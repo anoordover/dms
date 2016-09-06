@@ -7,8 +7,16 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 public class IAArchiverConfiguration {
     @XStreamAlias("worker_threads")
-    private int noWorkerThreads;
+    private int workerThreads;
 
     @XStreamAlias("log4j_properties_path")
     private String log4jPropertiesPath;
+
+    public int getWorkerThreads() {
+        return workerThreads;
+    }
+
+    public String getLog4JPropertiesPath() {
+        return log4jPropertiesPath;
+    }
 }

@@ -17,13 +17,13 @@ public class SIPPackagerConfiguration {
     private IAServerConfiguration serverConfiguration;
 
     @XStreamAlias("document_source")
-    private String documentSourceClass;
+    private PluggableObjectConfiguration documentSource;
 
     @XStreamAlias("retention_manager")
-    private String retentionManagerClass;
+    private PluggableObjectConfiguration retentionManager;
 
     @XStreamAlias("message_parser")
-    private String messageParserClass;
+    private PluggableObjectConfiguration messageParser;
 
     public IAArchiverConfiguration getArchiverConfiguration() {
         return archiverConfiguration;
@@ -37,16 +37,16 @@ public class SIPPackagerConfiguration {
         return serverConfiguration;
     }
 
-    public String getDocumentSourceClass() {
-        return documentSourceClass;
+    public PluggableObjectConfiguration getDocumentSource() {
+        return documentSource;
     }
 
-    public String getRetentionManagerClass() {
-        return retentionManagerClass;
+    public PluggableObjectConfiguration getRetentionManager() {
+        return retentionManager;
     }
 
-    public String getMessageParserClass() {
-        return messageParserClass;
+    public PluggableObjectConfiguration getMessageParser() {
+        return messageParser;
     }
 
 }
