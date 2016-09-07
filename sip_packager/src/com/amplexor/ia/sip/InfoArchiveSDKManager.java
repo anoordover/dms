@@ -1,4 +1,4 @@
-package com.amplexor.ia;
+package com.amplexor.ia.sip;
 
 /**
  * Created by admjzimmermann on 6-9-2016.

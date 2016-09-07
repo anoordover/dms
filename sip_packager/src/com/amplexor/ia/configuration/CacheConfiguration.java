@@ -1,6 +1,10 @@
 package com.amplexor.ia.configuration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
