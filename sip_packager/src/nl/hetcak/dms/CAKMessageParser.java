@@ -19,7 +19,7 @@ public class CAKMessageParser implements MessageParser {
     public IADocument parse(DocumentSource source) {
         if(source instanceof ActiveMQManager) {
             CAKDocument document = ((ActiveMQManager)source).retrieveDocument();
-            //Parse Metadata??
+            //TODO: Parse Metadata??
             return document;
         }
         return null; //We only read from ActiveMQ

@@ -10,6 +10,9 @@ public class SIPPackagerConfiguration {
     @XStreamAlias("Archiver")
     private IAArchiverConfiguration archiverConfiguration;
 
+    @XStreamAlias("WorkerManager")
+    private WorkerConfiguration workerConfiguration;
+
     @XStreamAlias("Caching")
     private CacheConfiguration cacheConfiguration;
 
@@ -49,4 +52,5 @@ public class SIPPackagerConfiguration {
         return messageParser;
     }
 
+    public WorkerConfiguration getWorkerConfiguration() { return workerConfiguration; }
 }

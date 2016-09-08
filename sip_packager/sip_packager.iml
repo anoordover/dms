@@ -21,5 +21,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="infoarchive-sip-sdk" level="project" />
   </component>
 </module>

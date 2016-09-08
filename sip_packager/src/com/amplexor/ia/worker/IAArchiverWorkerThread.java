@@ -1,5 +1,7 @@
-package com.amplexor.ia;
+package com.amplexor.ia.worker;
 
+import com.amplexor.ia.DocumentSource;
+import com.amplexor.ia.MessageParser;
 import com.amplexor.ia.cache.CacheManager;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.configuration.RetentionManagerConfiguration;
@@ -54,13 +56,6 @@ public class IAArchiverWorkerThread implements Runnable {
             IADocument document = messageParser.parse(documentSource);
             IARetentionClass retentionClass = retentionManager.retrieveRetentionClass(document);
             cacheManager.add(document, retentionClass);
-
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException ex) {
-
-            }
-
         }
     }
 

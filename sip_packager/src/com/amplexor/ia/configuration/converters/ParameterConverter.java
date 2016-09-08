@@ -24,7 +24,7 @@ public class ParameterConverter implements Converter {
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new TreeMap<String, Object>();
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             map.put(reader.getNodeName(), reader.getValue());
