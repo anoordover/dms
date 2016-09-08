@@ -2,7 +2,10 @@ package com.amplexor.ia;
 
 import com.amplexor.ia.cache.CacheManager;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
+import com.amplexor.ia.configuration.RetentionManagerConfiguration;
 import com.amplexor.ia.configuration.SIPPackagerConfiguration;
+import com.amplexor.ia.metadata.IADocument;
+import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
 
 import java.lang.reflect.InvocationTargetException;
@@ -12,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class IAArchiverWorkerThread implements Runnable {
     private SIPPackagerConfiguration configuration;
+    private int id;
 
     private int workerLoad;
     private boolean running;
@@ -26,22 +30,37 @@ public class IAArchiverWorkerThread implements Runnable {
     }
 
     public IAArchiverWorkerThread(SIPPackagerConfiguration configuration) {
+        this(configuration, 1);
+    }
+
+    public IAArchiverWorkerThread(SIPPackagerConfiguration configuration, int id) {
         this.configuration = configuration;
+        this.id = id;
     }
 
     @Override
     public void run() {
+        System.out.printf("Initializing Worker: %s\n", id);
         if (loadClasses()) {
             running = true;
+            Thread.currentThread().setName("IAWorker-" + id);
+            System.out.println("Initializing Document Caches");
+            cacheManager = new CacheManager(configuration.getCacheConfiguration());
+            cacheManager.initializeCache(configuration.getRetentionManager().getRetentionClasses());
+            System.out.println("DONE. Starting main loop");
         }
 
         while (running) {
+            IADocument document = messageParser.parse(documentSource);
+            IARetentionClass retentionClass = retentionManager.retrieveRetentionClass(document);
+            cacheManager.add(document, retentionClass);
+
             try {
-                documentSource.retrieveDocument();
-                Thread.sleep(20000);
+                Thread.sleep(10000);
             } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
+
             }
+
         }
     }
 
@@ -65,7 +84,7 @@ public class IAArchiverWorkerThread implements Runnable {
 
             Object retentionManagerInstance = Thread.currentThread().getContextClassLoader()
                     .loadClass(configuration.getRetentionManager().getImplementingClass())
-                    .getConstructor(PluggableObjectConfiguration.class)
+                    .getConstructor(RetentionManagerConfiguration.class)
                     .newInstance(configuration.getRetentionManager());
             if (retentionManagerInstance instanceof RetentionManager) {
                 retentionManager = RetentionManager.class.cast(retentionManagerInstance);

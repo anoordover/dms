@@ -1,5 +1,6 @@
 package com.amplexor.ia.cache;
 
+import com.amplexor.ia.metadata.IADocument;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
@@ -13,14 +14,43 @@ public class IACache {
     @XStreamAlias("id")
     private int id;
 
-    @XStreamAlias("num_messages")
-    @XStreamImplicit(itemFieldName = "message")
-    private List<TextMessage> numMessages;
+    @XStreamAlias("closed")
+    private boolean closed;
 
-    @XStreamAlias("expires")
-    private long expires;
+    @XStreamAlias("created")
+    private long created;
 
-    public IACache() {
+    @XStreamAlias("size")
+    private int size;
 
+    public IACache(int id) {
+        this.id = id;
+        this.closed = false;
+        this.size = 0;
+        this.created = System.currentTimeMillis();
+    }
+
+    public void add(IADocument document) {
+        size++;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void close() {
+        closed = true;
+    }
+
+    public long getCreated() {
+        return created;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public int getId() {
+        return id;
     }
 }

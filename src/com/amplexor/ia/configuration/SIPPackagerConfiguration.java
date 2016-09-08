@@ -20,7 +20,7 @@ public class SIPPackagerConfiguration {
     private PluggableObjectConfiguration documentSource;
 
     @XStreamAlias("retention_manager")
-    private PluggableObjectConfiguration retentionManager;
+    private RetentionManagerConfiguration retentionManager;
 
     @XStreamAlias("message_parser")
     private PluggableObjectConfiguration messageParser;
@@ -41,7 +41,7 @@ public class SIPPackagerConfiguration {
         return documentSource;
     }
 
-    public PluggableObjectConfiguration getRetentionManager() {
+    public RetentionManagerConfiguration getRetentionManager() {
         return retentionManager;
     }
 

@@ -3,6 +3,7 @@ package com.amplexor.ia.configuration;
 import com.amplexor.ia.configuration.SIPPackagerConfiguration;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import nl.hetcak.dms.CAKRetentionClass;
 
 import java.io.File;
 import java.io.IOException;

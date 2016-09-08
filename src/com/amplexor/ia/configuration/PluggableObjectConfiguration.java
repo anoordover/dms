@@ -1,10 +1,9 @@
 package com.amplexor.ia.configuration;
 
+import com.amplexor.ia.configuration.converters.ParameterConverter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.converters.extended.NamedMapConverter;
 
-import java.util.AbstractMap;
 import java.util.Map;
 
 /**
@@ -16,13 +15,17 @@ public class PluggableObjectConfiguration {
 
     @XStreamAlias("custom_parameters")
     @XStreamConverter(ParameterConverter.class)
-    private Map<String, String> customParameters;
+    private Map<String, Object> customParameters;
 
     public String getImplementingClass() {
         return implementingClass;
     }
 
     public String getParameter(String key) {
-        return customParameters.get(key);
+        return (String)customParameters.get(key);
+    }
+
+    public Map<String, Object> getSubset(String key) {
+        return (Map<String, Object>)customParameters.get(key);
     }
 }

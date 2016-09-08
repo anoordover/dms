@@ -12,10 +12,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class IAArchiver {
     private static String configLocation = (System.getProperty("user.dir") + "/config/IAArchiver.xml").replace('/', File.separatorChar);
-    private static String cacheSave = (System.getProperty("user.dir") + "/cache/cache.xml").replace('/', File.separatorChar);
 
     public static void main(String[] args) {
-        System.out.println("USER.DIR: " + System.getProperty("user.dir"));
         parseArguments(args);
         ConfigManager config = new ConfigManager(configLocation);
         config.loadConfiguration();
@@ -31,9 +29,6 @@ public class IAArchiver {
                 switch(args[i - 1]) {
                     case "-config":
                         configLocation = args[i];
-                        break;
-                    case "-cachesave":
-                        cacheSave = args[i];
                         break;
                     default:
                         break;
