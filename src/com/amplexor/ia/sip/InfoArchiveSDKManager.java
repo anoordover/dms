@@ -2,10 +2,14 @@ package com.amplexor.ia.sip;
 
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.metadata.IADocument;
+import com.amplexor.ia.retention.IARetentionClass;
 import com.emc.ia.sdk.sip.assembly.*;
+import com.emc.ia.sdk.sip.client.dto.RetentionClass;
 import com.emc.ia.sdk.support.io.EncodedHash;
 import com.emc.ia.sdk.support.xml.XmlBuilder;
+import nl.hetcak.dms.CAKDocument;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,22 +20,36 @@ import java.util.*;
  */
 public class InfoArchiveSDKManager {
     public static Path getSIPFile(IACache cache) {
-        SipAssembler<IADocument> sipAssembler = createSipAssembler(getPackageInformation(), getPdiAssembler(), getDigitalObjects());
-        //TODO: create SIP Package, return path on the filesystem
-        return Paths.get("");
+        Path rval = null;
+        try {
+            SipAssembler<IADocument> sipAssembler = createSipAssembler(getPackageInformation(cache.getRetentionClass()), getPdiAssembler(), getDigitalObjects());
+            FileGenerator<IADocument> fileGenerator = new FileGenerator<>(sipAssembler);
+            FileGenerationMetrics metrics = fileGenerator.generate(cache.getContents().iterator());
+            if (metrics.getFile() != null) {
+                System.out.println("Created SIP file " + metrics.getFile().getAbsolutePath());
+                rval = metrics.getFile().toPath();
+            } else {
+                System.out.println("Error generating SIP");
+            }
+        }
+        catch(IOException ex) {
+            System.err.println(ex.getLocalizedMessage());
+        }
+        return rval;
     }
 
     private static SipAssembler createSipAssembler(PackagingInformation packagingInformation, PdiAssembler pdiAssembler, DigitalObjectsExtraction digitalObjectsExtraction) {
-        //return new SipAssembler(packagingInformation, pdiAssembler, digitalObjectsExtraction);
+        return SipAssembler.forPdiAndContent(packagingInformation, pdiAssembler, digitalObjectsExtraction);
     }
 
-    private static PackagingInformation getPackageInformation() {
+    private static PackagingInformation getPackageInformation(IARetentionClass retentionClass) {
         return PackagingInformation.builder().dss()
                 .holding("CAK")
                 .application("DMS")
                 .producer("SIP_PKGR")
                 .entity("DMS_DEV")
                 .schema("urn:cak:dms:document:1.0")
+                .retentionClass(retentionClass.getName())
                 .end().build();
     }
 

@@ -25,7 +25,7 @@ public class ConfigManager {
 
     public void loadConfiguration() {
         XStream xstream = new XStream(new StaxDriver());
-        xstream.alias("configuration", SIPPackagerConfiguration.class);
+        xstream.alias("IAArchiver", SIPPackagerConfiguration.class);
         xstream.autodetectAnnotations(true);
         configuration = (SIPPackagerConfiguration)xstream.fromXML(new File(configPath));
     }
