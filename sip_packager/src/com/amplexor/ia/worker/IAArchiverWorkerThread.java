@@ -9,6 +9,7 @@ import com.amplexor.ia.configuration.SIPPackagerConfiguration;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
+import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -16,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class IAArchiverWorkerThread implements Runnable {
+    private static Logger logger = Logger.getLogger("IAArchiverWorkerThread");
     private SIPPackagerConfiguration configuration;
     private int id;
 
@@ -42,21 +44,28 @@ public class IAArchiverWorkerThread implements Runnable {
 
     @Override
     public void run() {
-        System.out.printf("Initializing Worker: %s\n", id);
+        logger.info("Intializing Worker " + id);
         if (loadClasses()) {
             running = true;
             Thread.currentThread().setName("IAWorker-" + id);
-            System.out.println("Initializing Document Caches");
+            logger.info("Initializing Document Caches");
             cacheManager = new CacheManager(configuration.getCacheConfiguration());
             cacheManager.initializeCache(configuration.getRetentionManager().getRetentionClasses());
-            System.out.println("DONE. Starting main loop");
+            logger.info("DONE. Starting main loop");
         }
 
         while (running) {
             IADocument document = messageParser.parse(documentSource);
+            logger.info("Retrieved document with id: " + document.getDocumentId());
             IARetentionClass retentionClass = retentionManager.retrieveRetentionClass(document);
             cacheManager.add(document, retentionClass);
         }
+        logger.info("Shutting down Worker " + id);
+    }
+
+    public synchronized void stopWorker() {
+        logger.info("Worker " + id + " Received Stop command");
+        running = false;
     }
 
     private boolean loadClasses() {

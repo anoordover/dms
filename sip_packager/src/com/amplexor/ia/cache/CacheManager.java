@@ -61,7 +61,6 @@ public class CacheManager {
             IACache cache = getCache(retentionClass);
             if (cache != null) {
                 cache.add(document);
-                document.extract(String.format("%s/%s/%d", base.toString(), retentionClass.getName(), cache.getId()));
             }
         }
     }
@@ -89,7 +88,7 @@ public class CacheManager {
 
     private void saveDocument(IADocument document) {
         try {
-            Path documentSave = Paths.get(String.format("%s/%s", save.toString(), document.getId()).replace('/', File.separatorChar));
+            Path documentSave = Paths.get(String.format("%s/%s", save.toString(), document.getDocumentId()).replace('/', File.separatorChar));
             XStream xstream = new XStream(new StaxDriver());
             xstream.processAnnotations(document.getClass());
             OutputStream outputStream = Files.newOutputStream(documentSave);

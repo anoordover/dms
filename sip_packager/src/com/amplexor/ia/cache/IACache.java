@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import javax.jms.TextMessage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -70,5 +71,9 @@ public class IACache {
 
     public IARetentionClass getRetentionClass() {
         return retentionClass;
+    }
+
+    public List<IADocument> getContents() {
+        return Collections.unmodifiableList(contents);
     }
 }

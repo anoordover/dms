@@ -2,24 +2,28 @@ package com.amplexor.ia;
 
 import com.amplexor.ia.configuration.ConfigManager;
 import com.amplexor.ia.configuration.WorkerConfiguration;
-import com.amplexor.ia.worker.IAArchiverWorkerThread;
 import com.amplexor.ia.worker.WorkerManager;
+import org.apache.log4j.PropertyConfigurator;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
 public class IAArchiver {
     private static String configLocation = (System.getProperty("user.dir") + "/config/IAArchiver.xml").replace('/', File.separatorChar);
+    private static Logger logger = Logger.getLogger("IAArchiver");
 
     public static void main(String[] args) {
         parseArguments(args);
         ConfigManager config = new ConfigManager(configLocation);
         config.loadConfiguration();
+
+        System.out.println("Configuring Logging with " + config.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+        PropertyConfigurator.configure(config.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+        logger.info("Logging configured using " + config.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
 
         WorkerManager workerManager = getWorkerManager(config.getConfiguration().getWorkerConfiguration());
         workerManager.initialize();
