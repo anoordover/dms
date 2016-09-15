@@ -18,6 +18,9 @@ public class IASipConfiguration {
     @XStreamAlias("entity_name")
     private String msEntityName;
 
+    @XStreamAlias("document_element_name")
+    private String msDocumentElementName;
+
     @XStreamAlias("schema_declaration")
     private String msSchemaDeclaration;
 
@@ -39,5 +42,9 @@ public class IASipConfiguration {
 
     public String getSchemaDeclaration() {
         return msSchemaDeclaration;
+    }
+
+    public String getDocumentElementName() {
+        return msDocumentElementName;
     }
 }

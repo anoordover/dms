@@ -25,9 +25,6 @@ public class IACache {
     @XStreamAlias("created")
     private long mlCreated;
 
-    @XStreamAlias("size")
-    private int miSize;
-
     @XStreamAlias("retention_class")
     private IARetentionClass mobjRetentionClass;
 
@@ -38,7 +35,6 @@ public class IACache {
         miId = iId;
         mobjRetentionClass = objRetentionClass;
         mbClosed = false;
-        miSize = 0;
         mlCreated = System.currentTimeMillis();
         mcContents = new ArrayList<>();
     }
@@ -60,7 +56,7 @@ public class IACache {
     }
 
     public int getSize() {
-        return miSize;
+        return mcContents.size();
     }
 
     public int getId() {

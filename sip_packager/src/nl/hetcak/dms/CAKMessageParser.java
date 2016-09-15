@@ -19,9 +19,11 @@ public class CAKMessageParser implements MessageParser {
     public IADocument parse(DocumentSource objSource) {
         if (objSource instanceof ActiveMQManager) {
             CAKDocument objDocument = ((ActiveMQManager) objSource).retrieveDocument();
-            //TODO: Parse Metadata??
-            return objDocument;
+            if(objDocument != null) {
+                objDocument.setDocumentId(objDocument.getMetadata("ArchiefDocumentId"));
+                return objDocument;
+            }
         }
-        return new CAKDocument();
+        return null;
     }
 }

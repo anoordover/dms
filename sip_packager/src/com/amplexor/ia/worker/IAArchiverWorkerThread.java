@@ -64,9 +64,14 @@ public class IAArchiverWorkerThread implements Runnable {
 
         while (mbRunning) {
             IADocument objDocument = mobjMessageParser.parse(mobjDocumentSource);
-            logger.info("Retrieved document with id: " + objDocument.getDocumentId());
-            IARetentionClass retentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
-            mobjCacheManager.add(objDocument, retentionClass);
+            if(objDocument != null) {
+                logger.info("Retrieved document with id: " + objDocument.getDocumentId());
+                IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
+                if (objRetentionClass != null) {
+                    mobjCacheManager.add(objDocument, objRetentionClass);
+                }
+            }
+            mobjCacheManager.update();
             mobjCacheManager.getClosedCaches().iterator().forEachRemaining(objCache -> {
                 Path objSipPath = mobjSipManager.getSIPFile(objCache);
                 mobjArchiveManager.ingestSip(objSipPath.toString());

@@ -3,6 +3,7 @@ package nl.hetcak.dms;
 import com.amplexor.ia.configuration.converters.ParameterConverter;
 import com.amplexor.ia.metadata.IADocument;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import java.util.*;
@@ -51,5 +52,9 @@ public class CAKDocument extends IADocument {
         }
 
         return new byte[0];
+    }
+
+    public void setPayload(byte[] cPayload) {
+        msPayload = Base64.getEncoder().encodeToString(cPayload);
     }
 }

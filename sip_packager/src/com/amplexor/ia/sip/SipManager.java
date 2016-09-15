@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +63,7 @@ public class SipManager {
     }
 
     private PdiAssembler getPdiAssembler() {
-        return new XmlPdiAssembler<IADocument>(URI.create(mobjConfiguration.getSchemaDeclaration()), mobjConfiguration.getEntityName()) {
+        return new XmlPdiAssembler<IADocument>(URI.create(mobjConfiguration.getSchemaDeclaration()), mobjConfiguration.getDocumentElementName(), mobjConfiguration.getEntityName()) {
             @Override
             protected void doAdd(IADocument objDocument, Map<String, ContentInfo> cMap) {
                 XmlBuilder builder = getBuilder();
@@ -74,13 +75,16 @@ public class SipManager {
     }
 
     private DigitalObjectsExtraction<IADocument> getDigitalObjects() {
-        return (IADocument objDocument) -> {
-            List<DigitalObject> cObjects = new ArrayList<>();
-            for (String sKey : objDocument.getContentKeys()) {
-                DigitalObject object = DigitalObject.fromBytes(sKey, objDocument.loadContent(sKey));
-                cObjects.add(object);
+        return new DigitalObjectsExtraction<IADocument>() {
+            @Override
+            public Iterator<? extends DigitalObject> apply(IADocument objDocument) {
+                List<DigitalObject> cObjects = new ArrayList<>();
+                for (String sKey : objDocument.getContentKeys()) {
+                    DigitalObject object = DigitalObject.fromBytes(sKey, objDocument.loadContent(sKey));
+                    cObjects.add(object);
+                }
+                return cObjects.iterator();
             }
-            return cObjects.iterator();
         };
     }
 }

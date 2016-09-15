@@ -76,7 +76,7 @@ public class CacheManager {
         IACache objCreate = new IACache(miNextId++, objRetentionClass);
         try {
             Path oCachePath = Paths.get(String.format("%s/%s/%d", mobjBasePath.toString(), objRetentionClass.getName(), objCreate.getId()).replace('/', File.separatorChar));
-            Files.createDirectory(oCachePath);
+            Files.createDirectories(oCachePath);
             mcCaches.add(objCreate);
         } catch (IOException ex) {
             miNextId--;

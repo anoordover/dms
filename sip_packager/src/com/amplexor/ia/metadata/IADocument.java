@@ -1,15 +1,21 @@
 package com.amplexor.ia.metadata;
 
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+
 import java.util.Set;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
 public abstract class IADocument {
+    @XStreamOmitField
     private String msDocumentId;
 
     public String getDocumentId() {
         return msDocumentId;
+    }
+    public void setDocumentId(String sDocumentId) {
+        msDocumentId = sDocumentId;
     }
 
     public abstract Set<String> getMetadataKeys();

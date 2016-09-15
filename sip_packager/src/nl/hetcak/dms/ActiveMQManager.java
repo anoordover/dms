@@ -19,9 +19,9 @@ public class ActiveMQManager implements DocumentSource {
 
     private static final String SSL_CONFIG_TRUSTSTORE = "trustStore";
     private static final String SSL_CONFIG_TRUSTSTOREPASS = "trustStorePassword";
-    private static final String SSL_CONFIG_BROKER_URL = "brokerUrl";
+    private static final String SSL_CONFIG_BROKER_URL = "brokerURL";
 
-    ActiveMQConnectionFactory mobjConnectionFactory;
+    ActiveMQSslConnectionFactory mobjConnectionFactory;
     Connection mobjConnection;
 
     public ActiveMQManager(PluggableObjectConfiguration objConfiguration) {
@@ -39,21 +39,22 @@ public class ActiveMQManager implements DocumentSource {
         try {
             if (mobjConnection == null) {
                 mobjConnection = mobjConnectionFactory.createConnection();
+                mobjConnection.start();
             }
-            mobjConnection.start();
             Session objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Destination objDestination = objSession.createQueue("AanleverenArchiefUitingen");
             MessageConsumer objConsumer = objSession.createConsumer(objDestination);
-            Message objMessage = objConsumer.receive();
-            if (objMessage instanceof TextMessage) {
-                TextMessage textMessage = (TextMessage) objMessage;
-                logger.info("Received: " + textMessage.getText());
+            Message objMessage = objConsumer.receive(500);
+            if (objMessage != null && objMessage instanceof TextMessage) {
+                TextMessage objTextMessage = (TextMessage) objMessage;
+                logger.info("Received: " + objTextMessage.getText());
                 XStream objXStream = new XStream(new StaxDriver());
-                objXStream.alias("Document", CAKDocument.class);
+                objXStream.alias("ArchiefDocument", CAKDocument.class);
                 objXStream.processAnnotations(CAKDocument.class);
-                objReturn = (CAKDocument) objXStream.fromXML(textMessage.getText());
+                objReturn = (CAKDocument) objXStream.fromXML(objTextMessage.getText());
             }
             mobjConnection.close();
+            mobjConnection = null;
         } catch (JMSException ex) {
             logger.error(ex);
         }
