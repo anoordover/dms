@@ -1,7 +1,6 @@
 package com.amplexor.ia.ingest;
 
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.Base64;
 
@@ -9,103 +8,99 @@ import java.util.Base64;
  * Created by admjzimmermann on 13-9-2016.
  */
 public class IACredentials {
-    private static String IA_USERNAME = "username";
-    private static String IA_PASSWORD = "password";
-    private static String IA_REFRESH_TOKEN = "refresh_token";
-    private static String IA_LOGIN_GRANT = "grant_type";
-    private static String IA_LOGIN_GRANT_REFRESH = "refresh_token";
-    private static String IA_LOGIN_GRANT_PASSWORD = "password";
+    private static final String ENCODING_UTF8 = "UTF-8";
+    private static final String IA_QUERY_USERNAME = "username";
+    private static final String IA_QUERY_PASS = "password";
+    private static final String IA_REFRESH_TOKEN = "refresh_token";
+    private static final String IA_QUERY_LOGIN_GRANT = "grant_type";
+    private static final String IA_LOGIN_GRANT_REFRESH = "refresh_token";
+    private static final String IA_LOGIN_GRANT_PASS = "password";
 
-    private String mUsername;
-    private String mPassword;
-    private String mToken;
-    private String mRefreshToken ="";
-    private long mExpiry;
+    private String msUsername;
+    private String msPassword;
+    private String msToken;
+    private String msRefreshToken;
+    private long mlExpiry;
+
+    public IACredentials() {
+        msUsername = "";
+        msPassword = null;
+        msToken = "";
+        msRefreshToken = "";
+        mlExpiry = -1;
+    }
 
     public String getUsername() {
-        return mUsername;
+        return msUsername;
     }
 
     public void setUsername(String aUsername) {
-        mUsername = aUsername;
+        msUsername = aUsername;
     }
 
     public String getPassword() {
-        return mPassword;
+        return msPassword;
     }
 
     public void setPassword(byte[] aPassword) {
-        mPassword = Base64.getEncoder().encodeToString(aPassword);
+        msPassword = Base64.getEncoder().encodeToString(aPassword);
     }
 
     public void setToken(String aToken) {
-        mToken = aToken;
+        msToken = aToken;
     }
 
     public void setRefreshToken(String aRefreshToken) {
-        mRefreshToken = aRefreshToken;
+        msRefreshToken = aRefreshToken;
     }
 
     public String getRefreshToken() {
-        return mRefreshToken;
+        return msRefreshToken;
     }
 
     public void setExpiry(long aExpiry) {
-        mExpiry = aExpiry;
+        mlExpiry = aExpiry;
     }
 
     public String getToken() {
-        return mToken;
+        return msToken;
     }
 
     public long getExpiry() {
-        return mExpiry;
+        return mlExpiry;
     }
 
     public boolean hasExpired() {
-        return (mExpiry < System.currentTimeMillis());
+        return mlExpiry <= System.currentTimeMillis();
     }
 
-    public IACredentials() {
 
+    public String getLoginQuery() throws UnsupportedEncodingException {
+        StringBuilder objBuilder = new StringBuilder();
+        objBuilder.append(URLEncoder.encode(IA_QUERY_USERNAME, ENCODING_UTF8));
+        objBuilder.append("=");
+        objBuilder.append(URLEncoder.encode(msUsername, ENCODING_UTF8));
+        objBuilder.append("&");
+        objBuilder.append(URLEncoder.encode(IA_QUERY_PASS, ENCODING_UTF8));
+        objBuilder.append("=");
+        String sDecodedPassword = new String(Base64.getDecoder().decode(msPassword.getBytes()));
+        objBuilder.append(URLEncoder.encode(sDecodedPassword, ENCODING_UTF8));
+        objBuilder.append("&");
+        objBuilder.append(URLEncoder.encode(IA_QUERY_LOGIN_GRANT, ENCODING_UTF8));
+        objBuilder.append("=");
+        objBuilder.append(URLEncoder.encode(IA_LOGIN_GRANT_PASS, ENCODING_UTF8));
+
+        return objBuilder.toString();
     }
 
-    public String getLoginQuery() {
-        StringBuilder oBuilder = new StringBuilder();
-        try {
-            oBuilder.append(URLEncoder.encode(IA_USERNAME, "UTF-8"));
-            oBuilder.append("=");
-            oBuilder.append(URLEncoder.encode(mUsername, "UTF-8"));
-            oBuilder.append("&");
-            oBuilder.append(URLEncoder.encode(IA_PASSWORD, "UTF-8"));
-            oBuilder.append("=");
-            String sDecodedPassword = new String(Base64.getDecoder().decode(mPassword.getBytes()));
-            oBuilder.append(URLEncoder.encode(sDecodedPassword, "UTF-8"));
-            sDecodedPassword = null;
-            oBuilder.append("&");
-            oBuilder.append(URLEncoder.encode(IA_LOGIN_GRANT, "UTF-8"));
-            oBuilder.append("=");
-            oBuilder.append(URLEncoder.encode(IA_LOGIN_GRANT_PASSWORD, "UTF-8"));
-        } catch (UnsupportedEncodingException ex) {
-            System.err.println(ex.getLocalizedMessage());
-        }
-        return oBuilder.toString();
-    }
-
-    public String getRefreshQuery() {
-        StringBuilder oBuilder = new StringBuilder();
-        try {
-            oBuilder.append(URLEncoder.encode(IA_REFRESH_TOKEN, "UTF-8"));
-            oBuilder.append("=");
-            oBuilder.append(URLEncoder.encode(mRefreshToken, "UTF-8"));
-            oBuilder.append("&");
-            oBuilder.append(URLEncoder.encode(IA_LOGIN_GRANT, "UTF-8"));
-            oBuilder.append("=");
-            oBuilder.append(URLEncoder.encode(IA_LOGIN_GRANT_REFRESH, "UTF-8"));
-        } catch (UnsupportedEncodingException ex) {
-            System.err.println(ex.getLocalizedMessage());
-        }
-        return oBuilder.toString();
+    public String getRefreshQuery() throws UnsupportedEncodingException {
+        return URLEncoder.encode(IA_REFRESH_TOKEN, ENCODING_UTF8) +
+                "=" +
+                URLEncoder.encode(msRefreshToken, ENCODING_UTF8) +
+                "&" +
+                URLEncoder.encode(IA_QUERY_LOGIN_GRANT, ENCODING_UTF8) +
+                "=" +
+                URLEncoder.encode(IA_LOGIN_GRANT_REFRESH, ENCODING_UTF8);
     }
 
 

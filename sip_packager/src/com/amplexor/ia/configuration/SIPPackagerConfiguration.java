@@ -1,56 +1,64 @@
 package com.amplexor.ia.configuration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
 public class SIPPackagerConfiguration {
-    @XStreamAlias("Archiver")
-    private IAArchiverConfiguration archiverConfiguration;
+    @XStreamAlias("archiver")
+    private IAArchiverConfiguration moArchiverConfiguration;
 
-    @XStreamAlias("WorkerManager")
-    private WorkerConfiguration workerConfiguration;
+    @XStreamAlias("worker_manager")
+    private WorkerConfiguration moWorkerConfiguration;
 
-    @XStreamAlias("Caching")
-    private CacheConfiguration cacheConfiguration;
+    @XStreamAlias("caching")
+    private CacheConfiguration moCacheConfiguration;
 
-    @XStreamAlias("REST_API")
-    private IAServerConfiguration serverConfiguration;
+    @XStreamAlias("rest_api")
+    private IAServerConfiguration moServerConfiguration;
+
+    @XStreamAlias("sip")
+    private IASipConfiguration moSipConfiguration;
 
     @XStreamAlias("document_source")
-    private PluggableObjectConfiguration documentSource;
+    private PluggableObjectConfiguration moDocumentSource;
 
     @XStreamAlias("retention_manager")
-    private RetentionManagerConfiguration retentionManager;
+    private RetentionManagerConfiguration moRetentionManager;
 
     @XStreamAlias("message_parser")
-    private PluggableObjectConfiguration messageParser;
+    private PluggableObjectConfiguration moMessageParser;
 
     public IAArchiverConfiguration getArchiverConfiguration() {
-        return archiverConfiguration;
+        return moArchiverConfiguration;
     }
 
     public CacheConfiguration getCacheConfiguration() {
-        return cacheConfiguration;
+        return moCacheConfiguration;
     }
 
     public IAServerConfiguration getServerConfiguration() {
-        return serverConfiguration;
+        return moServerConfiguration;
     }
 
     public PluggableObjectConfiguration getDocumentSource() {
-        return documentSource;
+        return moDocumentSource;
     }
 
     public RetentionManagerConfiguration getRetentionManager() {
-        return retentionManager;
+        return moRetentionManager;
     }
 
     public PluggableObjectConfiguration getMessageParser() {
-        return messageParser;
+        return moMessageParser;
     }
 
-    public WorkerConfiguration getWorkerConfiguration() { return workerConfiguration; }
+    public WorkerConfiguration getWorkerConfiguration() {
+        return moWorkerConfiguration;
+    }
+
+    public IASipConfiguration getSipConfiguration() {
+        return moSipConfiguration;
+    }
 }

@@ -13,28 +13,28 @@ import java.util.*;
  */
 public class ParameterConverter implements Converter {
     @Override
-    public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
-        final AbstractMap<String, Object> map = (AbstractMap<String, Object>) value;
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            writer.startNode(entry.getKey());
-            writer.setValue(entry.getValue().toString());
-            writer.endNode();
+    public void marshal(Object objValue, HierarchicalStreamWriter objWriter, MarshallingContext objContext) {
+        final AbstractMap<String, Object> cMap = (AbstractMap<String, Object>) objValue;
+        for (Map.Entry<String, Object> entry : cMap.entrySet()) {
+            objWriter.startNode(entry.getKey());
+            objWriter.setValue(entry.getValue().toString());
+            objWriter.endNode();
         }
     }
 
     @Override
-    public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        Map<String, Object> map = new TreeMap<String, Object>();
-        while (reader.hasMoreChildren()) {
-            reader.moveDown();
-            map.put(reader.getNodeName(), reader.getValue());
-            reader.moveUp();
+    public Object unmarshal(HierarchicalStreamReader objReader, UnmarshallingContext objContext) {
+        Map<String, Object> cReturn = new TreeMap<>();
+        while (objReader.hasMoreChildren()) {
+            objReader.moveDown();
+            cReturn.put(objReader.getNodeName(), objReader.getValue());
+            objReader.moveUp();
         }
-        return map;
+        return cReturn;
     }
 
     @Override
-    public boolean canConvert(Class aClass) {
-        return AbstractMap.class.isAssignableFrom(aClass);
+    public boolean canConvert(Class objClass) {
+        return AbstractMap.class.isAssignableFrom(objClass);
     }
 }

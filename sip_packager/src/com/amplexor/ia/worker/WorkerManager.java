@@ -18,21 +18,21 @@ public class WorkerManager {
     ExecutorService poolExecutor;
     boolean running;
 
-    public WorkerManager(WorkerConfiguration configuration) {
-        poolExecutor = Executors.newFixedThreadPool(configuration.getMaxWorkerThreads());
+    public WorkerManager(WorkerConfiguration objConfiguration) {
+        poolExecutor = Executors.newFixedThreadPool(objConfiguration.getMaxWorkerThreads());
     }
 
     public void initialize() {
         //TODO: Initialization Logic here
     }
 
-    public void start(SIPPackagerConfiguration configuration) {
+    public void start(SIPPackagerConfiguration objConfiguration) {
         int needed = 1;
         running = true;
 
         while (running) {
             if (needed == 1) { //Check if we need another worker
-                poolExecutor.submit(new IAArchiverWorkerThread(configuration));
+                poolExecutor.submit(new IAArchiverWorkerThread(objConfiguration));
                 ++needed;
             }
         }

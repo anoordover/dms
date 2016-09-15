@@ -3,10 +3,8 @@ package com.amplexor.ia.cache;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
-import javax.jms.TextMessage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,64 +14,64 @@ import java.util.List;
  */
 public class IACache {
     @XStreamOmitField
-    private String basePath;
+    private String msBasePath;
 
     @XStreamAlias("id")
-    private int id;
+    private int miId;
 
     @XStreamAlias("closed")
-    private boolean closed;
+    private boolean mbClosed;
 
     @XStreamAlias("created")
-    private long created;
+    private long mlCreated;
 
     @XStreamAlias("size")
-    private int size;
+    private int miSize;
 
     @XStreamAlias("retention_class")
-    private IARetentionClass retentionClass;
+    private IARetentionClass mobjRetentionClass;
 
     @XStreamAlias("contents")
-    private List<IADocument> contents;
+    private List<IADocument> mcContents;
 
-    public IACache(int id, IARetentionClass retentionClass) {
-        this.id = id;
-        this.retentionClass = retentionClass;
-        this.closed = false;
-        this.size = 0;
-        this.created = System.currentTimeMillis();
-        this.contents = new ArrayList<>();
+    public IACache(int iId, IARetentionClass objRetentionClass) {
+        miId = iId;
+        mobjRetentionClass = objRetentionClass;
+        mbClosed = false;
+        miSize = 0;
+        mlCreated = System.currentTimeMillis();
+        mcContents = new ArrayList<>();
     }
 
-    public void add(IADocument document) {
-        contents.add(document);
+    public void add(IADocument objDocument) {
+        mcContents.add(objDocument);
     }
 
     public boolean isClosed() {
-        return closed;
+        return mbClosed;
     }
 
     public void close() {
-        closed = true;
+        mbClosed = true;
     }
 
     public long getCreated() {
-        return created;
+        return mlCreated;
     }
 
     public int getSize() {
-        return size;
+        return miSize;
     }
 
     public int getId() {
-        return id;
+        return miId;
     }
 
     public IARetentionClass getRetentionClass() {
-        return retentionClass;
+        return mobjRetentionClass;
     }
 
     public List<IADocument> getContents() {
-        return Collections.unmodifiableList(contents);
+        return Collections.unmodifiableList(mcContents);
     }
 }

@@ -7,10 +7,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 public class IAArchiverConfiguration {
     @XStreamAlias("log4j_properties_path")
-    private String log4jPropertiesPath;
-
+    private String msLog4jPropertiesPAth;
 
     public String getLog4JPropertiesPath() {
-        return log4jPropertiesPath;
+        return msLog4jPropertiesPAth;
     }
 }

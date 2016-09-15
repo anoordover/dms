@@ -2,6 +2,7 @@ package com.amplexor.ia.configuration;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
@@ -9,22 +10,25 @@ import java.io.File;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class ConfigManager {
-    private String configPath;
-    private SIPPackagerConfiguration configuration;
+    private static Logger logger = Logger.getLogger("ConfigManager");
+
+    private String msConfigPath;
+    private SIPPackagerConfiguration mobjConfiguration;
+
+    public ConfigManager(String sConfigPath) {
+        msConfigPath = sConfigPath;
+    }
 
     public SIPPackagerConfiguration getConfiguration() {
-        return configuration;
+        return mobjConfiguration;
     }
 
-    public ConfigManager(String configPath) {
-        this.configPath = configPath;
-    }
 
     public void loadConfiguration() {
-        System.out.println("Loading Configuration from " + configPath);
-        XStream xstream = new XStream(new StaxDriver());
-        xstream.alias("IAArchiver", SIPPackagerConfiguration.class);
-        xstream.autodetectAnnotations(true);
-        configuration = (SIPPackagerConfiguration)xstream.fromXML(new File(configPath));
+        logger.info("Loading Configuration from " + msConfigPath);
+        XStream objXStream = new XStream(new StaxDriver());
+        objXStream.alias("IAArchiver", SIPPackagerConfiguration.class);
+        objXStream.autodetectAnnotations(true);
+        mobjConfiguration = (SIPPackagerConfiguration)objXStream.fromXML(new File(msConfigPath));
     }
 }

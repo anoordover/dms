@@ -1,5 +1,7 @@
 package com.amplexor.ia.util;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,70 +13,64 @@ import java.net.URLConnection;
  * Created by admjzimmermann on 14-9-2016.
  */
 public class MultipartUtility {
-    public static void startMultipart(String aBoundary, HttpURLConnection aConnection) throws IOException {
-        aConnection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + aBoundary);
+    private static Logger logger = Logger.getLogger("MultipartUtility");
+    private static final String LINE_FEED = "\r\n";
+
+    //Hides the implicit public constructor
+    private MultipartUtility() {
     }
 
-    public static void addFormField(String aBoundary, HttpURLConnection aConnection, String aName, String aValue) {
-        try {
-            PrintWriter oWriter = new PrintWriter(aConnection.getOutputStream());
-            oWriter.append("--" + aBoundary).append("\r\n");
-            oWriter.append("Content-Disposition: form-data; name=\"" + aName + "\"\r\n");
-            oWriter.append("Content-Type: text/plain; charset=UTF-8\r\n");
-            oWriter.append("\r\n");
-            oWriter.append(aValue);
-            oWriter.append("\r\n");
-            oWriter.flush();
-        } catch (IOException ex) {
+    public static void startMultipart(String sBoundary, HttpURLConnection objConnection) throws IOException {
+        objConnection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + sBoundary);
+    }
 
+    public static void addFormField(String sBoundary, HttpURLConnection objConnection, String sName, String sValue) {
+        try {
+            PrintWriter objWriter = new PrintWriter(objConnection.getOutputStream());
+            objWriter.append("--").append(sBoundary).append(LINE_FEED);
+            objWriter.append("Content-Disposition: form-data; name=\"").append(sName).append("\"").append(LINE_FEED);
+            objWriter.append("Content-Type: text/plain; charset=UTF-8").append(LINE_FEED);
+            objWriter.append(LINE_FEED);
+            objWriter.append(sValue);
+            objWriter.append(LINE_FEED);
+            objWriter.flush();
+        } catch (IOException ex) {
+            logger.error(ex);
         }
     }
 
-    public static void addFilePart(String aBoundary, HttpURLConnection aConnection, String aFile, String aFieldName) {
-        File oFile = new File(aFile);
-        try {
-            PrintWriter oWriter = new PrintWriter(aConnection.getOutputStream());
-            oWriter.append("--" + aBoundary + "\r\n");
-            oWriter.append("Content-Disposition: form-data; name=\"" + aFieldName + "\"; filename=\"" + oFile.getName() + "\"\r\n");
-            oWriter.append("Content-Type: " + URLConnection.guessContentTypeFromName(oFile.getName()) + "\r\n");
-            oWriter.append("Content-Transfer-Encoding: binary\r\n");
-            oWriter.append("\r\n");
-            oWriter.flush();
+    public static void addFilePart(String sBoundary, HttpURLConnection objConnection, String sFile, String sFieldName) throws IOException {
+        File objFile = new File(sFile);
+        PrintWriter objWriter = new PrintWriter(objConnection.getOutputStream());
+        objWriter.append("--").append(sBoundary).append(LINE_FEED);
+        objWriter.append("Content-Disposition: form-data; name=\"").append(sFieldName).append("\"; filename=\"").append(objFile.getName()).append("\"").append(LINE_FEED);
+        objWriter.append("Content-Type: ").append(URLConnection.guessContentTypeFromName(objFile.getName())).append(LINE_FEED);
+        objWriter.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
+        objWriter.append(LINE_FEED);
+        objWriter.flush();
 
-            try (FileInputStream oFileInput = new FileInputStream(oFile)) {
-                byte[] oBuffer = new byte[4096];
-                int iRead = -1;
-                while ((iRead = oFileInput.read(oBuffer)) != -1) {
-                    aConnection.getOutputStream().write(oBuffer, 0, iRead);
-                }
-                aConnection.getOutputStream().flush();
+        try (FileInputStream objFileInput = new FileInputStream(objFile)) {
+            byte[] objBuffer = new byte[4096];
+            int iRead;
+            while ((iRead = objFileInput.read(objBuffer)) != -1) {
+                objConnection.getOutputStream().write(objBuffer, 0, iRead);
             }
-            oWriter.append("\r\n");
-            oWriter.flush();
-
-        } catch (IOException ex) {
-
+            objConnection.getOutputStream().flush();
         }
+        objWriter.append(LINE_FEED);
+        objWriter.flush();
     }
 
-    public static void addHeaderField(String aBoundary, HttpURLConnection aConnection, String aHeader, String aValue) {
-        try {
-            PrintWriter oWriter = new PrintWriter(aConnection.getOutputStream());
-            oWriter.append(aHeader + ": " + aValue + "\r\n").flush();
-        } catch (IOException ex) {
-
-        }
+    public static void addHeaderField(HttpURLConnection objConnection, String sHeader, String sValue) throws IOException {
+        PrintWriter objWriter = new PrintWriter(objConnection.getOutputStream());
+        objWriter.append(sHeader).append(": ").append(sValue).append("\r\n").flush();
     }
 
-    public static void finishMultipart(String aBoundary, HttpURLConnection aConnection) {
-        try {
-            PrintWriter oWriter = new PrintWriter(aConnection.getOutputStream());
-            oWriter.append("\r\n").flush();
-            oWriter.append("--" + aBoundary + "--\r\n").flush();
-            oWriter.close();
-        } catch (IOException ex) {
-
-        }
+    public static void finishMultipart(String sBoundary, HttpURLConnection objConnection) throws IOException {
+        PrintWriter objWriter = new PrintWriter(objConnection.getOutputStream());
+        objWriter.append(LINE_FEED).flush();
+        objWriter.append("--").append(sBoundary).append("--").append(LINE_FEED).flush();
+        objWriter.close();
     }
 
 }

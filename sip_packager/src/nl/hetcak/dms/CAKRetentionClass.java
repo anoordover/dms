@@ -8,19 +8,18 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 public class CAKRetentionClass extends IARetentionClass {
     @XStreamAlias("handeling_nr")
-    private String handelingNr;
+    private String msHandelingNr;
 
-
-    public CAKRetentionClass(String name) {
-        this(name, "");
+    public CAKRetentionClass(String sName) {
+        this(sName, "");
     }
 
-    public CAKRetentionClass(String name, String handelingNr) {
-        super(name);
-        this.handelingNr = handelingNr;
+    public CAKRetentionClass(String sName, String sHandelingNr) {
+        super(sName);
+        msHandelingNr = sHandelingNr;
     }
 
     public String getHandelingNr() {
-        return handelingNr;
+        return msHandelingNr;
     }
 }

@@ -2,8 +2,6 @@ package com.amplexor.ia.configuration;
 
 import com.amplexor.ia.retention.IARetentionClass;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +11,16 @@ import java.util.List;
  */
 public class RetentionManagerConfiguration extends PluggableObjectConfiguration {
     @XStreamAlias("retention_classes")
-    private List<IARetentionClass> retentionClasses;
+    private List<IARetentionClass> mcRetentionClasses;
+
+    @XStreamAlias("retention_element_name")
+    private String msRetentionElementName;
 
     public List<IARetentionClass> getRetentionClasses() {
-        return Collections.unmodifiableList(retentionClasses);
+        return Collections.unmodifiableList(mcRetentionClasses);
+    }
+
+    public String getRetentionElementName() {
+        return msRetentionElementName;
     }
 }

@@ -1,8 +1,6 @@
 package com.amplexor.ia.ingest;
 
-import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,75 +10,75 @@ import java.util.Set;
  * Created by admjzimmermann on 14-9-2016.
  */
 public class IAObject {
-    private String mName;
-    private String mUUID;
-    private Map<String, String> mLinks;
+    private String msName;
+    private String msUUID;
+    private Map<String, String> mcLinks;
 
     public IAObject() {
-        mName = "";
-        mUUID = "";
-        mLinks = new HashMap<>();
+        msName = "";
+        msUUID = "";
+        mcLinks = new HashMap<>();
     }
 
     public String getName() {
-        return mName;
+        return msName;
     }
 
-    public void setName(String aName) {
-        mName = aName;
+    public void setName(String sName) {
+        msName = sName;
     }
 
     public String getUUID() {
-        return mUUID;
+        return msUUID;
     }
 
-    public void setUUID(String aUUID) {
-        mUUID = aUUID;
+    public void setUUID(String sUUID) {
+        msUUID = sUUID;
     }
 
-    public String getLink(String aLink) {
-        return mLinks.get(aLink);
+    public String getLink(String sLink) {
+        return mcLinks.get(sLink);
     }
 
-    public void addLink(String aName, String aLink) {
-        mLinks.put(aName, aLink);
+    public void addLink(String sName, String sLink) {
+        mcLinks.put(sName, sLink);
     }
 
     public Set<String> getAvailableLinks() {
-        return mLinks.keySet();
+        return mcLinks.keySet();
     }
 
-    public static IAObject fromJSONObject(JSONObject aObject) {
-        IAObject oReturn = new IAObject();
-        oReturn.setName((String) aObject.get("name"));
-        JSONObject oLinks = (JSONObject) aObject.get("_links");
-        for (Object key : oLinks.keySet()) {
-            JSONObject oLinkObject = (JSONObject) oLinks.get(key);
-            String sKeytype = ((String) key).substring(((String) key).lastIndexOf('/') + 1);
-            oReturn.addLink((String) sKeytype, (String) oLinkObject.get("href"));
-
-            if (key.equals("self")) {
-                String sSelfHref = (String) oLinkObject.get("href");
-                oReturn.setUUID(sSelfHref.substring(sSelfHref.lastIndexOf('/') + 1));
+    public static IAObject fromJSONObject(JSONObject objObject) {
+        IAObject objReturn = new IAObject();
+        objReturn.setName((String) objObject.get("name"));
+        JSONObject oLinks = (JSONObject) objObject.get("_links");
+        for (Object objKey : oLinks.keySet()) {
+            JSONObject objLinkObject = (JSONObject) oLinks.get(objKey);
+            String sKeytype = ((String) objKey).substring(((String) objKey).lastIndexOf('/') + 1);
+            objReturn.addLink(sKeytype, (String) objLinkObject.get("href"));
+            if ("self".equals(objKey)) {
+                String sSelfHref = (String) objLinkObject.get("href");
+                objReturn.setUUID(sSelfHref.substring(sSelfHref.lastIndexOf('/') + 1));
             }
         }
-        return oReturn;
+
+        return objReturn;
     }
 
     @Override
     public String toString() {
-        StringBuilder oBuilder = new StringBuilder();
-        oBuilder.append("Name: ");
-        oBuilder.append(mName);
-        oBuilder.append("UIID: ");
-        oBuilder.append(mUUID);
-        oBuilder.append("__LINKS__");
-        for(String sKey : mLinks.keySet()) {
-            oBuilder.append(sKey);
-            oBuilder.append(": ");
-            oBuilder.append(mLinks.get(sKey));
+        StringBuilder objBuilder = new StringBuilder();
+        objBuilder.append("Name: ");
+        objBuilder.append(msName);
+        objBuilder.append("UIID: ");
+        objBuilder.append(msUUID);
+        objBuilder.append("__LINKS__");
+        for (Map.Entry<String, String> objEntry : mcLinks.entrySet()) {
+            objBuilder.append(objEntry.getKey());
+            objBuilder.append(": ");
+            objBuilder.append(objEntry.getValue());
         }
-        oBuilder.append("_________");
-        return oBuilder.toString();
+        objBuilder.append("_________");
+        return objBuilder.toString();
     }
 }

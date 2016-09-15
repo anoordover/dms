@@ -11,21 +11,21 @@ import java.util.Map;
  */
 public class PluggableObjectConfiguration {
     @XStreamAlias("implementing_class")
-    private String implementingClass;
+    private String msImplementingClass;
 
     @XStreamAlias("custom_parameters")
     @XStreamConverter(ParameterConverter.class)
-    private Map<String, Object> customParameters;
+    private Map<String, Object> mcCustomParameters;
 
     public String getImplementingClass() {
-        return implementingClass;
+        return msImplementingClass;
     }
 
-    public String getParameter(String key) {
-        return (String)customParameters.get(key);
+    public String getParameter(String sKey) {
+        return (String) mcCustomParameters.get(sKey);
     }
 
-    public Map<String, Object> getSubset(String key) {
-        return (Map<String, Object>)customParameters.get(key);
+    public Map<String, Object> getSubset(String sKey) {
+        return (Map<String, Object>) mcCustomParameters.get(sKey);
     }
 }

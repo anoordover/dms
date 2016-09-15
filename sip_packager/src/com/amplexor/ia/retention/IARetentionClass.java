@@ -7,13 +7,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 public abstract class IARetentionClass {
     @XStreamAlias("name")
-    private String name;
+    private String msName;
 
-    public IARetentionClass(String name) {
-        this.name = name;
+    public IARetentionClass(String sName) {
+        this.msName = sName;
     }
 
     public String getName() {
-        return name;
+        return msName;
     }
 }

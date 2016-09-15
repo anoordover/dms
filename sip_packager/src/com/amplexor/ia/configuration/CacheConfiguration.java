@@ -1,33 +1,29 @@
 package com.amplexor.ia.configuration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
 public class CacheConfiguration {
     @XStreamAlias("base_path")
-    private String cacheBasePath;
+    private String msCacheBasePath;
 
     @XStreamAlias("message_threshold")
-    private int cacheMessageThreshold;
+    private int miCacheMessageThreshold;
 
     @XStreamAlias("time_threshold")
-    private int cacheTimeThreshold;
+    private int miCacheTimeThreshold;
 
     public String getCacheBasePath() {
-        return cacheBasePath;
+        return msCacheBasePath;
     }
 
     public int getCacheMessageThreshold() {
-        return cacheMessageThreshold;
+        return miCacheMessageThreshold;
     }
 
     public int getCacheTimeThreshold() {
-        return cacheTimeThreshold;
+        return miCacheTimeThreshold;
     }
 }
