@@ -41,13 +41,13 @@ public class CAKDocument extends IADocument {
     @Override
     public Set<String> getContentKeys() {
         Set<String> rval = new HashSet<>();
-        rval.add("PayloadPdf");
+        rval.add("Attachment");
         return rval;
     }
 
     @Override
     public byte[] loadContent(String key) {
-        if("PayloadPdf".equals(key)) {
+        if("Attachment".equals(key)) {
             return Base64.getDecoder().decode(msPayload);
         }
 

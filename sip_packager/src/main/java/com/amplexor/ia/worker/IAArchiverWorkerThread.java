@@ -50,7 +50,7 @@ public class IAArchiverWorkerThread implements Runnable {
 
     @Override
     public void run() {
-        logger.info("Intializing Worker " + miId);
+        logger.info("Initializing Worker " + miId);
         if (loadClasses()) {
             mbRunning = true;
             Thread.currentThread().setName("IAWorker-" + miId);
@@ -63,8 +63,12 @@ public class IAArchiverWorkerThread implements Runnable {
         }
 
         while (mbRunning) {
-            IADocument objDocument = mobjMessageParser.parse(mobjDocumentSource);
-            if(objDocument != null) {
+            IADocument objDocument = null;
+            String sDocumentData = mobjDocumentSource.retrieveDocumentData();
+            if (!"".equals(sDocumentData)) {
+                objDocument = mobjMessageParser.parse(sDocumentData);
+            }
+            if (objDocument != null) {
                 logger.info("Retrieved document with id: " + objDocument.getDocumentId());
                 IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
                 if (objRetentionClass != null) {

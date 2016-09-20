@@ -24,6 +24,7 @@ public class IASipConfiguration {
     @XStreamAlias("schema_declaration")
     private String msSchemaDeclaration;
 
+
     public String getHoldingName() {
         return msHoldingName;
     }
@@ -47,4 +48,5 @@ public class IASipConfiguration {
     public String getDocumentElementName() {
         return msDocumentElementName;
     }
+
 }

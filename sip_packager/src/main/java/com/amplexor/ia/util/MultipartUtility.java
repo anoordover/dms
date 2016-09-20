@@ -63,7 +63,7 @@ public class MultipartUtility {
 
     public static void addHeaderField(HttpURLConnection objConnection, String sHeader, String sValue) throws IOException {
         PrintWriter objWriter = new PrintWriter(objConnection.getOutputStream());
-        objWriter.append(sHeader).append(": ").append(sValue).append("\r\n").flush();
+        objWriter.append(sHeader).append(": ").append(sValue).append(LINE_FEED).flush();
     }
 
     public static void finishMultipart(String sBoundary, HttpURLConnection objConnection) throws IOException {

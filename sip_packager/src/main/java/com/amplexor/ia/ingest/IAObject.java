@@ -68,17 +68,21 @@ public class IAObject {
     @Override
     public String toString() {
         StringBuilder objBuilder = new StringBuilder();
+        objBuilder.append("IAObject\n");
         objBuilder.append("Name: ");
         objBuilder.append(msName);
+        objBuilder.append("\n");
         objBuilder.append("UIID: ");
         objBuilder.append(msUUID);
+        objBuilder.append("\n");
         objBuilder.append("__LINKS__");
+        objBuilder.append("\n");
         for (Map.Entry<String, String> objEntry : mcLinks.entrySet()) {
             objBuilder.append(objEntry.getKey());
             objBuilder.append(": ");
             objBuilder.append(objEntry.getValue());
+            objBuilder.append("\n");
         }
-        objBuilder.append("_________");
         return objBuilder.toString();
     }
 }
