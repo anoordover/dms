@@ -34,32 +34,32 @@ public class IACredentials {
         return msUsername;
     }
 
-    public void setUsername(String aUsername) {
-        msUsername = aUsername;
+    public void setUsername(String sUsername) {
+        msUsername = sUsername;
     }
 
     public String getPassword() {
         return msPassword;
     }
 
-    public void setPassword(byte[] aPassword) {
-        msPassword = Base64.getEncoder().encodeToString(aPassword);
+    public void setPassword(String sPassword) {
+        msPassword = sPassword;
     }
 
-    public void setToken(String aToken) {
-        msToken = aToken;
+    public void setToken(String sToken) {
+        msToken = sToken;
     }
 
-    public void setRefreshToken(String aRefreshToken) {
-        msRefreshToken = aRefreshToken;
+    public void setRefreshToken(String sRefreshToken) {
+        msRefreshToken = sRefreshToken;
     }
 
     public String getRefreshToken() {
         return msRefreshToken;
     }
 
-    public void setExpiry(long aExpiry) {
-        mlExpiry = aExpiry;
+    public void setExpiry(long lExpiry) {
+        mlExpiry = lExpiry;
     }
 
     public String getToken() {

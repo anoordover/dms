@@ -34,8 +34,8 @@ public class ActiveMQManager implements DocumentSource {
     }
 
     @Override
-    public CAKDocument retrieveDocument() {
-        CAKDocument objReturn = null;
+    public String retrieveDocumentData() {
+        String sReturn = "";
         try {
             if (mobjConnection == null) {
                 mobjConnection = mobjConnectionFactory.createConnection();
@@ -47,18 +47,15 @@ public class ActiveMQManager implements DocumentSource {
             Message objMessage = objConsumer.receive(500);
             if (objMessage != null && objMessage instanceof TextMessage) {
                 TextMessage objTextMessage = (TextMessage) objMessage;
-                logger.info("Received: " + objTextMessage.getText());
-                XStream objXStream = new XStream(new StaxDriver());
-                objXStream.alias("ArchiefDocument", CAKDocument.class);
-                objXStream.processAnnotations(CAKDocument.class);
-                objReturn = (CAKDocument) objXStream.fromXML(objTextMessage.getText());
+                logger.debug("Received: " + objTextMessage.getText());
+                sReturn = objTextMessage.getText();
             }
             mobjConnection.close();
             mobjConnection = null;
         } catch (JMSException ex) {
             logger.error(ex);
         }
-        return objReturn;
+        return sReturn;
     }
 
     @Override

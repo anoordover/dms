@@ -7,5 +7,5 @@ import com.amplexor.ia.metadata.IADocument;
  */
 @FunctionalInterface
 public interface MessageParser {
-    IADocument parse(DocumentSource objSource);
+    IADocument parse(String sData);
 }

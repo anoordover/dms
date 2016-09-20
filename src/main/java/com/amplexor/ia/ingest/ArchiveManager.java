@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class ArchiveManager {
     private static final int MILLISECONDS_PER_SECOND = 1000;
-    private static final int REFRESH_THRESHOLD_SECONDS = 120;
+    private static final int REFRESH_THRESHOLD_SECONDS = 300;
     private static final String HEADER_PRINT_FORMAT = "%s: %s%n";
     private static final String IA_OBJECT_LIST_IDENTIFIER = "_embedded";
     private static final String IA_ENDPOINT_TENANTS = "tenants";
@@ -36,25 +36,34 @@ public class ArchiveManager {
         moConfiguration = objConfiguration;
         moCredentials = new IACredentials();
         moCredentials.setUsername(moConfiguration.getIngestUser());
-        String sPasswordEnc = moConfiguration.getEncryptedIngestPassword();
-        moCredentials.setPassword(Base64.getDecoder().decode(sPasswordEnc.getBytes()));
+        moCredentials.setPassword(moConfiguration.getEncryptedIngestPassword());
     }
 
     public boolean ingestSip(String sSipFile) {
-        boolean bReturn;
+        boolean bReturn = false;
         try {
             if (moCredentials.hasExpired()) {
                 login();
-            } else if (System.currentTimeMillis() > (moCredentials.getExpiry() + (REFRESH_THRESHOLD_SECONDS * MILLISECONDS_PER_SECOND))) { //Refresh if within 2 minutes of expiry
+            } else if (System.currentTimeMillis() > (moCredentials.getExpiry() + (REFRESH_THRESHOLD_SECONDS * MILLISECONDS_PER_SECOND))) { //Refresh if within 5 minutes of expiry
                 refresh();
             }
 
             IAObject objInfoArchiveTenant = extractObjectWithName(restCall(IA_ENDPOINT_TENANTS), moConfiguration.getIngestTenant());
-            IAObject objDmsDevApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), moConfiguration.getIAApplicationName());
-            IAObject objAip = IAObject.fromJSONObject(receive(objDmsDevApplication, sSipFile));
-            IAObject objResult = IAObject.fromJSONObject(restCall(objAip.getLink(IA_ENDPOINT_INGEST), "PUT"));
-            logger.info(objResult);
-            bReturn = true;
+            IAObject objInfoArchiveApplication = null;
+            IAObject objAip = null;
+            if (objInfoArchiveTenant.getName() != null) {
+                objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), moConfiguration.getIAApplicationName());
+            }
+
+            if (objInfoArchiveApplication != null && objInfoArchiveApplication.getName() != null && !"".equals(objInfoArchiveApplication.getName())) {
+                objAip = IAObject.fromJSONObject(receive(objInfoArchiveApplication, sSipFile));
+            }
+
+            if (objAip != null && objAip.getName() != null && !"".equals(objAip.getName())) {
+                IAObject objResult = IAObject.fromJSONObject(restCall(objAip.getLink(IA_ENDPOINT_INGEST), "PUT"));
+                logger.info(objResult);
+                bReturn = true;
+            }
 
         } catch (IOException | ParseException ex) {
             logger.error(ex);
@@ -149,6 +158,7 @@ public class ArchiveManager {
 
     private JSONObject receive(IAObject objTarget, String sFile) throws IOException, ParseException {
         JSONObject objReturn;
+        IAObject objRecvNode = extractObjectWithName(restCall(objTarget.getLink("receiver-nodes")), "dms_dev_rcv_01");
         String sUrl = String.format("%s://%s:%d/systemdata/applications/%s/aips", moConfiguration.getProtocol(), moConfiguration.getHost(), moConfiguration.getPort(), objTarget.getUUID());
         HttpURLConnection objConnection = (HttpURLConnection) new URL(sUrl).openConnection();
         objConnection.setUseCaches(false);
@@ -158,6 +168,7 @@ public class ArchiveManager {
 
         String sBoundary = Long.toHexString(System.currentTimeMillis());
         MultipartUtility.startMultipart(sBoundary, objConnection);
+        MultipartUtility.addFormField(sBoundary, objConnection, "receiverNodeName", objRecvNode.getName());
         MultipartUtility.addFormField(sBoundary, objConnection, "format", "sip_zip");
         MultipartUtility.addFilePart(sBoundary, objConnection, sFile, "sip");
         MultipartUtility.finishMultipart(sBoundary, objConnection);
@@ -172,6 +183,7 @@ public class ArchiveManager {
 
         try (BufferedReader oReader = new BufferedReader(new InputStreamReader(objInputSource))) {
             objReturn = (JSONObject) new JSONParser().parse(oReader);
+
         }
 
         return objReturn;

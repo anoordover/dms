@@ -10,7 +10,9 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +39,9 @@ public class SipManager {
             FileGenerationMetrics objMetrics = objFileGenerator.generate(objCache.getContents().iterator());
             if (objMetrics.getFile() != null) {
                 logger.info("Created SIP file " + objMetrics.getFile().getAbsolutePath());
-                objReturn = objMetrics.getFile().toPath();
+                Path objTempPath = objMetrics.getFile().toPath();
+                objReturn = Files.copy(objTempPath, Paths.get(objTempPath.toString() + ".zip"));
+                Files.delete(objTempPath);
             } else {
                 logger.error("Error generating SIP");
             }
@@ -69,6 +73,9 @@ public class SipManager {
                 XmlBuilder builder = getBuilder();
                 for (String key : objDocument.getMetadataKeys()) {
                     builder.element(key, objDocument.getMetadata(key));
+                }
+                for(String sKey : objDocument.getContentKeys()) {
+                    builder.element(sKey, objDocument.getDocumentId() + ".pdf");
                 }
             }
         };
