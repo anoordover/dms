@@ -5,6 +5,7 @@ import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
 
+import static com.amplexor.ia.Logger.*;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
@@ -18,18 +19,18 @@ public class CAKRetentionManager implements RetentionManager {
 
     @Override
     public IARetentionClass retrieveRetentionClass(IADocument objSource) {
-        CAKRetentionClass objReturn = null;
-        CAKDocument objDocument = null;
-        String sRetentionName = null;
-        if (objSource instanceof CAKDocument) {
-            objDocument = (CAKDocument) objSource;
-            sRetentionName = objDocument.getMetadata(mobjConfiguration.getRetentionElementName());
-        }
+        info(this, "Retrieving Retention Class for IADocument: " + objSource.getDocumentId());
 
-        if (objDocument != null && sRetentionName != null) {
+        IARetentionClass objReturn = null;
+        String sRetentionName = null;
+        sRetentionName = objSource.getMetadata(mobjConfiguration.getRetentionElementName());
+
+
+        if (sRetentionName != null) {
             for (IARetentionClass retentionClass : mobjConfiguration.getRetentionClasses()) {
                 if (retentionClass.getName().equals(sRetentionName)) {
                     objReturn = (CAKRetentionClass) retentionClass;
+                    info(this, "Found Retention Class: " + objReturn.getName());
                     break;
                 }
             }

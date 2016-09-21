@@ -2,20 +2,19 @@ package nl.hetcak.dms;
 
 import com.amplexor.ia.DocumentSource;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
-import org.apache.activemq.ActiveMQConnectionFactory;
+import com.amplexor.ia.metadata.IADocument;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
-import org.apache.log4j.Logger;
+import static com.amplexor.ia.Logger.*;
 
 import javax.jms.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
 public class ActiveMQManager implements DocumentSource {
-    private static Logger logger = Logger.getLogger("ActiveMQManager");
 
     private static final String SSL_CONFIG_TRUSTSTORE = "trustStore";
     private static final String SSL_CONFIG_TRUSTSTOREPASS = "trustStorePassword";
@@ -23,8 +22,10 @@ public class ActiveMQManager implements DocumentSource {
 
     ActiveMQSslConnectionFactory mobjConnectionFactory;
     Connection mobjConnection;
+    PluggableObjectConfiguration mobjConfiguration;
 
     public ActiveMQManager(PluggableObjectConfiguration objConfiguration) {
+        mobjConfiguration = objConfiguration;
         mobjConnectionFactory = new ActiveMQSslConnectionFactory();
         Properties sslConfig = new Properties();
         sslConfig.setProperty(SSL_CONFIG_TRUSTSTORE, objConfiguration.getParameter("truststore"));
@@ -35,6 +36,7 @@ public class ActiveMQManager implements DocumentSource {
 
     @Override
     public String retrieveDocumentData() {
+        debug(this, "Retrieving Document Data");
         String sReturn = "";
         try {
             if (mobjConnection == null) {
@@ -42,41 +44,62 @@ public class ActiveMQManager implements DocumentSource {
                 mobjConnection.start();
             }
             Session objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination objDestination = objSession.createQueue("AanleverenArchiefUitingen");
+            Destination objDestination = objSession.createQueue("AanleverenArchiefUitingen"); //TODO: Configurable Queuename
             MessageConsumer objConsumer = objSession.createConsumer(objDestination);
-            Message objMessage = objConsumer.receive(500);
+            Message objMessage = objConsumer.receive(500); //TODO: Configurable Timeout
             if (objMessage != null && objMessage instanceof TextMessage) {
                 TextMessage objTextMessage = (TextMessage) objMessage;
-                logger.debug("Received: " + objTextMessage.getText());
+                debug(this, "Received: " + objTextMessage.getText());
                 sReturn = objTextMessage.getText();
             }
-            mobjConnection.close();
-            mobjConnection = null;
+            objSession.close();
         } catch (JMSException ex) {
-            logger.error(ex);
+            error(this, ex);
         }
+        debug(this, "Retrieved Data: " + sReturn);
         return sReturn;
     }
 
     @Override
-    public void postResult() {
+    public void postResult(IADocument objDocument) {
+        debug(this, "Posting Result " + objDocument.toString());
         try {
             if (mobjConnection == null) {
                 mobjConnection = mobjConnectionFactory.createConnection();
             }
             mobjConnection.start();
-             /* TODO: Send Result
-            Session session = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination destination = session.createQueue("VerwerkArchiefUitingenStatus");
-            MessageProducer producer = session.createProducer(destination);
+            Session objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            Destination objDestination = objSession.createQueue("VerwerkArchiefUitingenStatus");
+            MessageProducer objProducer = objSession.createProducer(objDestination);
+            TextMessage objMessage = objSession.createTextMessage();
 
-            TextMessage message = session.createTextMessage();
-            message.setText("{ document_id : 10001000, status : ingested }");
-            producer.send(destination, message);
-            */
+            String sStatusSuccess = mobjConfiguration.getParameter("result_success");
+            String sStatusError = mobjConfiguration.getParameter("result_error");
+            boolean bStatus = objDocument.getError() == null;
+            String[] cResultValues = mobjConfiguration.getParameter("result_values").split(";");
+            String[] cValues = new String[cResultValues.length];
+            int iCurrent = 0;
+            for (String sResultValue : cResultValues) {
+                switch (sResultValue) {
+                    case "{STATUS}":
+                        cValues[iCurrent++] = (bStatus ? sStatusSuccess : sStatusError);
+                        break;
+                    case "{ERROR}":
+                        cValues[iCurrent++] = (bStatus ? objDocument.getError() : "");
+                        break;
+                    default:
+                        cValues[iCurrent++] = (objDocument.getMetadata(sResultValue));
+                        break;
+                }
+            }
+            String sMessageText = String.format(mobjConfiguration.getParameter("result_format"), cValues);
+            debug(this, "Sending Message " + sMessageText);
+            objMessage.setText(sMessageText);
+            objProducer.send(objDestination, objMessage);
             mobjConnection.close();
         } catch (JMSException ex) {
-            logger.error(ex);
+            error(this, ex);
         }
+        debug(this, "Exiting Post Result");
     }
 }

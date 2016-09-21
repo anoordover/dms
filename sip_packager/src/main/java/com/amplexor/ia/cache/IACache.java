@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import static com.amplexor.ia.Logger.*;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
@@ -32,11 +33,15 @@ public class IACache {
     private List<IADocument> mcContents;
 
     public IACache(int iId, IARetentionClass objRetentionClass) {
+        debug(this, "Constructing IACache Object");
+
         miId = iId;
         mobjRetentionClass = objRetentionClass;
         mbClosed = false;
         mlCreated = System.currentTimeMillis();
         mcContents = new ArrayList<>();
+
+        debug(this, "Constructed IACache Object");
     }
 
     public void add(IADocument objDocument) {

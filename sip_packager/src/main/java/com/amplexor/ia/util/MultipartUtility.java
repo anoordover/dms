@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 
+import static com.amplexor.ia.Logger.*;
+
 /**
  * Created by admjzimmermann on 14-9-2016.
  */
@@ -35,7 +37,7 @@ public class MultipartUtility {
             objWriter.append(LINE_FEED);
             objWriter.flush();
         } catch (IOException ex) {
-            logger.error(ex);
+            error(MultipartUtility.class, ex);
         }
     }
 

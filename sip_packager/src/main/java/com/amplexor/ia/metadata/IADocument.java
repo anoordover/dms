@@ -25,4 +25,7 @@ public abstract class IADocument {
     public abstract Set<String> getContentKeys();
     public abstract byte[] loadContent(String sKey);
 
+    public abstract void setError(String sError);
+    public abstract String getError();
+
  }

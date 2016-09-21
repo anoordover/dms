@@ -2,10 +2,11 @@ package com.amplexor.ia.worker;
 
 import com.amplexor.ia.configuration.SIPPackagerConfiguration;
 import com.amplexor.ia.configuration.WorkerConfiguration;
-import org.apache.log4j.Logger;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static com.amplexor.ia.Logger.*;
 
 /**
  * Created by admjzimmermann on 8-9-2016.
@@ -13,7 +14,6 @@ import java.util.concurrent.Executors;
 
 //TODO: Apply logic, i.e. thresholds for starting / stopping workers etc.
 public class WorkerManager {
-    private static Logger logger = Logger.getLogger("WorkerManager");
 
     ExecutorService poolExecutor;
     boolean running;
@@ -29,9 +29,9 @@ public class WorkerManager {
     public void start(SIPPackagerConfiguration objConfiguration) {
         int needed = 1;
         running = true;
-
         while (running) {
             if (needed == 1) { //Check if we need another worker
+                info(this, "Starting Worker with ID: " + needed);
                 poolExecutor.submit(new IAArchiverWorkerThread(objConfiguration));
                 ++needed;
             }

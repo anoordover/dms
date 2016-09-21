@@ -6,7 +6,6 @@ import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.emc.ia.sdk.sip.assembly.*;
 import com.emc.ia.sdk.support.xml.XmlBuilder;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
 import java.io.IOException;
@@ -19,11 +18,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.amplexor.ia.Logger.*;
+
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
 public class SipManager {
-    private static Logger logger = Logger.getLogger("InfoArchiveSDKManager");
 
     private IASipConfiguration mobjConfiguration;
 
@@ -33,21 +33,23 @@ public class SipManager {
     }
 
     public Path getSIPFile(IACache objCache) {
+        debug(this, "Creating SIP file from cache " + objCache.getId());
         Path objReturn = null;
         try {
             SipAssembler<IADocument> objSipAssembler = createSipAssembler(getPackageInformation(objCache.getRetentionClass()), getPdiAssembler(), getDigitalObjects());
             FileGenerator<IADocument> objFileGenerator = new FileGenerator<>(objSipAssembler);
             FileGenerationMetrics objMetrics = objFileGenerator.generate(objCache.getContents().iterator());
             if (objMetrics.getFile() != null) {
-                logger.info("Created SIP file " + objMetrics.getFile().getAbsolutePath());
                 Path objTempPath = objMetrics.getFile().toPath();
                 objReturn = Files.copy(objTempPath, Paths.get(objTempPath.toString() + ".zip"));
+                info(this, "Created SIP File: " + objReturn.toString());
                 Files.delete(objTempPath);
+                debug(this, "Deleted temp file: " + objTempPath);
             } else {
-                logger.error("Error generating SIP");
+                error(this, "Error generating SIP");
             }
         } catch (IOException ex) {
-            logger.error(ex);
+            error(this, ex);
         }
         return objReturn;
     }
@@ -76,7 +78,7 @@ public class SipManager {
                     builder.element(sKey, objDocument.getMetadata(sKey));
                 }
                 for (String sKey : objDocument.getContentKeys()) {
-                    builder.element(sKey, objDocument.getDocumentId() + ".pdf");
+                    builder.element(sKey, String.format("%s_%s.pdf", sKey, objDocument.getDocumentId()));
                 }
             }
         };
@@ -88,7 +90,7 @@ public class SipManager {
             public Iterator<? extends DigitalObject> apply(IADocument objDocument) {
                 List<DigitalObject> cObjects = new ArrayList<>();
                 for (String sKey : objDocument.getContentKeys()) {
-                    DigitalObject object = DigitalObject.fromBytes(sKey, objDocument.loadContent(sKey));
+                    DigitalObject object = DigitalObject.fromBytes(String.format("%s_%s.pdf", sKey, objDocument.getDocumentId()), objDocument.loadContent(sKey));
                     cObjects.add(object);
                 }
                 return cObjects.iterator();

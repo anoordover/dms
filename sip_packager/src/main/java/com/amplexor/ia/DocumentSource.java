@@ -7,5 +7,5 @@ import com.amplexor.ia.metadata.IADocument;
  */
 public interface DocumentSource {
     String retrieveDocumentData();
-    void postResult();
+    void postResult(IADocument objDocument);
 }

@@ -11,7 +11,8 @@ import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
 import com.amplexor.ia.sip.SipManager;
-import org.apache.log4j.Logger;
+
+import static com.amplexor.ia.Logger.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
@@ -20,7 +21,6 @@ import java.nio.file.Path;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class IAArchiverWorkerThread implements Runnable {
-    private static Logger logger = Logger.getLogger("IAArchiverWorkerThread");
     private SIPPackagerConfiguration mobjConfiguration;
     private int miId;
 
@@ -50,16 +50,18 @@ public class IAArchiverWorkerThread implements Runnable {
 
     @Override
     public void run() {
-        logger.info("Initializing Worker " + miId);
+        info(this, "Initializing Worker " + miId);
         if (loadClasses()) {
             mbRunning = true;
             Thread.currentThread().setName("IAWorker-" + miId);
-            logger.info("Initializing Document Caches");
+            info(this, "Initializing Document Caches");
             mobjCacheManager = new CacheManager(mobjConfiguration.getCacheConfiguration());
             mobjCacheManager.initializeCache();
+            info(this, "Initializing SIP Manager");
             mobjSipManager = new SipManager(mobjConfiguration.getSipConfiguration());
+            info(this, "Initializing Archive Manager");
             mobjArchiveManager = new ArchiveManager(mobjConfiguration.getServerConfiguration());
-            logger.info("DONE. Starting main loop");
+            info(this, "DONE. Starting main loop");
         }
 
         while (mbRunning) {
@@ -69,7 +71,7 @@ public class IAArchiverWorkerThread implements Runnable {
                 objDocument = mobjMessageParser.parse(sDocumentData);
             }
             if (objDocument != null) {
-                logger.info("Retrieved document with id: " + objDocument.getDocumentId());
+                info(this, "Retrieved document with id: " + objDocument.getDocumentId());
                 IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
                 if (objRetentionClass != null) {
                     mobjCacheManager.add(objDocument, objRetentionClass);
@@ -81,11 +83,11 @@ public class IAArchiverWorkerThread implements Runnable {
                 mobjArchiveManager.ingestSip(objSipPath.toString());
             });
         }
-        logger.info("Shutting down Worker " + miId);
+        info(this, "Shutting down Worker " + miId);
     }
 
     public synchronized void stopWorker() {
-        logger.info("Worker " + miId + " Received Stop command");
+        info(this, "Worker " + miId + " Received Stop command");
         mbRunning = false;
     }
 
@@ -117,7 +119,7 @@ public class IAArchiverWorkerThread implements Runnable {
 
             return mobjDocumentSource != null && mobjMessageParser != null && mobjRetentionManager != null;
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-            logger.error(ex);
+            error(this, ex);
         }
         return false;
     }

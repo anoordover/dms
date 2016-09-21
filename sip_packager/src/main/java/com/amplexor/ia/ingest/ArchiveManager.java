@@ -2,7 +2,6 @@ package com.amplexor.ia.ingest;
 
 import com.amplexor.ia.configuration.IAServerConfiguration;
 import com.amplexor.ia.util.MultipartUtility;
-import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -16,6 +15,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
+import static com.amplexor.ia.Logger.*;
+
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
@@ -28,7 +29,6 @@ public class ArchiveManager {
     private static final String IA_ENDPOINT_APPLICATIONS = "applications";
     private static final String IA_ENDPOINT_INGEST = "ingest";
 
-    private static Logger logger = Logger.getLogger("ArchiveManager");
     private IAServerConfiguration moConfiguration;
     private final IACredentials moCredentials;
 
@@ -40,38 +40,49 @@ public class ArchiveManager {
     }
 
     public boolean ingestSip(String sSipFile) {
+        info(this, "Ingesting SIP " + sSipFile);
         boolean bReturn = false;
         try {
             if (moCredentials.hasExpired()) {
+                debug(this, "Logging in to IAWA");
                 login();
             } else if (System.currentTimeMillis() > (moCredentials.getExpiry() + (REFRESH_THRESHOLD_SECONDS * MILLISECONDS_PER_SECOND))) { //Refresh if within 5 minutes of expiry
                 refresh();
+                debug(this, "Refreshing Token");
             }
 
+            debug(this, "Fetching tenant " + moConfiguration.getIngestTenant());
             IAObject objInfoArchiveTenant = extractObjectWithName(restCall(IA_ENDPOINT_TENANTS), moConfiguration.getIngestTenant());
+            if (objInfoArchiveTenant.getName() != null) {
+                info(this, "Found Tenant with UUID: " + objInfoArchiveTenant.getUUID());
+            }
             IAObject objInfoArchiveApplication = null;
             IAObject objAip = null;
             if (objInfoArchiveTenant.getName() != null) {
+                debug(this, "Fetching Application" + moConfiguration.getIAApplicationName());
                 objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), moConfiguration.getIAApplicationName());
             }
 
             if (objInfoArchiveApplication != null && objInfoArchiveApplication.getName() != null && !"".equals(objInfoArchiveApplication.getName())) {
+                info(this, "Found application with UUID: " + objInfoArchiveApplication.getUUID());
+                debug(this, "Uploading AIP");
                 objAip = IAObject.fromJSONObject(receive(objInfoArchiveApplication, sSipFile));
             }
 
             if (objAip != null && objAip.getName() != null && !"".equals(objAip.getName())) {
+                info(this, "Uploaded AIP with UUID: " + objAip.getUUID());
+                debug(this, "Ingesting AIP");
                 IAObject objResult = IAObject.fromJSONObject(restCall(objAip.getLink(IA_ENDPOINT_INGEST), "PUT"));
-                if(objResult.getName() != null && objResult.getUUID() != null) {
-                    logger.info(objResult);
+                if (objResult.getName() != null && objResult.getUUID() != null) {
+                    info(this, "Successfully ingested AIP with UUID: " + objAip.getUUID()+ " Result: " + objResult.getName());
                     bReturn = true;
-                }
-                else {
-                    logger.error(String.format("Error Ingesting Object[Name: %s, UUID: %s]", objAip.getName(), objAip.getUUID()));
+                } else {
+                    error(this, String.format("Error Ingesting Object[Name: %s, UUID: %s]", objAip.getName(), objAip.getUUID()));
                 }
             }
 
         } catch (IOException | ParseException ex) {
-            logger.error(ex);
+            error(this, ex);
             bReturn = false;
         }
         return bReturn;
@@ -96,7 +107,7 @@ public class ArchiveManager {
                     moCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
                 }
             } catch (ParseException ex) {
-                logger.error(ex);
+                error(this, ex);
             }
         }
     }
@@ -120,11 +131,11 @@ public class ArchiveManager {
                     moCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
                 }
             } catch (ParseException ex) {
-                logger.error(ex);
+                error(this, ex);
             }
         } else {
             for (String key : oConnection.getHeaderFields().keySet()) {
-                logger.error(String.format("%s: %s%n", key, oConnection.getHeaderField(key)));
+                error(this, String.format("%s: %s%n", key, oConnection.getHeaderField(key)));
             }
         }
     }
@@ -188,7 +199,19 @@ public class ArchiveManager {
 
         try (BufferedReader oReader = new BufferedReader(new InputStreamReader(objInputSource))) {
             objReturn = (JSONObject) new JSONParser().parse(oReader);
+        }
 
+        if(objReturn.containsKey("_errors")) {
+            StringBuilder objErrorBuilder = new StringBuilder();
+            JSONArray objErrors = (JSONArray)objReturn.get("_errors");
+            objErrors.iterator().forEachRemaining((Object objErrorPart) -> {
+                if(objErrorPart instanceof JSONObject) {
+                    if(((JSONObject)objErrorPart).containsKey("localizedMessage")) {
+                        objErrorBuilder.append(((JSONObject)objErrorPart).get("localizedMessage"));
+                    }
+                }
+            });
+            throw new IllegalArgumentException(objErrorBuilder.toString());
         }
 
         return objReturn;
@@ -232,7 +255,7 @@ public class ArchiveManager {
 
     private static void printHeaders(HttpURLConnection objConnection) {
         for (String sHeaderName : objConnection.getHeaderFields().keySet()) {
-            logger.debug(String.format(HEADER_PRINT_FORMAT, sHeaderName, objConnection.getHeaderField(sHeaderName)));
+            debug(ArchiveManager.class, String.format(HEADER_PRINT_FORMAT, sHeaderName, objConnection.getHeaderField(sHeaderName)));
         }
     }
 }

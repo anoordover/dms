@@ -3,18 +3,17 @@ package com.amplexor.ia;
 import com.amplexor.ia.configuration.ConfigManager;
 import com.amplexor.ia.configuration.WorkerConfiguration;
 import com.amplexor.ia.worker.WorkerManager;
-import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import static com.amplexor.ia.Logger.*;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
 public class IAArchiver {
     private static String configLocation = (System.getProperty("user.dir") + "/config/IAArchiver.xml").replace('/', File.separatorChar);
-    private static Logger logger = Logger.getLogger("IAArchiver");
 
     private IAArchiver() {
 
@@ -25,10 +24,11 @@ public class IAArchiver {
         ConfigManager objConfigManager = new ConfigManager(configLocation);
         objConfigManager.loadConfiguration();
 
-        logger.info("Configuring Logging with " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+        info(IAArchiver.class, "Configuring Logging with " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
         PropertyConfigurator.configure(objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
-        logger.info("Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+        info(IAArchiver.class, "Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
 
+        info(IAArchiver.class, "Initializing Worker Manager");
         WorkerManager objWorkerManager = getWorkerManager(objConfigManager.getConfiguration().getWorkerConfiguration());
         objWorkerManager.initialize();
         objWorkerManager.start(objConfigManager.getConfiguration());
@@ -47,7 +47,7 @@ public class IAArchiver {
                     objReturn = (WorkerManager) objWorkerManager;
                 }
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-                logger.error(ex);
+                error(IAArchiver.class, ex);
             }
         }
         return objReturn;

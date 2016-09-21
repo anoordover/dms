@@ -5,6 +5,7 @@ import com.amplexor.ia.metadata.IADocument;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import java.util.*;
 
@@ -18,6 +19,9 @@ public class CAKDocument extends IADocument {
 
     @XStreamAlias("PayloadPdf")
     private String msPayload;
+
+    @XStreamOmitField
+    private String msError;
 
     public CAKDocument() {
         mcMetadata = new HashMap<>();
@@ -52,6 +56,16 @@ public class CAKDocument extends IADocument {
         }
 
         return new byte[0];
+    }
+
+    @Override
+    public void setError(String sError) {
+        msError = sError;
+    }
+
+    @Override
+    public String getError() {
+        return msError;
     }
 
     public void setPayload(byte[] cPayload) {

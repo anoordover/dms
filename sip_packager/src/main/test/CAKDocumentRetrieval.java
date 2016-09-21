@@ -87,6 +87,7 @@ public class CAKDocumentRetrieval {
         assertNotNull(objSipPath);
 
         assertTrue(mobjArchiveManager.ingestSip(objSipPath.toString()));
+        mobjDocumentSource.postResult(objDocument);
 
     }
 }
