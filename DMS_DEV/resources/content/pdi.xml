@@ -1,0 +1,113 @@
+<datas>
+    <data>
+        <id>pdi.index.creator</id>
+        <key.document.name>xdb.pdi.name</key.document.name>
+        <indexes>
+            <path.value.index>
+                <name>ArchiefDocumentId</name>
+                <path>
+                    /{urn:hetcak:dms:uitingarchief:2016:08}ArchiefDocumenten/{urn:hetcak:dms:uitingarchief:2016:08}ArchiefDocument[{urn:hetcak:dms:uitingarchief:2016:08}ArchiefDocumentId&lt;STRING>]
+                </path>
+                <compressed>false</compressed>
+                <unique.keys>false</unique.keys>
+                <concurrent>false</concurrent>
+                <build.without.logging>false</build.without.logging>
+            </path.value.index>
+            <path.value.index>
+                <name>ArchiefPersoonsnummer</name>
+                <path>
+                    /{urn:hetcak:dms:uitingarchief:2016:08}ArchiefDocumenten/{urn:hetcak:dms:uitingarchief:2016:08}ArchiefDocument[{urn:hetcak:dms:uitingarchief:2016:08}ArchiefPersoonsnummer&lt;STRING>]
+                </path>
+                <compressed>false</compressed>
+                <unique.keys>false</unique.keys>
+                <concurrent>false</concurrent>
+                <build.without.logging>false</build.without.logging>
+            </path.value.index>
+        </indexes>
+    </data>
+    <data>
+        <id>pdi.aiu.id</id>
+        <select.query>
+            <![CDATA[
+				declare namespace n = "urn:hetcak:dms:uitingarchief:2016:08";
+                for $aiu in /n:ArchiefDocumenten/n:ArchiefDocument
+                return $aiu
+                ]]>
+        </select.query>
+    </data>
+    <data>
+        <id>pdi.aiu.cnt</id>
+        <select.query>
+            <![CDATA[
+				declare namespace n = "urn:hetcak:dms:uitingarchief:2016:08";
+                count(/n:ArchiefDocumenten/n:ArchiefDocument)
+                ]]>
+        </select.query>
+    </data>
+    <data>
+        <id>pdi.pkeys</id>
+		<pkey attr="values01">
+			declare namespace n = "urn:hetcak:dms:uitingarchief:2016:08";
+			distinct-values(/n:ArchiefDocumenten/n:ArchiefDocument/n:ArchiefPersoonsnummer)
+		</pkey>
+		<pkey attr="values02">
+			declare namespace n = "urn:hetcak:dms:uitingarchief:2016:08";
+			distinct-values(/n:ArchiefDocumenten/n:ArchiefDocument/n:ArchiefDocumentId)
+		</pkey>
+		<pkey attr="values03">
+			declare namespace n = "urn:hetcak:dms:uitingarchief:2016:08";
+			distinct-values(/n:ArchiefDocumenten/n:ArchiefDocument/n:ArchiefDocumentsoort)
+		</pkey>
+		<pkey attr="values04">
+			declare namespace n = "urn:hetcak:dms:uitingarchief:2016:08";
+			distinct-values(/n:ArchiefDocumenten/n:ArchiefDocument/n:ArchiefDocumenttitel)
+		</pkey>
+        <pkey attr="dateTime01">
+			declare namespace n = "urn:hetcak:dms:uitingarchief:2016:08";
+			(
+				for $aiu in /n:ArchiefDocumenten/n:ArchiefDocument[n:ArchiefVerzenddag]
+				order by $aiu/n:ArchiefVerzenddag ascending
+				return $aiu/n:ArchiefVerzenddag/xs:date(.)
+			)[1]
+        </pkey>
+        <pkey attr="dateTime02">
+			declare namespace n = "urn:hetcak:dms:uitingarchief:2016:08";
+			(
+				for $aiu in /n:ArchiefDocumenten/n:ArchiefDocument[n:ArchiefVerzenddag]
+				order by $aiu/n:ArchiefVerzenddag descending
+				return $aiu/n:ArchiefVerzenddag/xs:date(.)
+			)[1]
+        </pkey>
+    </data>
+    <data>
+        <id>ri.init</id>
+        <select.query>
+            <![CDATA[
+                declare namespace n = "urn:hetcak:dms:uitingarchief:2016:08";
+                for $ci in distinct-values(/n:ArchiefDocumenten/n:ArchiefDocument/n:Attachment)
+                order by $ci
+                return <content type="application/pdf" format="pdf" audit="{ $ci }">{ $ci }</content>
+                ]]>
+        </select.query>
+    </data>
+    <data>
+        <id>xdb.pdi.ci.id</id>
+        <select.query>
+            <![CDATA[
+                declare namespace n = "urn:hetcak:dms:uitingarchief:2016:08";
+                declare namespace ri = "urn:x-emc:ia:schema:ri";
+                let $pdi_uri := root(.)
+                let $aip_id  := xhive:metadata($pdi_uri, 'aip_id')
+                let $ri_uri  := replace(document-uri($pdi_uri), '\.pdi$', '.ri')
+                for $ri in doc($ri_uri)/ri:ris/ri:ri[@key]
+                for $n in /n:ArchiefDocumenten/n:ArchiefDocument/n:Attachment[. = $ri/@key]
+                return ($n,concat($aip_id,":ci:",$ri/@seqno))
+                ]]>
+        </select.query>
+    </data>
+    <data>
+        <id>pdi.transformer</id>
+        <result.schema>urn:x-emc:ia:schema:pdi:export</result.schema>
+        <level>2</level>
+    </data>
+</datas>

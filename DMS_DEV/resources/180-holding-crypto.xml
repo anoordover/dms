@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="holding-crypto">
+    <target name="holding-crypto">
+        <!--
+        <echo>Configuring holding object with name '${holding}'</echo>
+        <ia-task self="holdingSelf">
+            <object typeAlias="holding" checkExistSpEL="?[name=='${holding}']">
+                <update>
+                    <ingestConfigs>
+                        <sipFormat>sip_zip</sipFormat>
+                        <ingest>${ingestSelf}</ingest>
+                    </ingestConfigs>
+                    <ingestConfigs>
+                        <sipFormat>sip_zip_crypto</sipFormat>
+                        <ingest>${ingestSelf}</ingest>
+                    </ingestConfigs>
+                </update>
+            </object>
+        </ia-task>
+        -->
+
+        <!-- Create an Holding Crypto object if any -->
+        <echo>Configuring holding crypto object with name '${holding}-crypto'</echo>
+        <ia-task self="holdingCryptoSelf">
+            <object typeAlias="holding-crypto" checkExistSpEL="?[name=='${holding}-crypto']">
+                <create>
+                    <name>${holding}-crypto</name>
+                </create>
+                <update>
+                    <holding>${holdingSelf}</holding>
+                    <cryptoEncoding>base64</cryptoEncoding>
+                    <ci>
+                        <cryptoObject>${cryptoSelf}</cryptoObject>
+                        <cryptoEnabled>true</cryptoEnabled>
+                    </ci>
+                    <pdi>
+                        <cryptoObject>${cryptoSelf}</cryptoObject>
+                        <cryptoEnabled>true</cryptoEnabled>
+                    </pdi>
+                    <sip>
+                        <cryptoObject>${cryptoSelf}</cryptoObject>
+                        <cryptoEnabled>true</cryptoEnabled>
+                    </sip>
+                    <pdis>
+                        <pdiCrypto>${pdiCryptoSelf}</pdiCrypto>
+                        <schema>${pdiSchema}</schema>
+                    </pdis>
+                    <pdis/>
+                </update>
+            </object>
+        </ia-task>
+    </target>
+</project>

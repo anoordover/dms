@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="ingest-node">
+    <target name="ingest-node">
+        <!-- Create a file-folder object if any-->
+        <echo>Configuring file-system-folder object with name '${application}-ingest-folder'</echo>
+        <ia-task self="fileSystemFolderIngestNodeSelf">
+            <object typeAlias="file-system-folder"
+                    checkExistSpEL="?[name=='${application}-ingest-folder']">
+                <create>
+                    <name>${application}-ingest-folder</name>
+                    <parentSpaceRootFolder>${spaceRootFolderSelf}</parentSpaceRootFolder>
+                    <subPath>working/${ingestNodeName}</subPath>
+                </create>
+            </object>
+        </ia-task>
+
+        <!-- Create an ingest-node object if any-->
+        <echo>Configuring ingest-node object with name '${ingestNodeName}'</echo>
+        <ia-task self="ingestNodeSelf">
+            <object typeAlias="ingest-node" checkExistSpEL="?[name=='${ingestNodeName}']">
+                <create>
+                    <name>${ingestNodeName}</name>
+                </create>
+                <update>
+                    <logLevel>INFO</logLevel>
+                    <workingDirectory>${fileSystemFolderIngestNodeSelf}</workingDirectory>
+                    <enumerationMaxResultCount>10</enumerationMaxResultCount>
+                    <enumerationCutoffDays>30</enumerationCutoffDays>
+                    <enumerationMinusRunning>true</enumerationMinusRunning>
+                </update>
+            </object>
+        </ia-task>
+    </target>
+</project>

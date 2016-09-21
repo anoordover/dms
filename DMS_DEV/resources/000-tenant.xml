@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="tenant">
+    <target name="tenant">
+        <!-- Create a tenant object if any-->
+        <echo>Configuring tenant object with name '${tenant}'</echo>
+        <ia-task self="tenantSelf">
+            <object typeAlias="tenant" checkExistSpEL="?[name=='${tenant}']">
+                <create>
+                    <name>${tenant}</name>
+                </create>
+            </object>
+        </ia-task>
+        <ia-use tenant="${tenant}"/>
+    </target>
+</project>

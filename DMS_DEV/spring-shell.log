@@ -1,0 +1,1362 @@
+// null 1.1.0.RELEASE log opened at 2016-09-20 16:03:22
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1466707897
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file916382532
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file188011119
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file839571125
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1472060353
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1476792576
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1335265072
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1603935766
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "cbc5bb76-e8ef-4c16-8e11-f9cd23118917"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1384930485
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file610406908
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file149465124
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file745096404
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file973501411
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1012720800
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file759645731
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1732273334
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file653212568
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1311217130
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1836904221
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1829403325
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1312428923
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file774815681
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1928471302
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1586260682
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file580040838
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1242520166
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file925822302
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file163404636
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1682219682
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file573174536
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1965575516
+// [failed] configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file638176120
+// null 1.1.0.RELEASE log opened at 2016-09-20 16:05:21
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file423068844
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1545886617
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file519269406
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1525246715
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file684783289
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file217361783
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1930416448
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1182379702
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "cbc5bb76-e8ef-4c16-8e11-f9cd23118917"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file808210112
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1086536514
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2096730603
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file808147337
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1998595814
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file884500711
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file916654948
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2057525459
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file105328542
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file43649635
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1644619841
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1501977460
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file667222040
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1435458798
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file969261028
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1918194879
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file367477576
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1148203060
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1220801428
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1598160013
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1195928462
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1991123390
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1730806585
+// [failed] configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file468319854
+// null 1.1.0.RELEASE log opened at 2016-09-20 16:07:00
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file162069528
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1456501374
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file975289238
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file856069876
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file314577969
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1436777506
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file389668460
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1470151119
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "cbc5bb76-e8ef-4c16-8e11-f9cd23118917"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file602116477
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file556859040
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2116654031
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1381557492
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1271735839
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file579640807
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file324408389
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file769088316
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1129445441
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1353118216
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1233872609
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1851389433
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file763328716
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file620236909
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file468957072
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file801267319
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1798089666
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1985230378
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1799456770
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1010245028
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1458658363
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1347913068
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file64734514
+// [failed] configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1333445580
+// null 1.1.0.RELEASE log opened at 2016-09-20 16:13:32
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1536699904
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1165460867
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file903828008
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1846876392
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1767701168
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file848014702
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1442311730
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2026769668
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file92971654
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1762363617
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1419558768
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file506370439
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1388994616
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file685977
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1020513385
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file389364355
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1960698793
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2089735415
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1285207332
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1904859023
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file600823992
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1935359688
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file315786899
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2123367399
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2008007106
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1118582592
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file194321052
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1296162481
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1763098555
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file444642310
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1480339140
+// [failed] configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file877229402
+// null 1.1.0.RELEASE log opened at 2016-09-20 16:16:20
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file76461253
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file575234865
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file956235435
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file920114143
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1235303805
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1986693904
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file996716504
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file875419335
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1769337164
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file825049761
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file491313989
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1320696102
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1469912558
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file339452300
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1314404273
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file979567743
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file99472180
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file835091769
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1889733060
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file633571273
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file609987384
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file243171863
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file411657364
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1744870080
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2086011819
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file305747850
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file688631876
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file666205413
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file774746698
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1031067759
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1286453447
+// [failed] configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file700017177
+// null 1.1.0.RELEASE log opened at 2016-09-20 16:18:56
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1097808679
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file788672043
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file125690172
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1334029646
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file995336191
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1563120760
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file265551560
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1144454088
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file258905483
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file605897208
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file395418002
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1068691131
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file855299381
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2004231217
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1885379745
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file664937249
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file495176515
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2096295620
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1839003683
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1769446184
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file63472405
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file281152548
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1180813623
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1711287089
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file107928826
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1529554785
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file920974421
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file936801525
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1683883950
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1387299106
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file101825627
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1663054530
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2093799284
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1449353650
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1586593845
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1566946531
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1392522444
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1022122545
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file368732455
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file624988958
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1996455122
+// null 1.1.0.RELEASE log opened at 2016-09-20 16:33:01
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1738402740
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1656232308
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1957842795
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1985406784
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2025621072
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1258477738
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file418536599
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1425839673
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file638035269
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file334349547
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1262945327
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file835380032
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1121357660
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file706186659
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file156365852
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file885037855
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file906784680
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file714010231
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1130121191
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1048053704
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file71085660
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1360551970
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file175603235
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1382328945
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file344309062
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file696566880
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1341659771
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1490499032
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1341256172
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file198811394
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file510926420
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file746039976
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file978167617
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1967296034
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file346563102
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1052874740
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1356562692
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1917637489
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1372092732
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file613196256
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file583223990
+// null 1.1.0.RELEASE log opened at 2016-09-20 16:35:08
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file628117844
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1882132562
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1853825512
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1322044319
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file790877258
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file860111056
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1348959536
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file556061880
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1821847457
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file27666335
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file122892321
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file27569943
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1066977034
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1727323471
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file729728464
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file799915838
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file543893824
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1913087612
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1455871413
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1673320533
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file463340169
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file246064
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file349998854
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1452096026
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1271690588
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1197747669
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1720608546
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file551371622
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file469572381
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1247661525
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1810890019
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1802994520
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file530714372
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1560564176
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2039178390
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1986229024
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1534821659
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file860361081
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1610033479
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2093728362
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file352685926
+// null 1.1.0.RELEASE log opened at 2016-09-20 17:14:27
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1788699745
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1647978328
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file757804760
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2048463319
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2008085521
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1213733833
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1024733828
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2092404958
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1645167156
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file318718782
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1899039056
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1008383257
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1148324243
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1995675931
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1039330147
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file275986153
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2090373152
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1368348878
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file205306573
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1629392108
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file396356830
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2028011124
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1544737920
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1371243111
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file269058671
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file431845275
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1909241583
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1039434463
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file156915771
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1668066850
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2074884162
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1595002055
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1090427962
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1364956989
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1979688499
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1498451
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file793196383
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1210273941
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1253034376
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file80840555
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file445382306
+// null 1.1.0.RELEASE log opened at 2016-09-20 17:18:43
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file806250268
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file766061187
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1314567712
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file73217876
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2141754324
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1485079658
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1626582404
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file739509232
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2132091352
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file275052244
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1823530865
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file137312386
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1740225129
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file23442602
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2061175403
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file766144385
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file349012686
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file190218266
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file811265719
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file47511669
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1031124200
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1794834484
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1126820221
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1650697430
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1036314484
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file186162580
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1100535960
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1333739795
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file192176093
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file937441338
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file692400382
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file66739118
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file587884476
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file562309238
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file15258055
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1587616900
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1746288621
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1512054014
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file439336412
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file79695403
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file651815759
+// null 1.1.0.RELEASE log opened at 2016-09-21 09:39:59
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1079201697
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file734454417
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1642517437
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file637278294
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file670106272
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1161309287
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file390615362
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file513046183
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file226876159
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file5721396
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file118778201
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1029336236
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1500421968
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file762075060
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1350957025
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file435801753
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file572000747
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file678043128
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file702846836
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1038884496
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file318257848
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1603739746
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file252064060
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file30976119
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1225866138
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2010065612
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2076405872
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1365330148
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1861689720
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1577476552
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file327529322
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1495757109
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file858977257
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file138453506
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1956951143
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file45882045
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file805578108
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file87831490
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2033435610
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1164344089
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file764741281
+// null 1.1.0.RELEASE log opened at 2016-09-21 09:41:35
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1195372879
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file486649783
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1047444809
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1243813998
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file348004099
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1350511235
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1951077137
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1254996300
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1105670897
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1324202168
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1969243803
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file305143743
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file784912358
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file189614134
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1629724
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1033726817
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1116135273
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file451380044
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file846311882
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1698644631
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file621342289
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2011391711
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1450350525
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file104598991
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file804225136
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file117690676
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1456647155
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1664314457
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file428191085
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file553907034
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1123145326
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file123133151
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file169244847
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1141452599
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file118051192
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1284125570
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1305638517
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1833995309
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1787761159
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file836179859
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file443117571
+// null 1.1.0.RELEASE log opened at 2016-09-21 09:43:15
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1157402602
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2112665812
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1690856725
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1825111696
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1274530953
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file206838172
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file379791700
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2020756208
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file719362819
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file954149832
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file598350609
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1444605133
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1077705355
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file103728721
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1372078615
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file735019164
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1196690000
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file431511132
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file730621697
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file718803811
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file120679759
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1690582803
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1881576360
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1720427490
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1477104083
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1492722833
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file186935335
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file354374604
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file110343819
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1979954167
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file792295047
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1711811378
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file192882502
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file907123356
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1053388556
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file684879873
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1973865293
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file508526177
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file104630043
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1128248226
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1114521436
+// null 1.1.0.RELEASE log opened at 2016-09-21 09:45:29
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file139967513
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1158100348
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file557851334
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1205557779
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2118113131
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2091102348
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file258799886
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1241736842
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file181055197
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1014815643
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1064278022
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file641189173
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file169768057
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2146162360
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1809885244
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1813898740
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file324901581
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1069480890
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file422603900
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file861789237
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1784362371
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file80305112
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1177052408
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file304387035
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file753306015
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1444627543
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1363917585
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1916875322
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file525150037
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file278469726
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1760976836
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file963659071
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1343129477
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1919487461
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file166684340
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1152352941
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1697760980
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file377818060
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file44156880
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file975108482
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1306376296
+// null 1.1.0.RELEASE log opened at 2016-09-21 09:50:20
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file340342341
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file695242207
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file210117617
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file828295554
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file571129444
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file141068434
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2078243863
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1034499812
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1400955537
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1042628379
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1427832945
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file601706917
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1370538894
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1940022564
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file80316959
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file178525742
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file153839887
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file672749795
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1594818965
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file123149433
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file108555656
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1650653068
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1222183869
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1630329741
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1426478369
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file243404375
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1318594359
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1126918804
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1828463047
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file662671913
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file230562752
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1768421786
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file355391068
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1323984866
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1414577584
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1711463396
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1253489422
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file442443586
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file948840349
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1530109419
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1649104069
+// null 1.1.0.RELEASE log opened at 2016-09-21 09:54:42
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file261768460
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file538906589
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file384057578
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1496241082
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1587467095
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file819327118
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file449412285
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file356275913
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file698237827
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1172583431
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1822263812
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1969050287
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1782241903
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file349271704
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1461260864
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file547542830
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file4257468
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file726634144
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1729557618
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file610283995
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1893188969
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file590466584
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1063017533
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file736397050
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1278895629
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2051377993
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1790108090
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1751242373
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1399642287
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2131051166
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1579719641
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2088243020
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1425780549
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1881326484
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1449045870
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1415770678
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file797646024
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file318372557
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1821213920
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1169401765
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1114217456
+// null 1.1.0.RELEASE log opened at 2016-09-21 10:05:11
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1968451639
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1319089621
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1142596275
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2099945707
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1859644786
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2027157649
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file541753239
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file110900197
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file701784383
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1169725407
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file301784608
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1998590513
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file285192753
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1079763370
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1575679394
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1784560117
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file154308871
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1297040361
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file146442040
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1462965122
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file677906444
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file483750376
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1841524145
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1490154485
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1143252492
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1743015106
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file349045271
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file442624000
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1211834099
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file606052587
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2025783005
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file855451843
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file569121795
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1995500266
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file327560100
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file853523668
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1799394737
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file951153955
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file661633962
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1805117278
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file450474269
+// null 1.1.0.RELEASE log opened at 2016-09-21 10:10:30
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file605285726
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1148140427
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file573605147
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1860899030
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file978346879
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1361112577
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1977842468
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file948500302
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file643103951
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1610680823
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1903499406
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1607279891
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1564626294
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1583464420
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file732331570
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file162912654
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1083182527
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1299113241
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1766582720
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file175275025
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file897132295
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file434692811
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1944025343
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1512442615
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file59661776
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file167463870
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file218996529
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file730014296
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file581454581
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1765728912
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1970294420
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1889498217
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1175090680
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file803830432
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1673263109
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file740306287
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1150583415
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1336589721
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1601282752
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file859725150
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file293307070
+// null 1.1.0.RELEASE log opened at 2016-09-21 10:21:54
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1580923009
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1289432206
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file35963342
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file967756406
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file47619518
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1731486864
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1829528445
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file58273140
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "57d90fda-27e9-4880-aa6c-bcca664ecea0"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file253243511
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1248723846
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1044323987
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1823080187
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1033139584
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1681969746
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1483979848
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1562587969
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file760732702
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2015425820
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1719290331
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1968961006
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file540021086
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file569148582
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1357581439
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file549109939
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file347418386
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1182870205
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file763398627
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1842280981
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file843882601
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1951519691
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file720719709
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1130790472
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1755805226
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1028958090
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1222558130
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2040501302
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1482654861
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2075302611
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1560862596
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file945680543
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file183649462
+// null 1.1.0.RELEASE log opened at 2016-09-21 10:25:14
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1395217639
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1601707667
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file813070003
+use --application "DMS_DEV_TR1"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file664467360
+use --space "DMS_DEV_TR1-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file749388085
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1044392588
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1974316092
+use --space-root-library "DMS_DEV_TR1-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file54491219
+select space-root-folder --where "?[name=='space-DMS_DEV_TR1']" --property "id"
+use --space-root-folder "b72eabc9-cc72-40c2-9927-ee8422e1e677"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file45273701
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2017940848
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file648010752
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1198101336
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file130858808
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1505341437
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1033222954
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file559180319
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file472917541
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file561317750
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2039982855
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1774879925
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file986172963
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1683388322
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file763015147
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file275433626
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1088907796
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1961351918
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file315603873
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1559022257
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file18475214
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file911792813
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file459466124
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file850071120
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2051046342
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file90800512
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1257753182
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file256959351
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file793976411
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1932022225
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2118774132
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1752348190
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file336988093
+// null 1.1.0.RELEASE log opened at 2016-09-21 10:42:00
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2088549099
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1203187890
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1512233690
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file12921249
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file520910710
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1134095938
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1680734090
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1724978767
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "6a6bee88-8a07-4ff1-aeae-61a5dd255dec"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1426939525
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file405258345
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1716858858
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1192494040
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file195292326
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file730425099
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2112483177
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1176910919
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1444037940
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file709659571
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file636945518
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1726251134
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1047387896
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1060425361
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file256033485
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file191045306
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file110631147
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1905289490
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file752065365
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1076340671
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2001475865
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file951525402
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file672488070
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1315998880
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file580417442
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2069094369
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1848533087
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file188518189
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1187076059
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1939209063
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1752646486
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1907920633
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1718595985
+// null 1.1.0.RELEASE log opened at 2016-09-21 11:02:19
+set-header --name Authorization --value "Bearer ${token}"
+// [failed] connect http://cwno0427.cak-bz.local:8775/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+// null 1.1.0.RELEASE log opened at 2016-09-21 11:02:46
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8765/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file107171351
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file758334434
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2011376641
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1404909147
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1369188889
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1469615048
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file935567250
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2098984238
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "ce17c716-02c5-4993-b009-d99dd88183a6"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1602158542
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1527423641
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1382278525
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2034354105
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file46786049
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1561876221
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file707398721
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1214755912
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1163038536
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1434320638
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2083316509
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file70853340
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1086400882
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file328140689
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file72618958
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file326836419
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1098678812
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file406106819
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1751176822
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1588986835
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1627562595
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1302482561
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file119194009
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1191429954
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file673854387
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1801047556
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file164780096
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1773214757
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file201072574
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1939886039
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1017321536
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1845806979
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1981414793
+// null 1.1.0.RELEASE log opened at 2016-09-21 11:05:10
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8765/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file908549675
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file254255356
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file528272022
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2066974159
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file360151302
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file609410800
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file671146077
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file116900755
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "ce17c716-02c5-4993-b009-d99dd88183a6"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1761566496
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1364512354
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file780175260
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2012858569
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file292665576
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1010104319
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file388427817
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file991698272
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1385776668
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1854875602
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2032522889
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file977186036
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1963672044
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file926797610
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file9059623
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file800309374
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1935908814
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1104503450
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file705773360
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1111859498
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file780929757
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file68179482
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1241577230
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file320493126
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1802711534
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file946043211
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1359942270
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1357385814
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1764264498
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file426546648
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2065583696
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file927200068
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file556356225
+// null 1.1.0.RELEASE log opened at 2016-09-21 11:09:25
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8765/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file912935155
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file714207777
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2143042673
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1534692961
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file479930033
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1218692863
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2026723170
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2014434077
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "ce17c716-02c5-4993-b009-d99dd88183a6"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1931472485
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1075870352
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2023956137
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file459562379
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1733575342
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1030651278
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1710441896
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1703897134
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1281115635
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1896723864
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1514774544
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file337580739
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file309226777
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1020351074
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1061868584
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1809434566
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1172669406
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file225215501
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file184788925
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2035693582
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1149787349
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2022376594
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file753922471
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file287977107
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1452427006
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1963689559
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file147511795
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1190370896
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1214186241
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file620837348
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1936372402
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file569470019
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file181309959
+// null 1.1.0.RELEASE log opened at 2016-09-21 11:11:17
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8765/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1170400306
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1422532775
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1151751560
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1483401363
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1202108995
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1074675982
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file355915504
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file726065979
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "ce17c716-02c5-4993-b009-d99dd88183a6"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file876576295
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1025806431
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1348239221
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1280590500
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file663599044
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1094849691
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1275651195
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file981613211
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file482762654
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file520279988
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1526842742
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1571035058
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1066679105
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1835315225
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file17590954
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1256383447
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1951747799
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file210880479
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2035346954
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1557559955
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file342660569
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1622420621
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file265678914
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file195651293
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1070683362
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1494634884
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file87776208
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file239502488
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file621311648
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file703139593
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1415772237
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1950678960
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1237943779
+// null 1.1.0.RELEASE log opened at 2016-09-21 11:16:48
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8765/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file486540868
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1259156670
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1208211363
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1818898521
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1510248280
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file210940644
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1726297036
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2113301099
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "ce17c716-02c5-4993-b009-d99dd88183a6"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file25984546
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1917962841
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1807052992
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file388609287
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file843872244
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file930713195
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file562449741
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file639223533
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file301111895
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1357983501
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2046429322
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file689606411
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1893749359
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file626178450
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file598117633
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2111734984
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file860293245
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1745808136
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2118835463
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1394569966
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1477230975
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1867877935
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1638249005
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2119747378
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1540225266
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file5996308
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1551458767
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file576917600
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file388240568
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file265227855
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2092447945
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file684782887
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file522974484
+// null 1.1.0.RELEASE log opened at 2016-09-21 13:38:41
+set-header --name Authorization --value "Bearer ${token}"
+connect http://cwno0427.cak-bz.local:8765/services --gateway http://cwno0427.cak-bz.local:8080 --user admjzimmermann --psw Wurcitwag40-
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1662010132
+use --tenant "INFOARCHIVE"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1279205305
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1380926143
+use --application "DMS_DEV"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file954048067
+use --space "DMS_DEV-space"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1857878228
+use --federation "mainFederation"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file258005088
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file650916424
+use --space-root-library "DMS_DEV-space-root-library"
+select file-system-root --where "?[isDefault==true]" --property "self"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1104237654
+select space-root-folder --where "?[name=='space-DMS_DEV']" --property "id"
+use --space-root-folder "ce17c716-02c5-4993-b009-d99dd88183a6"
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2102286223
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2052079518
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file915943012
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2104430492
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file163931789
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file481140153
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1790625853
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file570614164
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file878255085
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1893525108
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1964693928
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file751379697
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file402120915
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1527246425
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file747090343
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file329989354
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2122835644
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2026007208
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file623986441
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1463988286
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file15613939
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file152946140
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1833284396
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file889764296
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file2066861341
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1603367638
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1263294179
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file329255098
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file1812869614
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file226298025
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file431696754
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file302516857
+configure --from C:/Users/ADMJZI~1/AppData/Local/Temp/2/temp_data_file589046526

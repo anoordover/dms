@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="pdi">
+    <target name="pdi">
+        <!-- Create a PDI object if any-->
+        <echo>Configuring pdi object with name '${holding}-pdi'</echo>
+        <ia-task self="pdiSelf">
+            <object typeAlias="pdi" checkExistSpEL="?[name=='${holding}-pdi']">
+                <create>
+                    <name>${holding}-pdi</name>
+                </create>
+                <content format="xml" file="${basedir}/resources/content/pdi.xml"/>
+            </object>
+        </ia-task>
+    </target>
+</project>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="crypto-object">
+    <target name="crypto-object">
+        <!-- Create a CryptoObject object if any-->
+        <echo>Configuring crypto object with name '${holding}-crypto-object'</echo>
+        <ia-task self="cryptoSelf">
+            <object typeAlias="crypto-object" checkExistSpEL="?[name=='${holding}-crypto-object']">
+                <create>
+                    <name>${holding}-crypto-object</name>
+                    <keySize>128</keySize>
+                    <securityProvider>Bouncy Castle</securityProvider>
+                    <encryptionMode>CBC</encryptionMode>
+                    <paddingScheme>PKCS7PADDING</paddingScheme>
+                    <encryptionAlgorithm>AES</encryptionAlgorithm>
+                </create>
+            </object>
+        </ia-task>
+    </target>
+</project>

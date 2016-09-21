@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="result-configuration-helper">
+    <target name="result-configuration-helper">
+        <!-- Create first Result Helper object if any-->
+        <echo>Configuring result-configuration-helper object with name '${holding}-result-configuration-helper'</echo>
+        <ia-task>
+            <object typeAlias="result-configuration-helper"
+                    checkExistSpEL="?[name=='${holding}-result-configuration-helper']">
+                <create>
+                    <name>${holding}-result-configuration-helper</name>
+                </create>
+                <update>
+                    <resultSchema>${pdiSchema}</resultSchema>
+                    <resultSchema/>
+                </update>
+                <content format="xml" file="${basedir}/resources/content/result-configuration-helper.xml"/>
+            </object>
+        </ia-task>
+    </target>
+</project>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="transformation">
+    <target name="transformation">
+        <!-- Create an xQuery transformation object if any -->
+        <echo>Configuring transformation object with name '${holding}-transformation-csv'</echo>
+        <ia-task self="transformationSelf">
+            <object typeAlias="transformation"
+                    checkExistSpEL="?[name=='${holding}-transformation-csv']">
+                <create>
+                    <name>${holding}-transformation-csv</name>
+                </create>
+                <update>
+                    <inputSchema>${pdiSchema}</inputSchema>
+                    <inputSchema/>
+                    <resultSchema>urn:x-emc:ia:schema:pdi:export</resultSchema>
+                    <format>rendition.csv.gzip</format>
+                    <type>XQUERY</type>
+                    <xquery>
+                      <![CDATA[
+                        declare namespace n = "urn:hetcak:dms:uitingarchief:2016:08";
+
+                        declare function local:replace($i as xs:string?) {
+                            if ($i) then '"' || replace($i,'"','""') || '"' else '""'
+                        };
+
+                        declare function local:add-row($input) {string-join($input,',') || '&#xa;'};
+
+                        (
+                            (: Header :)
+                            local:add-row((
+                                    'ArchiefDocumentId',
+                                    'ArchiefVerzenddag',
+                                    'ArchiefPersoonsnummer',
+                                    'ArchiefDocumenttitel',
+									'ArchiefDocumentsoort'
+                            ))
+                            ,
+                            (: Rows :)
+                            for $call in /n:ArchiefDocumentum/n:ArchiefDocument
+                            return
+                                local:add-row(
+                                    (
+                                    local:replace($call/n:ArchiefDocumentId),
+                                    local:replace($call/n:ArchiefVerzenddag),
+                                    local:replace($call/n:ArchiefPersoonsnummer),
+                                    local:replace($call/n:ArchiefDocumenttitel),
+									local:replace($call/n:ArchiefDocumentsoort)
+                                    ))
+                        )
+                        ]]>
+                    </xquery>
+                </update>
+            </object>
+        </ia-task>
+    </target>
+</project>

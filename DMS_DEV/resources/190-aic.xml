@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="aic">
+    <target name="aic">
+        <!-- Create an AIC object if any-->
+        <echo>Configuring aic object with name '${holding}-aic'</echo>
+        <ia-task self="aicSelf">
+            <object typeAlias="aic" checkExistSpEL="?[name=='${holding}-aic']">
+                <create>
+                    <name>${holding}-aic</name>
+                </create>
+                <update>
+                    <holdings>${holdingSelf}</holdings>
+                    <holdings/>
+                    <predicate/>
+					<criterias>
+						<name>ArchiefPersoonsnummer</name>
+						<label>Persoons Nummer</label>
+						<type>STRING</type>
+						<pKeyValuesAttr>pkeys.values01</pKeyValuesAttr>
+					</criterias>
+                    <criterias>
+                        <name>ArchiefDocumentId</name>
+                        <label>Document ID</label>
+                        <type>HASHED</type>
+						<pKeyValuesAttr>pkeys.values02</pKeyValuesAttr>
+                    </criterias>
+					<criterias>
+						<name>ArchiefDocumentsoort</name>
+						<label>Document Soort</label>
+						<type>STRING</type>
+						<pKeyValuesAttr>pkeys.values03</pKeyValuesAttr>
+					</criterias>
+					<criterias>
+						<name>ArchiefDocumenttitel</name>
+						<label>Document Titel</label>
+						<type>STRING</type>
+						<pKeyValuesAttr>pkeys.values04</pKeyValuesAttr>
+					</criterias>
+					<criterias>
+						<name>ArchiefVerzenddag</name>
+						<label>Verzend Dag</label>
+						<type>DATE</type>
+						<pKeyMinAttr>pkeys.dateTime01</pKeyMinAttr>
+						<pKeyMaxAttr>pkeys.dateTime02</pKeyMaxAttr>
+					</criterias>
+                    <pdiCryptoQueryGroup></pdiCryptoQueryGroup>
+                    <pdiCryptoAccessGroup></pdiCryptoAccessGroup>
+                </update>
+            </object>
+        </ia-task>
+    </target>
+</project>

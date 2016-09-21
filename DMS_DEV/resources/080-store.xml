@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="store">
+    <target name="store">
+        <!-- Create a file-folder object if any-->
+        <echo>Configuring file-system-folder object with name '${application}-folder'</echo>
+        <ia-task self="fileSystemFolderStoreSelf">
+            <object typeAlias="file-system-folder"
+                    checkExistSpEL="?[name=='${application}-folder']">
+                <create>
+                    <name>${application}-folder</name>
+                    <parentSpaceRootFolder>${spaceRootFolderSelf}</parentSpaceRootFolder>
+                    <subPath>stores/${storeName}</subPath>
+                </create>
+            </object>
+        </ia-task>
+
+        <!-- Create first store object if any-->
+        <echo>Configuring store object with name '${storeName}'</echo>
+        <ia-task self="storeSelf">
+            <object typeAlias="store" checkExistSpEL="?[name=='${storeName}']">
+                <create>
+                    <name>${storeName}</name>
+                </create>
+                <update>
+                    <type>FILESYSTEM</type>
+                    <status>ONLINE</status>
+                    <fileSystemFolder>${fileSystemFolderStoreSelf}</fileSystemFolder>
+                </update>
+            </object>
+        </ia-task>
+
+        <!-- Create a result file-folder object -->
+        <property name="resultFileSystemFolderStoreName" value="${application}-result-folder"/>
+        <property name="resultStoreName" value="${application}-result-store"/>
+
+        <echo>Configuring file-system-folder object with name '${resultFileSystemFolderStoreName}'</echo>
+        <ia-task self="resultFileSystemFolderStoreSelf">
+            <object typeAlias="file-system-folder"
+                    checkExistSpEL="?[name=='${resultFileSystemFolderStoreName}']">
+                <create>
+                    <name>${resultFileSystemFolderStoreName}</name>
+                    <parentSpaceRootFolder>${spaceRootFolderSelf}</parentSpaceRootFolder>
+                    <subPath>stores/${resultStoreName}</subPath>
+                </create>
+            </object>
+        </ia-task>
+
+        <!-- Create first result store object -->
+        <echo>Configuring result store object with name '${resultStoreName}'</echo>
+        <ia-task self="resultStoreSelf">
+            <object typeAlias="store" checkExistSpEL="?[name=='${resultStoreName}']">
+                <create>
+                    <name>${resultStoreName}</name>
+                </create>
+                <update>
+                    <type>FILESYSTEM</type>
+                    <storeType>RESULT</storeType>
+                    <status>ONLINE</status>
+                    <fileSystemFolder>${resultFileSystemFolderStoreSelf}</fileSystemFolder>
+                </update>
+            </object>
+        </ia-task>
+    </target>
+</project>

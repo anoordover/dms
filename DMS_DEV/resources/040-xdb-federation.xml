@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="federation">
+    <target name="federation">
+        <!-- Create an federation object if any-->
+        <echo>Configuring federation object with name '${xdbFederation}'</echo>
+        <ia-task self="fedSelf">
+            <object typeAlias="federation" checkExistSpEL="?[name=='${xdbFederation}']">
+                <create>
+                    <name>${xdbFederation}</name>
+                    <bootstrap>${federationBootstrap}</bootstrap>
+                    <superUserPassword>${federationPassword}</superUserPassword>
+                </create>
+            </object>
+        </ia-task>
+        <ia-use federation="${xdbFederation}"/>
+    </target>
+</project>
