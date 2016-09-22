@@ -3,7 +3,6 @@ package nl.hetcak.dms;
 import com.amplexor.ia.configuration.converters.ParameterConverter;
 import com.amplexor.ia.metadata.IADocument;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 

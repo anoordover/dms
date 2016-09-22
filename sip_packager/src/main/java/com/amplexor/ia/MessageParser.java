@@ -2,10 +2,12 @@ package com.amplexor.ia;
 
 import com.amplexor.ia.metadata.IADocument;
 
+import java.util.List;
+
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
 @FunctionalInterface
 public interface MessageParser {
-    IADocument parse(String sData);
+    List<IADocument> parse(String sData);
 }

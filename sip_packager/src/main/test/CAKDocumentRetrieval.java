@@ -10,19 +10,16 @@ import com.amplexor.ia.ingest.ArchiveManager;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
-import com.amplexor.ia.sip.SipManager;
+import com.amplexor.ia.sip.AMPSipManager;
 import nl.hetcak.dms.CAKMessageParser;
 import nl.hetcak.dms.CAKRetentionManager;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.function.Consumer;
 
 import static org.junit.Assert.*;
 
@@ -38,7 +35,7 @@ public class CAKDocumentRetrieval {
     private MessageParser mobjMessageParser;
     private RetentionManager mobjRetentionManager;
     private CacheManager mobjCacheManager;
-    private SipManager mobjSipManager;
+    private AMPSipManager mobjSipManager;
     private ArchiveManager mobjArchiveManager;
 
     private String msTestData;
@@ -63,7 +60,7 @@ public class CAKDocumentRetrieval {
         mobjMessageParser = new CAKMessageParser(objConfig.getMessageParser());
         mobjRetentionManager = new CAKRetentionManager(objConfig.getRetentionManager());
         mobjCacheManager = new CacheManager(objConfig.getCacheConfiguration());
-        mobjSipManager = new SipManager(objConfig.getSipConfiguration());
+        mobjSipManager = new AMPSipManager(objConfig.getSipConfiguration());
         mobjArchiveManager = new ArchiveManager(objConfig.getServerConfiguration());
     }
 
@@ -72,7 +69,7 @@ public class CAKDocumentRetrieval {
         String sDocumentData = mobjDocumentSource.retrieveDocumentData();
         assertEquals(sDocumentData, msTestData);
 
-        IADocument objDocument = mobjMessageParser.parse(sDocumentData);
+        IADocument objDocument = mobjMessageParser.parse(sDocumentData).get(0);
         assertNotNull(objDocument);
 
         IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);

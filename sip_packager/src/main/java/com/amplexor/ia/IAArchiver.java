@@ -29,29 +29,12 @@ public class IAArchiver {
         info(IAArchiver.class, "Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
 
         info(IAArchiver.class, "Initializing Worker Manager");
-        WorkerManager objWorkerManager = getWorkerManager(objConfigManager.getConfiguration().getWorkerConfiguration());
-        objWorkerManager.initialize();
-        objWorkerManager.start(objConfigManager.getConfiguration());
+        WorkerManager objWorkerManager = WorkerManager.getWorkerManager();
+        objWorkerManager.initialize(objConfigManager.getConfiguration());
+        objWorkerManager.start();
     }
 
-    public static WorkerManager getWorkerManager(WorkerConfiguration objConfiguration) {
-        WorkerManager objReturn = null;
-        if (objConfiguration.getImplementingClass() == null || "".equals(objConfiguration.getImplementingClass())) {
-            objReturn = new WorkerManager(objConfiguration);
-        } else {
-            try {
-                Object objWorkerManager = ClassLoader.getSystemClassLoader().loadClass(objConfiguration.getImplementingClass())
-                        .getConstructor(WorkerConfiguration.class)
-                        .newInstance(objConfiguration);
-                if (objWorkerManager instanceof WorkerManager) {
-                    objReturn = (WorkerManager) objWorkerManager;
-                }
-            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-                error(IAArchiver.class, ex);
-            }
-        }
-        return objReturn;
-    }
+
 
     public static void parseArguments(String[] cArgs) {
         for (int i = 0; i < cArgs.length; ++i) {

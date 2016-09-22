@@ -4,6 +4,9 @@
     </archiver>
     <worker_manager>
         <max_worker_threads>4</max_worker_threads>
+        <worker_shutdown_threshold>50</worker_shutdown_threshold>
+        <worker_startup_threshold>250</worker_startup_threshold>
+        <check_interval_milliseconds>5000</check_interval_milliseconds>
     </worker_manager>
     <caching>
         <base_path>C:\Users\admjzimmermann\Desktop\ws\IACache</base_path>
@@ -23,7 +26,8 @@
         <ia_application_name>DMS_DEV</ia_application_name>
     </rest_api>
     <sip>
-        <holding_name>CAK</holding_name>
+        <implementing_class>com.amplexor.ia.sip.AMPSipManager</implementing_class>
+        <holding_name>CAK Klantarchief</holding_name>
         <application_name>DMS_DEV</application_name>
         <producer_name>SIP Packager</producer_name>
         <entity_name>ArchiefDocument</entity_name>

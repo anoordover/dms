@@ -14,28 +14,44 @@ import static com.amplexor.ia.Logger.*;
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
-public class CAKMessageParser implements MessageParser {
-    public CAKMessageParser(PluggableObjectConfiguration objConfiguration) {
+public class CAKMessageParserUitwijk implements MessageParser {
+    public CAKMessageParserUitwijk(PluggableObjectConfiguration objConfiguration) {
 
     }
 
     @Override
     public List<IADocument> parse(String sData) {
         info(this, "Parsing Document");
-        List<IADocument> cReturn = new ArrayList<>();
+        List<IADocument> objReturn = new ArrayList<>();
         XStream objXStream = new XStream(new StaxDriver());
         objXStream.alias("ArchiefDocument", CAKDocument.class);
         objXStream.processAnnotations(CAKDocument.class);
         Object objInstance = objXStream.fromXML(sData);
         if (objInstance != null && objInstance instanceof IADocument) {
-            IADocument objDocument = (IADocument) objInstance;
+            IADocument objParsedDocument = (IADocument) objInstance;
+            IADocument objDocument = new CAKDocument();
+            objParsedDocument.getMetadataKeys().forEach(key -> {
+                if(!"ArchiefBurgerservicenummer".equals(key)) {
+                    objDocument.setMetadata(key, objParsedDocument.getMetadata(key));
+                }
+            });
             objDocument.setDocumentId(objDocument.getMetadata("ArchiefDocumentId"));
-            cReturn.add(objDocument);
+            objReturn.add(objDocument);
+
+            IADocument objDocumentUitwijk = new CAKDocument();
+            objParsedDocument.getMetadataKeys().forEach(key -> {
+                if(!"ArchiefPersoonsnummer".equals(key)) {
+                    objDocumentUitwijk.setMetadata(key, objParsedDocument.getMetadata(key));
+                }
+            });
+            objDocumentUitwijk.setDocumentId(objDocumentUitwijk.getMetadata("ArchiefDocumentId"));
+            objReturn.add(objDocumentUitwijk);
+
             info(this, "Data parsed into IADocument " + objDocument.getDocumentId());
         } else {
             warn(this, "Data could not be parsed (Set level to debug to print retrieved data)");
             debug(this, "Document Data: " + sData);
         }
-        return cReturn;
+        return objReturn;
     }
 }

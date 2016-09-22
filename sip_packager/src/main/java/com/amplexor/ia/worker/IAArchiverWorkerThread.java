@@ -10,12 +10,14 @@ import com.amplexor.ia.ingest.ArchiveManager;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
-import com.amplexor.ia.sip.SipManager;
+import com.amplexor.ia.sip.AMPSipManager;
 
 import static com.amplexor.ia.Logger.*;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
@@ -32,7 +34,7 @@ public class IAArchiverWorkerThread implements Runnable {
     private RetentionManager mobjRetentionManager;
     private CacheManager mobjCacheManager;
     private ArchiveManager mobjArchiveManager;
-    private SipManager mobjSipManager;
+    private AMPSipManager mobjSipManager;
 
 
     public IAArchiverWorkerThread(SIPPackagerConfiguration objConfiguration) {
@@ -49,38 +51,49 @@ public class IAArchiverWorkerThread implements Runnable {
     public void run() {
         info(this, "Initializing Worker " + miId);
         if (loadClasses()) {
-            mbRunning = true;
-            Thread.currentThread().setName("IAWorker-" + miId);
-            info(this, "Initializing Document Caches");
-            mobjCacheManager = new CacheManager(mobjConfiguration.getCacheConfiguration());
-            mobjCacheManager.initializeCache();
-            info(this, "Initializing SIP Manager");
-            mobjSipManager = new SipManager(mobjConfiguration.getSipConfiguration());
-            info(this, "Initializing Archive Manager");
-            mobjArchiveManager = new ArchiveManager(mobjConfiguration.getServerConfiguration());
-            info(this, "DONE. Starting main loop");
+            try {
+                Thread.currentThread().setName("IAWorker-" + miId);
+                info(this, "Initializing Document Caches");
+                mobjCacheManager = new CacheManager(mobjConfiguration.getCacheConfiguration());
+                mobjCacheManager.initializeCache();
+                info(this, "Initializing SIP Manager");
+                mobjSipManager = new AMPSipManager(mobjConfiguration.getSipConfiguration());
+                info(this, "Initializing Archive Manager");
+                mobjArchiveManager = new ArchiveManager(mobjConfiguration.getServerConfiguration());
+                info(this, "DONE. Starting main loop");
+                mbRunning = true;
+            } catch (IOException ex) {
+                error(this, ex);
+            }
         }
 
         while (mbRunning) {
-            IADocument objDocument = null;
+            List<IADocument> cDocuments = null;
             String sDocumentData = mobjDocumentSource.retrieveDocumentData();
             if (!"".equals(sDocumentData)) {
                 ++miProcessedMessages;
-                objDocument = mobjMessageParser.parse(sDocumentData);
+                cDocuments = mobjMessageParser.parse(sDocumentData);
             }
-            if (objDocument != null) {
-                info(this, "Retrieved document with id: " + objDocument.getDocumentId());
-                IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
-                if (objRetentionClass != null) {
-                    mobjCacheManager.add(objDocument, objRetentionClass);
-                }
+            if (cDocuments != null) {
+                cDocuments.forEach(objDocument -> {
+                    debug(this, "Retrieved document with id: " + objDocument.getDocumentId());
+                    IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
+                    if(objRetentionClass != null) {
+                        mobjCacheManager.add(objDocument, objRetentionClass);
+                    }
+                });
             }
             mobjCacheManager.update();
             mobjCacheManager.getClosedCaches().iterator().forEachRemaining(objCache -> {
                 Path objSipPath = mobjSipManager.getSIPFile(objCache);
-                mobjArchiveManager.ingestSip(objSipPath.toString());
+                if (mobjArchiveManager.ingestSip(objSipPath.toString())) {
+                    info(this, "Succesfully Ingested SIP " + objSipPath.toString());
+                } else {
+                    error(this, "Error Ingesting SIP: " + objSipPath.toString());
+                }
             });
         }
+
         info(this, "Shutting down Worker " + miId);
     }
 

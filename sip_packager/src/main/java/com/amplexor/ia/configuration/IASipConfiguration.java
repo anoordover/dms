@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * Created by admjzimmermann on 15-9-2016.
  */
-public class IASipConfiguration {
+public class IASipConfiguration extends PluggableObjectConfiguration {
     @XStreamAlias("holding_name")
     private String msHoldingName;
 

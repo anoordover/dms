@@ -35,7 +35,7 @@ public class CacheManager {
         miNextId = 0;
     }
 
-    public void initializeCache() {
+    public void initializeCache() throws IOException {
         debug(this, "Initializing CacheManager");
         try {
             mobjBasePath = Paths.get(
@@ -53,6 +53,7 @@ public class CacheManager {
             debug(this, "CacheManager Initialized");
         } catch (IOException ex) {
             error(this, ex);
+            throw ex;
         }
     }
 
@@ -110,11 +111,11 @@ public class CacheManager {
         debug(this, "Checking group file path for IARetentionClass " + objRetentionClass.getName());
         boolean bReturn;
         try {
-            Path groupPath = Paths.get(String.format("%s/%s", mobjBasePath.toString(), objRetentionClass.getName()));
-            bReturn = Files.exists(groupPath);
+            Path objGroupPath = Paths.get(String.format("%s/%s", mobjBasePath.toString(), objRetentionClass.getName()));
+            bReturn = Files.exists(objGroupPath);
             if (!bReturn && bCreate) {
-                Files.createDirectories(groupPath);
-                bReturn = Files.exists(groupPath);
+                Files.createDirectories(objGroupPath);
+                bReturn = Files.exists(objGroupPath);
             }
             debug(this, "Found file path for IARetentionClass " + objRetentionClass.getName());
         } catch (IOException ex) {
@@ -158,7 +159,7 @@ public class CacheManager {
             if (objCache.isClosed()) {
                 Files.deleteIfExists(Paths.get(String.format("%s/%s/%d", mobjBasePath.toString(), objCache.getRetentionClass().getName(), objCache.getId())));
             }
-            debug(this, "Cache " + objCache.getId() + " Removed");
+            info(this, "Cache " + objCache.getId() + " Has Been Deleted");
         } catch (IOException ex) {
             error(this, ex);
         }

@@ -29,38 +29,39 @@ public class ArchiveManager {
     private static final String IA_ENDPOINT_APPLICATIONS = "applications";
     private static final String IA_ENDPOINT_INGEST = "ingest";
 
-    private IAServerConfiguration moConfiguration;
-    private final IACredentials moCredentials;
+    private IAServerConfiguration mobjConfiguration;
+    private final IACredentials mobjCredentials;
 
     public ArchiveManager(IAServerConfiguration objConfiguration) {
-        moConfiguration = objConfiguration;
-        moCredentials = new IACredentials();
-        moCredentials.setUsername(moConfiguration.getIngestUser());
-        moCredentials.setPassword(moConfiguration.getEncryptedIngestPassword());
+        mobjConfiguration = objConfiguration;
+        mobjCredentials = new IACredentials();
+        mobjCredentials.setUsername(mobjConfiguration.getIngestUser());
+        mobjCredentials.setPassword(mobjConfiguration.getEncryptedIngestPassword());
     }
 
     public boolean ingestSip(String sSipFile) {
         info(this, "Ingesting SIP " + sSipFile);
         boolean bReturn = false;
         try {
-            if (moCredentials.hasExpired()) {
+            if (mobjCredentials.hasExpired()) {
                 debug(this, "Logging in to IAWA");
                 login();
-            } else if (System.currentTimeMillis() > (moCredentials.getExpiry() + (REFRESH_THRESHOLD_SECONDS * MILLISECONDS_PER_SECOND))) { //Refresh if within 5 minutes of expiry
+            } else if (System.currentTimeMillis() > (mobjCredentials.getExpiry() + (REFRESH_THRESHOLD_SECONDS * MILLISECONDS_PER_SECOND))) { //Refresh if within 5 minutes of expiry
                 refresh();
                 debug(this, "Refreshing Token");
             }
 
+            info(this, "Sending SIP file" + sSipFile + " to IA");
             IAObject objAip = getAip(sSipFile);
             if (objAip != null && !"".equals(objAip.getUUID())) {
-                info(this, "Uploaded AIP with UUID: " + objAip.getUUID());
-                debug(this, "Ingesting AIP");
+                info(this, "SIP file " + sSipFile + " was received by IA");
+                debug(this, "Ingesting AIP with UUID: " + objAip.getUUID());
                 IAObject objResult = IAObject.fromJSONObject(restCall(objAip.getLink(IA_ENDPOINT_INGEST), "PUT"));
                 if (objResult != null && !"".equals(objResult.getUUID())) {
-                    info(this, "Successfully ingested AIP with UUID: " + objAip.getUUID() + " Result: " + objResult.getName());
+                    info(this, "Successfully ingested AIP with UUID: " + objAip.getUUID() + ", Result: " + objResult.getName());
                     bReturn = true;
                 } else {
-                    error(this, String.format("Error Ingesting Object[Name: %s, UUID: %s]", objAip.getName(), objAip.getUUID()));
+                    error(this, String.format("Error ingesting object[Name: %s, UUID: %s]", objAip.getName(), objAip.getUUID()));
                 }
             } else {
                 error(this, String.format("Error Creating AIP for SIP: %s", sSipFile));
@@ -74,14 +75,14 @@ public class ArchiveManager {
 
     private IAObject getAip(String sSipFile) throws IOException, ParseException {
         IAObject objInfoArchiveApplication = null;
-        debug(this, "Fetching tenant " + moConfiguration.getIngestTenant());
-        IAObject objInfoArchiveTenant = extractObjectWithName(restCall(IA_ENDPOINT_TENANTS), moConfiguration.getIngestTenant());
+        debug(this, "Fetching tenant " + mobjConfiguration.getIngestTenant());
+        IAObject objInfoArchiveTenant = extractObjectWithName(restCall(IA_ENDPOINT_TENANTS), mobjConfiguration.getIngestTenant());
         if (objInfoArchiveTenant.getName() != null) {
             info(this, "Found Tenant with UUID: " + objInfoArchiveTenant.getUUID());
         }
         if (objInfoArchiveTenant.getName() != null) {
-            debug(this, "Fetching Application" + moConfiguration.getIAApplicationName());
-            objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), moConfiguration.getIAApplicationName());
+            debug(this, "Fetching Application" + mobjConfiguration.getIAApplicationName());
+            objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), mobjConfiguration.getIAApplicationName());
         }
 
         if (objInfoArchiveApplication != null && !"".equals(objInfoArchiveApplication.getUUID())) {
@@ -94,7 +95,7 @@ public class ArchiveManager {
     }
 
     public void login() throws IOException {
-        String sUrl = String.format("%s://%s:%d/login?%s", moConfiguration.getGatewayProtocol(), moConfiguration.getGatewayHost(), moConfiguration.getGatewayPort(), moCredentials.getLoginQuery());
+        String sUrl = String.format("%s://%s:%d/login?%s", mobjConfiguration.getGatewayProtocol(), mobjConfiguration.getGatewayHost(), mobjConfiguration.getGatewayPort(), mobjCredentials.getLoginQuery());
         HttpURLConnection oConnection = (HttpURLConnection) new URL(sUrl).openConnection();
         oConnection.setRequestMethod("POST");
         oConnection.setRequestProperty("Cache-Control", "no-cache");
@@ -105,11 +106,11 @@ public class ArchiveManager {
                 JSONObject oRespObject = (JSONObject) new JSONParser().parse(oReader);
                 if (oRespObject != null) {
                     String sAccessToken = (String) oRespObject.get("access_token");
-                    moCredentials.setToken(sAccessToken);
+                    mobjCredentials.setToken(sAccessToken);
                     String sRefreshToken = (String) oRespObject.get("refresh_token");
-                    moCredentials.setRefreshToken(sRefreshToken);
+                    mobjCredentials.setRefreshToken(sRefreshToken);
                     long lExpiry = (long) oRespObject.get("expires_in");
-                    moCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
+                    mobjCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
                 }
             } catch (ParseException ex) {
                 error(this, ex);
@@ -118,7 +119,7 @@ public class ArchiveManager {
     }
 
     public void refresh() throws IOException {
-        String sUrl = String.format("%s://%s:%d/login?%s", moConfiguration.getGatewayProtocol(), moConfiguration.getGatewayHost(), moConfiguration.getGatewayPort(), moCredentials.getRefreshQuery());
+        String sUrl = String.format("%s://%s:%d/login?%s", mobjConfiguration.getGatewayProtocol(), mobjConfiguration.getGatewayHost(), mobjConfiguration.getGatewayPort(), mobjCredentials.getRefreshQuery());
         HttpURLConnection oConnection = (HttpURLConnection) new URL(sUrl).openConnection();
         oConnection.setRequestMethod("POST");
         oConnection.setRequestProperty("Cache-Control", "no-cache");
@@ -129,11 +130,11 @@ public class ArchiveManager {
                 JSONObject oRespObject = (JSONObject) new JSONParser().parse(oReader);
                 if (oRespObject != null) {
                     String sAccessToken = (String) oRespObject.get("access_token");
-                    moCredentials.setToken(sAccessToken);
+                    mobjCredentials.setToken(sAccessToken);
                     String sRefreshToken = (String) oRespObject.get("refresh_token");
-                    moCredentials.setRefreshToken(sRefreshToken);
+                    mobjCredentials.setRefreshToken(sRefreshToken);
                     long lExpiry = (long) oRespObject.get("expires_in");
-                    moCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
+                    mobjCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
                 }
             } catch (ParseException ex) {
                 error(this, ex);
@@ -152,14 +153,14 @@ public class ArchiveManager {
     private JSONObject restCall(String sTarget, String sMethod) throws IOException, ParseException {
         JSONObject objReturn;
         String sUrl;
-        if (sTarget.startsWith("http://") || sTarget.startsWith("https://")) { //Assume full URL is provided
+        if (sTarget.startsWith("http://") || sTarget.startsWith("https://")) {
             sUrl = sTarget;
         } else {
-            sUrl = String.format("%s://%s:%d/systemdata/%s", moConfiguration.getProtocol(), moConfiguration.getHost(), moConfiguration.getPort(), sTarget);
+            sUrl = String.format("%s://%s:%d/systemdata/%s", mobjConfiguration.getProtocol(), mobjConfiguration.getHost(), mobjConfiguration.getPort(), sTarget);
         }
         HttpURLConnection objConnection = (HttpURLConnection) new URL(sUrl).openConnection();
         objConnection.setRequestMethod(sMethod);
-        objConnection.setRequestProperty("Authorization", "Bearer " + moCredentials.getToken());
+        objConnection.setRequestProperty("Authorization", "Bearer " + mobjCredentials.getToken());
         objConnection.connect();
 
         InputStream objInputSource;
@@ -179,17 +180,15 @@ public class ArchiveManager {
 
     private JSONObject receive(IAObject objTarget, String sFile) throws IOException, ParseException {
         JSONObject objReturn;
-        IAObject objRecvNode = extractObjectWithName(restCall(objTarget.getLink("receiver-nodes")), "dms_dev_rcv_01");
-        String sUrl = String.format("%s://%s:%d/systemdata/applications/%s/aips", moConfiguration.getProtocol(), moConfiguration.getHost(), moConfiguration.getPort(), objTarget.getUUID());
+        String sUrl = String.format("%s://%s:%d/systemdata/applications/%s/aips", mobjConfiguration.getProtocol(), mobjConfiguration.getHost(), mobjConfiguration.getPort(), objTarget.getUUID());
         HttpURLConnection objConnection = (HttpURLConnection) new URL(sUrl).openConnection();
         objConnection.setUseCaches(false);
         objConnection.setDoOutput(true);
         objConnection.setDoInput(true);
-        objConnection.setRequestProperty("Authorization", "Bearer " + moCredentials.getToken());
+        objConnection.setRequestProperty("Authorization", "Bearer " + mobjCredentials.getToken());
 
         String sBoundary = Long.toHexString(System.currentTimeMillis());
         MultipartUtility.startMultipart(sBoundary, objConnection);
-        MultipartUtility.addFormField(sBoundary, objConnection, "receiverNodeName", objRecvNode.getName());
         MultipartUtility.addFormField(sBoundary, objConnection, "format", "sip_zip");
         MultipartUtility.addFilePart(sBoundary, objConnection, sFile, "sip");
         MultipartUtility.finishMultipart(sBoundary, objConnection);

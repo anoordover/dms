@@ -44,12 +44,12 @@ public class ActiveMQManager implements DocumentSource {
                 mobjConnection.start();
             }
             Session objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination objDestination = objSession.createQueue(mobjConfiguration.getParameter("input_queue_name")); //TODO: Configurable Queuename
+            Destination objDestination = objSession.createQueue(mobjConfiguration.getParameter("input_queue_name"));
             MessageConsumer objConsumer = objSession.createConsumer(objDestination);
-            Message objMessage = objConsumer.receive(Integer.parseInt(mobjConfiguration.getParameter("queue_receive_timeout"))); //TODO: Configurable Timeout
+            Message objMessage = objConsumer.receive(Integer.parseInt(mobjConfiguration.getParameter("queue_receive_timeout")));
             if (objMessage != null && objMessage instanceof TextMessage) {
                 TextMessage objTextMessage = (TextMessage) objMessage;
-                debug(this, "Received: " + objTextMessage.getText());
+                debug(this, "Received Data: " + objTextMessage.getText());
                 sReturn = objTextMessage.getText();
             }
             objSession.close();
@@ -93,7 +93,7 @@ public class ActiveMQManager implements DocumentSource {
                 }
             }
             String sMessageText = String.format(mobjConfiguration.getParameter("result_format"), cValues);
-            debug(this, "Sending Message " + sMessageText);
+            debug(this, "Sending Confirmation for document with ID: " + objDocument.getDocumentId());
             objMessage.setText(sMessageText);
             objProducer.send(objDestination, objMessage);
             mobjConnection.close();
