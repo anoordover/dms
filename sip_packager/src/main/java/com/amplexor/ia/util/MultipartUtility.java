@@ -1,7 +1,5 @@
 package com.amplexor.ia.util;
 
-import org.apache.log4j.Logger;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,13 +7,12 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 
-import static com.amplexor.ia.Logger.*;
+import static com.amplexor.ia.Logger.error;
 
 /**
  * Created by admjzimmermann on 14-9-2016.
  */
 public class MultipartUtility {
-    private static Logger logger = Logger.getLogger("MultipartUtility");
     private static final String LINE_FEED = "\r\n";
 
     //Hides the implicit public constructor

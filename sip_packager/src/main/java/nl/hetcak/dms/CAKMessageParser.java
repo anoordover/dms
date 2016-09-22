@@ -1,6 +1,5 @@
 package nl.hetcak.dms;
 
-import com.amplexor.ia.DocumentSource;
 import com.amplexor.ia.MessageParser;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.metadata.IADocument;
@@ -29,12 +28,9 @@ public class CAKMessageParser implements MessageParser {
         Object objInstance = objXStream.fromXML(sData);
         if (objInstance != null && objInstance instanceof IADocument) {
             objReturn = (IADocument) objInstance;
-            if (objReturn != null) {
-                objReturn.setDocumentId(objReturn.getMetadata("ArchiefDocumentId"));
-                info(this, "Data parsed into IADocument "+ objReturn.getDocumentId());
-            }
-        }
-        else {
+            objReturn.setDocumentId(objReturn.getMetadata("ArchiefDocumentId"));
+            info(this, "Data parsed into IADocument " + objReturn.getDocumentId());
+        } else {
             warn(this, "Data could not be parsed (Set level to debug to print retrieved data)");
             debug(this, "Document Data: " + sData);
         }

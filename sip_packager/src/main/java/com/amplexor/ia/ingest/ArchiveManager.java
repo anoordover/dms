@@ -51,41 +51,46 @@ public class ArchiveManager {
                 debug(this, "Refreshing Token");
             }
 
-            debug(this, "Fetching tenant " + moConfiguration.getIngestTenant());
-            IAObject objInfoArchiveTenant = extractObjectWithName(restCall(IA_ENDPOINT_TENANTS), moConfiguration.getIngestTenant());
-            if (objInfoArchiveTenant.getName() != null) {
-                info(this, "Found Tenant with UUID: " + objInfoArchiveTenant.getUUID());
-            }
-            IAObject objInfoArchiveApplication = null;
-            IAObject objAip = null;
-            if (objInfoArchiveTenant.getName() != null) {
-                debug(this, "Fetching Application" + moConfiguration.getIAApplicationName());
-                objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), moConfiguration.getIAApplicationName());
-            }
-
-            if (objInfoArchiveApplication != null && objInfoArchiveApplication.getName() != null && !"".equals(objInfoArchiveApplication.getName())) {
-                info(this, "Found application with UUID: " + objInfoArchiveApplication.getUUID());
-                debug(this, "Uploading AIP");
-                objAip = IAObject.fromJSONObject(receive(objInfoArchiveApplication, sSipFile));
-            }
-
-            if (objAip != null && objAip.getName() != null && !"".equals(objAip.getName())) {
+            IAObject objAip = getAip(sSipFile);
+            if (objAip != null && !"".equals(objAip.getUUID())) {
                 info(this, "Uploaded AIP with UUID: " + objAip.getUUID());
                 debug(this, "Ingesting AIP");
                 IAObject objResult = IAObject.fromJSONObject(restCall(objAip.getLink(IA_ENDPOINT_INGEST), "PUT"));
-                if (objResult.getName() != null && objResult.getUUID() != null) {
-                    info(this, "Successfully ingested AIP with UUID: " + objAip.getUUID()+ " Result: " + objResult.getName());
+                if (objResult != null && !"".equals(objResult.getUUID())) {
+                    info(this, "Successfully ingested AIP with UUID: " + objAip.getUUID() + " Result: " + objResult.getName());
                     bReturn = true;
                 } else {
                     error(this, String.format("Error Ingesting Object[Name: %s, UUID: %s]", objAip.getName(), objAip.getUUID()));
                 }
+            } else {
+                error(this, String.format("Error Creating AIP for SIP: %s", sSipFile));
             }
-
         } catch (IOException | ParseException ex) {
             error(this, ex);
             bReturn = false;
         }
         return bReturn;
+    }
+
+    private IAObject getAip(String sSipFile) throws IOException, ParseException {
+        IAObject objInfoArchiveApplication = null;
+        debug(this, "Fetching tenant " + moConfiguration.getIngestTenant());
+        IAObject objInfoArchiveTenant = extractObjectWithName(restCall(IA_ENDPOINT_TENANTS), moConfiguration.getIngestTenant());
+        if (objInfoArchiveTenant.getName() != null) {
+            info(this, "Found Tenant with UUID: " + objInfoArchiveTenant.getUUID());
+        }
+        if (objInfoArchiveTenant.getName() != null) {
+            debug(this, "Fetching Application" + moConfiguration.getIAApplicationName());
+            objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), moConfiguration.getIAApplicationName());
+        }
+
+        if (objInfoArchiveApplication != null && !"".equals(objInfoArchiveApplication.getUUID())) {
+            info(this, "Found application with UUID: " + objInfoArchiveApplication.getUUID());
+            debug(this, "Uploading AIP");
+            return IAObject.fromJSONObject(receive(objInfoArchiveApplication, sSipFile));
+        }
+
+        return null;
     }
 
     public void login() throws IOException {
@@ -201,33 +206,15 @@ public class ArchiveManager {
             objReturn = (JSONObject) new JSONParser().parse(oReader);
         }
 
-        if(objReturn.containsKey("_errors")) {
+        if (objReturn.containsKey("_errors")) {
             StringBuilder objErrorBuilder = new StringBuilder();
-            JSONArray objErrors = (JSONArray)objReturn.get("_errors");
+            JSONArray objErrors = (JSONArray) objReturn.get("_errors");
             objErrors.iterator().forEachRemaining((Object objErrorPart) -> {
-                if(objErrorPart instanceof JSONObject) {
-                    if(((JSONObject)objErrorPart).containsKey("localizedMessage")) {
-                        objErrorBuilder.append(((JSONObject)objErrorPart).get("localizedMessage"));
-                    }
+                if (objErrorPart instanceof JSONObject && ((JSONObject) objErrorPart).containsKey("localizedMessage")) {
+                    objErrorBuilder.append(((JSONObject) objErrorPart).get("localizedMessage"));
                 }
             });
             throw new IllegalArgumentException(objErrorBuilder.toString());
-        }
-
-        return objReturn;
-    }
-
-    private List<IAObject> extractObjects(JSONObject objObject) {
-        List<IAObject> objReturn = new ArrayList<>();
-        if (objObject.containsKey(IA_OBJECT_LIST_IDENTIFIER)) {
-            JSONObject oEmbedded = (JSONObject) objObject.get(IA_OBJECT_LIST_IDENTIFIER);
-            JSONArray oObjects = (JSONArray) oEmbedded.get(oEmbedded.keySet().iterator().next());
-            if (oObjects != null) {
-                for (JSONObject oObject1 : (Iterable<JSONObject>) oObjects) {
-                    IAObject oObject = IAObject.fromJSONObject(oObject1);
-                    objReturn.add(oObject);
-                }
-            }
         }
 
         return objReturn;

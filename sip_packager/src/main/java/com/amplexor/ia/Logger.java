@@ -6,6 +6,8 @@ import org.apache.log4j.Level;
  * Created by admjzimmermann on 21-9-2016.
  */
 public class Logger {
+    private Logger() {}
+
     public static void info(Object objCaller, Object objMessage) {
         org.apache.log4j.Logger objLogger = org.apache.log4j.Logger.getLogger(objCaller.getClass());
         objLogger.log(Logger.class.getCanonicalName(), Level.INFO, objMessage, null);

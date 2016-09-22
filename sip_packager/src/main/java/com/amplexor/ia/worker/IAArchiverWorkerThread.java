@@ -24,7 +24,7 @@ public class IAArchiverWorkerThread implements Runnable {
     private SIPPackagerConfiguration mobjConfiguration;
     private int miId;
 
-    private int miWorkerLoad;
+    private int miProcessedMessages;
     private boolean mbRunning;
 
     private DocumentSource mobjDocumentSource;
@@ -44,9 +44,6 @@ public class IAArchiverWorkerThread implements Runnable {
         miId = iId;
     }
 
-    public int getWorkerLoad() {
-        return miWorkerLoad;
-    }
 
     @Override
     public void run() {
@@ -68,6 +65,7 @@ public class IAArchiverWorkerThread implements Runnable {
             IADocument objDocument = null;
             String sDocumentData = mobjDocumentSource.retrieveDocumentData();
             if (!"".equals(sDocumentData)) {
+                ++miProcessedMessages;
                 objDocument = mobjMessageParser.parse(sDocumentData);
             }
             if (objDocument != null) {
@@ -122,5 +120,13 @@ public class IAArchiverWorkerThread implements Runnable {
             error(this, ex);
         }
         return false;
+    }
+
+    public synchronized int getProcessedMessageCounter() {
+        return miProcessedMessages;
+    }
+
+    public synchronized void resetProcessedMessageCounter() {
+        miProcessedMessages = 0;
     }
 }

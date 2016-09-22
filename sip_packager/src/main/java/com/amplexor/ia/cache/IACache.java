@@ -33,15 +33,11 @@ public class IACache {
     private List<IADocument> mcContents;
 
     public IACache(int iId, IARetentionClass objRetentionClass) {
-        debug(this, "Constructing IACache Object");
-
         miId = iId;
         mobjRetentionClass = objRetentionClass;
         mbClosed = false;
         mlCreated = System.currentTimeMillis();
         mcContents = new ArrayList<>();
-
-        debug(this, "Constructed IACache Object");
     }
 
     public void add(IADocument objDocument) {

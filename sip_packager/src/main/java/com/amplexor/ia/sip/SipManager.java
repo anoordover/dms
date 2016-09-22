@@ -6,7 +6,6 @@ import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.emc.ia.sdk.sip.assembly.*;
 import com.emc.ia.sdk.support.xml.XmlBuilder;
-import org.w3c.dom.Element;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -85,16 +83,13 @@ public class SipManager {
     }
 
     private DigitalObjectsExtraction<IADocument> getDigitalObjects() {
-        return new DigitalObjectsExtraction<IADocument>() {
-            @Override
-            public Iterator<? extends DigitalObject> apply(IADocument objDocument) {
-                List<DigitalObject> cObjects = new ArrayList<>();
-                for (String sKey : objDocument.getContentKeys()) {
-                    DigitalObject object = DigitalObject.fromBytes(String.format("%s_%s.pdf", sKey, objDocument.getDocumentId()), objDocument.loadContent(sKey));
-                    cObjects.add(object);
-                }
-                return cObjects.iterator();
+        return objDocument -> {
+            List<DigitalObject> cObjects = new ArrayList<>();
+            for (String sKey : objDocument.getContentKeys()) {
+                DigitalObject object = DigitalObject.fromBytes(String.format("%s_%s.pdf", sKey, objDocument.getDocumentId()), objDocument.loadContent(sKey));
+                cObjects.add(object);
             }
+            return cObjects.iterator();
         };
     }
 }

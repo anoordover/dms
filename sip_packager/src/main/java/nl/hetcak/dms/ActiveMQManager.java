@@ -4,12 +4,12 @@ import com.amplexor.ia.DocumentSource;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.metadata.IADocument;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
-import static com.amplexor.ia.Logger.*;
 
 import javax.jms.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
+
+import static com.amplexor.ia.Logger.debug;
+import static com.amplexor.ia.Logger.error;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
@@ -44,9 +44,9 @@ public class ActiveMQManager implements DocumentSource {
                 mobjConnection.start();
             }
             Session objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination objDestination = objSession.createQueue("AanleverenArchiefUitingen"); //TODO: Configurable Queuename
+            Destination objDestination = objSession.createQueue(mobjConfiguration.getParameter("input_queue_name")); //TODO: Configurable Queuename
             MessageConsumer objConsumer = objSession.createConsumer(objDestination);
-            Message objMessage = objConsumer.receive(500); //TODO: Configurable Timeout
+            Message objMessage = objConsumer.receive(Integer.parseInt(mobjConfiguration.getParameter("queue_receive_timeout"))); //TODO: Configurable Timeout
             if (objMessage != null && objMessage instanceof TextMessage) {
                 TextMessage objTextMessage = (TextMessage) objMessage;
                 debug(this, "Received: " + objTextMessage.getText());
@@ -69,7 +69,7 @@ public class ActiveMQManager implements DocumentSource {
             }
             mobjConnection.start();
             Session objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination objDestination = objSession.createQueue("VerwerkArchiefUitingenStatus");
+            Destination objDestination = objSession.createQueue(mobjConfiguration.getParameter("result_queue_name"));
             MessageProducer objProducer = objSession.createProducer(objDestination);
             TextMessage objMessage = objSession.createTextMessage();
 
@@ -82,13 +82,13 @@ public class ActiveMQManager implements DocumentSource {
             for (String sResultValue : cResultValues) {
                 switch (sResultValue) {
                     case "{STATUS}":
-                        cValues[iCurrent++] = (bStatus ? sStatusSuccess : sStatusError);
+                        cValues[iCurrent++] = bStatus ? sStatusSuccess : sStatusError;
                         break;
                     case "{ERROR}":
-                        cValues[iCurrent++] = (bStatus ? objDocument.getError() : "");
+                        cValues[iCurrent++] = bStatus ? objDocument.getError() : "";
                         break;
                     default:
-                        cValues[iCurrent++] = (objDocument.getMetadata(sResultValue));
+                        cValues[iCurrent++] = objDocument.getMetadata(sResultValue);
                         break;
                 }
             }
