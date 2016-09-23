@@ -9,6 +9,9 @@ public class SIPPackagerConfiguration {
     @XStreamAlias("archiver")
     private IAArchiverConfiguration moArchiverConfiguration;
 
+    @XStreamAlias("exceptions")
+    private ExceptionConfiguration mobjExceptionConfiguration;
+
     @XStreamAlias("worker_manager")
     private WorkerConfiguration moWorkerConfiguration;
 
@@ -60,5 +63,9 @@ public class SIPPackagerConfiguration {
 
     public IASipConfiguration getSipConfiguration() {
         return moSipConfiguration;
+    }
+
+    public ExceptionConfiguration getExceptionConfiguration() {
+        return mobjExceptionConfiguration;
     }
 }

@@ -1,6 +1,6 @@
 <IAArchiver>
     <archiver>
-        <log4j_properties_path>C:\Users\admjzimmermann\Desktop\ws\dms\log4j.properties</log4j_properties_path>
+        <log4j_properties_path>C:\Users\zimmermannj\Desktop\CAK\dms\log4j.properties</log4j_properties_path>
     </archiver>
     <worker_manager>
         <max_worker_threads>4</max_worker_threads>
@@ -9,8 +9,8 @@
         <check_interval_milliseconds>5000</check_interval_milliseconds>
     </worker_manager>
     <caching>
-        <base_path>C:\Users\admjzimmermann\Desktop\ws\IACache</base_path>
-        <message_threshold>1</message_threshold>
+        <base_path>C:\Users\zimmermannj\Desktop\CAK\IACache</base_path>
+        <message_threshold>10</message_threshold>
         <time_threshold>1800</time_threshold>
     </caching>
     <rest_api>

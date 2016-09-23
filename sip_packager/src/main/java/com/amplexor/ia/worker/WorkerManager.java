@@ -97,13 +97,12 @@ public class WorkerManager {
 
     public synchronized void start() {
         if (!mbIsRunning) {
-
             mobjManagerThread.start();
             mbIsRunning = true;
         }
     }
 
-    public void stop() {
+    public synchronized void stop() {
         mcWorkers.forEach(objThread -> objThread.stopWorker());
         mobjManagerThread.interrupt();
     }

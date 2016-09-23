@@ -1,19 +1,21 @@
 package com.amplexor.ia;
 
 import com.amplexor.ia.configuration.ConfigManager;
-import com.amplexor.ia.configuration.WorkerConfiguration;
+import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.worker.WorkerManager;
 import org.apache.log4j.PropertyConfigurator;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import static com.amplexor.ia.Logger.*;
+
+import static com.amplexor.ia.Logger.fatal;
+import static com.amplexor.ia.Logger.info;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
 public class IAArchiver {
     private static String configLocation = (System.getProperty("user.dir") + "/config/IAArchiver.xml").replace('/', File.separatorChar);
+    private static int ERROR_INVALID_CONFIG = 1001;
 
     private IAArchiver() {
 
@@ -21,17 +23,39 @@ public class IAArchiver {
 
     public static void main(String[] cArgs) {
         parseArguments(cArgs);
-        ConfigManager objConfigManager = new ConfigManager(configLocation);
-        objConfigManager.loadConfiguration();
+        ConfigManager objConfigManager = null;
+        WorkerManager objWorkerManager = null;
+        try {
+            objConfigManager = new ConfigManager(configLocation);
+            objConfigManager.loadConfiguration();
+            ExceptionHelper.getExceptionHelper().setExceptionConfiguration(objConfigManager.getConfiguration().getExceptionConfiguration());
+        } catch (IllegalArgumentException ex) {
+            fatal(IAArchiver.class, ex);
+            System.exit(ERROR_INVALID_CONFIG);
+        }
 
-        info(IAArchiver.class, "Configuring Logging with " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
-        PropertyConfigurator.configure(objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
-        info(IAArchiver.class, "Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+        if (objConfigManager != null) {
+            try {
+                info(IAArchiver.class, "Configuring Logging with " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+                PropertyConfigurator.configure(objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+                info(IAArchiver.class, "Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+            } catch (Exception ex) {
+                ExceptionHelper.getExceptionHelper().handleException(1002);
+            }
+            info(IAArchiver.class, "Initializing Worker Manager");
+            objWorkerManager = WorkerManager.getWorkerManager();
+            objWorkerManager.initialize(objConfigManager.getConfiguration());
+            objWorkerManager.start();
+        }
 
-        info(IAArchiver.class, "Initializing Worker Manager");
-        WorkerManager objWorkerManager = WorkerManager.getWorkerManager();
-        objWorkerManager.initialize(objConfigManager.getConfiguration());
-        objWorkerManager.start();
+        if (objWorkerManager != null) {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    objWorkerManager.stop();
+                }
+            });
+        }
     }
 
 
