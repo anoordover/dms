@@ -26,5 +26,6 @@ public class TestPostResult {
         objDocument.setMetadata("ArchiefDocumentId", "1000010000");
         objDocument.setError("Some Error Occurred");
         mobjDocumentSource.postResult(objDocument);
+
     }
 }
