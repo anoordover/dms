@@ -27,4 +27,12 @@ public class TestPostResult {
         objDocument.setError("Some Error Occurred");
         mobjDocumentSource.postResult(objDocument);
     }
+
+    @Test
+    public void testPostResult2() throws Exception {
+        IADocument objDocument = new CAKDocument();
+        objDocument.setMetadata("ArchiefDocumentId", "1000010000");
+        objDocument.setError("Some Error Occurred");
+        mobjDocumentSource.postResult(objDocument);
+    }
 }
