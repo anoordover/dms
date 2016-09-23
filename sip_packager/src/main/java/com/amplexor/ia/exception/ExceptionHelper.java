@@ -48,26 +48,27 @@ public class ExceptionHelper {
     }
 
     private void executeHandlers(AMPError objError, IADocument objDocument, DocumentSource objDocumentSource) {
-        List<String> cHandlers =  Arrays.asList(objError.getErrorHandling().split(";"));
+        List<String> cHandlers = Arrays.asList(objError.getErrorHandling().split(";"));
         cHandlers.forEach(sHandler -> {
-            switch (sHandler) {
-                case "notify_source":
-                    if (objDocumentSource != null && objDocument != null) {
-                        objDocumentSource.postResult(objDocument);
-                    }
-                    else {
-                        error(this, "DocumentSource or IADocument was not provided to error handler");
-                    }
-                    break;
-                case "log_error":
-                    error(this, objError.getErrorText());
-                    break;
-                case "log_fatal":
+            if ("notify_source".equals(sHandler)) {
+                if (objDocumentSource != null && objDocument != null) {
+                    objDocumentSource.postResult(objDocument);
+                } else {
+                    error(this, "DocumentSource or IADocument was not provided to error handler");
+                }
+            } else if ("log_error".equals(sHandler)) {
+                error(this, objError.getErrorText());
+            } else if ("log_fatal".equals(sHandler)) {
+                if (objError.getErrorCode() < 2000) {
+                    //Assume Logger is not available
+                    System.err.println(objError.getErrorText());
+                    System.exit(objError.getErrorCode());
+                } else {
                     fatal(this, objError.getErrorText());
                     System.exit(objError.getErrorCode());
-                default:
-                    error(this, "Invalid error handler " + sHandler);
-                    break;
+                }
+            } else {
+                error(this, "Invalid error handler " + sHandler);
             }
         });
     }

@@ -98,6 +98,33 @@
     <message_parser>
         <implementing_class>nl.hetcak.dms.CAKMessageParser</implementing_class>
     </message_parser>
+    <exceptions>
+        <error>
+            <error_code>1002</error_code>
+            <error_text>Invalid Log4J Properties</error_text>
+            <error_handling>log_fatal</error_handling>
+        </error>
+        <error>
+            <error_code>1003</error_code>
+            <error_text>Insufficient Privileges</error_text>
+            <error_handling>log_fatal</error_handling>
+        </error>
+        <error>
+            <error_code>2001</error_code>
+            <error_text>Invalid Cache basepath</error_text>
+            <error_handling>log_fatal</error_handling>
+        </error>
+        <error>
+            <error_code>2002</error_code>
+            <error_text>Insuffient Privileges(Cache folder creation)</error_text>
+            <error_handling>log_fatal</error_handling>
+        </error>
+        <error>
+            <error_code>2003</error_code>
+            <error_text>Failed to delete cache folder</error_text>
+            <error_handling>log_error</error_handling>
+        </error>
+    </exceptions>
 </IAArchiver>
 
 

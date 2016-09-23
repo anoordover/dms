@@ -6,6 +6,8 @@ import com.amplexor.ia.worker.WorkerManager;
 import org.apache.log4j.PropertyConfigurator;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.Properties;
 
 import static com.amplexor.ia.Logger.fatal;
 import static com.amplexor.ia.Logger.info;
@@ -35,13 +37,16 @@ public class IAArchiver {
         }
 
         if (objConfigManager != null) {
-            try {
-                info(IAArchiver.class, "Configuring Logging with " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
-                PropertyConfigurator.configure(objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
-                info(IAArchiver.class, "Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+            info(IAArchiver.class, "Configuring Logging with " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+            Properties objLog4JProperties = new Properties();
+            try (FileInputStream objPropertiesStream = new FileInputStream(objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath())) {
+                objLog4JProperties.load(objPropertiesStream);
+                PropertyConfigurator.configure(objLog4JProperties);
             } catch (Exception ex) {
                 ExceptionHelper.getExceptionHelper().handleException(1002);
             }
+            info(IAArchiver.class, "Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+
             info(IAArchiver.class, "Initializing Worker Manager");
             objWorkerManager = WorkerManager.getWorkerManager();
             objWorkerManager.initialize(objConfigManager.getConfiguration());
@@ -52,12 +57,11 @@ public class IAArchiver {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
-                    objWorkerManager.stop();
+                    WorkerManager.getWorkerManager().stop();
                 }
             });
         }
     }
-
 
 
     public static void parseArguments(String[] cArgs) {
