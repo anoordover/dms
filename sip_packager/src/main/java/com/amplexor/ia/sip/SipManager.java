@@ -10,6 +10,6 @@ import java.nio.file.Path;
  * Created by admjzimmermann on 22-9-2016.
  */
 public interface SipManager {
-    Path getSIPFile(IACache objCache);
-    Path getSIPFile(IADocument objDocument, IARetentionClass objRetentionClass);
+    boolean getSIPFile(IACache objCache);
+    boolean getSIPFile(IADocument objDocument, IARetentionClass objRetentionClass);
 }

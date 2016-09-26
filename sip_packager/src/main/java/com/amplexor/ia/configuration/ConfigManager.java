@@ -1,5 +1,6 @@
 package com.amplexor.ia.configuration;
 
+import com.amplexor.ia.exception.ExceptionHelper;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
@@ -29,12 +30,15 @@ public class ConfigManager {
         XStream objXStream = new XStream(new StaxDriver());
         objXStream.alias("IAArchiver", SIPPackagerConfiguration.class);
         objXStream.autodetectAnnotations(true);
-        mobjConfiguration = (SIPPackagerConfiguration)objXStream.fromXML(new File(msConfigPath));
-        if(mobjConfiguration != null) {
-            info(this, "Configuration loaded");
-        }
-        else {
-            throw new IllegalArgumentException("There was an error loading the configuration file, Exiting Application");
+        try {
+            mobjConfiguration = (SIPPackagerConfiguration) objXStream.fromXML(new File(msConfigPath));
+            if (mobjConfiguration != null) {
+                info(this, "Configuration loaded");
+            } else {
+                throw new IllegalArgumentException("There was an error loading the configuration file, Exiting Application");
+            }
+        } catch (ClassCastException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INIT_INVALID_CONFIGURATION, ex);
         }
     }
 }

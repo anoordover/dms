@@ -1,6 +1,7 @@
 package com.amplexor.ia.ingest;
 
 import com.amplexor.ia.configuration.IAServerConfiguration;
+import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.util.MultipartUtility;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -45,15 +46,25 @@ public class ArchiveManager {
         try {
             if (mobjCredentials.hasExpired()) {
                 debug(this, "Logging in to IAWA");
-                login();
+                if (!login()) {
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INVALID_IA_CREDENTIALS, new Exception("Unable to login"));
+                    return false;
+                }
             } else if (System.currentTimeMillis() > (mobjCredentials.getExpiry() + (REFRESH_THRESHOLD_SECONDS * MILLISECONDS_PER_SECOND))) { //Refresh if within 5 minutes of expiry
-                refresh();
                 debug(this, "Refreshing Token");
+                if (!refresh()) {
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INVALID_IA_CREDENTIALS, new Exception("Unable to refresh token"));
+                    return false;
+                }
             }
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        }
 
-            info(this, "Sending SIP file" + sSipFile + " to IA");
-            IAObject objAip = getAip(sSipFile);
-            if (objAip != null && !"".equals(objAip.getUUID())) {
+        info(this, "Sending SIP file" + sSipFile + " to IA");
+        IAObject objAip = getAip(sSipFile);
+        if (objAip != null && !"".equals(objAip.getUUID())) {
+            try {
                 info(this, "SIP file " + sSipFile + " was received by IA");
                 debug(this, "Ingesting AIP with UUID: " + objAip.getUUID());
                 IAObject objResult = IAObject.fromJSONObject(restCall(objAip.getLink(IA_ENDPOINT_INGEST), "PUT"));
@@ -61,40 +72,49 @@ public class ArchiveManager {
                     info(this, "Successfully ingested AIP with UUID: " + objAip.getUUID() + ", Result: " + objResult.getName());
                     bReturn = true;
                 } else {
-                    error(this, String.format("Error ingesting object[Name: %s, UUID: %s]", objAip.getName(), objAip.getUUID()));
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INGESTION_ERROR, new Exception(String.format("Error ingesting object[Name: %s, UUID: %s]", objAip.getName(), objAip.getUUID())));
                 }
-            } else {
-                error(this, String.format("Error Creating AIP for SIP: %s", sSipFile));
+            } catch (IllegalArgumentException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INGESTION_ERROR, ex);
+            } catch (ParseException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }
-        } catch (IOException | ParseException ex) {
-            error(this, ex);
-            bReturn = false;
+        } else {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_ERROR_UPLOADING_CONTENT, new Exception("InfoArchive returned a null AIP object"));
         }
         return bReturn;
     }
 
-    private IAObject getAip(String sSipFile) throws IOException, ParseException {
-        IAObject objInfoArchiveApplication = null;
-        debug(this, "Fetching tenant " + mobjConfiguration.getIngestTenant());
-        IAObject objInfoArchiveTenant = extractObjectWithName(restCall(IA_ENDPOINT_TENANTS), mobjConfiguration.getIngestTenant());
-        if (objInfoArchiveTenant.getName() != null) {
-            info(this, "Found Tenant with UUID: " + objInfoArchiveTenant.getUUID());
-        }
-        if (objInfoArchiveTenant.getName() != null) {
-            debug(this, "Fetching Application" + mobjConfiguration.getIAApplicationName());
-            objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), mobjConfiguration.getIAApplicationName());
-        }
+    private IAObject getAip(String sSipFile) {
+        try {
+            IAObject objInfoArchiveApplication = null;
+            debug(this, "Fetching tenant " + mobjConfiguration.getIngestTenant());
+            IAObject objInfoArchiveTenant = extractObjectWithName(restCall(IA_ENDPOINT_TENANTS), mobjConfiguration.getIngestTenant());
+            if (objInfoArchiveTenant.getName() != null) {
+                info(this, "Found Tenant with UUID: " + objInfoArchiveTenant.getUUID());
+            }
+            if (objInfoArchiveTenant.getName() != null) {
+                debug(this, "Fetching Application" + mobjConfiguration.getIAApplicationName());
+                objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), mobjConfiguration.getIAApplicationName());
+            }
 
-        if (objInfoArchiveApplication != null && !"".equals(objInfoArchiveApplication.getUUID())) {
-            info(this, "Found application with UUID: " + objInfoArchiveApplication.getUUID());
-            debug(this, "Uploading AIP");
-            return IAObject.fromJSONObject(receive(objInfoArchiveApplication, sSipFile));
+            if (objInfoArchiveApplication != null && !"".equals(objInfoArchiveApplication.getUUID())) {
+                info(this, "Found application with UUID: " + objInfoArchiveApplication.getUUID());
+                debug(this, "Uploading AIP");
+                return IAObject.fromJSONObject(receive(objInfoArchiveApplication, sSipFile));
+            }
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_ERROR_UPLOADING_CONTENT, ex);
+        } catch (ParseException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
 
         return null;
     }
 
-    public void login() throws IOException {
+    public boolean login() throws IOException {
         String sUrl = String.format("%s://%s:%d/login?%s", mobjConfiguration.getGatewayProtocol(), mobjConfiguration.getGatewayHost(), mobjConfiguration.getGatewayPort(), mobjCredentials.getLoginQuery());
         HttpURLConnection oConnection = (HttpURLConnection) new URL(sUrl).openConnection();
         oConnection.setRequestMethod("POST");
@@ -112,13 +132,15 @@ public class ArchiveManager {
                     long lExpiry = (long) oRespObject.get("expires_in");
                     mobjCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
                 }
+                return true;
             } catch (ParseException ex) {
-                error(this, ex);
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }
         }
+        return false;
     }
 
-    public void refresh() throws IOException {
+    public boolean refresh() throws IOException {
         String sUrl = String.format("%s://%s:%d/login?%s", mobjConfiguration.getGatewayProtocol(), mobjConfiguration.getGatewayHost(), mobjConfiguration.getGatewayPort(), mobjCredentials.getRefreshQuery());
         HttpURLConnection oConnection = (HttpURLConnection) new URL(sUrl).openConnection();
         oConnection.setRequestMethod("POST");
@@ -136,14 +158,12 @@ public class ArchiveManager {
                     long lExpiry = (long) oRespObject.get("expires_in");
                     mobjCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
                 }
+                return true;
             } catch (ParseException ex) {
-                error(this, ex);
-            }
-        } else {
-            for (String key : oConnection.getHeaderFields().keySet()) {
-                error(this, String.format("%s: %s%n", key, oConnection.getHeaderField(key)));
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }
         }
+        return false;
     }
 
     private JSONObject restCall(String sTarget) throws IOException, ParseException {

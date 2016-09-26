@@ -80,10 +80,10 @@ public class CAKDocumentRetrieval {
         objCache.add(objDocument);
         objCache.close();
 
-        Path objSipPath = mobjSipManager.getSIPFile(objCache);
-        assertNotNull(objSipPath);
+        assertTrue(mobjSipManager.getSIPFile(objCache));
+        assertNotNull(objCache.getSipFile());
 
-        assertTrue(mobjArchiveManager.ingestSip(objSipPath.toString()));
+        assertTrue(mobjArchiveManager.ingestSip(objCache.getSipFile().toString()));
         mobjDocumentSource.postResult(objDocument);
 
     }

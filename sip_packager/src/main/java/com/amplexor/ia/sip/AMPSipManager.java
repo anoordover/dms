@@ -2,11 +2,13 @@ package com.amplexor.ia.sip;
 
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.IASipConfiguration;
+import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.emc.ia.sdk.sip.assembly.*;
 import com.emc.ia.sdk.support.xml.XmlBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -31,30 +33,42 @@ public class AMPSipManager implements SipManager {
     }
 
     @Override
-    public Path getSIPFile(IACache objCache) {
-        debug(this, "Creating SIP file for cache with ID: " + objCache.getId());
-        Path objReturn = null;
+    public boolean getSIPFile(IACache objCache) {
+        if (objCache.getId() > -1) { //Sip is a single document
+            debug(this, "Creating SIP file for cache with ID: " + objCache.getId());
+        }
+
+        boolean bReturn = false;
         try {
             SipAssembler<IADocument> objSipAssembler = createSipAssembler(getPackageInformation(objCache.getRetentionClass()), getPdiAssembler(), getDigitalObjects());
-            FileGenerator<IADocument> objFileGenerator = new FileGenerator<>(objSipAssembler);
+            FileGenerator<IADocument> objFileGenerator = new FileGenerator<>(objSipAssembler, new File(mobjConfiguration.getSipOutputDirectory()));
             FileGenerationMetrics objMetrics = objFileGenerator.generate(objCache.getContents().iterator());
             if (objMetrics.getFile() != null) {
                 Path objTempPath = objMetrics.getFile().toPath();
-                objReturn = Files.copy(objTempPath, Paths.get(objTempPath.toString() + ".zip"));
-                info(this, "SIP File created: " + objReturn.toString() + " For Cache with ID " + objCache.getId());
+                Path objSipFile = Files.copy(objTempPath, Paths.get(objTempPath.toString() + ".zip"));
+                info(this, "SIP File created: " + objSipFile.toString() + " For Cache with ID " + objCache.getId());
                 Files.delete(objTempPath);
                 debug(this, "Deleted temp file: " + objTempPath);
+                objCache.setSipFile(objSipFile.toString());
+                bReturn = true;
             } else {
-                error(this, "Error generating SIP");
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objCache, new Exception("Error generating SIP file"));
             }
         } catch (IOException ex) {
-            error(this, ex);
+            long lTotalSize = 0;
+            for (IADocument objDocument : objCache.getContents()) {
+                lTotalSize += objDocument.getSizeEstimate();
+            }
+
+            if (new File(mobjConfiguration.getSipOutputDirectory()).getFreeSpace() < lTotalSize) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SIP_INSUFFICIENT_DISK_SPACE, ex);
+            }
         }
-        return objReturn;
+        return bReturn;
     }
 
     @Override
-    public Path getSIPFile(IADocument objDocument, IARetentionClass objRetentionClass) {
+    public boolean getSIPFile(IADocument objDocument, IARetentionClass objRetentionClass) {
         debug(this, "Creating SIP file for Document with ID: " + objDocument.getDocumentId());
         IACache objTempCache = new IACache(-1, objRetentionClass);
         objTempCache.add(objDocument);

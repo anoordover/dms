@@ -17,7 +17,6 @@ import static com.amplexor.ia.Logger.info;
  */
 public class IAArchiver {
     private static String configLocation = (System.getProperty("user.dir") + "/config/IAArchiver.xml").replace('/', File.separatorChar);
-    private static int ERROR_INVALID_CONFIG = 1001;
 
     private IAArchiver() {
 
@@ -32,8 +31,7 @@ public class IAArchiver {
             objConfigManager.loadConfiguration();
             ExceptionHelper.getExceptionHelper().setExceptionConfiguration(objConfigManager.getConfiguration().getExceptionConfiguration());
         } catch (IllegalArgumentException ex) {
-            fatal(IAArchiver.class, ex);
-            System.exit(ERROR_INVALID_CONFIG);
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INIT_INVALID_CONFIGURATION, ex);
         }
 
         if (objConfigManager != null) {
@@ -43,7 +41,7 @@ public class IAArchiver {
                 objLog4JProperties.load(objPropertiesStream);
                 PropertyConfigurator.configure(objLog4JProperties);
             } catch (Exception ex) {
-                ExceptionHelper.getExceptionHelper().handleException(1002);
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INIT_INVALID_LOG4J_PROPERTIES, ex);
             }
             info(IAArchiver.class, "Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
 

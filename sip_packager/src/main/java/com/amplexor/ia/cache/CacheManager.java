@@ -1,16 +1,19 @@
 package com.amplexor.ia.cache;
 
 import com.amplexor.ia.configuration.CacheConfiguration;
+import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+
 import static com.amplexor.ia.Logger.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -52,8 +55,9 @@ public class CacheManager {
             }
             debug(this, "CacheManager Initialized");
         } catch (IOException ex) {
-            error(this, ex);
-            throw ex;
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        } catch (InvalidPathException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_INVALID_BASE_PATH, ex);
         }
     }
 
@@ -88,21 +92,28 @@ public class CacheManager {
         } catch (IOException ex) {
             miNextId--;
             objCreate = null;
-            error(this, ex);
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        } catch (InvalidPathException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_INVALID_BASE_PATH, ex);
+
         }
         return objCreate;
     }
 
     private void saveDocument(IADocument objDocument) {
         debug(this, "Saving IADocument " + objDocument.getDocumentId());
+        Path objDocumentSave = null;
         try {
-            Path objDocumentSave = Paths.get(String.format("%s/%s", mobjSavePath.toString(), objDocument.getDocumentId()).replace('/', File.separatorChar));
+            objDocumentSave = Paths.get(String.format("%s/%s", mobjSavePath.toString(), objDocument.getDocumentId()).replace('/', File.separatorChar));
             XStream objXStream = new XStream(new StaxDriver());
             objXStream.processAnnotations(objDocument.getClass());
             OutputStream objOutputStream = Files.newOutputStream(objDocumentSave);
             objXStream.toXML(objDocument, objOutputStream);
             debug(this, "Saved IADocument " + objDocument.getDocumentId());
         } catch (IOException ex) {
+            if (objDocumentSave != null && objDocumentSave.toFile().getFreeSpace() < objDocument.getSizeEstimate()) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_INSUFFICIENT_DISK_SPACE, objDocument, ex);
+            }
             error(this, ex);
         }
     }
@@ -120,7 +131,7 @@ public class CacheManager {
             debug(this, "Found file path for IARetentionClass " + objRetentionClass.getName());
         } catch (IOException ex) {
             bReturn = false;
-            error(this, ex);
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
         return bReturn;
     }
@@ -161,7 +172,7 @@ public class CacheManager {
             }
             info(this, "Cache " + objCache.getId() + " Has Been Deleted");
         } catch (IOException ex) {
-            error(this, ex);
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
         }
     }
 }

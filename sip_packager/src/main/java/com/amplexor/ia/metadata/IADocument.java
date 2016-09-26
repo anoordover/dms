@@ -23,6 +23,7 @@ public abstract class IADocument {
     public abstract void setMetadata(String sKey, String sValue);
 
     public abstract Set<String> getContentKeys();
+    public abstract long getSizeEstimate();
     public abstract byte[] loadContent(String sKey);
 
     public abstract void setError(String sError);

@@ -2,6 +2,7 @@ package nl.hetcak.dms;
 
 import com.amplexor.ia.MessageParser;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
+import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
@@ -31,7 +32,7 @@ public class CAKMessageParserUitwijk implements MessageParser {
             IADocument objParsedDocument = (IADocument) objInstance;
             IADocument objDocument = new CAKDocument();
             objParsedDocument.getMetadataKeys().forEach(key -> {
-                if(!"ArchiefBurgerservicenummer".equals(key)) {
+                if (!"ArchiefBurgerservicenummer".equals(key)) {
                     objDocument.setMetadata(key, objParsedDocument.getMetadata(key));
                 }
             });
@@ -40,7 +41,7 @@ public class CAKMessageParserUitwijk implements MessageParser {
 
             IADocument objDocumentUitwijk = new CAKDocument();
             objParsedDocument.getMetadataKeys().forEach(key -> {
-                if(!"ArchiefPersoonsnummer".equals(key)) {
+                if (!"ArchiefPersoonsnummer".equals(key)) {
                     objDocumentUitwijk.setMetadata(key, objParsedDocument.getMetadata(key));
                 }
             });
@@ -49,8 +50,7 @@ public class CAKMessageParserUitwijk implements MessageParser {
 
             info(this, "Data parsed into IADocument " + objDocument.getDocumentId());
         } else {
-            warn(this, "Data could not be parsed (Set level to debug to print retrieved data)");
-            debug(this, "Document Data: " + sData);
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_INPUT, new Exception("Unable to parse retrieved document data: \n" + sData));
         }
         return objReturn;
     }

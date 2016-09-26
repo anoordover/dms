@@ -2,6 +2,7 @@ package nl.hetcak.dms;
 
 import com.amplexor.ia.MessageParser;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
+import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
@@ -33,8 +34,7 @@ public class CAKMessageParser implements MessageParser {
             cReturn.add(objDocument);
             info(this, "Data parsed into IADocument " + objDocument.getDocumentId());
         } else {
-            warn(this, "Data could not be parsed (Set level to debug to print retrieved data)");
-            debug(this, "Document Data: " + sData);
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_INPUT, new Exception("Unable to parse retrieved document data: \n" + sData));
         }
         return cReturn;
     }

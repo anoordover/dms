@@ -25,6 +25,6 @@ public class ExceptionConfiguration {
             }
         }
 
-        return new AMPError(9999, "Unknown error code: " + iCode, "log_fatal");
+        return new AMPError(iCode, "The following exception was thrown", "log_error");
     }
 }

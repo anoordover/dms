@@ -24,6 +24,9 @@ public class IASipConfiguration extends PluggableObjectConfiguration {
     @XStreamAlias("schema_declaration")
     private String msSchemaDeclaration;
 
+    @XStreamAlias("sip_output_directory")
+    private String msSipOutputDirectory;
+
 
     public String getHoldingName() {
         return msHoldingName;
@@ -49,4 +52,7 @@ public class IASipConfiguration extends PluggableObjectConfiguration {
         return msDocumentElementName;
     }
 
+    public String getSipOutputDirectory() {
+        return msSipOutputDirectory;
+    }
 }

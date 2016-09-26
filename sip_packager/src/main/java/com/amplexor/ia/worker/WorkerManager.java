@@ -36,7 +36,6 @@ public class WorkerManager {
     }
 
     public void initialize(SIPPackagerConfiguration objConfiguration) {
-        info(this, "Initializing WorkerManager");
         for (int i = 0; i < objConfiguration.getWorkerConfiguration().getMaxWorkerThreads(); ++i) {
             mcWorkers.add(new IAArchiverWorkerThread(objConfiguration));
         }
@@ -103,7 +102,9 @@ public class WorkerManager {
     }
 
     public synchronized void stop() {
-        mcWorkers.forEach(objThread -> objThread.stopWorker());
+        while(miCurrentWorker > -1) {
+            stopWorker();
+        }
         mobjManagerThread.interrupt();
     }
 }

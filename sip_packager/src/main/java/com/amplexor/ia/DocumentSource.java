@@ -1,5 +1,6 @@
 package com.amplexor.ia;
 
+import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.metadata.IADocument;
 
 /**
@@ -8,4 +9,5 @@ import com.amplexor.ia.metadata.IADocument;
 public interface DocumentSource {
     String retrieveDocumentData();
     void postResult(IADocument objDocument);
+    void postResult(IACache objCache);
 }

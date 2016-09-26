@@ -5,6 +5,8 @@ import com.amplexor.ia.retention.IARetentionClass;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +33,9 @@ public class IACache {
 
     @XStreamAlias("contents")
     private List<IADocument> mcContents;
+
+    @XStreamAlias("sip_file")
+    private String msSipFile;
 
     public IACache(int iId, IARetentionClass objRetentionClass) {
         miId = iId;
@@ -70,5 +75,13 @@ public class IACache {
 
     public List<IADocument> getContents() {
         return Collections.unmodifiableList(mcContents);
+    }
+
+    public void setSipFile(String sSipFile) {
+        msSipFile = sSipFile;
+    }
+
+    public Path getSipFile() {
+        return Paths.get(msSipFile);
     }
 }
