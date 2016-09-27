@@ -14,9 +14,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.amplexor.ia.Logger.*;
 
@@ -80,6 +78,16 @@ public class AMPSipManager implements SipManager {
     }
 
     private PackagingInformation getPackageInformation(IARetentionClass objRetentionClass) {
+        GregorianCalendar objCalendar = new GregorianCalendar();
+        objCalendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR) + 1);
+        objCalendar.set(Calendar.MONTH, 1);
+        objCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        objCalendar.set(Calendar.SECOND, 0);
+        objCalendar.set(Calendar.MINUTE, 0);
+        objCalendar.set(Calendar.HOUR, 0);
+        objCalendar.set(Calendar.MILLISECOND, 0);
+        objCalendar.setTimeZone(TimeZone.getDefault());
+
         return PackagingInformation.builder().dss()
                 .holding(mobjConfiguration.getHoldingName())
                 .application(mobjConfiguration.getApplicationName())
@@ -87,6 +95,7 @@ public class AMPSipManager implements SipManager {
                 .entity(mobjConfiguration.getEntityName())
                 .schema(mobjConfiguration.getSchemaDeclaration())
                 .retentionClass(objRetentionClass.getName().replace(' ', '_'))
+                .baseRetentionDate(objCalendar.getTime())
                 .end().build();
     }
 

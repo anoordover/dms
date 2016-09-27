@@ -1,7 +1,9 @@
 package com.amplexor.ia.worker;
 
 import com.amplexor.ia.configuration.SIPPackagerConfiguration;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +19,7 @@ public class WorkerManager {
     private static WorkerManager mobjWorkerManager;
 
     private Thread mobjManagerThread;
+
     private List<IAArchiverWorkerThread> mcWorkers;
     private int miCurrentWorker;
 

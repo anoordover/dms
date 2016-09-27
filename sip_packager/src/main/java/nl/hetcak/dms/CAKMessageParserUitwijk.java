@@ -32,10 +32,11 @@ public class CAKMessageParserUitwijk implements MessageParser {
             IADocument objParsedDocument = (IADocument) objInstance;
             IADocument objDocument = new CAKDocument();
             objParsedDocument.getMetadataKeys().forEach(key -> {
-                if (!"ArchiefBurgerservicenummer".equals(key)) {
+                if (!"PersoonBurgerservicenummer".equals(key)) {
                     objDocument.setMetadata(key, objParsedDocument.getMetadata(key));
                 }
             });
+            objDocument.setContent("Attachment", ((IADocument) objInstance).loadContent("Attachment"));
             objDocument.setDocumentId(objDocument.getMetadata("ArchiefDocumentId"));
             objReturn.add(objDocument);
 
@@ -45,6 +46,7 @@ public class CAKMessageParserUitwijk implements MessageParser {
                     objDocumentUitwijk.setMetadata(key, objParsedDocument.getMetadata(key));
                 }
             });
+            objDocumentUitwijk.setContent("Attachment", ((IADocument) objInstance).loadContent("Attachment"));
             objDocumentUitwijk.setDocumentId(objDocumentUitwijk.getMetadata("ArchiefDocumentId"));
             objReturn.add(objDocumentUitwijk);
 

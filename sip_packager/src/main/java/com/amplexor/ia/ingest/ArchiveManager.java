@@ -195,6 +195,7 @@ public class ArchiveManager {
             objReturn = (JSONObject) new JSONParser().parse(objReader);
         }
 
+        checkErrors(objReturn);
         return objReturn;
     }
 
@@ -224,10 +225,14 @@ public class ArchiveManager {
         try (BufferedReader oReader = new BufferedReader(new InputStreamReader(objInputSource))) {
             objReturn = (JSONObject) new JSONParser().parse(oReader);
         }
+        checkErrors(objReturn);
+        return objReturn;
+    }
 
-        if (objReturn.containsKey("_errors")) {
+    private void checkErrors(JSONObject objIAObject) throws IllegalArgumentException {
+        if (objIAObject.containsKey("_errors")) {
             StringBuilder objErrorBuilder = new StringBuilder();
-            JSONArray objErrors = (JSONArray) objReturn.get("_errors");
+            JSONArray objErrors = (JSONArray) objIAObject.get("_errors");
             objErrors.iterator().forEachRemaining((Object objErrorPart) -> {
                 if (objErrorPart instanceof JSONObject && ((JSONObject) objErrorPart).containsKey("localizedMessage")) {
                     objErrorBuilder.append(((JSONObject) objErrorPart).get("localizedMessage"));
@@ -235,8 +240,6 @@ public class ArchiveManager {
             });
             throw new IllegalArgumentException(objErrorBuilder.toString());
         }
-
-        return objReturn;
     }
 
     private IAObject extractObjectWithName(JSONObject objObject, String sName) {

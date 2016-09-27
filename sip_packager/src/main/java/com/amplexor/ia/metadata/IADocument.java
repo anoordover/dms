@@ -26,6 +26,8 @@ public abstract class IADocument {
     public abstract long getSizeEstimate();
     public abstract byte[] loadContent(String sKey);
 
+    public abstract void setContent(String sKey, byte[] cContent);
+
     public abstract void setError(String sError);
     public abstract String getError();
 

@@ -1,8 +1,8 @@
 <urn:ArchiefDocument xmlns:urn="urn:hetcak:dms:uitingarchief:2016:08">
     <urn:MetaData>
-        <urn:ArchiefDocumentId>1000010021</urn:ArchiefDocumentId>
+        <urn:ArchiefDocumentId>1002224232</urn:ArchiefDocumentId>
         <urn:ArchiefPersoonsnummer>1000010001</urn:ArchiefPersoonsnummer>
-        <urn:Persoonburgerservicenummer>100028903874927</urn:Persoonburgerservicenummer>
+        <urn:PersoonBurgerservicenummer>1000010001</urn:PersoonBurgerservicenummer>
         <urn:ArchiefDocumenttitel>B01</urn:ArchiefDocumenttitel>
         <urn:ArchiefDocumentsoort>Strorno Al Aanmaning</urn:ArchiefDocumentsoort>
         <urn:ArchiefRegeling>WMO</urn:ArchiefRegeling>

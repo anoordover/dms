@@ -61,12 +61,19 @@ public class CAKDocument extends IADocument {
     }
 
     @Override
-    public byte[] loadContent(String key) {
-        if ("Attachment".equals(key)) {
+    public byte[] loadContent(String sKey) {
+        if ("Attachment".equals(sKey)) {
             return Base64.getDecoder().decode(msPayload);
         }
 
         return new byte[0];
+    }
+
+    @Override
+    public void setContent(String sKey, byte[] cContent) {
+        if("Attachment".equals(sKey)) {
+            msPayload = Base64.getEncoder().encodeToString(cContent);
+        }
     }
 
     @Override
