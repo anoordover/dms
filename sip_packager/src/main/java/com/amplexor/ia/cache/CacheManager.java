@@ -24,7 +24,6 @@ import java.util.List;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class CacheManager {
-
     private CacheConfiguration mobjConfiguration;
     private List<IACache> mcCaches;
 
@@ -104,7 +103,7 @@ public class CacheManager {
         debug(this, "Saving IADocument " + objDocument.getDocumentId());
         Path objDocumentSave = null;
         try {
-            objDocumentSave = Paths.get(String.format("%s/%s", mobjSavePath.toString(), objDocument.getDocumentId()).replace('/', File.separatorChar));
+            objDocumentSave = Paths.get(String.format("%s/msg_%s.xml", mobjSavePath.toString(), objDocument.getDocumentId()).replace('/', File.separatorChar));
             XStream objXStream = new XStream(new StaxDriver());
             objXStream.processAnnotations(objDocument.getClass());
             OutputStream objOutputStream = Files.newOutputStream(objDocumentSave);
@@ -173,6 +172,19 @@ public class CacheManager {
             info(this, "Cache " + objCache.getId() + " Has Been Deleted");
         } catch (IOException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
+        }
+    }
+
+    public void saveCaches() {
+        for (IACache objCache : mcCaches) {
+            try (OutputStream objSaveStream = Files.newOutputStream(Paths.get(mobjSavePath.toString() + File.separatorChar + "IACache-" + objCache.getId() + ".xml"))) {
+                XStream objXStream = new XStream(new StaxDriver());
+                objXStream.alias("IACache", IACache.class);
+                objXStream.processAnnotations(IACache.class);
+                objXStream.toXML(objCache, objSaveStream);
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            }
         }
     }
 }

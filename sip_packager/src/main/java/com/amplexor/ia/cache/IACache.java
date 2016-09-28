@@ -16,9 +16,6 @@ import static com.amplexor.ia.Logger.*;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class IACache {
-    @XStreamOmitField
-    private String msBasePath;
-
     @XStreamAlias("id")
     private int miId;
 

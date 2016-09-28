@@ -88,6 +88,27 @@ public class CAKDocumentRetrieval {
 
         assertTrue(mobjArchiveManager.ingestSip(objCache.getSipFile().toString()));
         mobjDocumentSource.postResult(objDocument);
+    }
 
+    @Test
+    public void testMultipleMessages() throws Exception {
+        mobjCacheManager.initializeCache();
+        String sDocumentData = mobjDocumentSource.retrieveDocumentData();
+        for (int i = 0; i < 100; ++i) {
+            IADocument objDocument = mobjMessageParser.parse(sDocumentData).get(1);
+            IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
+
+            int iDocId = Integer.parseInt(objDocument.getDocumentId());
+            objDocument.setDocumentId(String.format("%d", (iDocId + i)));
+            objDocument.setMetadata("ArchiefDocumentId", objDocument.getDocumentId());
+            mobjCacheManager.add(objDocument, objRetentionClass);
+        }
+        mobjCacheManager.update();
+        mobjCacheManager.saveCaches();
+        for(IACache objCache : mobjCacheManager.getClosedCaches()) {
+            mobjSipManager.getSIPFile(objCache);
+            mobjArchiveManager.ingestSip(objCache.getSipFile().toString());
+            mobjDocumentSource.postResult(objCache);
+        }
     }
 }
