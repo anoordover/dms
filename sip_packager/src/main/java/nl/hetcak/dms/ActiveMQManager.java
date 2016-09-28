@@ -33,9 +33,9 @@ public class ActiveMQManager implements DocumentSource {
         mobjConfiguration = objConfiguration;
         mobjConnectionFactory = new ActiveMQSslConnectionFactory();
         try {
-            mobjConnectionFactory.setKeyStore(objConfiguration.getParameter("truststore"));
-            mobjConnectionFactory.setKeyStoreType("JKS");
-            mobjConnectionFactory.setKeyStorePassword(objConfiguration.getParameter("truststore_password"));
+            mobjConnectionFactory.setTrustStore(objConfiguration.getParameter("truststore"));
+            mobjConnectionFactory.setTrustStoreType("JKS");
+            mobjConnectionFactory.setTrustStorePassword(objConfiguration.getParameter("truststore_password"));
             mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter("broker"));
         } catch (Exception ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_TRUSTSTORE, ex);

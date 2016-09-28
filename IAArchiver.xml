@@ -9,7 +9,7 @@
         <check_interval_milliseconds>5000</check_interval_milliseconds>
     </worker_manager>
     <caching>
-        <base_path>C:\Users\zimmermannj\Desktop\ws\sip-packager\sip-pacakger\Cache</base_path>
+        <base_path>target/Cache</base_path>
         <message_threshold>10</message_threshold>
         <time_threshold>1800</time_threshold>
     </caching>
@@ -23,23 +23,23 @@
         <ingest_user>admjzimmermann</ingest_user>
         <encrypted_ingest_password>V3VyY2l0d2FnNDAt</encrypted_ingest_password>
         <ingest_tenant>INFOARCHIVE</ingest_tenant>
-        <ia_application_name>CAK_Klantarchief</ia_application_name>
+        <ia_application_name>CAK_Tijdelijk_Klantarchief</ia_application_name>
     </rest_api>
     <sip>
         <implementing_class>com.amplexor.ia.sip.AMPSipManager</implementing_class>
-        <holding_name>CAK_Klantarchief</holding_name>
-        <application_name>CAK_Klantarchief</application_name>
+        <holding_name>CAK_Tijdelijk_Klantarchief</holding_name>
+        <application_name>CAK_Tijdelijk_Klantarchief</application_name>
         <producer_name>SIP Packager</producer_name>
         <entity_name>ArchiefDocument</entity_name>
         <document_element_name>ArchiefDocumenten</document_element_name>
         <schema_declaration>urn:hetcak:dms:uitingarchief:2016:08</schema_declaration>
-        <sip_output_directory>C:\Users\admjzimmermann\Desktop\ws\sip-packager\SIPS</sip_output_directory>
+        <sip_output_directory>target/Sips</sip_output_directory>
     </sip>
     <document_source>
         <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
         <custom_parameters>
             <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
-            <truststore>truststore_ont1_mule.jks</truststore>
+            <truststore>truststore/truststore_ont1_mule.jks</truststore>
             <truststore_password>My0jKD3WWChHaVFrLwDNLxmaTl72f9PL</truststore_password>
             <result_format><![CDATA[<urn:Item DocumentId="%s" Status="%s">%s</urn:Item>]]></result_format>
             <results_element><![CDATA[<urn:Items xmlns:urn="urn:hetcak:dms:uitingarchief:2016:08">%s</urn:Items>]]></results_element>
