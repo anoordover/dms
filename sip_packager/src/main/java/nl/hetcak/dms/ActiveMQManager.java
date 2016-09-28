@@ -27,10 +27,10 @@ public class ActiveMQManager implements DocumentSource {
         mobjConfiguration = objConfiguration;
         mobjConnectionFactory = new ActiveMQSslConnectionFactory();
         try {
-            mobjConnectionFactory.setTrustStore(objConfiguration.getParameter("truststore"));
+            mobjConnectionFactory.setTrustStore(objConfiguration.getParameter(SSL_CONFIG_TRUSTSTORE));
             mobjConnectionFactory.setTrustStoreType("JKS");
-            mobjConnectionFactory.setTrustStorePassword(objConfiguration.getParameter("truststore_password"));
-            mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter("broker"));
+            mobjConnectionFactory.setTrustStorePassword(objConfiguration.getParameter(SSL_CONFIG_TRUSTSTOREPASS));
+            mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter(SSL_CONFIG_BROKER_URL));
         } catch (Exception ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_TRUSTSTORE, ex);
         }
@@ -40,30 +40,41 @@ public class ActiveMQManager implements DocumentSource {
     public String retrieveDocumentData() {
         debug(this, "Retrieving Document Data");
         String sReturn = "";
+        Session objSession = null;
         try {
-            if (mobjConnection == null) {
-                try {
-                    mobjConnection = mobjConnectionFactory.createConnection();
-                    mobjConnection.start();
-                } catch (JMSException ex) {
-                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNABLE_TO_CONNECT, ex);
+            if (mobjConnection != null) {
+                objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+                Destination objDestination = objSession.createQueue(mobjConfiguration.getParameter("input_queue_name"));
+                MessageConsumer objConsumer = objSession.createConsumer(objDestination);
+                Message objMessage = objConsumer.receive(Integer.parseInt(mobjConfiguration.getParameter("queue_receive_timeout")));
+                if (objMessage != null && objMessage instanceof TextMessage) {
+                    TextMessage objTextMessage = (TextMessage) objMessage;
+                    debug(this, "Received Data: " + objTextMessage.getText());
+                    sReturn = objTextMessage.getText();
                 }
             }
-            Session objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination objDestination = objSession.createQueue(mobjConfiguration.getParameter("input_queue_name"));
-            MessageConsumer objConsumer = objSession.createConsumer(objDestination);
-            Message objMessage = objConsumer.receive(Integer.parseInt(mobjConfiguration.getParameter("queue_receive_timeout")));
-            if (objMessage != null && objMessage instanceof TextMessage) {
-                TextMessage objTextMessage = (TextMessage) objMessage;
-                debug(this, "Received Data: " + objTextMessage.getText());
-                sReturn = objTextMessage.getText();
-            }
-            objSession.close();
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        } finally {
+            if (objSession != null) {
+                try {
+                    objSession.close();
+                } catch (JMSException ex) {
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+                }
+            }
         }
         debug(this, "Retrieved Data: " + sReturn);
         return sReturn;
+    }
+
+    public void initialize() {
+        try {
+            mobjConnection = mobjConnectionFactory.createConnection();
+            mobjConnection.start();
+        } catch (JMSException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNABLE_TO_CONNECT, ex);
+        }
     }
 
     @Override

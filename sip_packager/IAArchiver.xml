@@ -9,7 +9,7 @@
     <check_interval_milliseconds>5000</check_interval_milliseconds>
   </worker_manager>
   <caching>
-    <base_path>C:\Users\admjzimmermann\Desktop\ws\IACache</base_path>
+    <base_path>Cache/</base_path>
     <message_threshold>1</message_threshold>
     <time_threshold>1800</time_threshold>
   </caching>

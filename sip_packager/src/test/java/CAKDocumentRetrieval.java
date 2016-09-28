@@ -45,7 +45,7 @@ public class CAKDocumentRetrieval {
     public void setup() {
         mobjConfigManager = new ConfigManager(CONFIG_FILE);
         mobjConfigManager.loadConfiguration();
-        Path objTestDataPath = Paths.get(System.getProperty("user.dir") + "/" + TEST_DATA_FILE);
+        Path objTestDataPath = Paths.get("C:\\Users\\admjzimmermann\\Desktop\\ws\\sip-packager\\sip-packager\\sip_packager\\src\\test\\resources\\testdata.xml");
         StringBuilder objBuilder = new StringBuilder();
         try {
             Files.readAllLines(objTestDataPath).forEach(sTestDataLine -> objBuilder.append(sTestDataLine));
@@ -67,29 +67,6 @@ public class CAKDocumentRetrieval {
     }
 
     @Test
-    public void testRun() throws Exception {
-        String sDocumentData = mobjDocumentSource.retrieveDocumentData();
-        assertEquals(sDocumentData, msTestData);
-
-        IADocument objDocument = mobjMessageParser.parse(sDocumentData).get(0);
-        assertNotNull(objDocument);
-
-        IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
-        //assertNotNull(objRetentionClass);
-        //assertEquals(objRetentionClass.getName(), "Strorno Al Aanmaning");
-
-        IACache objCache = new IACache(0, objRetentionClass);
-        objCache.add(objDocument);
-        objCache.close();
-
-        assertTrue(mobjSipManager.getSIPFile(objCache));
-        //assertNotNull(objCache.getSipFile());
-
-        assertTrue(mobjArchiveManager.ingestSip(objCache.getSipFile().toString()));
-        mobjDocumentSource.postResult(objDocument);
-    }
-
-    @Test
     public void testMultipleMessages() throws Exception {
         mobjCacheManager.initializeCache();
         String sDocumentData = mobjDocumentSource.retrieveDocumentData();
@@ -104,10 +81,12 @@ public class CAKDocumentRetrieval {
         }
         mobjCacheManager.update();
         mobjCacheManager.saveCaches();
+        /*
         for (IACache objCache : mobjCacheManager.getClosedCaches()) {
             mobjSipManager.getSIPFile(objCache);
             mobjArchiveManager.ingestSip(objCache.getSipFile().toString());
             mobjDocumentSource.postResult(objCache);
         }
+        */
     }
 }

@@ -62,7 +62,6 @@ public class CacheManager {
 
     public void add(IADocument objDocument, IARetentionClass objRetentionClass) {
         debug(this, "Saving IADocument " + objDocument.getDocumentId());
-        saveDocument(objDocument);
         update();
         if (checkGroupPath(objRetentionClass, true)) {
             IACache cache = getCache(objRetentionClass);
@@ -71,6 +70,14 @@ public class CacheManager {
             }
         }
         debug(this, "IADocument " + objDocument.getDocumentId() + " Saved");
+    }
+
+    private void saveDocument(IADocument objDocument,IACache objCache) {
+        try {
+            try(OutputStream objDocumentSaveStream = Files.newOutputStream(Paths.get(String.format("%s/%s/%s", mobjBasePath.toString(), ))))
+        } catch (IOException ex) {
+
+        }
     }
 
     private IACache getCache(IARetentionClass objRetentionClass) {
@@ -97,24 +104,6 @@ public class CacheManager {
 
         }
         return objCreate;
-    }
-
-    private void saveDocument(IADocument objDocument) {
-        debug(this, "Saving IADocument " + objDocument.getDocumentId());
-        Path objDocumentSave = null;
-        try {
-            objDocumentSave = Paths.get(String.format("%s/msg_%s.xml", mobjSavePath.toString(), objDocument.getDocumentId()).replace('/', File.separatorChar));
-            XStream objXStream = new XStream(new StaxDriver());
-            objXStream.processAnnotations(objDocument.getClass());
-            OutputStream objOutputStream = Files.newOutputStream(objDocumentSave);
-            objXStream.toXML(objDocument, objOutputStream);
-            debug(this, "Saved IADocument " + objDocument.getDocumentId());
-        } catch (IOException ex) {
-            if (objDocumentSave != null && objDocumentSave.toFile().getFreeSpace() < objDocument.getSizeEstimate()) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_INSUFFICIENT_DISK_SPACE, objDocument, ex);
-            }
-            error(this, ex);
-        }
     }
 
     private boolean checkGroupPath(IARetentionClass objRetentionClass, boolean bCreate) {
