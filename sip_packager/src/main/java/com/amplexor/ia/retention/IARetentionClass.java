@@ -20,5 +20,7 @@ public abstract class IARetentionClass {
         return msName;
     }
 
-    public String getPolicy() {return msPolicy; }
+    public String getPolicy() {
+        return msPolicy;
+    }
 }

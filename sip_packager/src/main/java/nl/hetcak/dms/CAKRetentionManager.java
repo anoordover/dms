@@ -35,7 +35,7 @@ public class CAKRetentionManager implements RetentionManager {
             }
         }
 
-        if(objReturn == null) {
+        if (objReturn == null) {
             throw new IllegalArgumentException("Unknown Retention Policy: " + sRetentionName);
         }
 

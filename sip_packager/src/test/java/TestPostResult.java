@@ -5,6 +5,7 @@ import nl.hetcak.dms.ActiveMQManager;
 import nl.hetcak.dms.CAKDocument;
 import org.junit.Before;
 import org.junit.Test;
+
 /**
  * Created by admjzimmermann on 21-9-2016.
  */

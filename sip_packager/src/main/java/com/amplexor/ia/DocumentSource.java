@@ -8,6 +8,8 @@ import com.amplexor.ia.metadata.IADocument;
  */
 public interface DocumentSource {
     String retrieveDocumentData();
+
     void postResult(IADocument objDocument);
+
     void postResult(IACache objCache);
 }

@@ -105,7 +105,7 @@ public class WorkerManager {
     }
 
     public synchronized void stop() {
-        while(miCurrentWorker > -1) {
+        while (miCurrentWorker > -1) {
             stopWorker();
         }
         mobjManagerThread.interrupt();

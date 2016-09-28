@@ -52,7 +52,7 @@ public class CAKDocument extends IADocument {
     public long getSizeEstimate() {
         long lReturn = 0;
         for (Map.Entry<String, String> objEntry : mcMetadata.entrySet()) {
-            lReturn += (objEntry.getKey().length() * 2)+ 5;
+            lReturn += (objEntry.getKey().length() * 2) + 5;
             lReturn += objEntry.getValue().length();
         }
         lReturn += msPayload.length();
@@ -71,7 +71,7 @@ public class CAKDocument extends IADocument {
 
     @Override
     public void setContent(String sKey, byte[] cContent) {
-        if("Attachment".equals(sKey)) {
+        if ("Attachment".equals(sKey)) {
             msPayload = Base64.getEncoder().encodeToString(cContent);
         }
     }

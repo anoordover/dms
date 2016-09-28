@@ -77,7 +77,7 @@ public class ExceptionHelper {
 
     public synchronized void handleException(int iCode, Exception objException) {
         AMPError objError = mobjExceptionConfiguration.getError(iCode);
-        executeHandlers(objError, (IADocument)null, objException);
+        executeHandlers(objError, (IADocument) null, objException);
     }
 
     public synchronized void handleException(int iCode, IADocument objDocument, Exception objException) {

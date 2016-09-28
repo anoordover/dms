@@ -14,21 +14,27 @@ public abstract class IADocument {
     public String getDocumentId() {
         return msDocumentId;
     }
+
     public void setDocumentId(String sDocumentId) {
         msDocumentId = sDocumentId;
     }
 
     public abstract Set<String> getMetadataKeys();
+
     public abstract String getMetadata(String sKey);
+
     public abstract void setMetadata(String sKey, String sValue);
 
     public abstract Set<String> getContentKeys();
+
     public abstract long getSizeEstimate();
+
     public abstract byte[] loadContent(String sKey);
 
     public abstract void setContent(String sKey, byte[] cContent);
 
     public abstract void setError(String sError);
+
     public abstract String getError();
 
- }
+}

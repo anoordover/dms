@@ -19,8 +19,8 @@ public class ExceptionConfiguration {
     }
 
     public AMPError getError(int iCode) {
-        for(AMPError objError : mcErrors) {
-            if(objError.getErrorCode() == iCode) {
+        for (AMPError objError : mcErrors) {
+            if (objError.getErrorCode() == iCode) {
                 return objError;
             }
         }

@@ -11,5 +11,6 @@ import java.nio.file.Path;
  */
 public interface SipManager {
     boolean getSIPFile(IACache objCache);
+
     boolean getSIPFile(IADocument objDocument, IARetentionClass objRetentionClass);
 }
