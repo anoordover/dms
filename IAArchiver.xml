@@ -57,52 +57,42 @@
         <retention_classes>
             <nl.hetcak.dms.CAKRetentionClass>
                 <name>Startbrief</name>
-                <policy>R1</policy>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
                 <name>Kennisgeving</name>
-                <policy>R1</policy>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
                 <name>Factuur</name>
-                <policy>R1</policy>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
                 <name>Beschikking</name>
-                <policy>R1</policy>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
                 <name>Betaalregeling</name>
-                <policy>R1</policy>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
                 <name>Bevestiging Betaalregeling</name>
-                <policy>R1</policy>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
                 <name>Herinnering</name>
-                <policy>R1</policy>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
                 <name>Overlijdensprofiel</name>
-                <policy>R1</policy>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
                 <name>Strorno Al Aanmaning</name>
-                <policy>R1</policy>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
                 <name>Storno Al Herinnering</name>
-                <policy>R1</policy>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
         </retention_classes>
