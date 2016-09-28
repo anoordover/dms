@@ -6,7 +6,9 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by admjzimmermann on 6-9-2016.

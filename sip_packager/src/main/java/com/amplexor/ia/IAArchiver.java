@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-import static com.amplexor.ia.Logger.fatal;
 import static com.amplexor.ia.Logger.info;
 
 /**

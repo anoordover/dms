@@ -3,15 +3,12 @@ package com.amplexor.ia.cache;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static com.amplexor.ia.Logger.*;
 
 /**
  * Created by admjzimmermann on 6-9-2016.

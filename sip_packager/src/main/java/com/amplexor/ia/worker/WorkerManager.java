@@ -1,14 +1,11 @@
 package com.amplexor.ia.worker;
 
 import com.amplexor.ia.configuration.SIPPackagerConfiguration;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.amplexor.ia.Logger.info;
 import static com.amplexor.ia.Logger.warn;
 
 /**

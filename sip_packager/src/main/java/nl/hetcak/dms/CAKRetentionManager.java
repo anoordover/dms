@@ -1,13 +1,11 @@
 package nl.hetcak.dms;
 
 import com.amplexor.ia.configuration.RetentionManagerConfiguration;
-import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
-import com.sun.xml.bind.v2.runtime.IllegalAnnotationException;
 
-import static com.amplexor.ia.Logger.*;
+import static com.amplexor.ia.Logger.info;
 
 /**
  * Created by admjzimmermann on 6-9-2016.

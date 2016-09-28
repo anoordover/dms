@@ -7,8 +7,6 @@ import com.amplexor.ia.retention.IARetentionClass;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
-import static com.amplexor.ia.Logger.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,6 +17,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.amplexor.ia.Logger.*;
 
 /**
  * Created by admjzimmermann on 6-9-2016.

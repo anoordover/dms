@@ -14,9 +14,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
+import java.util.Date;
 
-import static com.amplexor.ia.Logger.*;
+import static com.amplexor.ia.Logger.debug;
+import static com.amplexor.ia.Logger.info;
 
 /**
  * Created by admjzimmermann on 6-9-2016.

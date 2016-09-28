@@ -10,7 +10,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.amplexor.ia.Logger.*;
+import static com.amplexor.ia.Logger.info;
 
 /**
  * Created by admjzimmermann on 6-9-2016.

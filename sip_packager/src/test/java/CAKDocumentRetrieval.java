@@ -1,5 +1,3 @@
-import static org.mockito.Mockito.*;
-
 import com.amplexor.ia.DocumentSource;
 import com.amplexor.ia.MessageParser;
 import com.amplexor.ia.cache.CacheManager;
@@ -12,7 +10,6 @@ import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
 import com.amplexor.ia.sip.AMPSipManager;
-import nl.hetcak.dms.CAKMessageParser;
 import nl.hetcak.dms.CAKMessageParserUitwijk;
 import nl.hetcak.dms.CAKRetentionManager;
 import org.junit.Before;
@@ -24,6 +21,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by admjzimmermann on 20-9-2016.

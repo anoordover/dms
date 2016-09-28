@@ -4,7 +4,6 @@ import com.amplexor.ia.exception.AMPError;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Created by zimmermannj on 9/23/2016.

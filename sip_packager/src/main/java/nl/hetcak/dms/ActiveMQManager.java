@@ -6,16 +6,10 @@ import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
-import org.apache.activemq.broker.region.*;
 
 import javax.jms.*;
-import javax.jms.Destination;
-import javax.net.ssl.SSLException;
-import java.security.KeyStoreException;
-import java.util.Properties;
 
 import static com.amplexor.ia.Logger.debug;
-import static com.amplexor.ia.Logger.error;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
