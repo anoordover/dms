@@ -70,23 +70,23 @@ public class CAKDocumentRetrieval {
     public void testMultipleMessages() throws Exception {
         mobjCacheManager.initializeCache();
         String sDocumentData = mobjDocumentSource.retrieveDocumentData();
-        for (int i = 0; i < 100; ++i) {
-            IADocument objDocument = mobjMessageParser.parse(sDocumentData).get(1);
-            IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
+        for(int j = 0; j < 10; j++ ) {
+            for (int i = 0; i < 100; ++i) {
+                IADocument objDocument = mobjMessageParser.parse(sDocumentData).get(1);
+                IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
 
-            int iDocId = Integer.parseInt(objDocument.getDocumentId());
-            objDocument.setDocumentId(String.format("%d", (iDocId + i)));
-            objDocument.setMetadata("ArchiefDocumentId", objDocument.getDocumentId());
-            mobjCacheManager.add(objDocument, objRetentionClass);
+                int iDocId = Integer.parseInt(objDocument.getDocumentId());
+                objDocument.setDocumentId(String.format("%d", (iDocId + (i + ( i * j)))));
+                objDocument.setMetadata("ArchiefDocumentId", objDocument.getDocumentId());
+                mobjCacheManager.add(objDocument, objRetentionClass);
+            }
+            mobjCacheManager.update();
+            for (IACache objCache : mobjCacheManager.getClosedCaches()) {
+                mobjSipManager.getSIPFile(objCache);
+                mobjArchiveManager.ingestSip(objCache.getSipFile().toString());
+                mobjDocumentSource.postResult(objCache);
+                mobjCacheManager.cleanupCache(objCache);
+            }
         }
-        mobjCacheManager.update();
-        mobjCacheManager.saveCaches();
-        /*
-        for (IACache objCache : mobjCacheManager.getClosedCaches()) {
-            mobjSipManager.getSIPFile(objCache);
-            mobjArchiveManager.ingestSip(objCache.getSipFile().toString());
-            mobjDocumentSource.postResult(objCache);
-        }
-        */
     }
 }

@@ -76,14 +76,24 @@ public class ExceptionHelper {
     }
 
     public synchronized void handleException(int iCode, Exception objException) {
-        AMPError objError = mobjExceptionConfiguration.getError(iCode);
-        executeHandlers(objError, (IADocument) null, objException);
+        if (mobjExceptionConfiguration != null) {
+            AMPError objError = mobjExceptionConfiguration.getError(iCode);
+            executeHandlers(objError, (IADocument) null, objException);
+        } else {
+            fatal(this, "No ExceptionConfiguration, Exiting");
+            System.exit(ERROR_OTHER);
+        }
     }
 
     public synchronized void handleException(int iCode, IADocument objDocument, Exception objException) {
-        AMPError objError = mobjExceptionConfiguration.getError(iCode);
-        objDocument.setError(objError.getErrorText());
-        executeHandlers(objError, objDocument, objException);
+        if (mobjExceptionConfiguration != null) {
+            AMPError objError = mobjExceptionConfiguration.getError(iCode);
+            objDocument.setError(objError.getErrorText());
+            executeHandlers(objError, objDocument, objException);
+        } else {
+            fatal(this, "No ExceptionConfiguration, Exiting");
+            System.exit(ERROR_OTHER);
+        }
     }
 
     public synchronized void handleException(int iCode, IACache objCache, Exception objException) {

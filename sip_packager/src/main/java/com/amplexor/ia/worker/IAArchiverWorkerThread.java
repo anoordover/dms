@@ -93,7 +93,7 @@ class IAArchiverWorkerThread implements Runnable {
                 }
             });
         }
-
+        mobjCacheManager.saveCaches();
         info(this, "Shutting down Worker " + miId);
     }
 

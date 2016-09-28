@@ -9,12 +9,14 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,6 +53,8 @@ public class CacheManager {
 
             if (!Files.exists(mobjSavePath)) {
                 Files.createDirectories(mobjSavePath);
+            } else {
+                loadCaches();
             }
             debug(this, "CacheManager Initialized");
         } catch (IOException ex) {
@@ -72,13 +76,13 @@ public class CacheManager {
         debug(this, "IADocument " + objDocument.getDocumentId() + " Saved");
     }
 
-    private void saveDocument(IADocument objDocument,IACache objCache) {
+    /*private void saveDocument(IADocument objDocument,IACache objCache) {
         try {
             try(OutputStream objDocumentSaveStream = Files.newOutputStream(Paths.get(String.format("%s/%s/%s", mobjBasePath.toString(), ))))
         } catch (IOException ex) {
 
         }
-    }
+    }*/
 
     private IACache getCache(IARetentionClass objRetentionClass) {
         debug(this, "Getting Cache for IARetentionClass " + objRetentionClass.getName());
@@ -157,6 +161,7 @@ public class CacheManager {
         try {
             if (objCache.isClosed()) {
                 Files.deleteIfExists(Paths.get(String.format("%s/%s/%d", mobjBasePath.toString(), objCache.getRetentionClass().getName(), objCache.getId())));
+                mcCaches.remove(objCache);
             }
             info(this, "Cache " + objCache.getId() + " Has Been Deleted");
         } catch (IOException ex) {
@@ -175,5 +180,20 @@ public class CacheManager {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }
         }
+    }
+
+    public void loadCaches() {
+        List<File> cSaveContents = Arrays.asList(new File(mobjSavePath.toString() + File.separatorChar).listFiles());
+        cSaveContents.forEach( objCacheSaveFile -> {
+            try (InputStream objCacheSaveInput = Files.newInputStream(objCacheSaveFile.toPath())) {
+                XStream objXStream = new XStream(new StaxDriver());
+                objXStream.alias("IACache", IACache.class);
+                objXStream.processAnnotations(IACache.class);
+                mcCaches.add((IACache)objXStream.fromXML(objCacheSaveInput));
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            }
+            objCacheSaveFile.delete();
+        });
     }
 }

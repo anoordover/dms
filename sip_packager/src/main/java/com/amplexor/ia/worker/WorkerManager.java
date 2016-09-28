@@ -50,7 +50,7 @@ public class WorkerManager {
                 mlDiffMillisecondsSinceLastCheck = Math.abs(lMillisecondsSinceLastCheck - System.currentTimeMillis());
                 if (mlDiffMillisecondsSinceLastCheck > objConfiguration.getWorkerConfiguration().getCheckInterval()) {
                     int iTotalProcessed = getProcessedMessages();
-                    if (iTotalProcessed < objConfiguration.getWorkerConfiguration().getWorkerShutdownThreshold() && miCurrentWorker > -1) {
+                    if (iTotalProcessed < objConfiguration.getWorkerConfiguration().getWorkerShutdownThreshold() && miCurrentWorker > 0) {
                         stopWorker();
                     } else if (iTotalProcessed > objConfiguration.getWorkerConfiguration().getWorkerStartupThreshold() && miCurrentWorker < objConfiguration.getWorkerConfiguration().getMaxWorkerThreads() || miCurrentWorker == -1) {
                         startWorker();

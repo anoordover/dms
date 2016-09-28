@@ -1,7 +1,6 @@
 <IAArchiver>
   <archiver>
-    <log4j_properties_path>C:\Users\admjzimmermann\Desktop\ws\sip-packager\sip-packager\log4j.properties
-    </log4j_properties_path>
+    <log4j_properties_path>C:\Users\admjzimmermann\Desktop\ws\sip-packager\sip-packager\log4j.properties</log4j_properties_path>
   </archiver>
   <worker_manager>
     <max_worker_threads>4</max_worker_threads>
@@ -11,7 +10,7 @@
   </worker_manager>
   <caching>
     <base_path>target/Cache</base_path>
-    <message_threshold>10</message_threshold>
+    <message_threshold>100</message_threshold>
     <time_threshold>1800</time_threshold>
   </caching>
   <rest_api>
