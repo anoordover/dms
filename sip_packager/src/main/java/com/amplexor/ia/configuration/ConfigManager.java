@@ -9,6 +9,7 @@ import java.io.File;
 import static com.amplexor.ia.Logger.info;
 
 /**
+ * The {@link ConfigManager} is responsible for loading and parsing a configuration file containing the configuration for this instance of the SIP Packager
  * Created by admjzimmermann on 6-9-2016.
  */
 public class ConfigManager {
@@ -25,6 +26,10 @@ public class ConfigManager {
     }
 
 
+    /**
+     * Loads the configuration contained in the XML file that was passed to this instance of the ConfigManager
+     * @throws IllegalArgumentException If there was a problem while loading of the configuration file
+     */
     public void loadConfiguration() throws IllegalArgumentException {
         info(this, "Loading Configuration from " + msConfigPath);
         XStream objXStream = new XStream(new StaxDriver());

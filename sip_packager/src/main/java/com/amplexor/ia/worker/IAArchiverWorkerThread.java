@@ -76,6 +76,7 @@ class IAArchiverWorkerThread implements Runnable {
                 ++miProcessedMessages;
                 cDocuments = mobjMessageParser.parse(sDocumentData);
             }
+
             if (cDocuments != null) {
                 cDocuments.forEach(objDocument -> {
                     debug(this, "Retrieved document with id: " + objDocument.getDocumentId());

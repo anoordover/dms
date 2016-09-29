@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * The {@link IACache} object contains a number of documents as well as a reference to a {@link IARetentionClass} object associated with the documents in this cache.
+ * It also contains data pertaining to the time at which the cache was created and the SIP file that was generated for this cache.
  * Created by admjzimmermann on 6-9-2016.
  */
 public class IACache {

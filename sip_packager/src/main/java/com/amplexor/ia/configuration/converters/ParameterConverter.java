@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * Custom XStream Converter class for reading a number of XML Elements and converting them to a {@link Map<String, Object>}
  * Created by admjzimmermann on 6-9-2016.
  */
 public class ParameterConverter implements Converter {

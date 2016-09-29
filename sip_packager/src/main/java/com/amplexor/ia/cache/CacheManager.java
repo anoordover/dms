@@ -23,6 +23,7 @@ import java.util.List;
 import static com.amplexor.ia.Logger.*;
 
 /**
+ * The {@link CacheManager} is responsible for keeping track of {@link IACache} objects, the folder structure associated with the caches and saving any data contained in these caches while they exist.
  * Created by admjzimmermann on 6-9-2016.
  */
 public class CacheManager {
@@ -39,6 +40,14 @@ public class CacheManager {
         miNextId = 0;
     }
 
+    /**
+     * Initializes the {@link CacheManager} based on the {@link CacheConfiguration}.
+     * The following actions will be executed:
+     * - Create the cache base folder if it does not exist
+     * - Create the cache save folder if it does not exist
+     * - Load any saved caches in the cache save folder and delete the files
+     * @throws IOException
+     */
     public void initializeCache() throws IOException {
         debug(this, "Initializing CacheManager");
         try {
@@ -64,6 +73,12 @@ public class CacheManager {
         }
     }
 
+    /**
+     * Adds {@link IADocument} objDocument to the cache for the {@link IARetentionClass} objRetentionClass
+     * Note: the update() method will be called before adding the document to ensure the current {@link IACache} does not exceed it's message threshold
+     * @param objDocument
+     * @param objRetentionClass
+     */
     public void add(IADocument objDocument, IARetentionClass objRetentionClass) {
         debug(this, "Saving IADocument " + objDocument.getDocumentId());
         update();
@@ -84,6 +99,11 @@ public class CacheManager {
         }
     }*/
 
+    /**
+     * Retrieve the currently open {@link IACache} for {@link IARetentionClass} objRetentionClass, or a new {@link IACache} if the current cache is non-existent or closed
+     * @param objRetentionClass The {@link IARetentionClass} to be associated with the {@link IACache}
+     * @return
+     */
     private IACache getCache(IARetentionClass objRetentionClass) {
         debug(this, "Getting Cache for IARetentionClass " + objRetentionClass.getName());
         for (IACache objCache : mcCaches) {
@@ -93,6 +113,7 @@ public class CacheManager {
             }
         }
 
+        //No Open Cache found, create a new cache for this retention class
         IACache objCreate = new IACache(miNextId++, objRetentionClass);
         try {
             Path oCachePath = Paths.get(String.format("%s/%s/%d", mobjBasePath.toString(), objRetentionClass.getName(), objCreate.getId()).replace('/', File.separatorChar));
@@ -105,11 +126,16 @@ public class CacheManager {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         } catch (InvalidPathException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_INVALID_BASE_PATH, ex);
-
         }
         return objCreate;
     }
 
+    /**
+     * Checks whether a folder exists for {@link IARetentionClass} objRetentionClass, if bCreate equals true a folder will be created if it does not exist
+     * @param objRetentionClass The {@link IARetentionClass} for which the folder should be available
+     * @param bCreate Whether to create a folder if one does not exist
+     * @return true if the folder exists(or is successfully created)
+     */
     private boolean checkGroupPath(IARetentionClass objRetentionClass, boolean bCreate) {
         debug(this, "Checking group file path for IARetentionClass " + objRetentionClass.getName());
         boolean bReturn;
@@ -128,6 +154,9 @@ public class CacheManager {
         return bReturn;
     }
 
+    /**
+     * Updates the {@link CacheManager}, Checks whether any {@link IACache}s reached their time or content thresholds, and closes these caches if they exceed these thresholds
+     */
     public void update() {
         debug(this, "Updating Caches");
         for (IACache objCache : mcCaches) {
@@ -144,6 +173,10 @@ public class CacheManager {
         debug(this, "Caches Updated");
     }
 
+    /**
+     * Get a {@link List<IACache>} of closed caches
+     * @return A (Unmodifiable) {@link List<IACache>} of closed caches
+     */
     public List<IACache> getClosedCaches() {
         debug(this, "Fetching Closed Caches");
         List<IACache> objClosed = new ArrayList<>();
@@ -156,6 +189,10 @@ public class CacheManager {
         return Collections.unmodifiableList(objClosed);
     }
 
+    /**
+     * Deletes {@link IACache} objCache from the list of caches, as well as from the filesystem
+     * @param objCache The cache that is to be removed
+     */
     public void cleanupCache(IACache objCache) {
         debug(this, "Cleaning Cache " + objCache.getId());
         try {
@@ -169,6 +206,10 @@ public class CacheManager {
         }
     }
 
+    /**
+     * Saves the caches currently held by the cache manager as XML files
+     * The output will be saved in the ${caching}/${base_path}
+     */
     public void saveCaches() {
         for (IACache objCache : mcCaches) {
             try (OutputStream objSaveStream = Files.newOutputStream(Paths.get(mobjSavePath.toString() + File.separatorChar + "IACache-" + objCache.getId() + ".xml"))) {
@@ -182,6 +223,9 @@ public class CacheManager {
         }
     }
 
+    /**
+     * Loads any {@link IACache}s in the current savePath(config.xml->${cachemanager}/${base_path}) and adds them to the {@link CacheManager}
+     */
     public void loadCaches() {
         List<File> cSaveContents = Arrays.asList(new File(mobjSavePath.toString() + File.separatorChar).listFiles());
         cSaveContents.forEach( objCacheSaveFile -> {
