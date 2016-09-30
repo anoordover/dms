@@ -6,12 +6,12 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.util.List;
 
 /**
+ * POJO
  * Created by zimmermannj on 9/23/2016.
  */
 public class ExceptionConfiguration {
     @XStreamImplicit(itemFieldName = "error")
     private List<AMPError> mcErrors;
-
 
     public ExceptionConfiguration() {
 

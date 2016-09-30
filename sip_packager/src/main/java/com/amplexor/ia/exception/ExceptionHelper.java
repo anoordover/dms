@@ -60,13 +60,22 @@ public class ExceptionHelper {
     private ExceptionConfiguration mobjExceptionConfiguration;
     private DocumentSource mobjDocumentSource;
 
+    //Private constructor to hide the implicit public one
     private ExceptionHelper() {
     }
 
+    /**
+     * Gets the instance of the {@link ExceptionHelper} for the current thread
+     * @return
+     */
     public static ExceptionHelper getExceptionHelper() {
         return mobjLocalInstance.get();
     }
 
+    /**
+     * Sets the {@link DocumentSource} to be used for the "notify_source" handler
+     * @param objDocumentSource
+     */
     public synchronized void setDocumentSource(DocumentSource objDocumentSource) {
         mobjDocumentSource = objDocumentSource;
     }

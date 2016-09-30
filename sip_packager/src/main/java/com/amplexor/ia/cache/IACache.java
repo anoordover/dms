@@ -34,6 +34,9 @@ public class IACache {
     @XStreamAlias("sip_file")
     private String msSipFile;
 
+    @XStreamAlias("target_application")
+    private String msApplicationName;
+
     public IACache(int iId, IARetentionClass objRetentionClass) {
         miId = iId;
         mobjRetentionClass = objRetentionClass;

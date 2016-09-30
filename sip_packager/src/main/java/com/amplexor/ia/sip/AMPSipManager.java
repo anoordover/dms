@@ -24,9 +24,8 @@ import static com.amplexor.ia.Logger.info;
  */
 public class AMPSipManager implements SipManager {
 
-    private IASipConfiguration mobjConfiguration;
+    protected IASipConfiguration mobjConfiguration;
 
-    //Hide implicit public constructor
     public AMPSipManager(IASipConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
     }
@@ -39,19 +38,24 @@ public class AMPSipManager implements SipManager {
 
         boolean bReturn = false;
         try {
-            SipAssembler<IADocument> objSipAssembler = createSipAssembler(getPackageInformation(objCache.getRetentionClass()), getPdiAssembler(), getDigitalObjects());
-            FileGenerator<IADocument> objFileGenerator = new FileGenerator<>(objSipAssembler, new File(mobjConfiguration.getSipOutputDirectory()));
-            FileGenerationMetrics objMetrics = objFileGenerator.generate(objCache.getContents().iterator());
-            if (objMetrics.getFile() != null) {
-                Path objTempPath = objMetrics.getFile().toPath();
-                Path objSipFile = Files.copy(objTempPath, Paths.get(objTempPath.toString() + ".zip"));
-                info(this, "SIP File created: " + objSipFile.toString() + " For Cache with ID " + objCache.getId());
-                Files.delete(objTempPath);
-                debug(this, "Deleted temp file: " + objTempPath);
-                objCache.setSipFile(objSipFile.toString());
-                bReturn = true;
+            if(objCache.getContents().size() > 0) {
+                IADocument objDocument = objCache.getContents().get(0); //Get the document metadata, (for CAK Fallback, can be removed later)
+                SipAssembler<IADocument> objSipAssembler = createSipAssembler(getPackageInformation(objDocument, objCache.getRetentionClass()), getPdiAssembler(), getDigitalObjects());
+                FileGenerator<IADocument> objFileGenerator = new FileGenerator<>(objSipAssembler, new File(mobjConfiguration.getSipOutputDirectory()));
+                FileGenerationMetrics objMetrics = objFileGenerator.generate(objCache.getContents().iterator());
+                if (objMetrics.getFile() != null) {
+                    Path objTempPath = objMetrics.getFile().toPath();
+                    Path objSipFile = Files.copy(objTempPath, Paths.get(objTempPath.toString() + ".zip"));
+                    info(this, "SIP File created: " + objSipFile.toString() + " For Cache with ID " + objCache.getId());
+                    Files.delete(objTempPath);
+                    debug(this, "Deleted temp file: " + objTempPath);
+                    objCache.setSipFile(objSipFile.toString());
+                    bReturn = true;
+                } else {
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objCache, new Exception("Error generating SIP file"));
+                }
             } else {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objCache, new Exception("Error generating SIP file"));
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objCache, new Exception("Cache did not contain any data"));
             }
         } catch (IOException ex) {
             long lTotalSize = 0;
@@ -74,11 +78,11 @@ public class AMPSipManager implements SipManager {
         return getSIPFile(objTempCache);
     }
 
-    private SipAssembler createSipAssembler(PackagingInformation objPackagingInformation, PdiAssembler objPdiAssembler, DigitalObjectsExtraction objDigitalObjectsExtraction) {
+    protected SipAssembler createSipAssembler(PackagingInformation objPackagingInformation, PdiAssembler objPdiAssembler, DigitalObjectsExtraction objDigitalObjectsExtraction) {
         return SipAssembler.forPdiAndContent(objPackagingInformation, objPdiAssembler, objDigitalObjectsExtraction);
     }
 
-    private PackagingInformation getPackageInformation(IARetentionClass objRetentionClass) {
+    protected PackagingInformation getPackageInformation(IADocument objDocument, IARetentionClass objRetentionClass) {
         GregorianCalendar objCalendar = new GregorianCalendar();
         objCalendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR) + 1);
         objCalendar.set(Calendar.MONTH, 1);
@@ -100,7 +104,7 @@ public class AMPSipManager implements SipManager {
                 .end().build();
     }
 
-    private PdiAssembler getPdiAssembler() {
+    protected PdiAssembler getPdiAssembler() {
         return new XmlPdiAssembler<IADocument>(URI.create(mobjConfiguration.getSchemaDeclaration()), mobjConfiguration.getDocumentElementName(), mobjConfiguration.getEntityName()) {
             @Override
             protected void doAdd(IADocument objDocument, Map<String, ContentInfo> cMap) {
@@ -115,7 +119,7 @@ public class AMPSipManager implements SipManager {
         };
     }
 
-    private DigitalObjectsExtraction<IADocument> getDigitalObjects() {
+    protected DigitalObjectsExtraction<IADocument> getDigitalObjects() {
         return objDocument -> {
             List<DigitalObject> cObjects = new ArrayList<>();
             for (String sKey : objDocument.getContentKeys()) {

@@ -3,9 +3,10 @@ package com.amplexor.ia.configuration;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
+ * POJO for holding configuration pertaining to the {@link com.amplexor.ia.cache.CacheManager}
  * Created by admjzimmermann on 6-9-2016.
  */
-public class CacheConfiguration {
+public class CacheConfiguration extends PluggableObjectConfiguration {
     @XStreamAlias("base_path")
     private String msCacheBasePath;
 

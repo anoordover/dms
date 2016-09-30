@@ -20,6 +20,8 @@
 .idea/dynamic.xml
 .idea/uiDesigner.xml
 
+sip_packager.iml
+
 # Gradle:
 .idea/gradle.xml
 .idea/libraries
