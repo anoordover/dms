@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 public class MetaDataGenerator {
     private static final String PDFPATH = "C:\\Users\\zimmermannj\\Desktop\\CAK\\pdf\\";
     private static final String RESULTPATH = "C:\\Users\\zimmermannj\\Desktop\\CAK\\data\\";
-    private static final int GENERATEAMOUNT = 50;
+    private static final int GENERATEAMOUNT = 2000;
 
 
     public static void main(String[] cArgs) {

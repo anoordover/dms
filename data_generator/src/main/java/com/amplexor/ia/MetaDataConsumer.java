@@ -2,20 +2,18 @@ package com.amplexor.ia;
 
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
+import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
-import com.amplexor.ia.document_source.DocumentSource;
-import org.apache.activemq.store.kahadb.disk.page.PageFile;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
+import java.nio.channels.FileLock;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Iterator;
-
-import static com.amplexor.ia.Logger.info;
+import java.util.Optional;
 
 /**
  * Created by minkenbergs on 30-9-2016.
@@ -23,6 +21,7 @@ import static com.amplexor.ia.Logger.info;
 public class MetaDataConsumer implements DocumentSource {
     private PluggableObjectConfiguration mobjConfiguration;
     private int iCounter = 0;
+    private static int BUFFER_SIZE = 4096;
 
     public MetaDataConsumer(PluggableObjectConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
@@ -31,41 +30,46 @@ public class MetaDataConsumer implements DocumentSource {
     @Override
     public String retrieveDocumentData() {
         String sReturn = "";
-        Path objSourcePath = Paths.get(mobjConfiguration.getParameter("source_path"));
-        Path objToDelete = null;
-        if (Files.exists(objSourcePath)) {
-            try (DirectoryStream<Path> objDirectoryStream = Files.newDirectoryStream(objSourcePath)) {
-                Iterator<Path> objDirectoryIterator = objDirectoryStream.iterator();
-                if (objDirectoryIterator.hasNext()) {
-                    Path objEntry = objDirectoryIterator.next();
-                    if (objEntry != null) {
-                        for (String sLine : Files.readAllLines(objEntry)) {
-                            sReturn += sLine;
-                        }
-                        objToDelete = objEntry;
+        try {
+            Path objSourcePath = Paths.get(mobjConfiguration.getParameter("source_path"));
+            Optional<Path> objEntry = Files.list(objSourcePath).findFirst();
+            if (objEntry.isPresent()) {
+                sReturn = readEntry(objEntry.get());
+            }
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        }
+        return sReturn;
+    }
+
+    private String readEntry(Path objEntryPath) {
+        if (objEntryPath != null) {
+            StringBuilder objBuilder = new StringBuilder();
+            FileLock objLock = null;
+            try (FileInputStream objInputStream = new FileInputStream(objEntryPath.toFile())) {
+                objLock = objInputStream.getChannel().tryLock();
+                if (objLock != null) {
+                    int iRead;
+                    byte[] cBytesRead = new byte[BUFFER_SIZE];
+                    while ((iRead = objInputStream.read(cBytesRead, 0, BUFFER_SIZE)) != -1) {
+                        objBuilder.append(new String(cBytesRead, 0, iRead, StandardCharsets.UTF_8));
                     }
                 }
             } catch (IOException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-
+            } finally {
+                if (objLock != null) {
+                    try {
+                        objLock.release();
+                    } catch (IOException ex) {
+                        ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+                    }
+                }
             }
-        } else {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, new Exception("Could not find source path"));
-            System.exit(ExceptionHelper.ERROR_OTHER);
+            return objBuilder.toString();
         }
 
-        if (objToDelete != null) {
-            try {
-                iCounter++;
-                Files.delete(objToDelete);
-            } catch (IOException ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-            }
-        } else {
-            info(this, "Read " + iCounter + " Files");
-        }
-
-        return sReturn;
+        return "";
     }
 
     @Override

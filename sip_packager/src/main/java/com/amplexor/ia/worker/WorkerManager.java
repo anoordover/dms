@@ -36,8 +36,10 @@ public class WorkerManager {
     }
 
     public void initialize(SIPPackagerConfiguration objConfiguration) {
+        miCurrentWorker = -1;
         for (int i = 0; i < objConfiguration.getWorkerConfiguration().getMaxWorkerThreads(); ++i) {
-            mcWorkers.add(new IAArchiverWorkerThread(objConfiguration));
+            mcWorkers.add(new IAArchiverWorkerThread(objConfiguration, i + 1));
+            startWorker();
         }
 
         mobjManagerThread = new Thread(() -> {
@@ -49,7 +51,7 @@ public class WorkerManager {
 
                 mlDiffMillisecondsSinceLastCheck = Math.abs(lMillisecondsSinceLastCheck - System.currentTimeMillis());
                 if (mlDiffMillisecondsSinceLastCheck > objConfiguration.getWorkerConfiguration().getCheckInterval()) {
-                    int iTotalProcessed = getProcessedMessages();
+                    int iTotalProcessed = getProcessedBytes();
                     if (iTotalProcessed < objConfiguration.getWorkerConfiguration().getWorkerShutdownThreshold() && miCurrentWorker > 0) {
                         stopWorker();
                     } else if (iTotalProcessed > objConfiguration.getWorkerConfiguration().getWorkerStartupThreshold() && miCurrentWorker < objConfiguration.getWorkerConfiguration().getMaxWorkerThreads() || miCurrentWorker == -1) {
@@ -60,14 +62,14 @@ public class WorkerManager {
                 waitForNextCheck();
             }
         });
-        miCurrentWorker = -1;
     }
 
-    private int getProcessedMessages() {
+    private int getProcessedBytes() {
         int iReturn = 0;
         for (Iterator<IAArchiverWorkerThread> objIter = mcWorkers.iterator(); objIter.hasNext(); ) {
             IAArchiverWorkerThread objWorker = objIter.next();
-            iReturn += objWorker.getProcessedMessageCounter();
+            iReturn += objWorker.getProcessedBytes();
+            objWorker.resetProcessedBytes();
         }
         return iReturn;
     }

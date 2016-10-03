@@ -30,6 +30,8 @@
     <bytecodeTargetLevel>
       <module name="data_generator" target="1.8" />
       <module name="PackagerAPI" target="1.8" />
+      <module name="Raadplegen" target="1.8" />
+      <module name="request_processor" target="1.8" />
       <module name="sip-packager" target="1.8" />
       <module name="sip_packager" target="1.8" />
     </bytecodeTargetLevel>

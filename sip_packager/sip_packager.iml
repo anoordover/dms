@@ -36,6 +36,5 @@
     <orderEntry type="library" name="Maven: org.apache.activemq:activemq-all:5.14.0" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20160810" level="project" />
     <orderEntry type="module" module-name="PackagerAPI" />
-    <orderEntry type="module" module-name="data_generator" />
   </component>
 </module>

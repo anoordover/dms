@@ -24,7 +24,7 @@ class IAArchiverWorkerThread implements Runnable {
     private SIPPackagerConfiguration mobjConfiguration;
     private int miId;
 
-    private int miProcessedMessages;
+    private int miProcessedBytes;
     private boolean mbRunning;
 
     private DocumentSource mobjDocumentSource;
@@ -71,12 +71,12 @@ class IAArchiverWorkerThread implements Runnable {
             List<IADocument> cDocuments = null;
             String sDocumentData = mobjDocumentSource.retrieveDocumentData();
             if (!"".equals(sDocumentData)) {
-                ++miProcessedMessages;
                 cDocuments = mobjMessageParser.parse(sDocumentData);
             }
 
             if (cDocuments != null) {
                 cDocuments.forEach(objDocument -> {
+                    miProcessedBytes += objDocument.getSizeEstimate();
                     debug(this, "Retrieved document with id: " + objDocument.getDocumentId());
                     try {
                         mobjCacheManager.add(objDocument, mobjRetentionManager.retrieveRetentionClass(objDocument));
@@ -162,11 +162,11 @@ class IAArchiverWorkerThread implements Runnable {
         return false;
     }
 
-    public synchronized int getProcessedMessageCounter() {
-        return miProcessedMessages;
+    public synchronized int getProcessedBytes() {
+        return miProcessedBytes;
     }
 
-    public synchronized void resetProcessedMessageCounter() {
-        miProcessedMessages = 0;
+    public synchronized void resetProcessedBytes() {
+        miProcessedBytes = 0;
     }
 }

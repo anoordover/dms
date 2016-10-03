@@ -32,6 +32,5 @@
     <orderEntry type="library" name="Maven: xpp3:xpp3_min:1.1.4c" level="project" />
     <orderEntry type="library" name="Maven: org.apache.activemq:activemq-all:5.14.0" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20160810" level="project" />
-    <orderEntry type="module" module-name="PackagerAPI" />
   </component>
 </module>

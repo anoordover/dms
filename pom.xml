@@ -9,6 +9,8 @@
   <packaging>pom</packaging>
   <modules>
     <module>sip_packager</module>
+      <module>Raadplegen</module>
+      <module>request_processor</module>
   </modules>
   <dependencies>
     <!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->

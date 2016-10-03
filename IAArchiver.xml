@@ -4,14 +4,14 @@
   </archiver>
   <worker_manager>
     <max_worker_threads>4</max_worker_threads>
-    <worker_shutdown_threshold>50</worker_shutdown_threshold>
-    <worker_startup_threshold>250</worker_startup_threshold>
+    <worker_shutdown_threshold>131072</worker_shutdown_threshold>
+    <worker_startup_threshold>524288</worker_startup_threshold>
     <check_interval_milliseconds>5000</check_interval_milliseconds>
   </worker_manager>
   <caching>
     <implementing_class>nl.hetcak.dms.CAKCacheManager</implementing_class>
     <base_path>target/Cache</base_path>
-    <message_threshold>10</message_threshold>
+    <message_threshold>100</message_threshold>
     <time_threshold>1800</time_threshold>
   </caching>
   <rest_api>
