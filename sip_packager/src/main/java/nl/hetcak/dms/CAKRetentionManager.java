@@ -18,7 +18,7 @@ public class CAKRetentionManager implements RetentionManager {
     }
 
     @Override
-    public IARetentionClass retrieveRetentionClass(IADocument objSource) throws IllegalArgumentException {
+    public IARetentionClass retrieveRetentionClass(IADocument objSource) {
         info(this, "Retrieving Retention Class for IADocument: " + objSource.getDocumentId());
 
         IARetentionClass objReturn = null;

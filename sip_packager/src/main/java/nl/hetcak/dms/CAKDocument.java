@@ -12,6 +12,8 @@ import java.util.*;
  * Created by admjzimmermann on 7-9-2016.
  */
 public class CAKDocument extends IADocument {
+    private static final String KEY_ATTACHMENT = "Attachement";
+
     @XStreamAlias("MetaData")
     @XStreamConverter(ParameterConverter.class)
     private Map<String, String> mcMetadata;
@@ -44,7 +46,7 @@ public class CAKDocument extends IADocument {
     @Override
     public Set<String> getContentKeys() {
         Set<String> rval = new HashSet<>();
-        rval.add("Attachment");
+        rval.add(KEY_ATTACHMENT);
         return rval;
     }
 
@@ -62,7 +64,7 @@ public class CAKDocument extends IADocument {
 
     @Override
     public byte[] loadContent(String sKey) {
-        if ("Attachment".equals(sKey)) {
+        if (KEY_ATTACHMENT.equals(sKey)) {
             return Base64.getDecoder().decode(msPayload);
         }
 
@@ -71,7 +73,7 @@ public class CAKDocument extends IADocument {
 
     @Override
     public void setContent(String sKey, byte[] cContent) {
-        if ("Attachment".equals(sKey)) {
+        if (KEY_ATTACHMENT.equals(sKey)) {
             msPayload = Base64.getEncoder().encodeToString(cContent);
         }
     }

@@ -38,7 +38,7 @@ public class AMPSipManager implements SipManager {
 
         boolean bReturn = false;
         try {
-            if(objCache.getContents().size() > 0) {
+            if(!objCache.getContents().isEmpty()) {
                 IADocument objDocument = objCache.getContents().get(0); //Get the document metadata, (for CAK Fallback, can be removed later)
                 SipAssembler<IADocument> objSipAssembler = createSipAssembler(getPackageInformation(objDocument, objCache.getRetentionClass()), getPdiAssembler(), getDigitalObjects());
                 FileGenerator<IADocument> objFileGenerator = new FileGenerator<>(objSipAssembler, new File(mobjConfiguration.getSipOutputDirectory()));

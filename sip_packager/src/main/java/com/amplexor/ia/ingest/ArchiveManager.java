@@ -24,7 +24,6 @@ import static com.amplexor.ia.Logger.info;
  */
 public class ArchiveManager {
     private static final int MILLISECONDS_PER_SECOND = 1000;
-    private static final int REFRESH_THRESHOLD_SECONDS = 300;
     private static final String HEADER_PRINT_FORMAT = "%s: %s";
     private static final String IA_OBJECT_LIST_IDENTIFIER = "_embedded";
     private static final String IA_ENDPOINT_TENANTS = "tenants";

@@ -91,7 +91,7 @@ class IAArchiverWorkerThread implements Runnable {
                     info(this, "Successfully Ingested SIP " + objCache.getSipFile().toString());
                 }
             });
-            mobjCacheManager.getClosedCaches().forEach( objCache -> mobjCacheManager.cleanupCache(objCache));
+            mobjCacheManager.getClosedCaches().forEach(mobjCacheManager::cleanupCache);
         }
         mobjCacheManager.saveCaches();
         info(this, "Shutting down Worker " + miId);

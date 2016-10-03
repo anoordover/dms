@@ -16,6 +16,8 @@ import static com.amplexor.ia.Logger.info;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class CAKMessageParserUitwijk implements MessageParser {
+    private static final String KEY_ATTACHMENT = "Attachement";
+
     public CAKMessageParserUitwijk(PluggableObjectConfiguration objConfiguration) {
 
     }
@@ -36,7 +38,7 @@ public class CAKMessageParserUitwijk implements MessageParser {
                     objDocument.setMetadata(key, objParsedDocument.getMetadata(key));
                 }
             });
-            objDocument.setContent("Attachment", ((IADocument) objInstance).loadContent("Attachment"));
+            objDocument.setContent(KEY_ATTACHMENT, ((IADocument) objInstance).loadContent(KEY_ATTACHMENT));
             objDocument.setDocumentId(objDocument.getMetadata("ArchiefDocumentId"));
             objReturn.add(objDocument);
 
@@ -46,7 +48,7 @@ public class CAKMessageParserUitwijk implements MessageParser {
                     objDocumentUitwijk.setMetadata(key, objParsedDocument.getMetadata(key));
                 }
             });
-            objDocumentUitwijk.setContent("Attachment", ((IADocument) objInstance).loadContent("Attachment"));
+            objDocumentUitwijk.setContent(KEY_ATTACHMENT, ((IADocument) objInstance).loadContent(KEY_ATTACHMENT));
             objDocumentUitwijk.setDocumentId(objDocumentUitwijk.getMetadata("ArchiefDocumentId"));
             objReturn.add(objDocumentUitwijk);
 

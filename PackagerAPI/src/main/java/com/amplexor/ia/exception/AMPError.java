@@ -16,10 +16,6 @@ public class AMPError {
     @XStreamAlias("error_handling")
     private String msErrorHandling;
 
-    public AMPError() {
-
-    }
-
     public AMPError(int iCode, String sErrorText, String sErrorHandling) {
         miErrorCode = iCode;
         msErrorText = sErrorText;
