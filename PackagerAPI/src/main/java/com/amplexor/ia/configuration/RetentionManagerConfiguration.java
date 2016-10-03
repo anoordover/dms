@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * POJO for holding configuration pertaining to the RetentionManager
  * Created by admjzimmermann on 7-9-2016.
  */
 public class RetentionManagerConfiguration extends PluggableObjectConfiguration {

@@ -3,6 +3,7 @@ package com.amplexor.ia.configuration;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
+ * POJO for holding configuration pertaining to the creation of SIP Files
  * Created by admjzimmermann on 15-9-2016.
  */
 public class IASipConfiguration extends PluggableObjectConfiguration {

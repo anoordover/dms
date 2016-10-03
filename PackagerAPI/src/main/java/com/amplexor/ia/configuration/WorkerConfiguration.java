@@ -3,6 +3,7 @@ package com.amplexor.ia.configuration;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
+ * POJO for holding configuration pertaining to the WorkerManager
  * Created by admjzimmermann on 8-9-2016.
  */
 public class WorkerConfiguration extends PluggableObjectConfiguration {

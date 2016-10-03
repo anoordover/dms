@@ -3,6 +3,7 @@ package com.amplexor.ia.retention;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
+ * POJO for holding information pertaining to the retention classes available within the InfoArchive environment
  * Created by admjzimmermann on 6-9-2016.
  */
 public abstract class IARetentionClass {

@@ -3,6 +3,8 @@ package com.amplexor.ia;
 import org.apache.log4j.Level;
 
 /**
+ * Helper class for statically exporting log4j logging methods
+ * use "import static com.amplexor.ia.Logger.*"
  * Created by admjzimmermann on 21-9-2016.
  */
 public class Logger {

@@ -3,6 +3,7 @@ package com.amplexor.ia.configuration;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
+ * POJO for holding all other configuration POJO's (The layout of this class decides the accepted layout for the configuration xml)
  * Created by admjzimmermann on 6-9-2016.
  */
 public class SIPPackagerConfiguration {

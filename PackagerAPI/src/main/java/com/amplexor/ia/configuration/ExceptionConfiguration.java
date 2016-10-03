@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * POJO
+ * POJO for holding configuration pertaining to errors that might occur when running the SIP Packager
  * Created by zimmermannj on 9/23/2016.
  */
 public class ExceptionConfiguration {

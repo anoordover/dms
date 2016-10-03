@@ -3,6 +3,7 @@ package com.amplexor.ia.exception;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
+ * POJO for holding information about SIP Packager specific errors
  * Created by zimmermannj on 9/23/2016.
  */
 public class AMPError {

@@ -3,6 +3,7 @@ package com.amplexor.ia.configuration;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
+ * POJO for holding configuration pertaining to interaction with the InfoArchive REST API
  * Created by admjzimmermann on 6-9-2016.
  */
 public class IAServerConfiguration {

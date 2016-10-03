@@ -5,6 +5,8 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import java.util.Set;
 
 /**
+ * Abstract class which should be subclassed by the Client implementation of the SIP Packager
+ * This class will be used to store a documents metadata and content data
  * Created by admjzimmermann on 6-9-2016.
  */
 public abstract class IADocument {

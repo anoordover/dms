@@ -12,6 +12,8 @@ import static com.amplexor.ia.Logger.error;
 import static com.amplexor.ia.Logger.fatal;
 
 /**
+ * Helper class for handling errors that occur within the SIP Packager, Note that this class is Thread Local,
+ * meaning that every thread will have its own instance of the ExceptionHelper
  * Created by zimmermannj on 9/23/2016.
  */
 public class ExceptionHelper {
@@ -60,12 +62,13 @@ public class ExceptionHelper {
     private ExceptionConfiguration mobjExceptionConfiguration;
     private DocumentSource mobjDocumentSource;
 
-    //Private constructor to hide the implicit public one
+    /*Private constructor to hide the implicit public one*/
     private ExceptionHelper() {
     }
 
     /**
      * Gets the instance of the {@link ExceptionHelper} for the current thread
+     *
      * @return
      */
     public static ExceptionHelper getExceptionHelper() {
@@ -74,16 +77,28 @@ public class ExceptionHelper {
 
     /**
      * Sets the {@link DocumentSource} to be used for the "notify_source" handler
+     *
      * @param objDocumentSource
      */
     public synchronized void setDocumentSource(DocumentSource objDocumentSource) {
         mobjDocumentSource = objDocumentSource;
     }
 
+    /**
+     * Set the {@link ExceptionConfiguration} to be used by this instance of the ExceptionHelper
+     *
+     * @param objExceptionConfiguration
+     */
     public synchronized void setExceptionConfiguration(ExceptionConfiguration objExceptionConfiguration) {
         mobjExceptionConfiguration = objExceptionConfiguration;
     }
 
+    /**
+     * Handle the exception with code iCode
+     *
+     * @param iCode        The code for this error
+     * @param objException The exception associated with this error code
+     */
     public synchronized void handleException(int iCode, Exception objException) {
         if (mobjExceptionConfiguration != null) {
             AMPError objError = mobjExceptionConfiguration.getError(iCode);
@@ -94,6 +109,13 @@ public class ExceptionHelper {
         }
     }
 
+    /**
+     * Handle the exception with code iCode and IADocument objDocument
+     *
+     * @param iCode        The code for this error
+     * @param objDocument  The IADocument whose error should be set (For use by {@link DocumentSource}.postResult({@link IADocument})_
+     * @param objException The exception associated with this error code
+     */
     public synchronized void handleException(int iCode, IADocument objDocument, Exception objException) {
         if (mobjExceptionConfiguration != null) {
             AMPError objError = mobjExceptionConfiguration.getError(iCode);
@@ -105,6 +127,13 @@ public class ExceptionHelper {
         }
     }
 
+    /**
+     * Handle the exception with code iCode and IADocument objDocument
+     *
+     * @param iCode        The code for this error
+     * @param objCache     The IACache whose error should be set (For use by {@link DocumentSource}.postResult({@link IACache})_
+     * @param objException The exception associated with this error code
+     */
     public synchronized void handleException(int iCode, IACache objCache, Exception objException) {
         AMPError objError = mobjExceptionConfiguration.getError(iCode);
         for (IADocument objDocument : objCache.getContents()) {
@@ -113,6 +142,13 @@ public class ExceptionHelper {
         executeHandlers(objError, objCache, objException);
     }
 
+    /**
+     * Executes the handlers associated with {@link AMPError} objError
+     *
+     * @param objError     The error whose handlers should be invoked
+     * @param objCache     The cache associated with the error
+     * @param objException The exception associated with this error
+     */
     private void executeHandlers(AMPError objError, IACache objCache, Exception objException) {
         List<String> cHandlers = Arrays.asList(objError.getErrorHandling().split(";"));
         cHandlers.forEach(sHandler -> {
@@ -143,6 +179,13 @@ public class ExceptionHelper {
         });
     }
 
+    /**
+     * Executes the handlers associated with {@link AMPError} objError
+     *
+     * @param objError     The error whose handlers should be invoked
+     * @param objDocument  The document associated with the error
+     * @param objException The exception associated with this error
+     */
     private void executeHandlers(AMPError objError, IADocument objDocument, Exception objException) {
         List<String> cHandlers = Arrays.asList(objError.getErrorHandling().split(";"));
         cHandlers.forEach(sHandler -> {
