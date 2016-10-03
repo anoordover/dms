@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.amplexor.ia.Logger.*;
 
@@ -86,12 +87,11 @@ public class AMPCacheManager implements CacheManager {
     public void add(IADocument objDocument, IARetentionClass objRetentionClass) {
         debug(this, "Saving IADocument " + objDocument.getDocumentId());
         update();
-        if (checkGroupPath(objRetentionClass, true)) {
-            IACache objCache = getCache(objRetentionClass);
-            if (objCache != null) {
-                objCache.add(objDocument);
-            }
+        IACache objCache = getCache(objRetentionClass);
+        if (objCache != null) {
+            objCache.add(objDocument);
         }
+
         debug(this, "IADocument " + objDocument.getDocumentId() + " Saved");
     }
 
@@ -112,48 +112,10 @@ public class AMPCacheManager implements CacheManager {
 
         //No Open Cache found, create a new cache for this retention class
         IACache objCreate = new IACache(miNextId++, objRetentionClass);
-        try {
-            Path objCachePath = Paths.get(String.format("%s/%s/%d", mobjBasePath.toString(), objRetentionClass.getName(), objCreate.getId()).replace('/', File.separatorChar));
-            Files.createDirectories(objCachePath);
-            mcCaches.add(objCreate);
-            debug(this, "Returning Cache " + objCreate.getId());
-        } catch (IOException ex) {
-            miNextId--;
-            objCreate = null;
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-        } catch (InvalidPathException ex) {
-            miNextId--;
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_INVALID_BASE_PATH, ex);
-        }
+        mcCaches.add(objCreate);
+        debug(this, "Returning Cache " + objCreate.getId());
 
         return objCreate;
-    }
-
-    /**
-     * Checks whether a folder exists for {@link IARetentionClass} objRetentionClass, if bCreate equals true a folder will be created if it does not exist
-     *
-     * @param objRetentionClass The {@link IARetentionClass} for which the folder should be available
-     * @param bCreate           Whether to create a folder if one does not exist
-     * @return true if the folder exists(or is successfully created)
-     */
-    private boolean checkGroupPath(IARetentionClass objRetentionClass, boolean bCreate) {
-        debug(this, "Checking group file path for IARetentionClass " + objRetentionClass.getName());
-        boolean bReturn;
-        try {
-            Path objGroupPath = Paths.get(String.format("%s/%s", mobjBasePath.toString(), objRetentionClass.getName()));
-            bReturn = Files.exists(objGroupPath);
-
-            if (!bReturn && bCreate) {
-                Files.createDirectories(objGroupPath);
-                bReturn = Files.exists(objGroupPath);
-            }
-            debug(this, "Found file path for IARetentionClass " + objRetentionClass.getName());
-        } catch (IOException ex) {
-            bReturn = false;
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-        }
-
-        return bReturn;
     }
 
     /**
@@ -162,17 +124,15 @@ public class AMPCacheManager implements CacheManager {
     @Override
     public void update() {
         debug(this, "Updating Caches");
-        for (IACache objCache : mcCaches) {
-            if (!objCache.isClosed()) {
-                if (objCache.getSize() >= mobjConfiguration.getCacheMessageThreshold()) {
-                    info(this, String.format("Closing cache %s-%d, Reason: Message Threshold Reached(%d)%n", objCache.getRetentionClass().getName(), objCache.getId(), mobjConfiguration.getCacheMessageThreshold()));
-                    objCache.close();
-                } else if (objCache.getCreated() <= (System.currentTimeMillis() - (mobjConfiguration.getCacheTimeThreshold() * 1000))) {
-                    info(this, String.format("Closing cache %s-%d, Reason: Time Threshold Reached(%d)%n", objCache.getRetentionClass().getName(), objCache.getId(), mobjConfiguration.getCacheTimeThreshold()));
-                    objCache.close();
-                }
+        mcCaches.stream().filter(objCache -> !objCache.isClosed()).forEach(objCache -> {
+            if (objCache.getSize() >= mobjConfiguration.getCacheMessageThreshold()) {
+                info(this, String.format("Closing cache %s-%d, Reason: Message Threshold Reached(%d)%n", objCache.getRetentionClass().getName(), objCache.getId(), mobjConfiguration.getCacheMessageThreshold()));
+                objCache.close();
+            } else if (objCache.getCreated() <= (System.currentTimeMillis() - (mobjConfiguration.getCacheTimeThreshold() * 1000))) {
+                info(this, String.format("Closing cache %s-%d, Reason: Time Threshold Reached(%d)%n", objCache.getRetentionClass().getName(), objCache.getId(), mobjConfiguration.getCacheTimeThreshold()));
+                objCache.close();
             }
-        }
+        });
         debug(this, "Caches Updated");
     }
 
@@ -184,18 +144,14 @@ public class AMPCacheManager implements CacheManager {
     @Override
     public List<IACache> getClosedCaches() {
         debug(this, "Fetching Closed Caches");
-        List<IACache> objClosed = new ArrayList<>();
-        for (IACache objCache : mcCaches) {
-            if (objCache.isClosed()) {
-                objClosed.add(objCache);
-            }
-        }
+        List<IACache> objClosed = mcCaches.stream().filter(IACache::isClosed).collect(Collectors.toList());
         debug(this, "Found " + objClosed.size() + " Closed Caches");
         return Collections.unmodifiableList(objClosed);
     }
 
     /**
      * Deletes {@link IACache} objCache from the list of caches, as well as from the filesystem
+     *
      * @param objCache The cache that is to be removed
      */
     @Override
@@ -245,7 +201,7 @@ public class AMPCacheManager implements CacheManager {
             } catch (IOException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }
-            if(!objCacheSaveFile.delete()) {
+            if (!objCacheSaveFile.delete()) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, new IOException("Unable to delete cache save file"));
             }
         });
