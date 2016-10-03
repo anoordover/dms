@@ -1,5 +1,5 @@
-import com.amplexor.ia.DocumentSource;
-import com.amplexor.ia.MessageParser;
+import com.amplexor.ia.document_source.DocumentSource;
+import com.amplexor.ia.parsing.MessageParser;
 import com.amplexor.ia.cache.CacheManager;
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.ConfigManager;
@@ -10,8 +10,10 @@ import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
 import com.amplexor.ia.sip.AMPSipManager;
+import nl.hetcak.dms.CAKCacheManager;
 import nl.hetcak.dms.CAKMessageParserUitwijk;
 import nl.hetcak.dms.CAKRetentionManager;
+import nl.hetcak.dms.CAKSipManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,8 +62,8 @@ public class CAKDocumentRetrieval {
         SIPPackagerConfiguration objConfig = mobjConfigManager.getConfiguration();
         mobjMessageParser = new CAKMessageParserUitwijk(objConfig.getMessageParser());
         mobjRetentionManager = new CAKRetentionManager(objConfig.getRetentionManager());
-        mobjCacheManager = new CacheManager(objConfig.getCacheConfiguration());
-        mobjSipManager = new AMPSipManager(objConfig.getSipConfiguration());
+        mobjCacheManager = new CAKCacheManager(objConfig.getCacheConfiguration());
+        mobjSipManager = new CAKSipManager(objConfig.getSipConfiguration());
         mobjArchiveManager = new ArchiveManager(objConfig.getServerConfiguration());
         ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfigManager.getConfiguration().getExceptionConfiguration());
     }

@@ -1,12 +1,9 @@
 package com.amplexor.ia.worker;
 
-import com.amplexor.ia.DocumentSource;
-import com.amplexor.ia.MessageParser;
+import com.amplexor.ia.document_source.DocumentSource;
+import com.amplexor.ia.parsing.MessageParser;
 import com.amplexor.ia.cache.CacheManager;
-import com.amplexor.ia.configuration.IASipConfiguration;
-import com.amplexor.ia.configuration.PluggableObjectConfiguration;
-import com.amplexor.ia.configuration.RetentionManagerConfiguration;
-import com.amplexor.ia.configuration.SIPPackagerConfiguration;
+import com.amplexor.ia.configuration.*;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.ingest.ArchiveManager;
 import com.amplexor.ia.metadata.IADocument;
@@ -51,15 +48,16 @@ class IAArchiverWorkerThread implements Runnable {
     @Override
     public void run() {
         info(this, "Initializing Worker " + miId);
+        info(this, "Setting up ExceptionHelper");
+        ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfiguration.getExceptionConfiguration());
         if (loadClasses()) {
             try {
                 Thread.currentThread().setName("IAWorker-" + miId);
-                info(this, "Setting up ExceptionHelper");
-                ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfiguration.getExceptionConfiguration());
                 ExceptionHelper.getExceptionHelper().setDocumentSource(mobjDocumentSource);
                 info(this, "Initializing Document Caches");
-                mobjCacheManager = new CacheManager(mobjConfiguration.getCacheConfiguration());
-                mobjCacheManager.initializeCache();
+                if (mobjCacheManager != null) {
+                    mobjCacheManager.initializeCache();
+                }
                 info(this, "Initializing Archive Manager");
                 mobjArchiveManager = new ArchiveManager(mobjConfiguration.getServerConfiguration());
                 info(this, "DONE. Starting main loop");
@@ -90,9 +88,10 @@ class IAArchiverWorkerThread implements Runnable {
             mobjCacheManager.update();
             mobjCacheManager.getClosedCaches().iterator().forEachRemaining(objCache -> {
                 if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache.getSipFile().toString())) {
-                    info(this, "Succesfully Ingested SIP " + objCache.getSipFile().toString());
+                    info(this, "Successfully Ingested SIP " + objCache.getSipFile().toString());
                 }
             });
+            mobjCacheManager.getClosedCaches().forEach( objCache -> mobjCacheManager.cleanupCache(objCache));
         }
         mobjCacheManager.saveCaches();
         info(this, "Shutting down Worker " + miId);
@@ -105,6 +104,16 @@ class IAArchiverWorkerThread implements Runnable {
 
     private boolean loadClasses() {
         try {
+            info(this, "Initializing Cache Manager");
+            Object objCacheManager = Thread.currentThread().getContextClassLoader()
+                    .loadClass(mobjConfiguration.getCacheConfiguration().getImplementingClass())
+                    .getConstructor(CacheConfiguration.class)
+                    .newInstance(mobjConfiguration.getCacheConfiguration());
+            if (objCacheManager instanceof CacheManager) {
+                info(this, "Successfully loaded Cache Manager " + mobjConfiguration.getCacheConfiguration().getImplementingClass());
+                mobjCacheManager = CacheManager.class.cast(objCacheManager);
+            }
+
             info(this, "Initializing Document Source");
             Object objDocumentSource = Thread.currentThread().getContextClassLoader()
                     .loadClass(mobjConfiguration.getDocumentSource().getImplementingClass())
@@ -146,8 +155,9 @@ class IAArchiverWorkerThread implements Runnable {
             }
 
             return mobjDocumentSource != null && mobjMessageParser != null && mobjRetentionManager != null;
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException ex) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | NullPointerException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            System.exit(ExceptionHelper.ERROR_OTHER);
         }
         return false;
     }

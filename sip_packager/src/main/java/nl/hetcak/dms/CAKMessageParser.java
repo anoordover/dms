@@ -1,6 +1,6 @@
 package nl.hetcak.dms;
 
-import com.amplexor.ia.MessageParser;
+import com.amplexor.ia.parsing.MessageParser;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;

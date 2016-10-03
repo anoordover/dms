@@ -1,6 +1,6 @@
 <IAArchiver>
   <archiver>
-    <log4j_properties_path>C:\Users\admjzimmermann\Desktop\ws\sip-packager\sip-packager\log4j.properties</log4j_properties_path>
+    <log4j_properties_path>C:\Users\zimmermannj\Desktop\CAK\dms\log4j.properties</log4j_properties_path>
   </archiver>
   <worker_manager>
     <max_worker_threads>4</max_worker_threads>
@@ -9,8 +9,9 @@
     <check_interval_milliseconds>5000</check_interval_milliseconds>
   </worker_manager>
   <caching>
+    <implementing_class>nl.hetcak.dms.CAKCacheManager</implementing_class>
     <base_path>target/Cache</base_path>
-    <message_threshold>100</message_threshold>
+    <message_threshold>10</message_threshold>
     <time_threshold>1800</time_threshold>
   </caching>
   <rest_api>
@@ -36,10 +37,11 @@
     <sip_output_directory>target/Sips</sip_output_directory>
   </sip>
   <document_source>
-    <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
+    <implementing_class>com.amplexor.ia.MetaDataConsumer</implementing_class>
     <custom_parameters>
+      <source_path>C:\Users\zimmermannj\Desktop\CAK\data</source_path>
       <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
-      <truststore>truststore/truststore_ont1_mule.jks</truststore>
+      <truststore>truststore_ont1_mule.jks</truststore>
       <truststore_password>My0jKD3WWChHaVFrLwDNLxmaTl72f9PL</truststore_password>
       <result_format><![CDATA[<urn:Item DocumentId="%s" Status="%s">%s</urn:Item>]]></result_format>
       <results_element>

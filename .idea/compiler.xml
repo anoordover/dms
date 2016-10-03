@@ -22,10 +22,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="data_generator" />
+        <module name="PackagerAPI" />
         <module name="sip_packager" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="data_generator" target="1.8" />
+      <module name="PackagerAPI" target="1.8" />
       <module name="sip-packager" target="1.8" />
       <module name="sip_packager" target="1.8" />
     </bytecodeTargetLevel>

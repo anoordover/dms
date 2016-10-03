@@ -1,6 +1,6 @@
 package nl.hetcak.dms;
 
-import com.amplexor.ia.DocumentSource;
+import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;

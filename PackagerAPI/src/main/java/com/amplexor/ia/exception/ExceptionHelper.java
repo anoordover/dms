@@ -1,6 +1,6 @@
 package com.amplexor.ia.exception;
 
-import com.amplexor.ia.DocumentSource;
+import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.ExceptionConfiguration;
 import com.amplexor.ia.metadata.IADocument;

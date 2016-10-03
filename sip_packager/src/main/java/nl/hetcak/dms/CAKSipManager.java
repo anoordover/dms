@@ -5,7 +5,6 @@ import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.sip.AMPSipManager;
 import com.emc.ia.sdk.sip.assembly.PackagingInformation;
-import com.sun.javaws.jnl.ResourcesDesc;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;

@@ -21,12 +21,12 @@ public class FileWriter {
             writer.write("\t\t<urn:ArchiefDocumentsoort>"); writer.write(String.valueOf(document.getArchiefDocumentsoort()));  writer.write("</urn:ArchiefDocumentsoort>\n");
             writer.write("\t\t<urn:ArchiefRegeling>"); writer.write(String.valueOf(document.getArchiefRegeling()));  writer.write("</urn:ArchiefRegeling>\n");
             writer.write("\t\t<urn:ArchiefDocumentkenmerk>"); writer.write(String.valueOf(document.getArchiefDocumentKenmerk())+"-"+String.valueOf(document.getArchiefRegeling()));  writer.write("</urn:ArchiefDocumentkenmerk>\n");
-            writer.write("\t\t<urn:ArchiefVerzenddag>"); writer.write(String.valueOf(document.getArchiefVerzenddag().getYear())+"-"+String.format("%02d", document.getArchiefVerzenddag().getMonthValue())+"-"+document.getArchiefVerzenddag().getDayOfMonth());  writer.write("</urn:ArchiefVerzenddag>\n");
+            writer.write("\t\t<urn:ArchiefVerzenddag>"); writer.write(String.valueOf(document.getArchiefVerzenddag().getYear())+"-"+String.format("%02d", document.getArchiefVerzenddag().getMonthValue())+"-"+String.format("%02d", document.getArchiefVerzenddag().getDayOfMonth()));  writer.write("</urn:ArchiefVerzenddag>\n");
             writer.write("\t\t<urn:ArchiefDocumenttype>"); writer.write(String.valueOf(document.getArchiefDocumenttype()));  writer.write("</urn:ArchiefDocumenttype>\n");
             writer.write("\t\t<urn:ArchiefDocumentstatus>"); writer.write(String.valueOf(document.getArchiefDocumentstatus()));  writer.write("</urn:ArchiefDocumentstatus>\n");
             writer.write("\t\t<urn:ArchiefRegelingsjaar>"); writer.write(String.valueOf(document.getArchiefRegelingsjaar()));  writer.write("</urn:ArchiefRegelingsjaar>\n");
             writer.write("\t</urn:MetaData>\n");
-            writer.write("\t</urn:PayloadPdf>"); writer.write(String.valueOf(document.getPayloadPdf()));  writer.write("t</urn:PayloadPdf>\n");
+            writer.write("\t<urn:PayloadPdf>"); writer.write(String.valueOf(document.getPayloadPdf()));  writer.write("</urn:PayloadPdf>\n");
             writer.write("</urn:ArchiefDocument>");
             writer.close();
         }

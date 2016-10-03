@@ -27,12 +27,12 @@ import static com.amplexor.ia.Logger.*;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class AMPCacheManager implements CacheManager {
-    private CacheConfiguration mobjConfiguration;
-    private List<IACache> mcCaches;
+    protected CacheConfiguration mobjConfiguration;
+    protected List<IACache> mcCaches;
 
-    private int miNextId;
-    private Path mobjBasePath;
-    private Path mobjSavePath;
+    protected int miNextId;
+    protected Path mobjBasePath;
+    protected Path mobjSavePath;
 
     public AMPCacheManager(CacheConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
@@ -49,6 +49,7 @@ public class AMPCacheManager implements CacheManager {
      *
      * @throws IOException
      */
+    @Override
     public void initializeCache() throws IOException {
         debug(this, "Initializing CacheManager");
         try {
@@ -81,25 +82,18 @@ public class AMPCacheManager implements CacheManager {
      * @param objDocument
      * @param objRetentionClass
      */
+    @Override
     public void add(IADocument objDocument, IARetentionClass objRetentionClass) {
         debug(this, "Saving IADocument " + objDocument.getDocumentId());
         update();
         if (checkGroupPath(objRetentionClass, true)) {
-            IACache cache = getCache(objRetentionClass);
-            if (cache != null) {
-                cache.add(objDocument);
+            IACache objCache = getCache(objRetentionClass);
+            if (objCache != null) {
+                objCache.add(objDocument);
             }
         }
         debug(this, "IADocument " + objDocument.getDocumentId() + " Saved");
     }
-
-    /*private void saveDocument(IADocument objDocument,IACache objCache) {
-        try {
-            try(OutputStream objDocumentSaveStream = Files.newOutputStream(Paths.get(String.format("%s/%s/%s", mobjBasePath.toString(), ))))
-        } catch (IOException ex) {
-
-        }
-    }*/
 
     /**
      * Retrieve the currently open {@link IACache} for {@link IARetentionClass} objRetentionClass, or a new {@link IACache} if the current cache is non-existent or closed
@@ -107,7 +101,7 @@ public class AMPCacheManager implements CacheManager {
      * @param objRetentionClass The {@link IARetentionClass} to be associated with the {@link IACache}
      * @return
      */
-    private IACache getCache(IARetentionClass objRetentionClass) {
+    protected IACache getCache(IARetentionClass objRetentionClass) {
         debug(this, "Getting Cache for IARetentionClass " + objRetentionClass.getName());
         for (IACache objCache : mcCaches) {
             if (objCache.getRetentionClass().equals(objRetentionClass) && !objCache.isClosed()) {
@@ -119,8 +113,8 @@ public class AMPCacheManager implements CacheManager {
         //No Open Cache found, create a new cache for this retention class
         IACache objCreate = new IACache(miNextId++, objRetentionClass);
         try {
-            Path oCachePath = Paths.get(String.format("%s/%s/%d", mobjBasePath.toString(), objRetentionClass.getName(), objCreate.getId()).replace('/', File.separatorChar));
-            Files.createDirectories(oCachePath);
+            Path objCachePath = Paths.get(String.format("%s/%s/%d", mobjBasePath.toString(), objRetentionClass.getName(), objCreate.getId()).replace('/', File.separatorChar));
+            Files.createDirectories(objCachePath);
             mcCaches.add(objCreate);
             debug(this, "Returning Cache " + objCreate.getId());
         } catch (IOException ex) {
@@ -128,8 +122,10 @@ public class AMPCacheManager implements CacheManager {
             objCreate = null;
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         } catch (InvalidPathException ex) {
+            miNextId--;
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_INVALID_BASE_PATH, ex);
         }
+
         return objCreate;
     }
 
@@ -146,6 +142,7 @@ public class AMPCacheManager implements CacheManager {
         try {
             Path objGroupPath = Paths.get(String.format("%s/%s", mobjBasePath.toString(), objRetentionClass.getName()));
             bReturn = Files.exists(objGroupPath);
+
             if (!bReturn && bCreate) {
                 Files.createDirectories(objGroupPath);
                 bReturn = Files.exists(objGroupPath);
@@ -155,12 +152,14 @@ public class AMPCacheManager implements CacheManager {
             bReturn = false;
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
+
         return bReturn;
     }
 
     /**
      * Updates the {@link CacheManager}, Checks whether any {@link IACache}s reached their time or content thresholds, and closes these caches if they exceed these thresholds
      */
+    @Override
     public void update() {
         debug(this, "Updating Caches");
         for (IACache objCache : mcCaches) {
@@ -182,6 +181,7 @@ public class AMPCacheManager implements CacheManager {
      *
      * @return A (Unmodifiable) {@link List<IACache>} of closed caches
      */
+    @Override
     public List<IACache> getClosedCaches() {
         debug(this, "Fetching Closed Caches");
         List<IACache> objClosed = new ArrayList<>();
@@ -196,9 +196,9 @@ public class AMPCacheManager implements CacheManager {
 
     /**
      * Deletes {@link IACache} objCache from the list of caches, as well as from the filesystem
-     *
      * @param objCache The cache that is to be removed
      */
+    @Override
     public void cleanupCache(IACache objCache) {
         debug(this, "Cleaning Cache " + objCache.getId());
         try {
@@ -216,6 +216,7 @@ public class AMPCacheManager implements CacheManager {
      * Saves the caches currently held by the cache manager as XML files
      * The output will be saved in the ${caching}/${base_path}
      */
+    @Override
     public void saveCaches() {
         for (IACache objCache : mcCaches) {
             try (OutputStream objSaveStream = Files.newOutputStream(Paths.get(mobjSavePath.toString() + File.separatorChar + "IACache-" + objCache.getId() + ".xml"))) {
@@ -232,6 +233,7 @@ public class AMPCacheManager implements CacheManager {
     /**
      * Loads any {@link IACache}s in the current savePath(config.xml->${cachemanager}/${base_path}) and adds them to the {@link CacheManager}
      */
+    @Override
     public void loadCaches() {
         List<File> cSaveContents = Arrays.asList(new File(mobjSavePath.toString() + File.separatorChar).listFiles());
         cSaveContents.forEach(objCacheSaveFile -> {
@@ -243,7 +245,9 @@ public class AMPCacheManager implements CacheManager {
             } catch (IOException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }
-            objCacheSaveFile.delete();
+            if(!objCacheSaveFile.delete()) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, new IOException("Unable to delete cache save file"));
+            }
         });
     }
 }
