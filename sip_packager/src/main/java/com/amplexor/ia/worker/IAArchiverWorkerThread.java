@@ -50,22 +50,22 @@ class IAArchiverWorkerThread implements Runnable {
         info(this, "Initializing Worker " + miId);
         info(this, "Setting up ExceptionHelper");
         ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfiguration.getExceptionConfiguration());
-        if (loadClasses()) {
-            try {
+        try {
+            if (loadClasses()) {
                 mobjDocumentSource.initialize();
                 Thread.currentThread().setName("IAWorker-" + miId);
                 ExceptionHelper.getExceptionHelper().setDocumentSource(mobjDocumentSource);
                 info(this, "Initializing Document Caches");
-                if (mobjCacheManager != null) {
-                    mobjCacheManager.initializeCache();
-                }
+                mobjCacheManager.initializeCache();
                 info(this, "Initializing Archive Manager");
                 mobjArchiveManager = new ArchiveManager(mobjConfiguration.getServerConfiguration());
                 info(this, "DONE. Starting main loop");
                 mbRunning = true;
-            } catch (IOException ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+
             }
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            WorkerManager.getWorkerManager().stop();
         }
 
         while (mbRunning) {
@@ -98,10 +98,7 @@ class IAArchiverWorkerThread implements Runnable {
             mobjCacheManager.saveCaches();
         }
 
-        if (mobjDocumentSource != null) {
-            mobjDocumentSource.shutdown();
-        }
-
+        mobjDocumentSource.shutdown();
         info(this, "Shutting down Worker " + miId);
     }
 
@@ -165,7 +162,7 @@ class IAArchiverWorkerThread implements Runnable {
             return mobjDocumentSource != null && mobjMessageParser != null && mobjRetentionManager != null;
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | NullPointerException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-            System.exit(ExceptionHelper.ERROR_OTHER);
+            WorkerManager.getWorkerManager().stop();
         }
         return false;
     }

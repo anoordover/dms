@@ -30,7 +30,7 @@ public class ConfigManager {
      * Loads the configuration contained in the XML file that was passed to this instance of the ConfigManager
      * @throws IllegalArgumentException If there was a problem while loading of the configuration file
      */
-    public void loadConfiguration() throws IllegalArgumentException {
+    public void loadConfiguration() {
         info(this, "Loading Configuration from " + msConfigPath);
         XStream objXStream = new XStream(new StaxDriver());
         objXStream.alias("IAArchiver", SIPPackagerConfiguration.class);

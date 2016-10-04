@@ -1,8 +1,8 @@
 package com.amplexor.ia.exception;
 
-import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.ExceptionConfiguration;
+import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.metadata.IADocument;
 
 import java.util.Arrays;
@@ -63,7 +63,8 @@ public class ExceptionHelper {
     private DocumentSource mobjDocumentSource;
 
     /*Private constructor to hide the implicit public one*/
-    private ExceptionHelper() {}
+    private ExceptionHelper() {
+    }
 
     /**
      * Gets the instance of the {@link ExceptionHelper} for the current thread
@@ -145,73 +146,35 @@ public class ExceptionHelper {
      * Executes the handlers associated with {@link AMPError} objError
      *
      * @param objError     The error whose handlers should be invoked
-     * @param objCache     The cache associated with the error
+     * @param objIAItem     The cache associated with the error
      * @param objException The exception associated with this error
      */
-    private void executeHandlers(AMPError objError, IACache objCache, Exception objException) {
+    private void executeHandlers(AMPError objError, Object objIAItem, Exception objException) {
         List<String> cHandlers = Arrays.asList(objError.getErrorHandling().split(";"));
-        cHandlers.forEach(sHandler -> {
+        for (String sHandler : cHandlers) {
             if ("notify_source".equals(sHandler)) {
-                if (mobjDocumentSource != null && objCache != null) {
-                    mobjDocumentSource.postResult(objCache);
-                } else {
-                    error(this, "DocumentSource or IADocument was not provided to error handler");
+                if(mobjDocumentSource == null || objIAItem == null) {
+                    error(ExceptionHelper.this, "DocumentSource or IADocument was not provided to error handler");
+                    return;
                 }
-            } else if ("log_error".equals(sHandler)) {
-                error(this, objError.getErrorText());
-                error(this, objException);
-            } else if ("log_fatal".equals(sHandler)) {
-                if (objError.getErrorCode() < 2000) {
-                    //Assume Logger is not available
-                    System.err.println(objError.getErrorText());
-                    System.err.println(objException.getLocalizedMessage());
-                    System.exit(objError.getErrorCode());
-                } else {
-                    fatal(this, objError.getErrorText());
-                    fatal(this, objException);
-                    System.exit(objError.getErrorCode());
-                }
-            } else {
-                error(this, "Invalid error handler " + sHandler);
-                error(this, objException);
-            }
-        });
-    }
 
-    /**
-     * Executes the handlers associated with {@link AMPError} objError
-     *
-     * @param objError     The error whose handlers should be invoked
-     * @param objDocument  The document associated with the error
-     * @param objException The exception associated with this error
-     */
-    private void executeHandlers(AMPError objError, IADocument objDocument, Exception objException) {
-        List<String> cHandlers = Arrays.asList(objError.getErrorHandling().split(";"));
-        cHandlers.forEach(sHandler -> {
-            if ("notify_source".equals(sHandler)) {
-                if (mobjDocumentSource != null && objDocument != null) {
-                    mobjDocumentSource.postResult(objDocument);
-                } else {
-                    error(this, "DocumentSource or IADocument was not provided to error handler");
+                if(objIAItem instanceof IACache) {
+                    mobjDocumentSource.postResult((IACache)objIAItem);
+                } else if (objIAItem instanceof IADocument) {
+                    mobjDocumentSource.postResult((IADocument)objIAItem);
                 }
+
             } else if ("log_error".equals(sHandler)) {
-                error(this, objError.getErrorText());
-                error(this, objException);
+                error(ExceptionHelper.this, objError.getErrorText());
+                error(ExceptionHelper.this, objException);
             } else if ("log_fatal".equals(sHandler)) {
-                if (objError.getErrorCode() < 2000) {
-                    //Assume Logger is not available
-                    System.err.println(objError.getErrorText());
-                    System.err.println(objException.getLocalizedMessage());
-                    System.exit(objError.getErrorCode());
-                } else {
-                    fatal(this, objError.getErrorText());
-                    fatal(this, objException);
-                    System.exit(objError.getErrorCode());
-                }
+                fatal(ExceptionHelper.this, objError.getErrorText());
+                fatal(ExceptionHelper.this, objException);
+                System.exit(objError.getErrorCode());
             } else {
-                error(this, "Invalid error handler " + sHandler);
-                error(this, objException);
+                error(ExceptionHelper.this, "Invalid error handler " + sHandler);
+                error(ExceptionHelper.this, objException);
             }
-        });
+        }
     }
 }

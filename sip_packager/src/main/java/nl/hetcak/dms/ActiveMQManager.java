@@ -65,6 +65,7 @@ public class ActiveMQManager implements DocumentSource {
         return sReturn;
     }
 
+    @Override
     public void initialize() {
         try {
             mobjConnection = mobjConnectionFactory.createConnection();
@@ -74,6 +75,7 @@ public class ActiveMQManager implements DocumentSource {
         }
     }
 
+    @Override
     public void shutdown() {
         try {
             if (mobjConnection != null) {

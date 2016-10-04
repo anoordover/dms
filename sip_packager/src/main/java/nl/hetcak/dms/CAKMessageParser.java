@@ -26,16 +26,19 @@ public class CAKMessageParser implements MessageParser {
         List<IADocument> cReturn = new ArrayList<>();
         XStream objXStream = new XStream(new StaxDriver());
         objXStream.alias("ArchiefDocument", CAKDocument.class);
-        objXStream.processAnnotations(CAKDocument.class);
-        Object objInstance = objXStream.fromXML(sData);
-        if (objInstance != null && objInstance instanceof IADocument) {
-            IADocument objDocument = (IADocument) objInstance;
-            objDocument.setDocumentId(objDocument.getMetadata("ArchiefDocumentId"));
-            cReturn.add(objDocument);
-            info(this, "Data parsed into IADocument " + objDocument.getDocumentId());
-        } else {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_INPUT, new Exception("Unable to parse retrieved document data: \n" + sData));
+        try {
+            objXStream.processAnnotations(CAKDocument.class);
+            Object objInstance = objXStream.fromXML(sData);
+            if (objInstance != null && objInstance instanceof IADocument) {
+                IADocument objDocument = (IADocument) objInstance;
+                objDocument.setDocumentId(objDocument.getMetadata("ArchiefDocumentId"));
+                cReturn.add(objDocument);
+                info(this, "Data parsed into IADocument " + objDocument.getDocumentId());
+            }
+        } catch (Exception ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_INPUT, ex);
         }
+
         return cReturn;
     }
 }

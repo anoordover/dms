@@ -56,7 +56,7 @@ public class CAKMessageParserFallback implements MessageParser {
                 info(this, "Data parsed into IADocument " + objDocument.getDocumentId());
             }
         } catch (Exception ex) {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_INPUT, new Exception("Unable to parse retrieved document data"));
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_INPUT, ex);
         }
         return objReturn;
     }
