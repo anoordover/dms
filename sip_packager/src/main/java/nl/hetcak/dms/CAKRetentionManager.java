@@ -5,7 +5,7 @@ import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
 
-import static com.amplexor.ia.Logger.*;
+import static com.amplexor.ia.Logger.info;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
@@ -22,10 +22,7 @@ public class CAKRetentionManager implements RetentionManager {
         info(this, "Retrieving Retention Class for IADocument: " + objSource.getDocumentId());
 
         IARetentionClass objReturn = null;
-        String sRetentionName;
-        sRetentionName = objSource.getMetadata(mobjConfiguration.getRetentionElementName());
-
-
+        String sRetentionName = objSource.getMetadata(mobjConfiguration.getRetentionElementName());
         if (sRetentionName != null) {
             for (IARetentionClass retentionClass : mobjConfiguration.getRetentionClasses()) {
                 if (retentionClass.getName().equals(sRetentionName)) {
@@ -34,6 +31,10 @@ public class CAKRetentionManager implements RetentionManager {
                     break;
                 }
             }
+        }
+
+        if (objReturn == null) {
+            throw new IllegalArgumentException("Unknown Retention Policy: " + sRetentionName);
         }
 
         return objReturn;

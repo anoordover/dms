@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.amplexor.ia.Logger.info;
 import static com.amplexor.ia.Logger.warn;
 
 /**
@@ -17,6 +16,7 @@ public class WorkerManager {
     private static WorkerManager mobjWorkerManager;
 
     private Thread mobjManagerThread;
+
     private List<IAArchiverWorkerThread> mcWorkers;
     private int miCurrentWorker;
 
@@ -36,9 +36,10 @@ public class WorkerManager {
     }
 
     public void initialize(SIPPackagerConfiguration objConfiguration) {
-        info(this, "Initializing WorkerManager");
+        miCurrentWorker = -1;
         for (int i = 0; i < objConfiguration.getWorkerConfiguration().getMaxWorkerThreads(); ++i) {
-            mcWorkers.add(new IAArchiverWorkerThread(objConfiguration));
+            mcWorkers.add(new IAArchiverWorkerThread(objConfiguration, i + 1));
+            startWorker();
         }
 
         mobjManagerThread = new Thread(() -> {
@@ -50,8 +51,8 @@ public class WorkerManager {
 
                 mlDiffMillisecondsSinceLastCheck = Math.abs(lMillisecondsSinceLastCheck - System.currentTimeMillis());
                 if (mlDiffMillisecondsSinceLastCheck > objConfiguration.getWorkerConfiguration().getCheckInterval()) {
-                    int iTotalProcessed = getProcessedMessages();
-                    if (iTotalProcessed < objConfiguration.getWorkerConfiguration().getWorkerShutdownThreshold() && miCurrentWorker > -1) {
+                    int iTotalProcessed = getProcessedBytes();
+                    if (iTotalProcessed < objConfiguration.getWorkerConfiguration().getWorkerShutdownThreshold() && miCurrentWorker > 0) {
                         stopWorker();
                     } else if (iTotalProcessed > objConfiguration.getWorkerConfiguration().getWorkerStartupThreshold() && miCurrentWorker < objConfiguration.getWorkerConfiguration().getMaxWorkerThreads() || miCurrentWorker == -1) {
                         startWorker();
@@ -61,14 +62,14 @@ public class WorkerManager {
                 waitForNextCheck();
             }
         });
-        miCurrentWorker = -1;
     }
 
-    private int getProcessedMessages() {
+    private int getProcessedBytes() {
         int iReturn = 0;
         for (Iterator<IAArchiverWorkerThread> objIter = mcWorkers.iterator(); objIter.hasNext(); ) {
             IAArchiverWorkerThread objWorker = objIter.next();
-            iReturn += objWorker.getProcessedMessageCounter();
+            iReturn += objWorker.getProcessedBytes();
+            objWorker.resetProcessedBytes();
         }
         return iReturn;
     }
@@ -97,14 +98,15 @@ public class WorkerManager {
 
     public synchronized void start() {
         if (!mbIsRunning) {
-
             mobjManagerThread.start();
             mbIsRunning = true;
         }
     }
 
-    public void stop() {
-        mcWorkers.forEach(objThread -> objThread.stopWorker());
+    public synchronized void stop() {
+        while (miCurrentWorker > -1) {
+            stopWorker();
+        }
         mobjManagerThread.interrupt();
     }
 }

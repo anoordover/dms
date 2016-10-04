@@ -1,32 +1,30 @@
 package com.amplexor.ia.worker;
 
-import com.amplexor.ia.DocumentSource;
-import com.amplexor.ia.MessageParser;
+import com.amplexor.ia.document_source.DocumentSource;
+import com.amplexor.ia.parsing.MessageParser;
 import com.amplexor.ia.cache.CacheManager;
-import com.amplexor.ia.configuration.PluggableObjectConfiguration;
-import com.amplexor.ia.configuration.RetentionManagerConfiguration;
-import com.amplexor.ia.configuration.SIPPackagerConfiguration;
+import com.amplexor.ia.configuration.*;
+import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.ingest.ArchiveManager;
 import com.amplexor.ia.metadata.IADocument;
-import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
-import com.amplexor.ia.sip.AMPSipManager;
-
-import static com.amplexor.ia.Logger.*;
+import com.amplexor.ia.sip.SipManager;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Path;
 import java.util.List;
+
+import static com.amplexor.ia.Logger.debug;
+import static com.amplexor.ia.Logger.info;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
  */
-public class IAArchiverWorkerThread implements Runnable {
+class IAArchiverWorkerThread implements Runnable {
     private SIPPackagerConfiguration mobjConfiguration;
     private int miId;
 
-    private int miProcessedMessages;
+    private int miProcessedBytes;
     private boolean mbRunning;
 
     private DocumentSource mobjDocumentSource;
@@ -34,7 +32,7 @@ public class IAArchiverWorkerThread implements Runnable {
     private RetentionManager mobjRetentionManager;
     private CacheManager mobjCacheManager;
     private ArchiveManager mobjArchiveManager;
-    private AMPSipManager mobjSipManager;
+    private SipManager mobjSipManager;
 
 
     public IAArchiverWorkerThread(SIPPackagerConfiguration objConfiguration) {
@@ -50,20 +48,22 @@ public class IAArchiverWorkerThread implements Runnable {
     @Override
     public void run() {
         info(this, "Initializing Worker " + miId);
+        info(this, "Setting up ExceptionHelper");
+        ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfiguration.getExceptionConfiguration());
         if (loadClasses()) {
             try {
                 Thread.currentThread().setName("IAWorker-" + miId);
+                ExceptionHelper.getExceptionHelper().setDocumentSource(mobjDocumentSource);
                 info(this, "Initializing Document Caches");
-                mobjCacheManager = new CacheManager(mobjConfiguration.getCacheConfiguration());
-                mobjCacheManager.initializeCache();
-                info(this, "Initializing SIP Manager");
-                mobjSipManager = new AMPSipManager(mobjConfiguration.getSipConfiguration());
+                if (mobjCacheManager != null) {
+                    mobjCacheManager.initializeCache();
+                }
                 info(this, "Initializing Archive Manager");
                 mobjArchiveManager = new ArchiveManager(mobjConfiguration.getServerConfiguration());
                 info(this, "DONE. Starting main loop");
                 mbRunning = true;
             } catch (IOException ex) {
-                error(this, ex);
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }
         }
 
@@ -71,29 +71,29 @@ public class IAArchiverWorkerThread implements Runnable {
             List<IADocument> cDocuments = null;
             String sDocumentData = mobjDocumentSource.retrieveDocumentData();
             if (!"".equals(sDocumentData)) {
-                ++miProcessedMessages;
                 cDocuments = mobjMessageParser.parse(sDocumentData);
             }
+
             if (cDocuments != null) {
                 cDocuments.forEach(objDocument -> {
+                    miProcessedBytes += objDocument.getSizeEstimate();
                     debug(this, "Retrieved document with id: " + objDocument.getDocumentId());
-                    IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
-                    if(objRetentionClass != null) {
-                        mobjCacheManager.add(objDocument, objRetentionClass);
+                    try {
+                        mobjCacheManager.add(objDocument, mobjRetentionManager.retrieveRetentionClass(objDocument));
+                    } catch (IllegalArgumentException ex) {
+                        ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNKNOWN_RETENTION, objDocument, ex);
                     }
                 });
             }
             mobjCacheManager.update();
             mobjCacheManager.getClosedCaches().iterator().forEachRemaining(objCache -> {
-                Path objSipPath = mobjSipManager.getSIPFile(objCache);
-                if (mobjArchiveManager.ingestSip(objSipPath.toString())) {
-                    info(this, "Succesfully Ingested SIP " + objSipPath.toString());
-                } else {
-                    error(this, "Error Ingesting SIP: " + objSipPath.toString());
+                if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache.getSipFile().toString())) {
+                    info(this, "Successfully Ingested SIP " + objCache.getSipFile().toString());
                 }
             });
+            mobjCacheManager.getClosedCaches().forEach(mobjCacheManager::cleanupCache);
         }
-
+        mobjCacheManager.saveCaches();
         info(this, "Shutting down Worker " + miId);
     }
 
@@ -104,42 +104,69 @@ public class IAArchiverWorkerThread implements Runnable {
 
     private boolean loadClasses() {
         try {
+            info(this, "Initializing Cache Manager");
+            Object objCacheManager = Thread.currentThread().getContextClassLoader()
+                    .loadClass(mobjConfiguration.getCacheConfiguration().getImplementingClass())
+                    .getConstructor(CacheConfiguration.class)
+                    .newInstance(mobjConfiguration.getCacheConfiguration());
+            if (objCacheManager instanceof CacheManager) {
+                info(this, "Successfully loaded Cache Manager " + mobjConfiguration.getCacheConfiguration().getImplementingClass());
+                mobjCacheManager = CacheManager.class.cast(objCacheManager);
+            }
+
+            info(this, "Initializing Document Source");
             Object objDocumentSource = Thread.currentThread().getContextClassLoader()
                     .loadClass(mobjConfiguration.getDocumentSource().getImplementingClass())
                     .getConstructor(PluggableObjectConfiguration.class)
                     .newInstance(mobjConfiguration.getDocumentSource());
             if (objDocumentSource instanceof DocumentSource) {
+                info(this, "Successfully loaded Document Source: " + mobjConfiguration.getDocumentSource().getImplementingClass());
                 mobjDocumentSource = DocumentSource.class.cast(objDocumentSource);
             }
 
+            info(this, "Initializing Message Parser");
             Object objMessageParser = Thread.currentThread().getContextClassLoader()
                     .loadClass(mobjConfiguration.getMessageParser().getImplementingClass())
                     .getConstructor(PluggableObjectConfiguration.class)
                     .newInstance(mobjConfiguration.getMessageParser());
             if (objMessageParser instanceof MessageParser) {
+                info(this, "Successfully loaded Message Parser: " + mobjConfiguration.getMessageParser().getImplementingClass());
                 mobjMessageParser = MessageParser.class.cast(objMessageParser);
             }
 
+            info(this, "Initializing Retention Manager");
             Object objRetentionManager = Thread.currentThread().getContextClassLoader()
                     .loadClass(mobjConfiguration.getRetentionManager().getImplementingClass())
                     .getConstructor(RetentionManagerConfiguration.class)
                     .newInstance(mobjConfiguration.getRetentionManager());
             if (objRetentionManager instanceof RetentionManager) {
+                info(this, "Successfully loaded Retention Manager: " + mobjConfiguration.getMessageParser().getImplementingClass());
                 mobjRetentionManager = RetentionManager.class.cast(objRetentionManager);
             }
 
+            info(this, "Initializing SIP Manager");
+            Object objSipManager = Thread.currentThread().getContextClassLoader()
+                    .loadClass(mobjConfiguration.getSipConfiguration().getImplementingClass())
+                    .getConstructor(IASipConfiguration.class)
+                    .newInstance(mobjConfiguration.getSipConfiguration());
+            if (objSipManager instanceof SipManager) {
+                info(this, "Successfully loaded SIP Manager: " + mobjConfiguration.getSipConfiguration().getImplementingClass());
+                mobjSipManager = SipManager.class.cast(objSipManager);
+            }
+
             return mobjDocumentSource != null && mobjMessageParser != null && mobjRetentionManager != null;
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-            error(this, ex);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | NullPointerException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            System.exit(ExceptionHelper.ERROR_OTHER);
         }
         return false;
     }
 
-    public synchronized int getProcessedMessageCounter() {
-        return miProcessedMessages;
+    public synchronized int getProcessedBytes() {
+        return miProcessedBytes;
     }
 
-    public synchronized void resetProcessedMessageCounter() {
-        miProcessedMessages = 0;
+    public synchronized void resetProcessedBytes() {
+        miProcessedBytes = 0;
     }
 }

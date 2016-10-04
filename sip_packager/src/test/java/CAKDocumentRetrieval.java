@@ -1,18 +1,19 @@
-import static org.mockito.Mockito.*;
-
-import com.amplexor.ia.DocumentSource;
-import com.amplexor.ia.MessageParser;
+import com.amplexor.ia.document_source.DocumentSource;
+import com.amplexor.ia.parsing.MessageParser;
 import com.amplexor.ia.cache.CacheManager;
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.ConfigManager;
 import com.amplexor.ia.configuration.SIPPackagerConfiguration;
+import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.ingest.ArchiveManager;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
 import com.amplexor.ia.sip.AMPSipManager;
-import nl.hetcak.dms.CAKMessageParser;
+import nl.hetcak.dms.CAKCacheManager;
+import nl.hetcak.dms.CAKMessageParserUitwijk;
 import nl.hetcak.dms.CAKRetentionManager;
+import nl.hetcak.dms.CAKSipManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,6 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by admjzimmermann on 20-9-2016.
@@ -44,7 +47,7 @@ public class CAKDocumentRetrieval {
     public void setup() {
         mobjConfigManager = new ConfigManager(CONFIG_FILE);
         mobjConfigManager.loadConfiguration();
-        Path objTestDataPath = Paths.get(System.getProperty("user.dir") + "/" + TEST_DATA_FILE);
+        Path objTestDataPath = Paths.get("C:\\Users\\admjzimmermann\\Desktop\\ws\\sip-packager\\sip-packager\\sip_packager\\src\\test\\resources\\testdata.xml");
         StringBuilder objBuilder = new StringBuilder();
         try {
             Files.readAllLines(objTestDataPath).forEach(sTestDataLine -> objBuilder.append(sTestDataLine));
@@ -57,34 +60,35 @@ public class CAKDocumentRetrieval {
         when(mobjDocumentSource.retrieveDocumentData()).thenReturn(msTestData);
 
         SIPPackagerConfiguration objConfig = mobjConfigManager.getConfiguration();
-        mobjMessageParser = new CAKMessageParser(objConfig.getMessageParser());
+        mobjMessageParser = new CAKMessageParserUitwijk(objConfig.getMessageParser());
         mobjRetentionManager = new CAKRetentionManager(objConfig.getRetentionManager());
-        mobjCacheManager = new CacheManager(objConfig.getCacheConfiguration());
-        mobjSipManager = new AMPSipManager(objConfig.getSipConfiguration());
+        mobjCacheManager = new CAKCacheManager(objConfig.getCacheConfiguration());
+        mobjSipManager = new CAKSipManager(objConfig.getSipConfiguration());
         mobjArchiveManager = new ArchiveManager(objConfig.getServerConfiguration());
+        ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfigManager.getConfiguration().getExceptionConfiguration());
     }
 
     @Test
-    public void testRun() throws Exception {
+    public void testMultipleMessages() throws Exception {
+        mobjCacheManager.initializeCache();
         String sDocumentData = mobjDocumentSource.retrieveDocumentData();
-        assertEquals(sDocumentData, msTestData);
+        for(int j = 0; j < 10; j++ ) {
+            for (int i = 0; i < 100; ++i) {
+                IADocument objDocument = mobjMessageParser.parse(sDocumentData).get(1);
+                IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
 
-        IADocument objDocument = mobjMessageParser.parse(sDocumentData).get(0);
-        assertNotNull(objDocument);
-
-        IARetentionClass objRetentionClass = mobjRetentionManager.retrieveRetentionClass(objDocument);
-        assertNotNull(objRetentionClass);
-        assertEquals(objRetentionClass.getName(), "Strorno Al Aanmaning");
-
-        IACache objCache = new IACache(0, objRetentionClass);
-        objCache.add(objDocument);
-        objCache.close();
-
-        Path objSipPath = mobjSipManager.getSIPFile(objCache);
-        assertNotNull(objSipPath);
-
-        assertTrue(mobjArchiveManager.ingestSip(objSipPath.toString()));
-        mobjDocumentSource.postResult(objDocument);
-
+                int iDocId = Integer.parseInt(objDocument.getDocumentId());
+                objDocument.setDocumentId(String.format("%d", (iDocId + (i + ( i * j)))));
+                objDocument.setMetadata("ArchiefDocumentId", objDocument.getDocumentId());
+                mobjCacheManager.add(objDocument, objRetentionClass);
+            }
+            mobjCacheManager.update();
+            for (IACache objCache : mobjCacheManager.getClosedCaches()) {
+                mobjSipManager.getSIPFile(objCache);
+                mobjArchiveManager.ingestSip(objCache.getSipFile().toString());
+                mobjDocumentSource.postResult(objCache);
+                mobjCacheManager.cleanupCache(objCache);
+            }
+        }
     }
 }
