@@ -20,7 +20,6 @@ import java.util.Optional;
  */
 public class MetaDataConsumer implements DocumentSource {
     private PluggableObjectConfiguration mobjConfiguration;
-    private int iCounter = 0;
     private static int BUFFER_SIZE = 4096;
 
     public MetaDataConsumer(PluggableObjectConfiguration objConfiguration) {
@@ -74,21 +73,21 @@ public class MetaDataConsumer implements DocumentSource {
 
     @Override
     public void postResult(IADocument objDocument) {
-
+        //Cannot postback to filesystem
     }
 
     @Override
     public void postResult(IACache objCache) {
-
+        //Cannot postback to filesystem
     }
 
     @Override
     public void initialize() {
-
+        //Nothing to initialize
     }
 
     @Override
     public void shutdown() {
-
+        //Nothing to clean
     }
 }

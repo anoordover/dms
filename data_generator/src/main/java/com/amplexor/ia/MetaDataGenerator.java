@@ -41,20 +41,21 @@ public class MetaDataGenerator {
 
         RandomGenerator rg = new RandomGenerator();
         for (int i = 0; i < GENERATEAMOUNT; i++) {
-            XmlDocument doc = new XmlDocument(
-                    rg.generateArchiefDocumentId(),
-                    rg.generateArchiefPersoonNummer(),
-                    rg.generatePersoonBurgersservicenummer(),
-                    rg.generateRandomEnum(ArchiefDocumenttitel.class),
-                    rg.generateRandomEnum(ArchiefDocumentsoort.class),
-                    rg.generateRandomEnum(ArchiefRegeling.class),
-                    rg.generateDocumentKenmerkNr(),
-                    rg.generateVerzendDag(),
-                    rg.generateRandomEnum(ArchiefDocumenttype.class),
-                    rg.generateRandomEnum(ArchiefDocumentstatus.class),
-                    rg.generateVerzendDag().getYear(), TransformPDF.encodeBase64(PDFPATH + rg.generateIntOneToSix()));
+            XmlDocument objDocument = new XmlDocument();
+            objDocument.setArchiefDocumentId(rg.generateArchiefDocumentId());
+            objDocument.setArchiefPersoonsnummer(rg.generateArchiefPersoonNummer());
+            objDocument.setPersoonBurgerservicenummer(rg.generatePersoonBurgersservicenummer());
+            objDocument.setArchiefDocumenttitel(rg.generateRandomEnum(ArchiefDocumenttitel.class));
+            objDocument.setArchiefDocumentsoort(rg.generateRandomEnum(ArchiefDocumentsoort.class));
+            objDocument.setArchiefRegeling(rg.generateRandomEnum(ArchiefRegeling.class));
+            objDocument.setArchiefDocumentkenmerk(rg.generateDocumentKenmerkNr());
+            objDocument.setVerzenddag(rg.generateVerzendDag());
+            objDocument.setArchiefDocumenttype(rg.generateRandomEnum(ArchiefDocumenttype.class));
+            objDocument.setArchiefDocumentstatus(rg.generateRandomEnum(ArchiefDocumentstatus.class));
+            objDocument.setRegelingjaar(rg.generateVerzendDag().getYear());
+            objDocument.setPayloadPdf(TransformPDF.encodeBase64(PDFPATH + rg.generateIntOneToSix()));
 
-            FileWriter.toXml(RESULTPATH, String.valueOf(i), doc);
+            FileWriter.toXml(RESULTPATH, String.valueOf(i), objDocument);
         }
     }
 
