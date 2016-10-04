@@ -29,6 +29,8 @@ public class ArchiveManagerTest {
         when(iasc.getGatewayPort()).thenReturn((short)8080);
         ArchiveManager am = new ArchiveManager(iasc);
         am.login();
+
+        //// TODO: 4-10-2016 add test assertion
         //test needs to be validated, when is am.login() successful
     }
 
