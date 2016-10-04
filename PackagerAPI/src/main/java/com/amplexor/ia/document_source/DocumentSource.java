@@ -25,4 +25,14 @@ public interface DocumentSource {
      * @param objCache The cache whose status should be posted
      */
     void postResult(IACache objCache);
+
+    /**
+     * This method will initialize the document source, such as setting up connections
+     */
+    void initialize();
+
+    /**
+     * This method will shutdown the document source by, for example closing open connections.
+     */
+    void shutdown();
 }

@@ -34,14 +34,14 @@ public class MetaDataGenerator {
             }
         }
 
-        if(!Files.exists(objPdfPath)) {
+        if (!Files.exists(objPdfPath)) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, new Exception("PDF Path does not exist, Exiting"));
             System.exit(ExceptionHelper.ERROR_OTHER);
         }
 
         RandomGenerator rg = new RandomGenerator();
         for (int i = 0; i < GENERATEAMOUNT; i++) {
-            xmlDocument doc = new xmlDocument(
+            XmlDocument doc = new XmlDocument(
                     rg.generateArchiefDocumentId(),
                     rg.generateArchiefPersoonNummer(),
                     rg.generatePersoonBurgersservicenummer(),
@@ -54,7 +54,7 @@ public class MetaDataGenerator {
                     rg.generateRandomEnum(ArchiefDocumentstatus.class),
                     rg.generateVerzendDag().getYear(), TransformPDF.encodeBase64(PDFPATH + rg.generateIntOneToSix()));
 
-            FileWriter.writeTestDataFile(RESULTPATH, String.valueOf(i), doc);
+            FileWriter.toXml(RESULTPATH, String.valueOf(i), doc);
         }
     }
 

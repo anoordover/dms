@@ -52,6 +52,7 @@ class IAArchiverWorkerThread implements Runnable {
         ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfiguration.getExceptionConfiguration());
         if (loadClasses()) {
             try {
+                mobjDocumentSource.initialize();
                 Thread.currentThread().setName("IAWorker-" + miId);
                 ExceptionHelper.getExceptionHelper().setDocumentSource(mobjDocumentSource);
                 info(this, "Initializing Document Caches");
@@ -93,7 +94,14 @@ class IAArchiverWorkerThread implements Runnable {
             });
             mobjCacheManager.getClosedCaches().forEach(mobjCacheManager::cleanupCache);
         }
-        mobjCacheManager.saveCaches();
+        if (mobjCacheManager != null) {
+            mobjCacheManager.saveCaches();
+        }
+
+        if (mobjDocumentSource != null) {
+            mobjDocumentSource.shutdown();
+        }
+
         info(this, "Shutting down Worker " + miId);
     }
 

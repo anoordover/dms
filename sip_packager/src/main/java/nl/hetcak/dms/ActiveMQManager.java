@@ -15,9 +15,6 @@ import static com.amplexor.ia.Logger.debug;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class ActiveMQManager implements DocumentSource {
-    private static final String SSL_CONFIG_TRUSTSTORE = "trustStore";
-    private static final String SSL_CONFIG_TRUSTSTOREPASS = "trustStorePassword";
-    private static final String SSL_CONFIG_BROKER_URL = "brokerURL";
 
     ActiveMQSslConnectionFactory mobjConnectionFactory;
     Connection mobjConnection;
@@ -27,10 +24,10 @@ public class ActiveMQManager implements DocumentSource {
         mobjConfiguration = objConfiguration;
         mobjConnectionFactory = new ActiveMQSslConnectionFactory();
         try {
-            mobjConnectionFactory.setTrustStore(objConfiguration.getParameter(SSL_CONFIG_TRUSTSTORE));
+            mobjConnectionFactory.setTrustStore(objConfiguration.getParameter("truststore"));
             mobjConnectionFactory.setTrustStoreType("JKS");
-            mobjConnectionFactory.setTrustStorePassword(objConfiguration.getParameter(SSL_CONFIG_TRUSTSTOREPASS));
-            mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter(SSL_CONFIG_BROKER_URL));
+            mobjConnectionFactory.setTrustStorePassword(objConfiguration.getParameter("truststore_password"));
+            mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter("broker"));
         } catch (Exception ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_TRUSTSTORE, ex);
         }
@@ -74,6 +71,16 @@ public class ActiveMQManager implements DocumentSource {
             mobjConnection.start();
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNABLE_TO_CONNECT, ex);
+        }
+    }
+
+    public void shutdown() {
+        try {
+            if (mobjConnection != null) {
+                mobjConnection.close();
+            }
+        } catch (JMSException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
     }
 

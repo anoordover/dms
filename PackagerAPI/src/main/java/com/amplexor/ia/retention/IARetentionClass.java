@@ -10,9 +10,6 @@ public abstract class IARetentionClass {
     @XStreamAlias("name")
     private String msName;
 
-    @XStreamAlias("policy")
-    private String msPolicy;
-
     public IARetentionClass(String sName) {
         this.msName = sName;
     }
@@ -21,7 +18,4 @@ public abstract class IARetentionClass {
         return msName;
     }
 
-    public String getPolicy() {
-        return msPolicy;
-    }
 }

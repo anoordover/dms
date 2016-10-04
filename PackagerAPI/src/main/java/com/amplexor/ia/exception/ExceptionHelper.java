@@ -63,8 +63,7 @@ public class ExceptionHelper {
     private DocumentSource mobjDocumentSource;
 
     /*Private constructor to hide the implicit public one*/
-    private ExceptionHelper() {
-    }
+    private ExceptionHelper() {}
 
     /**
      * Gets the instance of the {@link ExceptionHelper} for the current thread

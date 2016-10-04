@@ -81,4 +81,14 @@ public class MetaDataConsumer implements DocumentSource {
     public void postResult(IACache objCache) {
 
     }
+
+    @Override
+    public void initialize() {
+
+    }
+
+    @Override
+    public void shutdown() {
+
+    }
 }

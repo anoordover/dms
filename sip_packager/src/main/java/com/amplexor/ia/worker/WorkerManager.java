@@ -54,7 +54,7 @@ public class WorkerManager {
                     int iTotalProcessed = getProcessedBytes();
                     if (iTotalProcessed < objConfiguration.getWorkerConfiguration().getWorkerShutdownThreshold() && miCurrentWorker > 0) {
                         stopWorker();
-                    } else if (iTotalProcessed > objConfiguration.getWorkerConfiguration().getWorkerStartupThreshold() && miCurrentWorker < objConfiguration.getWorkerConfiguration().getMaxWorkerThreads() || miCurrentWorker == -1) {
+                    } else if (iTotalProcessed > objConfiguration.getWorkerConfiguration().getWorkerStartupThreshold() && miCurrentWorker < (objConfiguration.getWorkerConfiguration().getMaxWorkerThreads() - 1) || miCurrentWorker == -1) {
                         startWorker();
                     }
                     lMillisecondsSinceLastCheck = System.currentTimeMillis();
