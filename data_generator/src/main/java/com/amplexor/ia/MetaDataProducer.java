@@ -15,6 +15,10 @@ import java.util.Enumeration;
  * Created by admjzimmermann on 4-10-2016.
  */
 public class MetaDataProducer {
+    private MetaDataProducer() { //Hide implicit public ctor
+
+    }
+
     public static void main(String[] cArgs) {
         ConfigManager objConfigManager = new ConfigManager("IAArchiver.xml");
         objConfigManager.loadConfiguration();
@@ -62,18 +66,19 @@ public class MetaDataProducer {
             objProducer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
             for (int i = 0; i < Integer.parseInt(objConfigManager.getConfiguration().getDocumentSource().getParameter("output_amount")); ++i) {
                 RandomGenerator rg = new RandomGenerator();
-                XmlDocument objDocument = new XmlDocument(
-                        rg.generateArchiefDocumentId(),
-                        rg.generateArchiefPersoonNummer(),
-                        rg.generatePersoonBurgersservicenummer(),
-                        rg.generateRandomEnum(ArchiefDocumenttitel.class),
-                        rg.generateRandomEnum(ArchiefDocumentsoort.class),
-                        rg.generateRandomEnum(ArchiefRegeling.class),
-                        rg.generateDocumentKenmerkNr(),
-                        rg.generateVerzendDag(),
-                        rg.generateRandomEnum(ArchiefDocumenttype.class),
-                        rg.generateRandomEnum(ArchiefDocumentstatus.class),
-                        rg.generateVerzendDag().getYear(), TransformPDF.encodeBase64(objConfigManager.getConfiguration().getDocumentSource().getParameter("pdf_path") + File.separatorChar + rg.generateIntOneToSix()));
+                XmlDocument objDocument = new XmlDocument();
+                objDocument.setArchiefDocumentId(rg.generateArchiefDocumentId());
+                objDocument.setArchiefPersoonsnummer(rg.generateArchiefPersoonNummer());
+                objDocument.setPersoonBurgerservicenummer(rg.generatePersoonBurgersservicenummer());
+                objDocument.setArchiefDocumenttitel(rg.generateRandomEnum(ArchiefDocumenttitel.class));
+                objDocument.setArchiefDocumentsoort(rg.generateRandomEnum(ArchiefDocumentsoort.class));
+                objDocument.setArchiefRegeling(rg.generateRandomEnum(ArchiefRegeling.class));
+                objDocument.setArchiefDocumentkenmerk(rg.generateDocumentKenmerkNr());
+                objDocument.setVerzenddag(rg.generateVerzendDag());
+                objDocument.setArchiefDocumenttype(rg.generateRandomEnum(ArchiefDocumenttype.class));
+                objDocument.setArchiefDocumentstatus(rg.generateRandomEnum(ArchiefDocumentstatus.class));
+                objDocument.setRegelingjaar(rg.generateVerzendDag().getYear());
+                objDocument.setPayloadPdf(TransformPDF.encodeBase64(objConfigManager.getConfiguration().getDocumentSource().getParameter("pdf_path") + File.separatorChar + rg.generateIntOneToSix()));
 
                 TextMessage objMessage = objSession.createTextMessage(objDocument.getXml());
                 Logger.info(MetaDataProducer.class, "Generated Document With ID:" + objDocument.getArchiefDocumentId());

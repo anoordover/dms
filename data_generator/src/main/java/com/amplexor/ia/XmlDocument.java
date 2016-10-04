@@ -42,6 +42,10 @@ public class XmlDocument {
     @XStreamAlias("PayloadPdf")
     private String msPayloadPdf;
 
+    public XmlDocument() {
+        mobjMetaData = new MetaData();
+    }
+
     public void setArchiefDocumentId(long lArchiefDocumentId) {
         mobjMetaData.mlArchiefDocumentId = lArchiefDocumentId;
     }

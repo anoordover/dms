@@ -7,7 +7,6 @@ import com.amplexor.ia.utils.FileWriter;
 import com.amplexor.ia.utils.RandomGenerator;
 import com.amplexor.ia.utils.TransformPDF;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +20,9 @@ public class MetaDataGenerator {
     private static final String RESULTPATH = "C:\\Users\\zimmermannj\\Desktop\\CAK\\data\\";
     private static final int GENERATEAMOUNT = 2000;
 
+    private MetaDataGenerator() { //Hide implicit public constructor
+
+    }
 
     public static void main(String[] cArgs) {
         ExceptionHelper.getExceptionHelper().setExceptionConfiguration(new ExceptionConfiguration());

@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 public class MetaDataConsumer implements DocumentSource {
     private PluggableObjectConfiguration mobjConfiguration;
-    private static int BUFFER_SIZE = 4096;
+    private static final int BUFFER_SIZE = 4096;
 
     public MetaDataConsumer(PluggableObjectConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
