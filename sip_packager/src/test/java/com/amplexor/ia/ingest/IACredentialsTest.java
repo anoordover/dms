@@ -1,5 +1,6 @@
 package com.amplexor.ia.ingest;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -63,12 +64,12 @@ public class IACredentialsTest {
         assertTrue(iactest.hasExpired());
     }
 
-//    @Test
+    @Ignore
     public void getLoginQuery() throws Exception {
 
     }
 
-//    @Test
+    @Ignore
     public void getRefreshQuery() throws Exception {
 
     }
