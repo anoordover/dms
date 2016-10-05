@@ -1,5 +1,6 @@
 package com.amplexor.ia.worker;
 
+import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.parsing.MessageParser;
 import com.amplexor.ia.cache.CacheManager;
@@ -81,21 +82,21 @@ class IAArchiverWorkerThread implements Runnable {
                     debug(this, "Retrieved document with id: " + objDocument.getDocumentId());
                     try {
                         mobjCacheManager.add(objDocument, mobjRetentionManager.retrieveRetentionClass(objDocument));
+                        mobjCacheManager.saveCaches();
                     } catch (IllegalArgumentException ex) {
-                        ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNKNOWN_RETENTION, objDocument, ex);
+                        IADocumentReference objReference = new IADocumentReference(objDocument.getDocumentId(), null);
+                        ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNKNOWN_RETENTION, objReference, ex);
                     }
                 });
             }
             mobjCacheManager.update();
             mobjCacheManager.getClosedCaches().iterator().forEachRemaining(objCache -> {
-                if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache.getSipFile().toString())) {
+                if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache)) {
                     info(this, "Successfully Ingested SIP " + objCache.getSipFile().toString());
+                    mobjDocumentSource.postResult(objCache.getContents());
+                    mobjCacheManager.cleanupCache(objCache);
                 }
             });
-            mobjCacheManager.getClosedCaches().forEach(mobjCacheManager::cleanupCache);
-        }
-        if (mobjCacheManager != null) {
-            mobjCacheManager.saveCaches();
         }
 
         mobjDocumentSource.shutdown();

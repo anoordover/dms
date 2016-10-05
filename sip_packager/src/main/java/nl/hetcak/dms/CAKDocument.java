@@ -12,7 +12,7 @@ import java.util.*;
  * Created by admjzimmermann on 7-9-2016.
  */
 public class CAKDocument extends IADocument {
-    private static final String KEY_ATTACHMENT = "Attachement";
+    public static final String KEY_ATTACHMENT = "Attachment";
 
     @XStreamAlias("MetaData")
     @XStreamConverter(ParameterConverter.class)
@@ -57,7 +57,10 @@ public class CAKDocument extends IADocument {
             lReturn += (objEntry.getKey().length() * 2) + 5;
             lReturn += objEntry.getValue().length();
         }
-        lReturn += msPayload.length();
+
+        if (msPayload != null) {
+            lReturn += msPayload.length();
+        }
 
         return lReturn;
     }

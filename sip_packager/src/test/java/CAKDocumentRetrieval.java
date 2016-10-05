@@ -85,8 +85,8 @@ public class CAKDocumentRetrieval {
             mobjCacheManager.update();
             for (IACache objCache : mobjCacheManager.getClosedCaches()) {
                 mobjSipManager.getSIPFile(objCache);
-                mobjArchiveManager.ingestSip(objCache.getSipFile().toString());
-                mobjDocumentSource.postResult(objCache);
+                mobjArchiveManager.ingestSip(objCache);
+                mobjDocumentSource.postResult(objCache.getContents());
                 mobjCacheManager.cleanupCache(objCache);
             }
         }

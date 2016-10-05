@@ -2,7 +2,9 @@ package com.amplexor.ia.cache;
 
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
+import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,13 +31,22 @@ public class IACache {
     private IARetentionClass mobjRetentionClass;
 
     @XStreamAlias("contents")
-    private List<IADocument> mcContents;
+    private List<IADocumentReference> mcContents;
 
     @XStreamAlias("sip_file")
     private String msSipFile;
 
     @XStreamAlias("document_identifier")
     private String msDocumentIdentifier;
+
+    @XStreamAlias("document_element_name")
+    private String msDocumentElementName;
+
+    @XStreamAlias("document_class")
+    private String msDocumentClass;
+
+    @XStreamAlias("target_application")
+    private String msTargetApplication;
 
     public IACache(int iId, IARetentionClass objRetentionClass) {
         miId = iId;
@@ -45,8 +56,8 @@ public class IACache {
         mcContents = new ArrayList<>();
     }
 
-    public void add(IADocument objDocument) {
-        mcContents.add(objDocument);
+    public void add(IADocumentReference objReference) {
+        mcContents.add(objReference);
     }
 
     public boolean isClosed() {
@@ -73,7 +84,7 @@ public class IACache {
         return mobjRetentionClass;
     }
 
-    public List<IADocument> getContents() {
+    public List<IADocumentReference> getContents() {
         return Collections.unmodifiableList(mcContents);
     }
 
@@ -92,4 +103,10 @@ public class IACache {
     public void setDocumentIdentifier(String sDocumentIdentifier) {
         msDocumentIdentifier = sDocumentIdentifier;
     }
+
+    public void setTargetApplication(String sTargetApplication) {
+        msTargetApplication = sTargetApplication;
+    }
+
+    public String getTargetApplication() {return msTargetApplication;}
 }

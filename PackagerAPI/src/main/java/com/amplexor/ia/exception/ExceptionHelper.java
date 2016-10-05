@@ -1,10 +1,12 @@
 package com.amplexor.ia.exception;
 
 import com.amplexor.ia.cache.IACache;
+import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.configuration.ExceptionConfiguration;
 import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.metadata.IADocument;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -116,10 +118,11 @@ public class ExceptionHelper {
      * @param objDocument  The IADocument whose error should be set (For use by {@link DocumentSource}.postResult({@link IADocument})_
      * @param objException The exception associated with this error code
      */
-    public synchronized void handleException(int iCode, IADocument objDocument, Exception objException) {
+    public synchronized void handleException(int iCode, IADocumentReference objDocument, Exception objException) {
         if (mobjExceptionConfiguration != null) {
             AMPError objError = mobjExceptionConfiguration.getError(iCode);
-            objDocument.setError(objError.getErrorText());
+            objDocument.setErrorCode(iCode);
+            objDocument.setErrorMessage(objError.getErrorText());
             executeHandlers(objError, objDocument, objException);
         } else {
             fatal(this, "No ExceptionConfiguration, Exiting");
@@ -136,8 +139,9 @@ public class ExceptionHelper {
      */
     public synchronized void handleException(int iCode, IACache objCache, Exception objException) {
         AMPError objError = mobjExceptionConfiguration.getError(iCode);
-        for (IADocument objDocument : objCache.getContents()) {
-            objDocument.setError(objError.getErrorText());
+        for (IADocumentReference objDocument : objCache.getContents()) {
+            objDocument.setErrorCode(iCode);
+            objDocument.setErrorMessage(objError.getErrorText());
         }
         executeHandlers(objError, objCache, objException);
     }
@@ -157,11 +161,11 @@ public class ExceptionHelper {
                     error(ExceptionHelper.this, "DocumentSource or IADocument was not provided to error handler");
                     return;
                 }
-
+                List<IADocumentReference> cDocuments = new ArrayList<>();
                 if(objIAItem instanceof IACache) {
-                    mobjDocumentSource.postResult((IACache)objIAItem);
-                } else if (objIAItem instanceof IADocument) {
-                    mobjDocumentSource.postResult((IADocument)objIAItem);
+                    cDocuments.addAll(((IACache) objIAItem).getContents());
+                } else if (objIAItem instanceof IADocumentReference) {
+                    cDocuments.add((IADocumentReference)objIAItem);
                 }
 
             } else if ("log_error".equals(sHandler)) {

@@ -5,12 +5,12 @@ import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -87,12 +87,34 @@ public class AMPCacheManager implements CacheManager {
     public void add(IADocument objDocument, IARetentionClass objRetentionClass) {
         debug(this, "Saving IADocument " + objDocument.getDocumentId());
         update();
-        IACache objCache = getCache(objRetentionClass);
-        if (objCache != null) {
-            objCache.add(objDocument);
+        try {
+            IACache objCache = getCache(objRetentionClass);
+            if (objCache != null) {
+                objCache.add(new IADocumentReference(objDocument.getDocumentId(), saveDocument(objCache, objDocument)));
+            }
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
 
         debug(this, "IADocument " + objDocument.getDocumentId() + " Saved");
+    }
+
+    protected String saveDocument(IACache objCache, IADocument objDocument) throws IOException {
+        Path objDocumentPath = Paths.get(String.format("%s/%d/%s.xml", mobjBasePath.toString(), objCache.getId(), objDocument.getDocumentId()));
+        XStream objXStream = new XStream(new DomDriver("UTF-8"));
+        Class<?> objClass = IADocument.class;
+        try {
+            objClass = Thread.currentThread().getContextClassLoader().loadClass(mobjConfiguration.getParameter("document_class"));
+        } catch (ClassNotFoundException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        }
+        objXStream.alias(mobjConfiguration.getParameter("document_element_name"), objClass);
+        objXStream.processAnnotations(objClass);
+        try (OutputStream objOutputStream = Files.newOutputStream(objDocumentPath)) {
+            objXStream.toXML(objDocument, objOutputStream);
+        }
+        saveCache(objCache);
+        return objDocumentPath.toString();
     }
 
     /**
@@ -101,7 +123,7 @@ public class AMPCacheManager implements CacheManager {
      * @param objRetentionClass The {@link IARetentionClass} to be associated with the {@link IACache}
      * @return
      */
-    protected IACache getCache(IARetentionClass objRetentionClass) {
+    protected IACache getCache(IARetentionClass objRetentionClass) throws IOException {
         debug(this, "Getting Cache for IARetentionClass " + objRetentionClass.getName());
         for (IACache objCache : mcCaches) {
             if (objCache.getRetentionClass().equals(objRetentionClass) && !objCache.isClosed()) {
@@ -112,6 +134,8 @@ public class AMPCacheManager implements CacheManager {
 
         //No Open Cache found, create a new cache for this retention class
         IACache objCreate = new IACache(miNextId++, objRetentionClass);
+        Path objCachePath = Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCreate.getId()));
+        Files.createDirectories(objCachePath);
         mcCaches.add(objCreate);
         debug(this, "Returning Cache " + objCreate.getId());
 
@@ -159,7 +183,11 @@ public class AMPCacheManager implements CacheManager {
         debug(this, "Cleaning Cache " + objCache.getId());
         try {
             if (objCache.isClosed()) {
-                Files.deleteIfExists(Paths.get(String.format("%s/%s/%d", mobjBasePath.toString(), objCache.getRetentionClass().getName(), objCache.getId())));
+                for (IADocumentReference objReference : objCache.getContents()) {
+                    Files.delete(Paths.get(objReference.getFile()));
+                }
+                Files.deleteIfExists(Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCache.getId())));
+                Files.deleteIfExists(Paths.get(String.format("%s/IACache-%d.xml", mobjSavePath.toString(), objCache.getId())));
                 mcCaches.remove(objCache);
             }
             info(this, "Cache " + objCache.getId() + " Has Been Deleted");
@@ -175,14 +203,29 @@ public class AMPCacheManager implements CacheManager {
     @Override
     public void saveCaches() {
         for (IACache objCache : mcCaches) {
-            try (OutputStream objSaveStream = Files.newOutputStream(Paths.get(mobjSavePath.toString() + File.separatorChar + "IACache-" + objCache.getId() + ".xml"))) {
-                XStream objXStream = new XStream(new StaxDriver());
-                objXStream.alias("IACache", IACache.class);
-                objXStream.processAnnotations(IACache.class);
-                objXStream.toXML(objCache, objSaveStream);
-            } catch (IOException ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            saveCache(objCache);
+        }
+    }
+
+    public void saveCache(IACache objCache) {
+        Path objSave = Paths.get(mobjSavePath.toString() + File.separatorChar + "IACache-" + objCache.getId() + ".xml");
+        Path objBackup = Paths.get(objSave.toString() + ".bak");
+        try {
+            if (Files.exists(objSave)) {
+                Files.deleteIfExists(objBackup);
+                objSave.toFile().renameTo(objBackup.toFile());
             }
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        }
+
+        try (OutputStream objSaveStream = Files.newOutputStream(objSave)) {
+            XStream objXStream = new XStream(new StaxDriver());
+            objXStream.alias("IACache", IACache.class);
+            objXStream.processAnnotations(IACache.class);
+            objXStream.toXML(objCache, objSaveStream);
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
     }
 

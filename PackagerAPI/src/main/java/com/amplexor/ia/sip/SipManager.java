@@ -1,6 +1,7 @@
 package com.amplexor.ia.sip;
 
 import com.amplexor.ia.cache.IACache;
+import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 
@@ -22,5 +23,5 @@ public interface SipManager {
      * @param objRetentionClass The retention class that applies to objDocument
      * @return a boolean value indication whether creation was successful
      */
-    boolean getSIPFile(IADocument objDocument, IARetentionClass objRetentionClass);
+    boolean getSIPFile(IADocumentReference objDocument, IARetentionClass objRetentionClass);
 }

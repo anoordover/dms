@@ -1,5 +1,6 @@
 package com.amplexor.ia.ingest;
 
+import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.IAServerConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.util.MultipartUtility;
@@ -43,35 +44,35 @@ public class ArchiveManager {
     /**
      * Executes all the required steps for ingesting a SIP file (Retrieve tenant, get associated application, upload the SIP file and ingest the generated AIP)
      *
-     * @param sSipFile The location of the SIP file on the local filesystem
+     * @param objCache The cache containing a reference to the SIP file location and the target application
      * @return whether or not ingesting the SIP file was successful.
      */
-    public boolean ingestSip(String sSipFile) {
-        info(this, "Ingesting SIP " + sSipFile);
+    public boolean ingestSip(IACache objCache) {
+        info(this, "Ingesting SIP " + objCache.getSipFile().toString());
         boolean bReturn = false;
         authenticate();
 
 
-        info(this, "Sending SIP file" + sSipFile + " to IA");
-        IAObject objAip = getAip(sSipFile);
+        info(this, "Sending SIP file" + objCache.getSipFile().toString() + " to IA");
+        IAObject objAip = getAip(objCache);
         if (objAip != null && !"".equals(objAip.getUUID())) {
             try {
-                info(this, "SIP file " + sSipFile + " was received by IA");
+                info(this, "SIP file " + objCache.getSipFile().toString() + " was received by IA");
                 debug(this, "Ingesting AIP with UUID: " + objAip.getUUID());
                 IAObject objResult = IAObject.fromJSONObject(restCall(objAip.getLink(IA_ENDPOINT_INGEST), "PUT"));
                 if (objResult != null && !"".equals(objResult.getUUID())) {
                     info(this, "Successfully ingested AIP with UUID: " + objAip.getUUID() + ", Result: " + objResult.getName());
                     bReturn = true;
                 } else {
-                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INGESTION_ERROR, new Exception(String.format("Error ingesting object[Name: %s, UUID: %s]", objAip.getName(), objAip.getUUID())));
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INGESTION_ERROR, objCache, new Exception(String.format("Error ingesting object[Name: %s, UUID: %s]", objAip.getName(), objAip.getUUID())));
                 }
             } catch (IllegalArgumentException ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INGESTION_ERROR, ex);
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INGESTION_ERROR, objCache, ex);
             } catch (ParseException | IOException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }
         } else {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_ERROR_UPLOADING_CONTENT, new Exception("InfoArchive returned a null AIP object"));
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_ERROR_UPLOADING_CONTENT, objCache, new Exception("InfoArchive returned a null AIP object"));
         }
         return bReturn;
     }
@@ -79,10 +80,10 @@ public class ArchiveManager {
     /**
      * Helper method for executing all the prerequisite steps as well as uploading a SIP file to the InfoArchive REST API
      *
-     * @param sSipFile The location of the SIP file on the local filesystem
+     * @param objCache The cache containing a reference to the SIP file location and the target application
      * @return a {@link IAObject} containing the AIP that was created for the SIP file
      */
-    private IAObject getAip(String sSipFile) {
+    private IAObject getAip(IACache objCache) {
         try {
             IAObject objInfoArchiveApplication = null;
             debug(this, "Fetching tenant " + mobjConfiguration.getIngestTenant());
@@ -92,18 +93,20 @@ public class ArchiveManager {
             }
             if (objInfoArchiveTenant.getName() != null) {
                 debug(this, "Fetching Application" + mobjConfiguration.getIAApplicationName());
-                objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), mobjConfiguration.getIAApplicationName());
+                objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), objCache.getTargetApplication());
             }
 
             if (objInfoArchiveApplication != null && !"".equals(objInfoArchiveApplication.getUUID())) {
                 info(this, "Found application with UUID: " + objInfoArchiveApplication.getUUID());
                 debug(this, "Uploading AIP");
-                return IAObject.fromJSONObject(receive(objInfoArchiveApplication, sSipFile));
+                return IAObject.fromJSONObject(receive(objInfoArchiveApplication, objCache.getSipFile().toString()));
             }
         } catch (IOException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_ERROR_UPLOADING_CONTENT, ex);
         } catch (ParseException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        } catch (IllegalArgumentException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNKNOWN_RETENTION, ex);
         }
 
         return null;
@@ -243,7 +246,12 @@ public class ArchiveManager {
         }
 
         try (BufferedReader oReader = new BufferedReader(new InputStreamReader(objInputSource))) {
-            objReturn = (JSONObject) new JSONParser().parse(oReader);
+            StringBuilder objBuilder = new StringBuilder();
+            String sRead;
+            while ((sRead = oReader.readLine()) != null) {
+                objBuilder.append(sRead);
+            }
+            objReturn = (JSONObject) new JSONParser().parse(objBuilder.toString());
         }
         checkErrors(objReturn);
         return objReturn;

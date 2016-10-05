@@ -1,5 +1,6 @@
 package com.amplexor.ia;
 
+import com.amplexor.ia.exception.ExceptionHelper;
 import org.apache.log4j.Level;
 
 /**
@@ -33,7 +34,7 @@ public class Logger {
 
     public static void error(Object objCaller, Object objMessage) {
         org.apache.log4j.Logger objLogger = org.apache.log4j.Logger.getLogger(objCaller.getClass());
-        objLogger.log(Logger.class.getCanonicalName(), Level.ERROR, objMessage, null);
+        objLogger.log(ExceptionHelper.class.getCanonicalName(), Level.ERROR, objMessage, null);
     }
 
     public static void fatal(Object objCaller, Object objMessage) {

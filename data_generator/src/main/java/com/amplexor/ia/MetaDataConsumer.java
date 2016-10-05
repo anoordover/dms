@@ -1,6 +1,7 @@
 package com.amplexor.ia;
 
 import com.amplexor.ia.cache.IACache;
+import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.exception.ExceptionHelper;
@@ -13,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,6 +41,11 @@ public class MetaDataConsumer implements DocumentSource {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
         return sReturn;
+    }
+
+    @Override
+    public void postResult(List<IADocumentReference> objCache) {
+        //Cannot post back to filesystem
     }
 
     private String readEntry(Path objEntryPath) {
@@ -71,15 +78,6 @@ public class MetaDataConsumer implements DocumentSource {
         return "";
     }
 
-    @Override
-    public void postResult(IADocument objDocument) {
-        //Cannot postback to filesystem
-    }
-
-    @Override
-    public void postResult(IACache objCache) {
-        //Cannot postback to filesystem
-    }
 
     @Override
     public void initialize() {
