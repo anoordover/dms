@@ -44,23 +44,27 @@ public class MetaDataProducer {
                 objEnum.nextElement();
             }
             Logger.info(MetaDataProducer.class, "Found " + iCount + "Messages in Queue: " + objConfigManager.getConfiguration().getDocumentSource().getParameter("input_queue_name"));
-            Logger.info(MetaDataProducer.class, "Emptying Queue");
-            MessageConsumer objConsumer = objSession.createConsumer(objDestination);
-            for (int iMsg = 0; iMsg < iCount; ++iMsg) {
-                objConsumer.receive(500);
-            }
-            objConsumer.close();
 
-            iCount = 0;
-            objEnum = objBrowser.getEnumeration();
-            while (objEnum.hasMoreElements()) {
-                iCount++;
-                objEnum.nextElement();
+            if (objConfigManager.getConfiguration().getDocumentSource().getParameter("queue_action").equals("empty")) {
+                Logger.info(MetaDataProducer.class, "Emptying Queue");
+                MessageConsumer objConsumer = objSession.createConsumer(objDestination);
+                for (int iMsg = 0; iMsg < iCount; ++iMsg) {
+                    objConsumer.receive(500);
+                }
+                objConsumer.close();
+
+                iCount = 0;
+                objEnum = objBrowser.getEnumeration();
+                while (objEnum.hasMoreElements()) {
+                    iCount++;
+                    objEnum.nextElement();
+                }
+
+                if (iCount == 0) {
+                    Logger.info(MetaDataProducer.class, "Queue Empty, Feeding Random MetaData now.");
+                }
             }
 
-            if (iCount == 0) {
-                Logger.info(MetaDataProducer.class, "Queue Empty, Feeding Random MetaData now.");
-            }
 
             MessageProducer objProducer = objSession.createProducer(objDestination);
             objProducer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);

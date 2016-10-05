@@ -28,7 +28,7 @@ public class ArchiveManagerTest {
         when(iasc.getGatewayHost()).thenReturn("cwno0427.cak-bz.local");
         when(iasc.getGatewayPort()).thenReturn((short)8080);
         ArchiveManager am = new ArchiveManager(iasc);
-        am.login();
+        assertTrue(am.authenticate());
         //test needs to be validated, when is am.login() successful
     }
 

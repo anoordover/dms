@@ -55,7 +55,8 @@
 
       <!-- Data Generator -->
       <pdf_path>C:\Users\admjzimmermann\Desktop\ws\dms\resources</pdf_path>
-      <output_amount>500</output_amount>
+      <output_amount>1</output_amount>
+      <queue_action>nop</queue_action>
 
     </custom_parameters>
   </document_source>
@@ -106,7 +107,7 @@
     </retention_classes>
   </retention_manager>
   <message_parser>
-    <implementing_class>nl.hetcak.dms.CAKMessageParserUitwijk</implementing_class>
+    <implementing_class>nl.hetcak.dms.CAKMessageParserFallback</implementing_class>
   </message_parser>
   <exceptions>
     <error>

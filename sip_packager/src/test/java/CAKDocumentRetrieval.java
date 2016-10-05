@@ -1,17 +1,17 @@
-import com.amplexor.ia.document_source.DocumentSource;
-import com.amplexor.ia.parsing.MessageParser;
 import com.amplexor.ia.cache.CacheManager;
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.ConfigManager;
 import com.amplexor.ia.configuration.SIPPackagerConfiguration;
+import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.ingest.ArchiveManager;
 import com.amplexor.ia.metadata.IADocument;
+import com.amplexor.ia.parsing.MessageParser;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.retention.RetentionManager;
 import com.amplexor.ia.sip.AMPSipManager;
 import nl.hetcak.dms.CAKCacheManager;
-import nl.hetcak.dms.CAKMessageParserUitwijk;
+import nl.hetcak.dms.CAKMessageParserFallback;
 import nl.hetcak.dms.CAKRetentionManager;
 import nl.hetcak.dms.CAKSipManager;
 import org.junit.Before;
@@ -22,7 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -60,7 +60,7 @@ public class CAKDocumentRetrieval {
         when(mobjDocumentSource.retrieveDocumentData()).thenReturn(msTestData);
 
         SIPPackagerConfiguration objConfig = mobjConfigManager.getConfiguration();
-        mobjMessageParser = new CAKMessageParserUitwijk(objConfig.getMessageParser());
+        mobjMessageParser = new CAKMessageParserFallback(objConfig.getMessageParser());
         mobjRetentionManager = new CAKRetentionManager(objConfig.getRetentionManager());
         mobjCacheManager = new CAKCacheManager(objConfig.getCacheConfiguration());
         mobjSipManager = new CAKSipManager(objConfig.getSipConfiguration());

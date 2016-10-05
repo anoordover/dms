@@ -1,8 +1,11 @@
 package com.amplexor.ia;
 
+import com.amplexor.ia.configuration.converters.LocalDateConverter;
+import com.amplexor.ia.data.CAKXmlDocumentData;
 import com.amplexor.ia.enums.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
@@ -12,126 +15,102 @@ import java.time.LocalDate;
  * Created by admjzimmermann on 4-10-2016.
  */
 public class XmlDocument {
-    private class MetaData {
-        @XStreamAlias("ArchiefDocumentId")
-        private long mlArchiefDocumentId;
-        @XStreamAlias("ArchiefPersoonsnummer")
-        private long mlArchiefPersoonsnummer;
-        @XStreamAlias("PersoonBurgerservicenummer")
-        private long mlPersoonBurgerservicenummer;
-        @XStreamAlias("ArchiefDocumenttitel")
-        private ArchiefDocumenttitel mobjArchiefDocumenttitel;
-        @XStreamAlias("ArchiefDocumentsoort")
-        private ArchiefDocumentsoort mobjArchiefDocumentsoort;
-        @XStreamAlias("ArchiefRegeling")
-        private ArchiefRegeling mobjArchiefRegeling;
-        @XStreamAlias("ArchiefDocumentkenmerk")
-        private long mlArchiefDocumentkenmerk;
-        @XStreamAlias("ArchiefVerzenddag")
-        private LocalDate mobjVerzenddag;
-        @XStreamAlias("ArchiefDocumenttype")
-        private ArchiefDocumenttype mobjArchiefDocumenttype;
-        @XStreamAlias("ArchiefDocumentstatus")
-        private ArchiefDocumentstatus mobjArchiefDocumentstatus;
-        @XStreamAlias("ArchiefRegelingsjaar")
-        private int miRegelingjaar;
-    }
-
     @XStreamAlias("MetaData")
-    private MetaData mobjMetaData;
+    private CAKXmlDocumentData mobjMetaData;
+
     @XStreamAlias("PayloadPdf")
     private String msPayloadPdf;
 
     public XmlDocument() {
-        mobjMetaData = new MetaData();
+        mobjMetaData = new CAKXmlDocumentData();
     }
 
     public void setArchiefDocumentId(long lArchiefDocumentId) {
-        mobjMetaData.mlArchiefDocumentId = lArchiefDocumentId;
+        mobjMetaData.setArchiefDocumentId(lArchiefDocumentId);
     }
 
     public long getArchiefDocumentId() {
-        return mobjMetaData.mlArchiefDocumentId;
+        return mobjMetaData.getArchiefDocumentId();
     }
 
     public long getArchiefPersoonsnummer() {
-        return mobjMetaData.mlArchiefPersoonsnummer;
+        return mobjMetaData.getArchiefPersoonsnummer();
     }
 
     public void setArchiefPersoonsnummer(long lArchiefPersoonsnummer) {
-        mobjMetaData.mlArchiefPersoonsnummer = lArchiefPersoonsnummer;
+        mobjMetaData.setArchiefPersoonsnummer(lArchiefPersoonsnummer);
     }
 
     public long getPersoonBurgerservicenummer() {
-        return mobjMetaData.mlPersoonBurgerservicenummer;
+        return mobjMetaData.getPersoonBurgerservicenummer();
     }
 
     public void setPersoonBurgerservicenummer(long lPersoonBurgerservicenummer) {
-        mobjMetaData.mlPersoonBurgerservicenummer = lPersoonBurgerservicenummer;
+        mobjMetaData.setPersoonBurgerservicenummer(lPersoonBurgerservicenummer);
     }
 
     public ArchiefDocumenttitel getArchiefDocumenttitel() {
-        return mobjMetaData.mobjArchiefDocumenttitel;
+        return mobjMetaData.getArchiefDocumenttitel();
     }
 
     public void setArchiefDocumenttitel(ArchiefDocumenttitel objArchiefDocumenttitel) {
-        this.mobjMetaData.mobjArchiefDocumenttitel = objArchiefDocumenttitel;
+        mobjMetaData.setArchiefDocumenttitel(objArchiefDocumenttitel);
     }
 
     public ArchiefDocumentsoort getArchiefDocumentsoort() {
-        return mobjMetaData.mobjArchiefDocumentsoort;
+        return mobjMetaData.getArchiefDocumentsoort();
     }
 
     public void setArchiefDocumentsoort(ArchiefDocumentsoort objArchiefDocumentsoort) {
-        this.mobjMetaData.mobjArchiefDocumentsoort = objArchiefDocumentsoort;
+        mobjMetaData.setArchiefDocumentsoort(objArchiefDocumentsoort);
     }
 
     public ArchiefRegeling getArchiefRegeling() {
-        return mobjMetaData.mobjArchiefRegeling;
+        return mobjMetaData.getArchiefRegeling();
     }
 
     public void setArchiefRegeling(ArchiefRegeling objArchiefRegeling) {
-        this.mobjMetaData.mobjArchiefRegeling = objArchiefRegeling;
+        mobjMetaData.setArchiefRegeling(objArchiefRegeling);
     }
 
     public long getArchiefDocumentkenmerk() {
-        return mobjMetaData.mlArchiefDocumentkenmerk;
+        return mobjMetaData.getArchiefDocumentkenmerk();
     }
 
     public void setArchiefDocumentkenmerk(long lArchiefDocumentkenmerk) {
-        this.mobjMetaData.mlArchiefDocumentkenmerk = lArchiefDocumentkenmerk;
+        mobjMetaData.setArchiefDocumentkenmerk(lArchiefDocumentkenmerk);
     }
 
     public LocalDate getVerzenddag() {
-        return mobjMetaData.mobjVerzenddag;
+        return mobjMetaData.getVerzenddag();
     }
 
     public void setVerzenddag(LocalDate objVerzenddag) {
-        this.mobjMetaData.mobjVerzenddag = objVerzenddag;
+        mobjMetaData.setVerzenddag(objVerzenddag);
     }
 
     public ArchiefDocumenttype getArchiefDocumenttype() {
-        return mobjMetaData.mobjArchiefDocumenttype;
+        return mobjMetaData.getArchiefDocumenttype();
     }
 
     public void setArchiefDocumenttype(ArchiefDocumenttype objArchiefDocumenttype) {
-        this.mobjMetaData.mobjArchiefDocumenttype = objArchiefDocumenttype;
+        mobjMetaData.setArchiefDocumenttype(objArchiefDocumenttype);
     }
 
     public ArchiefDocumentstatus getArchiefDocumentstatus() {
-        return mobjMetaData.mobjArchiefDocumentstatus;
+        return mobjMetaData.getArchiefDocumentstatus();
     }
 
     public void setArchiefDocumentstatus(ArchiefDocumentstatus objArchiefDocumentstatus) {
-        this.mobjMetaData.mobjArchiefDocumentstatus = objArchiefDocumentstatus;
+        mobjMetaData.setArchiefDocumentstatus(objArchiefDocumentstatus);
     }
 
     public int getRegelingjaar() {
-        return mobjMetaData.miRegelingjaar;
+        return mobjMetaData.getRegelingjaar();
     }
 
     public void setRegelingjaar(int iRegelingjaar) {
-        this.mobjMetaData.miRegelingjaar = iRegelingjaar;
+        mobjMetaData.setRegelingjaar(iRegelingjaar);
     }
 
     public String getPayloadPdf() {
