@@ -29,7 +29,7 @@ public interface CacheManager {
      * @param objDocument
      * @param objRetentionClass
      */
-    void add(IADocument objDocument, IARetentionClass objRetentionClass);
+    boolean add(IADocument objDocument, IARetentionClass objRetentionClass);
 
     /**
      * Updates the {@link CacheManager}, Checks whether any {@link IACache}s reached their time or content thresholds, and closes these caches if they exceed these thresholds

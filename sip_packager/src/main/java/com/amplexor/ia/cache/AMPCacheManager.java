@@ -84,19 +84,23 @@ public class AMPCacheManager implements CacheManager {
      * @param objRetentionClass
      */
     @Override
-    public void add(IADocument objDocument, IARetentionClass objRetentionClass) {
+    public boolean add(IADocument objDocument, IARetentionClass objRetentionClass) {
         debug(this, "Saving IADocument " + objDocument.getDocumentId());
+
+        boolean bReturn = false;
         update();
         try {
             IACache objCache = getCache(objRetentionClass);
             if (objCache != null) {
                 objCache.add(new IADocumentReference(objDocument.getDocumentId(), saveDocument(objCache, objDocument)));
+                bReturn = true;
             }
         } catch (IOException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
-
         debug(this, "IADocument " + objDocument.getDocumentId() + " Saved");
+
+        return bReturn;
     }
 
     protected String saveDocument(IACache objCache, IADocument objDocument) throws IOException {

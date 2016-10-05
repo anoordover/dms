@@ -25,18 +25,23 @@ public class CAKCacheManager extends AMPCacheManager {
     }
 
     @Override
-    public void add(IADocument objDocument, IARetentionClass objRetentionClass) {
+    public boolean add(IADocument objDocument, IARetentionClass objRetentionClass) {
         debug(this, "Saving IADocument " + objDocument.getDocumentId());
+
+        boolean bReturn = false;
         update();
         try {
             IACache objCache = getCache(objRetentionClass, objDocument.getMetadataKeys().contains("PersoonBurgerservicenummer"));
             if (objCache != null) {
                 objCache.add(new IADocumentReference(objDocument.getDocumentId(), saveDocument(objCache, objDocument)));
+                bReturn = true;
             }
         } catch (IOException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
         debug(this, "IADocument " + objDocument.getDocumentId() + " Saved");
+
+        return bReturn;
     }
 
     private IACache getCache(IARetentionClass objRetentionClass, boolean bIsFallback) throws IOException {
