@@ -3,6 +3,7 @@ package com.amplexor.ia.cache;
 import com.amplexor.ia.configuration.CacheConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -28,39 +29,40 @@ public class AMPCacheManagerTest {
         acm.initializeCache();
         Path p = Paths.get("target/Cache/main/save");
         assertTrue(Files.exists(p));
+        //TODO  check - Load any saved caches in the cache save folder and delete the files
     }
 
-    @Test
+    @Ignore
     public void add() throws Exception {
 
     }
 
-    @Test
+    @Ignore
     public void getCache() throws Exception {
 
     }
 
-    @Test
+    @Ignore
     public void update() throws Exception {
 
     }
 
-    @Test
+    @Ignore
     public void getClosedCaches() throws Exception {
 
     }
 
-    @Test
+    @Ignore
     public void cleanupCache() throws Exception {
 
     }
 
-    @Test
+    @Ignore
     public void saveCaches() throws Exception {
 
     }
 
-    @Test
+    @Ignore
     public void loadCaches() throws Exception {
 
     }
