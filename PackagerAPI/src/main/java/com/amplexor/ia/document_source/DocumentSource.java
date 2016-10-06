@@ -1,7 +1,10 @@
 package com.amplexor.ia.document_source;
 
 import com.amplexor.ia.cache.IACache;
+import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.metadata.IADocument;
+
+import java.util.List;
 
 /**
  * This interface defines the methods used by the SIP Packager to retrieve data and post back the result to whatever datasource is implemented
@@ -15,14 +18,18 @@ public interface DocumentSource {
     String retrieveDocumentData();
 
     /**
-     * Post the resulting status of the {@link IADocument} back to the document source
-     * @param objDocument The document whose status should be posted
-     */
-    void postResult(IADocument objDocument);
-
-    /**
      * Post the resulting status of the {@link IACache} back to the document source
      * @param objCache The cache whose status should be posted
      */
-    void postResult(IACache objCache);
+    void postResult(List<IADocumentReference> objCache);
+
+    /**
+     * This method will initialize the document source, such as setting up connections
+     */
+    void initialize();
+
+    /**
+     * This method will shutdown the document source by, for example closing open connections.
+     */
+    void shutdown();
 }

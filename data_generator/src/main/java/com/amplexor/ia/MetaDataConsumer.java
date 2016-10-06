@@ -1,6 +1,7 @@
 package com.amplexor.ia;
 
 import com.amplexor.ia.cache.IACache;
+import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.exception.ExceptionHelper;
@@ -13,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,8 +22,7 @@ import java.util.Optional;
  */
 public class MetaDataConsumer implements DocumentSource {
     private PluggableObjectConfiguration mobjConfiguration;
-    private int iCounter = 0;
-    private static int BUFFER_SIZE = 4096;
+    private static final int BUFFER_SIZE = 4096;
 
     public MetaDataConsumer(PluggableObjectConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
@@ -40,6 +41,11 @@ public class MetaDataConsumer implements DocumentSource {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
         return sReturn;
+    }
+
+    @Override
+    public void postResult(List<IADocumentReference> objCache) {
+        //Cannot post back to filesystem
     }
 
     private String readEntry(Path objEntryPath) {
@@ -72,13 +78,14 @@ public class MetaDataConsumer implements DocumentSource {
         return "";
     }
 
-    @Override
-    public void postResult(IADocument objDocument) {
 
+    @Override
+    public void initialize() {
+        //Nothing to initialize
     }
 
     @Override
-    public void postResult(IACache objCache) {
-
+    public void shutdown() {
+        //Nothing to clean
     }
 }

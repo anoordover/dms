@@ -22,11 +22,11 @@ public class CAKRetentionManager implements RetentionManager {
         info(this, "Retrieving Retention Class for IADocument: " + objSource.getDocumentId());
 
         IARetentionClass objReturn = null;
-        String sRetentionName = objSource.getMetadata(mobjConfiguration.getRetentionElementName());
-        if (sRetentionName != null) {
-            for (IARetentionClass retentionClass : mobjConfiguration.getRetentionClasses()) {
-                if (retentionClass.getName().equals(sRetentionName)) {
-                    objReturn = retentionClass;
+        String sDocumentTitle = objSource.getMetadata(mobjConfiguration.getRetentionElementName());
+        if (sDocumentTitle != null) {
+            for (IARetentionClass objRetentionClass : mobjConfiguration.getRetentionClasses()) {
+                if (objRetentionClass instanceof CAKRetentionClass && ((CAKRetentionClass) objRetentionClass).getAssociatedDocumentTitle().contains(sDocumentTitle)) {
+                    objReturn = objRetentionClass;
                     info(this, "Found Retention Class: " + objReturn.getName());
                     break;
                 }
@@ -34,7 +34,7 @@ public class CAKRetentionManager implements RetentionManager {
         }
 
         if (objReturn == null) {
-            throw new IllegalArgumentException("Unknown Retention Policy: " + sRetentionName);
+            throw new IllegalArgumentException("Document Title: " + sDocumentTitle + " Is not tied to a Retention Policy");
         }
 
         return objReturn;

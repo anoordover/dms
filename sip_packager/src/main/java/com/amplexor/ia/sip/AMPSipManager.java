@@ -1,20 +1,29 @@
 package com.amplexor.ia.sip;
 
 import com.amplexor.ia.cache.IACache;
+import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.configuration.IASipConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.emc.ia.sdk.sip.assembly.*;
 import com.emc.ia.sdk.support.xml.XmlBuilder;
+import com.sun.org.apache.xerces.internal.xni.QName;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.io.xml.QNameMap;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.amplexor.ia.Logger.debug;
 import static com.amplexor.ia.Logger.info;
@@ -37,12 +46,13 @@ public class AMPSipManager implements SipManager {
         }
 
         boolean bReturn = false;
+        debug(this, "Retrieving Documents from disk");
+        List<IADocument> cDocument = retrieveDocuments(objCache);
         try {
-            if(!objCache.getContents().isEmpty()) {
-                IADocument objDocument = objCache.getContents().get(0); //Get the document metadata, (for CAK Fallback, can be removed later)
-                SipAssembler<IADocument> objSipAssembler = createSipAssembler(getPackageInformation(objDocument, objCache.getRetentionClass()), getPdiAssembler(), getDigitalObjects());
+            if (!cDocument.isEmpty()) {
+                SipAssembler<IADocument> objSipAssembler = createSipAssembler(getPackageInformation(cDocument.get(0), objCache.getRetentionClass()), getPdiAssembler(), getDigitalObjects());
                 FileGenerator<IADocument> objFileGenerator = new FileGenerator<>(objSipAssembler, new File(mobjConfiguration.getSipOutputDirectory()));
-                FileGenerationMetrics objMetrics = objFileGenerator.generate(objCache.getContents().iterator());
+                FileGenerationMetrics objMetrics = objFileGenerator.generate(cDocument.iterator());
                 if (objMetrics.getFile() != null) {
                     Path objTempPath = objMetrics.getFile().toPath();
                     Path objSipFile = Files.copy(objTempPath, Paths.get(objTempPath.toString() + ".zip"));
@@ -59,7 +69,7 @@ public class AMPSipManager implements SipManager {
             }
         } catch (IOException ex) {
             long lTotalSize = 0;
-            for (IADocument objDocument : objCache.getContents()) {
+            for (IADocument objDocument : cDocument) {
                 lTotalSize += objDocument.getSizeEstimate();
             }
 
@@ -70,11 +80,35 @@ public class AMPSipManager implements SipManager {
         return bReturn;
     }
 
+    protected List<IADocument> retrieveDocuments(IACache objCache) {
+        List<IADocument> cDocuments = new ArrayList<>();
+        Class<?> objClass = IADocument.class;
+        try {
+            objClass = Thread.currentThread().getContextClassLoader().loadClass(mobjConfiguration.getParameter("document_class"));
+        } catch (ClassNotFoundException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        }
+        XStream objXStream = new XStream(new StaxDriver());
+        objXStream.alias(mobjConfiguration.getParameter("document_element_name"), objClass);
+        objXStream.processAnnotations(objClass);
+        for (IADocumentReference objReference : objCache.getContents()) {
+            try (FileReader objReader = new FileReader(objReference.getFile())) {
+                IADocument objDocument = (IADocument)objClass.cast(objXStream.fromXML(objReader));
+                objDocument.setDocumentId(objReference.getDocumentId());
+                cDocuments.add((IADocument) objDocument);
+            } catch (ClassCastException | IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            }
+        }
+
+        return cDocuments;
+    }
+
     @Override
-    public boolean getSIPFile(IADocument objDocument, IARetentionClass objRetentionClass) {
-        debug(this, "Creating SIP file for Document with ID: " + objDocument.getDocumentId());
+    public boolean getSIPFile(IADocumentReference objDocumentReference, IARetentionClass objRetentionClass) {
+        debug(this, "Creating SIP file for Document with ID: " + objDocumentReference.getDocumentId());
         IACache objTempCache = new IACache(-1, objRetentionClass);
-        objTempCache.add(objDocument);
+        objTempCache.add(objDocumentReference);
         return getSIPFile(objTempCache);
     }
 
@@ -83,15 +117,6 @@ public class AMPSipManager implements SipManager {
     }
 
     protected PackagingInformation getPackageInformation(IADocument objDocument, IARetentionClass objRetentionClass) {
-        GregorianCalendar objCalendar = new GregorianCalendar();
-        objCalendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR) + 1);
-        objCalendar.set(Calendar.MONTH, 1);
-        objCalendar.set(Calendar.DAY_OF_MONTH, 1);
-        objCalendar.set(Calendar.SECOND, 0);
-        objCalendar.set(Calendar.MINUTE, 0);
-        objCalendar.set(Calendar.HOUR, 0);
-        objCalendar.set(Calendar.MILLISECOND, 0);
-        objCalendar.setTimeZone(TimeZone.getDefault());
 
         return PackagingInformation.builder().dss()
                 .holding(mobjConfiguration.getHoldingName())
@@ -100,7 +125,6 @@ public class AMPSipManager implements SipManager {
                 .entity(mobjConfiguration.getEntityName())
                 .schema(mobjConfiguration.getSchemaDeclaration())
                 .retentionClass(objRetentionClass.getName().replace(' ', '_'))
-                .baseRetentionDate(objCalendar.getTime())
                 .end().build();
     }
 

@@ -11,12 +11,6 @@
         <option value="$PROJECT_DIR$/PackagerAPI/pom.xml" />
       </list>
     </option>
-    <option name="ignoredFiles">
-      <set>
-        <option value="$PROJECT_DIR$/Raadplegen/pom.xml" />
-        <option value="$PROJECT_DIR$/request_processor/pom.xml" />
-      </set>
-    </option>
   </component>
   <component name="PDMPlugin">
     <option name="skipTestSources" value="false" />

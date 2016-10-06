@@ -1,5 +1,6 @@
 package com.amplexor.ia.ingest;
 
+import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.IAServerConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.util.MultipartUtility;
@@ -42,45 +43,47 @@ public class ArchiveManager {
 
     /**
      * Executes all the required steps for ingesting a SIP file (Retrieve tenant, get associated application, upload the SIP file and ingest the generated AIP)
-     * @param sSipFile The location of the SIP file on the local filesystem
+     *
+     * @param objCache The cache containing a reference to the SIP file location and the target application
      * @return whether or not ingesting the SIP file was successful.
      */
-    public boolean ingestSip(String sSipFile) {
-        info(this, "Ingesting SIP " + sSipFile);
+    public boolean ingestSip(IACache objCache) {
+        info(this, "Ingesting SIP " + objCache.getSipFile().toString());
         boolean bReturn = false;
         authenticate();
 
 
-        info(this, "Sending SIP file" + sSipFile + " to IA");
-        IAObject objAip = getAip(sSipFile);
+        info(this, "Sending SIP file" + objCache.getSipFile().toString() + " to IA");
+        IAObject objAip = getAip(objCache);
         if (objAip != null && !"".equals(objAip.getUUID())) {
             try {
-                info(this, "SIP file " + sSipFile + " was received by IA");
+                info(this, "SIP file " + objCache.getSipFile().toString() + " was received by IA");
                 debug(this, "Ingesting AIP with UUID: " + objAip.getUUID());
                 IAObject objResult = IAObject.fromJSONObject(restCall(objAip.getLink(IA_ENDPOINT_INGEST), "PUT"));
                 if (objResult != null && !"".equals(objResult.getUUID())) {
                     info(this, "Successfully ingested AIP with UUID: " + objAip.getUUID() + ", Result: " + objResult.getName());
                     bReturn = true;
                 } else {
-                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INGESTION_ERROR, new Exception(String.format("Error ingesting object[Name: %s, UUID: %s]", objAip.getName(), objAip.getUUID())));
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INGESTION_ERROR, objCache, new Exception(String.format("Error ingesting object[Name: %s, UUID: %s]", objAip.getName(), objAip.getUUID())));
                 }
             } catch (IllegalArgumentException ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INGESTION_ERROR, ex);
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INGESTION_ERROR, objCache, ex);
             } catch (ParseException | IOException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }
         } else {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_ERROR_UPLOADING_CONTENT, new Exception("InfoArchive returned a null AIP object"));
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_ERROR_UPLOADING_CONTENT, objCache, new Exception("InfoArchive returned a null AIP object"));
         }
         return bReturn;
     }
 
     /**
      * Helper method for executing all the prerequisite steps as well as uploading a SIP file to the InfoArchive REST API
-     * @param sSipFile The location of the SIP file on the local filesystem
+     *
+     * @param objCache The cache containing a reference to the SIP file location and the target application
      * @return a {@link IAObject} containing the AIP that was created for the SIP file
      */
-    private IAObject getAip(String sSipFile) {
+    private IAObject getAip(IACache objCache) {
         try {
             IAObject objInfoArchiveApplication = null;
             debug(this, "Fetching tenant " + mobjConfiguration.getIngestTenant());
@@ -90,18 +93,20 @@ public class ArchiveManager {
             }
             if (objInfoArchiveTenant.getName() != null) {
                 debug(this, "Fetching Application" + mobjConfiguration.getIAApplicationName());
-                objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), mobjConfiguration.getIAApplicationName());
+                objInfoArchiveApplication = extractObjectWithName(restCall(objInfoArchiveTenant.getLink(IA_ENDPOINT_APPLICATIONS)), objCache.getTargetApplication());
             }
 
             if (objInfoArchiveApplication != null && !"".equals(objInfoArchiveApplication.getUUID())) {
                 info(this, "Found application with UUID: " + objInfoArchiveApplication.getUUID());
                 debug(this, "Uploading AIP");
-                return IAObject.fromJSONObject(receive(objInfoArchiveApplication, sSipFile));
+                return IAObject.fromJSONObject(receive(objInfoArchiveApplication, objCache.getSipFile().toString()));
             }
         } catch (IOException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_ERROR_UPLOADING_CONTENT, ex);
         } catch (ParseException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        } catch (IllegalArgumentException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNKNOWN_RETENTION, ex);
         }
 
         return null;
@@ -110,91 +115,60 @@ public class ArchiveManager {
     /**
      * Attempts to authenticate with the InfoArchive Gateway, failing authentication will lead to the application exiting as there will be nowhere to send out SIP packages.
      */
-    public void authenticate() {
+    public boolean authenticate() {
         try {
-            if (mobjCredentials.hasExpired()) {
-                debug(this, "Logging in to IAWA");
-                if (!login()) {
-                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INVALID_IA_CREDENTIALS, new Exception("Unable to login"));
-                }
+            String sUrl = String.format("%s://%s:%d/login?%s",
+                    mobjConfiguration.getGatewayProtocol(),
+                    mobjConfiguration.getGatewayHost(),
+                    mobjConfiguration.getGatewayPort(),
+                    mobjCredentials.hasExpired() ? mobjCredentials.getLoginQuery() : mobjCredentials.getRefreshQuery());
+
+            HttpURLConnection oConnection = (HttpURLConnection) new URL(sUrl).openConnection();
+            oConnection.setRequestMethod("POST");
+            oConnection.setRequestProperty("Cache-Control", "no-cache");
+            oConnection.setRequestProperty("Content-Type", "x-www-urlencoded");
+            oConnection.connect();
+
+            InputStream objInputStream;
+            if (oConnection.getResponseCode() == 200) {
+                objInputStream = oConnection.getInputStream();
             } else {
-                debug(this, "Refreshing Token");
-                if (!refresh()) {
-                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INVALID_IA_CREDENTIALS, new Exception("Unable to refresh token"));
-                }
+                objInputStream = oConnection.getErrorStream();
             }
+
+            return readLoginResponse(objInputStream);
         } catch (IOException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
+
+        return false;
     }
 
-    /**
-     * Login with the {@link IACredentials} provided in the configuration file
-     * @return true if login was successful, false if the provided credentials we're invalid
-     * @throws IOException if an error occurred during the HTTP request
-     */
-    public boolean login() throws IOException {
-        String sUrl = String.format("%s://%s:%d/login?%s", mobjConfiguration.getGatewayProtocol(), mobjConfiguration.getGatewayHost(), mobjConfiguration.getGatewayPort(), mobjCredentials.getLoginQuery());
-        HttpURLConnection oConnection = (HttpURLConnection) new URL(sUrl).openConnection();
-        oConnection.setRequestMethod("POST");
-        oConnection.setRequestProperty("Cache-Control", "no-cache");
-        oConnection.setRequestProperty("Content-Type", "x-www-urlencoded");
-        oConnection.connect();
-        if (oConnection.getResponseCode() == 200) {
-            try (BufferedReader oReader = new BufferedReader(new InputStreamReader(oConnection.getInputStream()))) {
-                JSONObject oRespObject = (JSONObject) new JSONParser().parse(oReader);
-                if (oRespObject != null) {
-                    String sAccessToken = (String) oRespObject.get("access_token");
-                    mobjCredentials.setToken(sAccessToken);
-                    String sRefreshToken = (String) oRespObject.get("refresh_token");
-                    mobjCredentials.setRefreshToken(sRefreshToken);
-                    long lExpiry = (long) oRespObject.get("expires_in");
-                    mobjCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
-                }
+    private boolean readLoginResponse(InputStream objInputStream) {
+        try (BufferedReader oReader = new BufferedReader(new InputStreamReader(objInputStream))) {
+            JSONObject oRespObject = (JSONObject) new JSONParser().parse(oReader);
+            if (oRespObject != null) {
+                String sAccessToken = (String) oRespObject.get("access_token");
+                mobjCredentials.setToken(sAccessToken);
+                String sRefreshToken = (String) oRespObject.get("refresh_token");
+                mobjCredentials.setRefreshToken(sRefreshToken);
+                long lExpiry = (long) oRespObject.get("expires_in");
+                mobjCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
                 return true;
-            } catch (ParseException ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }
+        } catch (ParseException | IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
         return false;
     }
 
-    /**
-     * Refreshes the authentication token used by {@link IACredentials}
-     * @return true if refresh was successful, false if the token was invalid
-     * @throws IOException if an error occurred during the HTTP request
-     */
-    public boolean refresh() throws IOException {
-        String sUrl = String.format("%s://%s:%d/login?%s", mobjConfiguration.getGatewayProtocol(), mobjConfiguration.getGatewayHost(), mobjConfiguration.getGatewayPort(), mobjCredentials.getRefreshQuery());
-        HttpURLConnection oConnection = (HttpURLConnection) new URL(sUrl).openConnection();
-        oConnection.setRequestMethod("POST");
-        oConnection.setRequestProperty("Cache-Control", "no-cache");
-        oConnection.setRequestProperty("Content-Type", "x-www-urlencoded");
-        oConnection.connect();
-        if (oConnection.getResponseCode() == 200) {
-            try (BufferedReader oReader = new BufferedReader(new InputStreamReader(oConnection.getInputStream()))) {
-                JSONObject oRespObject = (JSONObject) new JSONParser().parse(oReader);
-                if (oRespObject != null) {
-                    String sAccessToken = (String) oRespObject.get("access_token");
-                    mobjCredentials.setToken(sAccessToken);
-                    String sRefreshToken = (String) oRespObject.get("refresh_token");
-                    mobjCredentials.setRefreshToken(sRefreshToken);
-                    long lExpiry = (long) oRespObject.get("expires_in");
-                    mobjCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
-                }
-                return true;
-            } catch (ParseException ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-            }
-        }
-        return false;
-    }
 
     /**
      * Send a request to the InfoArchive REST API using the HTTP GET method, target can be an endpoint or a fully qualified URL.
+     *
      * @param sTarget The target to which the request should be sent (i.e. tenants)
      * @return a {@link JSONObject} containing the results returned by the InfoArchive REST API
-     * @throws IOException if an error occurred during the HTTP request
+     * @throws IOException    if an error occurred during the HTTP request
      * @throws ParseException if there was a problem parsing the {@link JSONObject} returned by the REST API
      */
     private JSONObject restCall(String sTarget) throws IOException, ParseException {
@@ -203,10 +177,11 @@ public class ArchiveManager {
 
     /**
      * Send a request to the InfoArchive REST API using the HTTP method provided in sMethod, target can be an endpoint or a fully qualified URL
+     *
      * @param sTarget The target to which the request should be sent
      * @param sMethod The HTTP method to be used (GET, PUT, DELETE, POST)
      * @return a {@link JSONObject} containing the results returned by the InfoArchive REST API
-     * @throws IOException if an error occured during the HTTP request
+     * @throws IOException    if an error occured during the HTTP request
      * @throws ParseException if there was a problem parsing the {@link JSONObject} returned by the REST API
      */
     private JSONObject restCall(String sTarget, String sMethod) throws IOException, ParseException {
@@ -240,10 +215,11 @@ public class ArchiveManager {
 
     /**
      * Sends the SIP file located at sFile to the application contained in {@link IAObject} objTarget
+     *
      * @param objTarget a {@link JSONObject} describing the InfoArchive Application which should receive the SIP file
-     * @param sFile the location of the SIP file on the local filesystem
+     * @param sFile     the location of the SIP file on the local filesystem
      * @return a {@link JSONObject} containing the AIP returned by the InfoArchive REST API
-     * @throws IOException if an error occurred during the HTTP request
+     * @throws IOException    if an error occurred during the HTTP request
      * @throws ParseException if there was a problem parsing the {@link JSONObject} returned by the REST API
      */
     private JSONObject receive(IAObject objTarget, String sFile) throws IOException, ParseException {
@@ -270,7 +246,12 @@ public class ArchiveManager {
         }
 
         try (BufferedReader oReader = new BufferedReader(new InputStreamReader(objInputSource))) {
-            objReturn = (JSONObject) new JSONParser().parse(oReader);
+            StringBuilder objBuilder = new StringBuilder();
+            String sRead;
+            while ((sRead = oReader.readLine()) != null) {
+                objBuilder.append(sRead);
+            }
+            objReturn = (JSONObject) new JSONParser().parse(objBuilder.toString());
         }
         checkErrors(objReturn);
         return objReturn;
@@ -278,6 +259,7 @@ public class ArchiveManager {
 
     /**
      * Helper Method to check for and extract any errors from a {@link JSONObject} returned by the InfoArchive REST API
+     *
      * @param objIAObject A {@link JSONObject} returned by the InfoArchive REST API
      */
     private void checkErrors(JSONObject objIAObject) {
@@ -295,8 +277,9 @@ public class ArchiveManager {
 
     /**
      * Helper Method for extracting a {@link IAObject} from a {@link JSONObject} returned by the InfoArchive REST API
+     *
      * @param objObject The {@link JSONObject} to parse
-     * @param sName The name of the object to extract
+     * @param sName     The name of the object to extract
      * @return a {@link IAObject} extracted from the supplied {@link JSONObject}
      */
     private IAObject extractObjectWithName(JSONObject objObject, String sName) {
@@ -321,6 +304,7 @@ public class ArchiveManager {
 
     /**
      * Helper method for printing the headers of a {@link HttpURLConnection}
+     *
      * @param objConnection the connection from which to print the headers
      */
     private static void printHeaders(HttpURLConnection objConnection) {

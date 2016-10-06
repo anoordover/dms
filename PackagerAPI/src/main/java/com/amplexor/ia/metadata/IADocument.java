@@ -38,5 +38,4 @@ public abstract class IADocument {
     public abstract void setError(String sError);
 
     public abstract String getError();
-
 }
