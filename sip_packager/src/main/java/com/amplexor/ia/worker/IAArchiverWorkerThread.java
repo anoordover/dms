@@ -70,6 +70,11 @@ class IAArchiverWorkerThread implements Runnable {
         }
 
         while (mbRunning) {
+            if(Thread.currentThread().isInterrupted()) {
+                info(this, "Worker-" + miId + " was Interruped");
+                break;
+            }
+
             List<IADocument> cDocuments = null;
             String sDocumentData = mobjDocumentSource.retrieveDocumentData();
             if (!"".equals(sDocumentData)) {
@@ -89,6 +94,7 @@ class IAArchiverWorkerThread implements Runnable {
                     }
                 });
             }
+
             mobjCacheManager.update();
             mobjCacheManager.getClosedCaches().iterator().forEachRemaining(objCache -> {
                 if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache)) {
@@ -99,6 +105,8 @@ class IAArchiverWorkerThread implements Runnable {
             });
         }
 
+        info(this, "Saving Caches for worker " + miId);
+        mobjCacheManager.saveCaches();
         mobjDocumentSource.shutdown();
         info(this, "Shutting down Worker " + miId);
     }

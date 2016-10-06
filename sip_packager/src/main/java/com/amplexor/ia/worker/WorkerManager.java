@@ -16,7 +16,7 @@ public class WorkerManager {
     private static WorkerManager mobjWorkerManager;
 
     private Thread mobjManagerThread;
-
+    private List<Thread> mcThreads;
     private List<IAArchiverWorkerThread> mcWorkers;
     private int miCurrentWorker;
 
@@ -37,6 +37,7 @@ public class WorkerManager {
 
     public void initialize(SIPPackagerConfiguration objConfiguration) {
         miCurrentWorker = -1;
+        mcThreads = new ArrayList<>();
         for (int i = 0; i < objConfiguration.getWorkerConfiguration().getMaxWorkerThreads(); ++i) {
             mcWorkers.add(new IAArchiverWorkerThread(objConfiguration, i + 1));
             startWorker();
@@ -86,13 +87,15 @@ public class WorkerManager {
 
     private void startWorker() {
         if (miCurrentWorker > -2) { //Start from index 0
-            new Thread(mcWorkers.get(++miCurrentWorker)).start();
+            mcThreads.add(new Thread(mcWorkers.get(++miCurrentWorker)));
+            mcThreads.get(miCurrentWorker).start();
         }
     }
 
     private void stopWorker() {
         if (miCurrentWorker > -1) {
-            mcWorkers.get(miCurrentWorker--).stopWorker();
+            mcThreads.get(miCurrentWorker).interrupt();
+            mcThreads.remove(miCurrentWorker--);
         }
     }
 
@@ -107,6 +110,7 @@ public class WorkerManager {
         while (miCurrentWorker > -1) {
             stopWorker();
         }
+        mbIsRunning = false;
         mobjManagerThread.interrupt();
     }
 }
