@@ -85,7 +85,7 @@ public class WorkerManager {
 
     private void startWorker() {
         if (miCurrentWorker > -2) { //Start from index 0
-           new Thread(mcWorkers.get(++miCurrentWorker)).start();
+            new Thread(mcWorkers.get(++miCurrentWorker)).start();
         }
     }
 

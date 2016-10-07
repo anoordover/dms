@@ -24,9 +24,11 @@ import static com.amplexor.ia.Logger.info;
 class IAArchiverWorkerThread implements Runnable {
     private SIPPackagerConfiguration mobjConfiguration;
     private int miId;
+    private Thread mobjShutdownHook;
 
     private int miProcessedBytes;
     private boolean mbRunning;
+    private boolean mbShutdownFlag;
 
     private DocumentSource mobjDocumentSource;
     private MessageParser mobjMessageParser;
@@ -43,44 +45,54 @@ class IAArchiverWorkerThread implements Runnable {
     public IAArchiverWorkerThread(SIPPackagerConfiguration objConfiguration, int iId) {
         mobjConfiguration = objConfiguration;
         miId = iId;
+        mobjShutdownHook = new Thread() {
+            @Override
+            public void run() {
+                while (isRunning()) {
+                }
+                info(this, "Shutdown Hook for Worker-" + miId);
+                if (mobjCacheManager != null) {
+                    mobjCacheManager.saveCaches();
+                }
+
+            }
+        };
+        Runtime.getRuntime().addShutdownHook(mobjShutdownHook);
     }
 
+    public synchronized boolean isRunning() {
+        return mbRunning;
+    }
 
     @Override
     public void run() {
         info(this, "Initializing Worker " + miId);
         info(this, "Setting up ExceptionHelper");
         ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfiguration.getExceptionConfiguration());
-        try {
-            if (loadClasses()) {
-                mobjDocumentSource.initialize();
-                Thread.currentThread().setName("IAWorker-" + miId);
-                ExceptionHelper.getExceptionHelper().setDocumentSource(mobjDocumentSource);
-                info(this, "Initializing Document Caches");
-                mobjCacheManager.initializeCache();
-                info(this, "Initializing Archive Manager");
-                mobjArchiveManager = new ArchiveManager(mobjConfiguration.getServerConfiguration());
-                info(this, "DONE. Starting main loop");
-                mbRunning = true;
-
+        synchronized (this) {
+            try {
+                if (loadClasses()) {
+                    mobjDocumentSource.initialize();
+                    Thread.currentThread().setName("IAWorker-" + miId);
+                    ExceptionHelper.getExceptionHelper().setDocumentSource(mobjDocumentSource);
+                    info(this, "Initializing Document Caches");
+                    mobjCacheManager.initializeCache();
+                    info(this, "Initializing Archive Manager");
+                    mobjArchiveManager = new ArchiveManager(mobjConfiguration.getServerConfiguration());
+                    info(this, "DONE. Starting main loop");
+                    mbRunning = true;
+                }
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+                WorkerManager.getWorkerManager().stop();
             }
-        } catch (IOException ex) {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-            WorkerManager.getWorkerManager().stop();
         }
-
-        while (mbRunning) {
-            if(Thread.currentThread().isInterrupted()) {
-                info(this, "Worker-" + miId + " was Interruped");
-                break;
-            }
-
+        while (isRunning()) {
             List<IADocument> cDocuments = null;
             String sDocumentData = mobjDocumentSource.retrieveDocumentData();
             if (!"".equals(sDocumentData)) {
                 cDocuments = mobjMessageParser.parse(sDocumentData);
             }
-
             if (cDocuments != null) {
                 cDocuments.forEach(objDocument -> {
                     miProcessedBytes += objDocument.getSizeEstimate();
@@ -94,7 +106,6 @@ class IAArchiverWorkerThread implements Runnable {
                     }
                 });
             }
-
             mobjCacheManager.update();
             mobjCacheManager.getClosedCaches().iterator().forEachRemaining(objCache -> {
                 if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache)) {
@@ -103,17 +114,15 @@ class IAArchiverWorkerThread implements Runnable {
                     mobjCacheManager.cleanupCache(objCache);
                 }
             });
+            mbRunning = !mbShutdownFlag;
         }
-
-        info(this, "Saving Caches for worker " + miId);
-        mobjCacheManager.saveCaches();
         mobjDocumentSource.shutdown();
         info(this, "Shutting down Worker " + miId);
     }
 
     public synchronized void stopWorker() {
         info(this, "Worker " + miId + " Received Stop command");
-        mbRunning = false;
+        mbShutdownFlag = true;
     }
 
     private boolean loadClasses() {

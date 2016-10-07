@@ -141,9 +141,6 @@ public class ActiveMQManager implements DocumentSource {
                     case "{ID}":
                         cValues[iCurrent++] = objReference.getDocumentId();
                         break;
-                    case "{STATUS}":
-                        cValues[iCurrent++] = objReference.getErrorCode() == 0 ? mobjConfiguration.getParameter("result_success") : mobjConfiguration.getParameter("result_error");
-                        break;
                     default:
                         cValues[iCurrent++] = cValues[iCurrent];
                         break;

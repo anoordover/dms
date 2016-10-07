@@ -117,7 +117,6 @@ public class AMPCacheManager implements CacheManager {
         try (OutputStream objOutputStream = Files.newOutputStream(objDocumentPath)) {
             objXStream.toXML(objDocument, objOutputStream);
         }
-        saveCache(objCache);
         return objDocumentPath.toString();
     }
 
