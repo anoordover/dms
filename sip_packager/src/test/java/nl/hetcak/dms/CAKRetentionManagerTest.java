@@ -28,7 +28,11 @@ public class CAKRetentionManagerTest {
         ArrayList<IARetentionClass> retentionClasses = new ArrayList<IARetentionClass>(Arrays.asList(iarc));
         when(rmc.getRetentionClasses()).thenReturn(retentionClasses);
 
+
+
         IADocument iad = mock(IADocument.class);
+        when(iad.getMetadata(rmc.getRetentionElementName())).thenReturn("Z03");
+        when(iad.getDocumentId()).thenReturn("1002224232");
 
         CAKRetentionManager crm = new CAKRetentionManager(rmc);
 

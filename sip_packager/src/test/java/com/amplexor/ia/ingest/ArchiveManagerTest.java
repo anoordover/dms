@@ -1,5 +1,6 @@
 package com.amplexor.ia.ingest;
 
+import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.IAServerConfiguration;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -14,8 +15,28 @@ import static org.mockito.Mockito.when;
  */
 public class ArchiveManagerTest {
 
-    @Ignore
+    @Test
     public void ingestSip() throws Exception {
+        IACache ic = mock(IACache.class);
+        //change null to sipfile
+        when(ic.getSipFile()).thenReturn(null);
+        when(ic.getTargetApplication()).thenReturn("CAK_Klantarchief");
+
+        IAServerConfiguration isc = mock(IAServerConfiguration.class);
+        when(isc.getIngestTenant()).thenReturn("INFOARCHIVE");
+        when(isc.getIAApplicationName()).thenReturn("JUnit test");
+        when(isc.getProtocol()).thenReturn("HTTP");
+        when(isc.getHost()).thenReturn("cwno0427.cak-bz.local");
+        when(isc.getPort()).thenReturn((short)8765);
+        when(isc.getGatewayProtocol()).thenReturn("HTTP");
+        when(isc.getGatewayHost()).thenReturn("cwno0427.cak-bz.local");
+        when(isc.getGatewayPort()).thenReturn((short)8080);
+        when(isc.getIngestUser()).thenReturn("admjzimmermann");
+        when(isc.getEncryptedIngestPassword()).thenReturn("V3VyY2l0d2FnNDAt");
+
+        ArchiveManager am = new ArchiveManager(isc);
+
+        assertTrue(am.ingestSip(ic));
 
     }
 
@@ -29,7 +50,6 @@ public class ArchiveManagerTest {
         when(iasc.getGatewayPort()).thenReturn((short)8080);
         ArchiveManager am = new ArchiveManager(iasc);
         assertTrue(am.authenticate());
-        //test needs to be validated, when is am.login() successful
     }
 
 }
