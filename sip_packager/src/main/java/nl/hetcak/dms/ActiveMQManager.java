@@ -133,7 +133,7 @@ public class ActiveMQManager implements DocumentSource {
             for (String sResultValue : cResultValues) {
                 switch (sResultValue) {
                     case "{ERROR}":
-                        cValues[iCurrent++] = String.valueOf(objReference.getErrorCode());
+                        cValues[iCurrent++] = String.format("%04d", objReference.getErrorCode());
                         break;
                     case "{MESSAGE}":
                         cValues[iCurrent++] = objReference.getErrorMessage();

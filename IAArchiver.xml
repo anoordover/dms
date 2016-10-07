@@ -57,7 +57,7 @@
 
             <broker>tcp://infoarchive40:61616</broker>
 
-            <result_format><![CDATA[<urn:Item ResultCode="%04d" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
+            <result_format><![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
             <results_element><![CDATA[<urn:Items xmlns:urn="urn:hetcak:dms:uitingarchief:2016:08">%s</urn:Items>]]></results_element>
             <result_values>{ERROR};{ID};{MESSAGE}</result_values>
             <result_success>Geslaagd</result_success>
