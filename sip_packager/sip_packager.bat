@@ -1,0 +1,1 @@
+java -jar SIP_Packager.jar -config config/IAArchiver.xml

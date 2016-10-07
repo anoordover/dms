@@ -20,7 +20,7 @@ public class MetaDataProducer {
     }
 
     public static void main(String[] cArgs) {
-        ConfigManager objConfigManager = new ConfigManager("IAArchiver.xml");
+        ConfigManager objConfigManager = new ConfigManager("data_generator/IAArchiver.xml");
         objConfigManager.loadConfiguration();
         ExceptionHelper.getExceptionHelper().setExceptionConfiguration(objConfigManager.getConfiguration().getExceptionConfiguration());
 
