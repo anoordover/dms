@@ -92,7 +92,7 @@ public class AMPCacheManager implements CacheManager {
         try {
             IACache objCache = getCache(objRetentionClass);
             if (objCache != null) {
-                objCache.add(new IADocumentReference(objDocument.getDocumentId(), saveDocument(objCache, objDocument)));
+                objCache.add(new IADocumentReference(objDocument, saveDocument(objCache, objDocument)));
                 bReturn = true;
             }
         } catch (IOException ex) {
@@ -189,8 +189,8 @@ public class AMPCacheManager implements CacheManager {
                 for (IADocumentReference objReference : objCache.getContents()) {
                     Files.delete(Paths.get(objReference.getFile()));
                 }
-                Files.deleteIfExists(Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCache.getId())));
-                Files.deleteIfExists(Paths.get(String.format("%s/IACache-%d.xml", mobjSavePath.toString(), objCache.getId())));
+                Files.deleteIfExists(Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCache.getId()).replace('/', File.separatorChar)));
+                Files.deleteIfExists(Paths.get(String.format("%s/IACache-%d.xml", mobjSavePath.toString(), objCache.getId()).replace('/', File.separatorChar)));
                 mcCaches.remove(objCache);
             }
             info(this, "Cache " + objCache.getId() + " Has Been Deleted");
@@ -205,23 +205,11 @@ public class AMPCacheManager implements CacheManager {
      */
     @Override
     public void saveCaches() {
-        for (IACache objCache : mcCaches) {
-            saveCache(objCache);
-        }
+        mcCaches.forEach(this::saveCache);
     }
 
     public void saveCache(IACache objCache) {
         Path objSave = Paths.get(mobjSavePath.toString() + File.separatorChar + "IACache-" + objCache.getId() + ".xml");
-        Path objBackup = Paths.get(objSave.toString() + ".bak");
-        try {
-            if (Files.exists(objSave)) {
-                Files.deleteIfExists(objBackup);
-                objSave.toFile().renameTo(objBackup.toFile());
-            }
-        } catch (IOException ex) {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-        }
-
         try (OutputStream objSaveStream = Files.newOutputStream(objSave)) {
             XStream objXStream = new XStream(new StaxDriver());
             objXStream.alias("IACache", IACache.class);

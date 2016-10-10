@@ -88,19 +88,9 @@ public class AMPSipManager implements SipManager {
         } catch (ClassNotFoundException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
-        XStream objXStream = new XStream(new StaxDriver());
-        objXStream.alias(mobjConfiguration.getParameter("document_element_name"), objClass);
-        objXStream.processAnnotations(objClass);
         for (IADocumentReference objReference : objCache.getContents()) {
-            try (FileReader objReader = new FileReader(objReference.getFile())) {
-                IADocument objDocument = (IADocument)objClass.cast(objXStream.fromXML(objReader));
-                objDocument.setDocumentId(objReference.getDocumentId());
-                cDocuments.add((IADocument) objDocument);
-            } catch (ClassCastException | IOException ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-            }
+            cDocuments.add(objReference.getDocumentData(objClass, mobjConfiguration.getParameter("document_element_name")));
         }
-
         return cDocuments;
     }
 
