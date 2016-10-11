@@ -7,6 +7,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Base64;
 import java.util.Properties;
 
 import static com.amplexor.ia.Logger.info;
