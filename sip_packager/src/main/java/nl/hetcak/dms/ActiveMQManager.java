@@ -25,7 +25,7 @@ public class ActiveMQManager implements DocumentSource {
         mobjConfiguration = objConfiguration;
         mobjConnectionFactory = new ActiveMQSslConnectionFactory();
         mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter("broker"));
-        if(mobjConfiguration.getParameter("truststore") != null) {
+        if (mobjConfiguration.getParameter("truststore") != null) {
             try {
                 mobjConnectionFactory.setTrustStore(objConfiguration.getParameter("truststore"));
                 mobjConnectionFactory.setTrustStoreType("JKS");
@@ -76,29 +76,39 @@ public class ActiveMQManager implements DocumentSource {
     }
 
     @Override
-    public void initialize() {
+    public boolean initialize() {
+        boolean bReturn = false;
         try {
             mobjConnection = mobjConnectionFactory.createConnection();
             mobjConnection.setClientID("SIP_Packager-" + Thread.currentThread().getName());
             mobjConnection.start();
+            bReturn = true;
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNABLE_TO_CONNECT, ex);
         }
+
+        return bReturn;
     }
 
     @Override
-    public void shutdown() {
+    public boolean shutdown() {
+        boolean bReturn = false;
         try {
             if (mobjConnection != null) {
                 mobjConnection.close();
             }
+
+            bReturn = true;
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
+
+        return bReturn;
     }
 
     @Override
-    public void postResult(List<IADocumentReference> cDocuments) {
+    public boolean postResult(List<IADocumentReference> cDocuments) {
+        boolean bReturn = false;
         Session objSession = null;
         MessageProducer objProducer = null;
         try {
@@ -107,6 +117,7 @@ public class ActiveMQManager implements DocumentSource {
             objProducer = objSession.createProducer(objDestination);
             TextMessage objMessage = objSession.createTextMessage(getResultXml(cDocuments));
             objProducer.send(objDestination, objMessage);
+            bReturn = true;
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         } finally {
@@ -120,8 +131,11 @@ public class ActiveMQManager implements DocumentSource {
                 }
             } catch (JMSException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+                bReturn = false;
             }
         }
+
+        return bReturn;
     }
 
     private String getResultXml(List<IADocumentReference> cDocuments) {

@@ -95,11 +95,14 @@ public class AMPSipManager implements SipManager {
     }
 
     @Override
-    public boolean getSIPFile(IADocumentReference objDocumentReference, IARetentionClass objRetentionClass) {
+    public IACache getSIPFile(IADocumentReference objDocumentReference, IARetentionClass objRetentionClass) {
         debug(this, "Creating SIP file for Document with ID: " + objDocumentReference.getDocumentId());
         IACache objTempCache = new IACache(-1, objRetentionClass);
         objTempCache.add(objDocumentReference);
-        return getSIPFile(objTempCache);
+        if (getSIPFile(objTempCache)) {
+            return objTempCache;
+        }
+        return null;
     }
 
     protected SipAssembler createSipAssembler(PackagingInformation objPackagingInformation, PdiAssembler objPdiAssembler, DigitalObjectsExtraction objDigitalObjectsExtraction) {

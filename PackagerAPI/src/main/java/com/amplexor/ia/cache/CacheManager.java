@@ -20,7 +20,7 @@ public interface CacheManager {
      *
      * @throws IOException
      */
-    void initializeCache() throws IOException;
+    boolean initializeCache() throws IOException;
 
     /**
      * Adds {@link IADocument} objDocument to the cache for the {@link IARetentionClass} objRetentionClass
@@ -48,16 +48,16 @@ public interface CacheManager {
      *
      * @param objCache The cache that is to be removed
      */
-    void cleanupCache(IACache objCache);
+    boolean cleanupCache(IACache objCache);
 
     /**
      * Saves the caches currently held by the cache manager as XML files
      * The output will be saved in the ${caching}/${base_path}
      */
-    void saveCaches();
+    boolean saveCaches();
 
     /**
      * Loads any {@link IACache}s in the current savePath(config.xml->${cachemanager}/${base_path}) and adds them to the {@link CacheManager}
      */
-    void loadCaches();
+    boolean loadCaches();
 }

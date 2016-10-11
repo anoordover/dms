@@ -21,15 +21,15 @@ public interface DocumentSource {
      * Post the resulting status of the {@link IACache} back to the document source
      * @param objCache The cache whose status should be posted
      */
-    void postResult(List<IADocumentReference> objCache);
+    boolean postResult(List<IADocumentReference> objCache);
 
     /**
      * This method will initialize the document source, such as setting up connections
      */
-    void initialize();
+    boolean initialize();
 
     /**
      * This method will shutdown the document source by, for example closing open connections.
      */
-    void shutdown();
+    boolean shutdown();
 }
