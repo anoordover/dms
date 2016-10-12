@@ -190,22 +190,40 @@ public class AMPCacheManager implements CacheManager {
     @Override
     public boolean cleanupCache(IACache objCache) {
         debug(this, "Cleaning Cache " + objCache.getId());
-        boolean bReturn = false;
+        boolean bReturn = true;
 
-        try {
-            if (objCache.isClosed()) {
-                for (IADocumentReference objReference : objCache.getContents()) {
+        if (objCache.isClosed()) {
+            for (IADocumentReference objReference : objCache.getContents()) {
+                try {
                     Files.delete(Paths.get(objReference.getFile()));
+                } catch (IOException ex) {
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
+                    bReturn = false;
                 }
-                Files.deleteIfExists(Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCache.getId()).replace('/', File.separatorChar)));
-                Files.deleteIfExists(Paths.get(String.format("%s/IACache-%d.xml", mobjSavePath.toString(), objCache.getId()).replace('/', File.separatorChar)));
-                mcCaches.remove(objCache);
-                bReturn = true;
             }
-            info(this, "Cache " + objCache.getId() + " Has Been Deleted");
-        } catch (IOException ex) {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
+
+            try {
+                Files.deleteIfExists(Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCache.getId()).replace('/', File.separatorChar)));
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
+                bReturn = false;
+            }
+            try {
+                Files.deleteIfExists(Paths.get(String.format("%s/IACache-%d.xml", mobjSavePath.toString(), objCache.getId()).replace('/', File.separatorChar)));
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
+                bReturn = false;
+            }
+            try {
+                Files.deleteIfExists(Paths.get(String.format("%s", objCache.getSipFile().toString())));
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
+                bReturn = false;
+            }
+            mcCaches.remove(objCache);
         }
+        info(this, "Cache " + objCache.getId() + " Has Been Deleted");
+
         return bReturn;
     }
 

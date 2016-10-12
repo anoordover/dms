@@ -45,8 +45,9 @@ public class MetaDataConsumer implements DocumentSource {
     }
 
     @Override
-    public void postResult(List<IADocumentReference> objCache) {
+    public boolean postResult(List<IADocumentReference> objCache) {
         //Cannot post back to filesystem
+        return true;
     }
 
     private String readEntry(Path objEntryPath) {
@@ -83,12 +84,14 @@ public class MetaDataConsumer implements DocumentSource {
 
 
     @Override
-    public void initialize() {
+    public boolean initialize() {
         //Nothing to initialize
+        return true;
     }
 
     @Override
-    public void shutdown() {
+    public boolean shutdown() {
         //Nothing to clean
+        return true;
     }
 }

@@ -25,8 +25,8 @@
         <gateway_protocol>http</gateway_protocol>
         <gateway_host>cwno0427</gateway_host>
         <gateway_port>8080</gateway_port>
-        <ingest_user>admjzimmermann</ingest_user>
-        <encrypted_ingest_password>V3VyY2l0d2FnNDAt</encrypted_ingest_password>
+        <ingest_user>sa-infoarchive-ont</ingest_user>
+        <encrypted_ingest_password>OFRFeGNsZXJneXdX</encrypted_ingest_password>
         <ingest_tenant>INFOARCHIVE</ingest_tenant>
     </rest_api>
     <sip>
@@ -63,11 +63,6 @@
             <input_queue_name>AanleverenArchiefUitingen</input_queue_name>
             <result_queue_name>VerwerkArchiefUitingenStatus</result_queue_name>
             <queue_receive_timeout>500</queue_receive_timeout>
-
-            <!-- Data Generator -->
-            <pdf_path>C:\Users\admjzimmermann\Desktop\ws\dms\resources</pdf_path>
-            <output_amount>500</output_amount>
-            <queue_action>clean</queue_action>
         </custom_parameters>
     </document_source>
     <retention_manager>

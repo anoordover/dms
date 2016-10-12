@@ -1,6 +1,7 @@
 package com.amplexor.ia.worker;
 
 import com.amplexor.ia.configuration.SIPPackagerConfiguration;
+import com.amplexor.ia.configuration.WorkerConfiguration;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,7 +41,6 @@ public class WorkerManager {
             mcWorkers.add(new IAArchiverWorkerThread(objConfiguration, i + 1));
             startWorker();
         }
-
         mobjManagerThread = new Thread(() -> {
             long lMillisecondsSinceLastCheck = 0;
             while (mbIsRunning) {
@@ -51,16 +51,52 @@ public class WorkerManager {
                 mlDiffMillisecondsSinceLastCheck = Math.abs(lMillisecondsSinceLastCheck - System.currentTimeMillis());
                 if (mlDiffMillisecondsSinceLastCheck > objConfiguration.getWorkerConfiguration().getCheckInterval()) {
                     int iTotalProcessed = getProcessedBytes();
-                    if (iTotalProcessed < objConfiguration.getWorkerConfiguration().getWorkerShutdownThreshold() && miCurrentWorker > 0) {
+                    if (shouldStopWorker(iTotalProcessed, objConfiguration.getWorkerConfiguration())) {
                         stopWorker();
-                    } else if (iTotalProcessed > objConfiguration.getWorkerConfiguration().getWorkerStartupThreshold() && miCurrentWorker < (objConfiguration.getWorkerConfiguration().getMaxWorkerThreads() - 1) || miCurrentWorker == -1) {
+                    } else if (shouldStartWorker(iTotalProcessed, objConfiguration.getWorkerConfiguration())) {
                         startWorker();
                     }
                     lMillisecondsSinceLastCheck = System.currentTimeMillis();
                 }
+                updatePausedWorkerCaches(objConfiguration.getWorkerConfiguration());
                 waitForNextCheck();
             }
         });
+    }
+
+    private void updatePausedWorkerCaches(WorkerConfiguration objConfiguration) {
+        for (int i = miCurrentWorker + 1; i < objConfiguration.getMaxWorkerThreads() - 1; ++i) {
+            mcWorkers.get(i).update();
+            if (mcWorkers.get(i).getClosedCacheCount() > 0) {
+                mcWorkers.get(i).setIngestFlag();
+                startWorker();
+            }
+        }
+    }
+
+    private boolean shouldStopWorker(int iProcessed, WorkerConfiguration objConfiguration) {
+        if (iProcessed < objConfiguration.getWorkerShutdownThreshold() && miCurrentWorker > 0) {
+            if (mcWorkers.get(miCurrentWorker).isIngesting()) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean shouldStartWorker(int iProcessed, WorkerConfiguration objConfiguration) {
+        if (iProcessed > objConfiguration.getWorkerStartupThreshold() && miCurrentWorker < (objConfiguration.getMaxWorkerThreads() - 1) || miCurrentWorker == -1) {
+            return true;
+        }
+
+        //Start a new worker if the current one is ingesting
+        if (miCurrentWorker > -1 && mcWorkers.get(miCurrentWorker).isIngesting() && miCurrentWorker < (objConfiguration.getMaxWorkerThreads() - 1)) {
+            return true;
+        }
+
+        return false;
     }
 
     private int getProcessedBytes() {
@@ -75,7 +111,7 @@ public class WorkerManager {
 
     private void waitForNextCheck() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(100);
         } catch (InterruptedException ex) {
             warn(this, "WorkerManager Thread was Interrupted");
             mbIsRunning = false;

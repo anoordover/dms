@@ -2,7 +2,6 @@ package com.amplexor.ia.document_source;
 
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.cache.IADocumentReference;
-import com.amplexor.ia.metadata.IADocument;
 
 import java.util.List;
 
@@ -19,9 +18,9 @@ public interface DocumentSource {
 
     /**
      * Post the resulting status of the {@link IACache} back to the document source
-     * @param objCache The cache whose status should be posted
+     * @param cReferences a List of document references
      */
-    boolean postResult(List<IADocumentReference> objCache);
+    boolean postResult(List<IADocumentReference> cReferences);
 
     /**
      * This method will initialize the document source, such as setting up connections
