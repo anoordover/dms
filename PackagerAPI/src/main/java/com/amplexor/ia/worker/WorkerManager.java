@@ -111,6 +111,7 @@ public class WorkerManager {
     private void stopWorker() {
         if (miCurrentWorker > -1) {
             mcWorkers.get(miCurrentWorker--).stopWorker();
+
         }
     }
 

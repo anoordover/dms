@@ -9,6 +9,7 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/data_generator/pom.xml" />
         <option value="$PROJECT_DIR$/PackagerAPI/pom.xml" />
+        <option value="$PROJECT_DIR$/request_processor/pom.xml" />
       </list>
     </option>
   </component>
