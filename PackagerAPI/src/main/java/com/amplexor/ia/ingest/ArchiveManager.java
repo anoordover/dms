@@ -148,12 +148,16 @@ public class ArchiveManager {
         try (BufferedReader oReader = new BufferedReader(new InputStreamReader(objInputStream))) {
             JSONObject oRespObject = (JSONObject) new JSONParser().parse(oReader);
             if (oRespObject != null) {
-                String sAccessToken = (String) oRespObject.get("access_token");
-                mobjCredentials.setToken(sAccessToken);
-                String sRefreshToken = (String) oRespObject.get("refresh_token");
-                mobjCredentials.setRefreshToken(sRefreshToken);
-                long lExpiry = (long) oRespObject.get("expires_in");
-                mobjCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
+                if (oRespObject.containsKey("access_token")) {
+                    mobjCredentials.setToken((String) oRespObject.get("access_token"));
+                }
+                if (oRespObject.containsKey("refresh_token")) {
+                    mobjCredentials.setRefreshToken((String) oRespObject.get("refresh_token"));
+                }
+                if (oRespObject.containsKey("expires_in")) {
+                    long lExpiry = (long) oRespObject.get("expires_in");
+                    mobjCredentials.setExpiry(new Date().getTime() + (lExpiry * MILLISECONDS_PER_SECOND));
+                }
                 return true;
             }
         } catch (ParseException | IOException ex) {

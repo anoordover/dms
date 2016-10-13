@@ -5,12 +5,13 @@ import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -21,7 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.amplexor.ia.Logger.*;
+import static com.amplexor.ia.Logger.debug;
+import static com.amplexor.ia.Logger.info;
 
 /**
  * The {@link CacheManager} is responsible for keeping track of {@link IACache} objects, the folder structure associated with the caches and saving any data contained in these caches while they exist.
@@ -51,8 +53,9 @@ public class AMPCacheManager implements CacheManager {
      * @throws IOException
      */
     @Override
-    public void initializeCache() throws IOException {
+    public boolean initializeCache() throws IOException {
         debug(this, "Initializing CacheManager");
+        boolean bReturn = false;
         try {
             mobjBasePath = Paths.get(
                     String.format("%s/%s/", mobjConfiguration.getCacheBasePath(), Thread.currentThread().getName()).replace('/', File.separatorChar));
@@ -68,12 +71,15 @@ public class AMPCacheManager implements CacheManager {
             } else {
                 loadCaches();
             }
+            bReturn = true;
             debug(this, "CacheManager Initialized");
         } catch (IOException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         } catch (InvalidPathException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_INVALID_BASE_PATH, ex);
         }
+
+        return bReturn;
     }
 
     /**
@@ -92,7 +98,7 @@ public class AMPCacheManager implements CacheManager {
         try {
             IACache objCache = getCache(objRetentionClass);
             if (objCache != null) {
-                objCache.add(new IADocumentReference(objDocument.getDocumentId(), saveDocument(objCache, objDocument)));
+                objCache.add(new IADocumentReference(objDocument, saveDocument(objCache, objDocument)));
                 bReturn = true;
             }
         } catch (IOException ex) {
@@ -117,7 +123,6 @@ public class AMPCacheManager implements CacheManager {
         try (OutputStream objOutputStream = Files.newOutputStream(objDocumentPath)) {
             objXStream.toXML(objDocument, objOutputStream);
         }
-        saveCache(objCache);
         return objDocumentPath.toString();
     }
 
@@ -183,21 +188,43 @@ public class AMPCacheManager implements CacheManager {
      * @param objCache The cache that is to be removed
      */
     @Override
-    public void cleanupCache(IACache objCache) {
+    public boolean cleanupCache(IACache objCache) {
         debug(this, "Cleaning Cache " + objCache.getId());
-        try {
-            if (objCache.isClosed()) {
-                for (IADocumentReference objReference : objCache.getContents()) {
+        boolean bReturn = true;
+
+        if (objCache.isClosed()) {
+            for (IADocumentReference objReference : objCache.getContents()) {
+                try {
                     Files.delete(Paths.get(objReference.getFile()));
+                } catch (IOException ex) {
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
+                    bReturn = false;
                 }
-                Files.deleteIfExists(Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCache.getId())));
-                Files.deleteIfExists(Paths.get(String.format("%s/IACache-%d.xml", mobjSavePath.toString(), objCache.getId())));
-                mcCaches.remove(objCache);
             }
-            info(this, "Cache " + objCache.getId() + " Has Been Deleted");
-        } catch (IOException ex) {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
+
+            try {
+                Files.deleteIfExists(Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCache.getId()).replace('/', File.separatorChar)));
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
+                bReturn = false;
+            }
+            try {
+                Files.deleteIfExists(Paths.get(String.format("%s/IACache-%d.xml", mobjSavePath.toString(), objCache.getId()).replace('/', File.separatorChar)));
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
+                bReturn = false;
+            }
+            try {
+                Files.deleteIfExists(Paths.get(String.format("%s", objCache.getSipFile().toString())));
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
+                bReturn = false;
+            }
+            mcCaches.remove(objCache);
         }
+        info(this, "Cache " + objCache.getId() + " Has Been Deleted");
+
+        return bReturn;
     }
 
     /**
@@ -205,39 +232,37 @@ public class AMPCacheManager implements CacheManager {
      * The output will be saved in the ${caching}/${base_path}
      */
     @Override
-    public void saveCaches() {
+    public boolean saveCaches() {
+        boolean bReturn = true;
         for (IACache objCache : mcCaches) {
-            saveCache(objCache);
+            if (!saveCache(objCache)) {
+                bReturn = false;
+            }
         }
+        return bReturn;
     }
 
-    public void saveCache(IACache objCache) {
+    public boolean saveCache(IACache objCache) {
+        boolean bReturn = false;
         Path objSave = Paths.get(mobjSavePath.toString() + File.separatorChar + "IACache-" + objCache.getId() + ".xml");
-        Path objBackup = Paths.get(objSave.toString() + ".bak");
-        try {
-            if (Files.exists(objSave)) {
-                Files.deleteIfExists(objBackup);
-                objSave.toFile().renameTo(objBackup.toFile());
-            }
-        } catch (IOException ex) {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-        }
-
         try (OutputStream objSaveStream = Files.newOutputStream(objSave)) {
             XStream objXStream = new XStream(new StaxDriver());
             objXStream.alias("IACache", IACache.class);
             objXStream.processAnnotations(IACache.class);
             objXStream.toXML(objCache, objSaveStream);
+            bReturn = true;
         } catch (IOException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
+
+        return bReturn;
     }
 
     /**
      * Loads any {@link IACache}s in the current savePath(config.xml->${cachemanager}/${base_path}) and adds them to the {@link CacheManager}
      */
     @Override
-    public void loadCaches() {
+    public boolean loadCaches() {
         List<File> cSaveContents = Arrays.asList(new File(mobjSavePath.toString() + File.separatorChar).listFiles());
         cSaveContents.forEach(objCacheSaveFile -> {
             try (InputStream objCacheSaveInput = Files.newInputStream(objCacheSaveFile.toPath())) {
@@ -252,6 +277,7 @@ public class AMPCacheManager implements CacheManager {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, new IOException("Unable to delete cache save file"));
             }
         });
+        return true;
     }
 
 }

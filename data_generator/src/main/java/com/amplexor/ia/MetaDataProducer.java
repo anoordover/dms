@@ -8,6 +8,9 @@ import com.amplexor.ia.utils.TransformPDF;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
 
 import javax.jms.*;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
 import java.io.File;
 import java.util.Enumeration;
 
@@ -20,13 +23,12 @@ public class MetaDataProducer {
     }
 
     public static void main(String[] cArgs) {
-        ConfigManager objConfigManager = new ConfigManager("IAArchiver.xml");
+        ConfigManager objConfigManager = new ConfigManager("data_generator/IAArchiver.xml");
         objConfigManager.loadConfiguration();
         ExceptionHelper.getExceptionHelper().setExceptionConfiguration(objConfigManager.getConfiguration().getExceptionConfiguration());
 
         ActiveMQSslConnectionFactory objConnectionFactory = new ActiveMQSslConnectionFactory(objConfigManager.getConfiguration().getDocumentSource().getParameter("broker"));
         Connection objConnection = null;
-
         try {
             objConnectionFactory.setTrustStore(objConfigManager.getConfiguration().getDocumentSource().getParameter("truststore"));
             objConnectionFactory.setTrustStorePassword(objConfigManager.getConfiguration().getDocumentSource().getParameter("truststore_password"));
@@ -36,6 +38,8 @@ public class MetaDataProducer {
 
             Session objSession = objConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue objDestination = objSession.createQueue(objConfigManager.getConfiguration().getDocumentSource().getParameter("input_queue_name"));
+
+
             QueueBrowser objBrowser = objSession.createBrowser(objDestination);
             int iCount = 0;
             Enumeration objEnum = objBrowser.getEnumeration();
@@ -64,7 +68,6 @@ public class MetaDataProducer {
                     Logger.info(MetaDataProducer.class, "Queue Empty, Feeding Random MetaData now.");
                 }
             }
-
             MessageProducer objProducer = objSession.createProducer(objDestination);
             objProducer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
             for (int i = 0; i < Integer.parseInt(objConfigManager.getConfiguration().getDocumentSource().getParameter("output_amount")); ++i) {

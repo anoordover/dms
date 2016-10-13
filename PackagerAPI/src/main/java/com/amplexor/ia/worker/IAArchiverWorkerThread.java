@@ -1,18 +1,19 @@
 package com.amplexor.ia.worker;
 
-import com.amplexor.ia.cache.IADocumentReference;
-import com.amplexor.ia.document_source.DocumentSource;
-import com.amplexor.ia.parsing.MessageParser;
 import com.amplexor.ia.cache.CacheManager;
+import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.configuration.*;
+import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.ingest.ArchiveManager;
 import com.amplexor.ia.metadata.IADocument;
+import com.amplexor.ia.parsing.MessageParser;
 import com.amplexor.ia.retention.RetentionManager;
 import com.amplexor.ia.sip.SipManager;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.rmi.server.ExportException;
 import java.util.List;
 
 import static com.amplexor.ia.Logger.debug;
@@ -24,9 +25,13 @@ import static com.amplexor.ia.Logger.info;
 class IAArchiverWorkerThread implements Runnable {
     private SIPPackagerConfiguration mobjConfiguration;
     private int miId;
+    private Thread mobjShutdownHook;
 
     private int miProcessedBytes;
     private boolean mbRunning;
+    private boolean mbShutdownFlag;
+    private boolean mbIngesting;
+    private boolean mbIngestFlag;
 
     private DocumentSource mobjDocumentSource;
     private MessageParser mobjMessageParser;
@@ -43,42 +48,60 @@ class IAArchiverWorkerThread implements Runnable {
     public IAArchiverWorkerThread(SIPPackagerConfiguration objConfiguration, int iId) {
         mobjConfiguration = objConfiguration;
         miId = iId;
+        mobjShutdownHook = new Thread() {
+            @Override
+            public void run() {
+                info(this, "Waiting for Worker-" + miId + " to shutdown");
+                while (isRunning()) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                info(this, "Shutdown Hook for Worker-" + miId);
+                if (mobjCacheManager != null) {
+                    mobjCacheManager.saveCaches();
+                }
+
+            }
+        };
+        Runtime.getRuntime().addShutdownHook(mobjShutdownHook);
     }
 
+    public synchronized boolean isRunning() {
+        return mbRunning;
+    }
 
     @Override
     public void run() {
         info(this, "Initializing Worker " + miId);
         info(this, "Setting up ExceptionHelper");
         ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfiguration.getExceptionConfiguration());
-        try {
-            if (loadClasses()) {
-                mobjDocumentSource.initialize();
-                Thread.currentThread().setName("IAWorker-" + miId);
-                ExceptionHelper.getExceptionHelper().setDocumentSource(mobjDocumentSource);
-                info(this, "Initializing Document Caches");
-                mobjCacheManager.initializeCache();
-                info(this, "Initializing Archive Manager");
-                mobjArchiveManager = new ArchiveManager(mobjConfiguration.getServerConfiguration());
-                info(this, "DONE. Starting main loop");
-                mbRunning = true;
-
+        synchronized (this) {
+            try {
+                if (loadClasses()) {
+                    mobjDocumentSource.initialize();
+                    Thread.currentThread().setName("IAWorker-" + miId);
+                    info(this, "Initializing Document Caches");
+                    mobjCacheManager.initializeCache();
+                    info(this, "Initializing Archive Manager");
+                    mobjArchiveManager = new ArchiveManager(mobjConfiguration.getServerConfiguration());
+                    info(this, "DONE. Starting main loop");
+                    mbRunning = true;
+                }
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+                WorkerManager.getWorkerManager().signalStop(ExceptionHelper.ERROR_OTHER);
             }
-        } catch (IOException ex) {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-            WorkerManager.getWorkerManager().stop();
         }
-
-        while (mbRunning) {
-            if(Thread.currentThread().isInterrupted()) {
-                info(this, "Worker-" + miId + " was Interruped");
-                break;
-            }
-
+        while (isRunning()) {
             List<IADocument> cDocuments = null;
-            String sDocumentData = mobjDocumentSource.retrieveDocumentData();
-            if (!"".equals(sDocumentData)) {
-                cDocuments = mobjMessageParser.parse(sDocumentData);
+            if (!mbIngestFlag) {
+                String sDocumentData = mobjDocumentSource.retrieveDocumentData();
+                if (!"".equals(sDocumentData)) {
+                    cDocuments = mobjMessageParser.parse(sDocumentData);
+                }
             }
 
             if (cDocuments != null) {
@@ -96,24 +119,54 @@ class IAArchiverWorkerThread implements Runnable {
             }
 
             mobjCacheManager.update();
-            mobjCacheManager.getClosedCaches().iterator().forEachRemaining(objCache -> {
-                if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache)) {
-                    info(this, "Successfully Ingested SIP " + objCache.getSipFile().toString());
-                    mobjDocumentSource.postResult(objCache.getContents());
-                    mobjCacheManager.cleanupCache(objCache);
-                }
-            });
-        }
+            ingest();
+            if (mbIngestFlag) {
+                mbIngestFlag = mbRunning = false;
+            }
 
-        info(this, "Saving Caches for worker " + miId);
-        mobjCacheManager.saveCaches();
+            mbRunning = !mbShutdownFlag;
+        }
         mobjDocumentSource.shutdown();
         info(this, "Shutting down Worker " + miId);
     }
 
+    public void ingest() {
+        mbIngesting = true;
+        mobjCacheManager.getClosedCaches().iterator().forEachRemaining(objCache -> {
+            if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache)) {
+                info(this, "Successfully Ingested SIP " + objCache.getSipFile().toString());
+            }
+            mobjDocumentSource.postResult(objCache.getContents());
+            mobjCacheManager.cleanupCache(objCache);
+        });
+        mbIngesting = false;
+    }
+
+    public synchronized void update() {
+        if (mobjCacheManager != null) {
+            mobjCacheManager.update();
+        }
+    }
+
+    public synchronized int getClosedCacheCount() {
+        if (mobjCacheManager != null) {
+            return mobjCacheManager.getClosedCaches().size();
+        }
+
+        return -1;
+    }
+
+    public synchronized void setIngestFlag() {
+        mbIngestFlag = true;
+    }
+
+    public synchronized boolean isIngesting() {
+        return mbIngesting;
+    }
+
     public synchronized void stopWorker() {
         info(this, "Worker " + miId + " Received Stop command");
-        mbRunning = false;
+        mbShutdownFlag = true;
     }
 
     private boolean loadClasses() {
@@ -171,7 +224,7 @@ class IAArchiverWorkerThread implements Runnable {
             return mobjDocumentSource != null && mobjMessageParser != null && mobjRetentionManager != null;
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | NullPointerException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-            WorkerManager.getWorkerManager().stop();
+            WorkerManager.getWorkerManager().signalStop(ExceptionHelper.ERROR_OTHER);
         }
         return false;
     }

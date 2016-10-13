@@ -5,6 +5,7 @@ import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.configuration.ExceptionConfiguration;
 import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.metadata.IADocument;
+import com.amplexor.ia.worker.WorkerManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +63,6 @@ public class ExceptionHelper {
     };
 
     private ExceptionConfiguration mobjExceptionConfiguration;
-    private DocumentSource mobjDocumentSource;
 
     /*Private constructor to hide the implicit public one*/
     private ExceptionHelper() {
@@ -75,15 +75,6 @@ public class ExceptionHelper {
      */
     public static ExceptionHelper getExceptionHelper() {
         return mobjLocalInstance.get();
-    }
-
-    /**
-     * Sets the {@link DocumentSource} to be used for the "notify_source" handler
-     *
-     * @param objDocumentSource
-     */
-    public synchronized void setDocumentSource(DocumentSource objDocumentSource) {
-        mobjDocumentSource = objDocumentSource;
     }
 
     /**
@@ -107,7 +98,6 @@ public class ExceptionHelper {
             executeHandlers(objError, (IADocument) null, objException);
         } else {
             fatal(this, "No ExceptionConfiguration, Exiting");
-            System.exit(ERROR_OTHER);
         }
     }
 
@@ -126,7 +116,7 @@ public class ExceptionHelper {
             executeHandlers(objError, objDocument, objException);
         } else {
             fatal(this, "No ExceptionConfiguration, Exiting");
-            System.exit(ERROR_OTHER);
+            WorkerManager.getWorkerManager().signalStop(iCode);
         }
     }
 
@@ -157,7 +147,7 @@ public class ExceptionHelper {
         List<String> cHandlers = Arrays.asList(objError.getErrorHandling().split(";"));
         for (String sHandler : cHandlers) {
             if ("notify_source".equals(sHandler)) {
-                if(mobjDocumentSource == null || objIAItem == null) {
+                if(objIAItem == null) {
                     error(ExceptionHelper.this, "DocumentSource or IADocument was not provided to error handler");
                     return;
                 }
@@ -168,13 +158,19 @@ public class ExceptionHelper {
                     cDocuments.add((IADocumentReference)objIAItem);
                 }
 
+                cDocuments.forEach(objIADocumentReference -> {
+                    if(objIADocumentReference.getErrorCode() == 0) {
+                        objIADocumentReference.setErrorCode(objError.getErrorCode());
+                        objIADocumentReference.setErrorMessage(objError.getErrorText());
+                    }
+                });
             } else if ("log_error".equals(sHandler)) {
                 error(ExceptionHelper.this, objError.getErrorText());
                 error(ExceptionHelper.this, objException);
             } else if ("log_fatal".equals(sHandler)) {
                 fatal(ExceptionHelper.this, objError.getErrorText());
                 fatal(ExceptionHelper.this, objException);
-                System.exit(objError.getErrorCode());
+                WorkerManager.getWorkerManager().signalStop(objError.getErrorCode());
             } else {
                 error(ExceptionHelper.this, "Invalid error handler " + sHandler);
                 error(ExceptionHelper.this, objException);

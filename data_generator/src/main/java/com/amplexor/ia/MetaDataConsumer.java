@@ -10,6 +10,7 @@ import com.amplexor.ia.metadata.IADocument;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.channels.FileLock;
+import java.nio.channels.NonWritableChannelException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,8 +45,9 @@ public class MetaDataConsumer implements DocumentSource {
     }
 
     @Override
-    public void postResult(List<IADocumentReference> objCache) {
+    public boolean postResult(List<IADocumentReference> objCache) {
         //Cannot post back to filesystem
+        return true;
     }
 
     private String readEntry(Path objEntryPath) {
@@ -62,6 +64,8 @@ public class MetaDataConsumer implements DocumentSource {
                     }
                 }
             } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            } catch (NonWritableChannelException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             } finally {
                 if (objLock != null) {
@@ -80,12 +84,14 @@ public class MetaDataConsumer implements DocumentSource {
 
 
     @Override
-    public void initialize() {
+    public boolean initialize() {
         //Nothing to initialize
+        return true;
     }
 
     @Override
-    public void shutdown() {
+    public boolean shutdown() {
         //Nothing to clean
+        return true;
     }
 }

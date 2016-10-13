@@ -88,28 +88,21 @@ public class AMPSipManager implements SipManager {
         } catch (ClassNotFoundException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
-        XStream objXStream = new XStream(new StaxDriver());
-        objXStream.alias(mobjConfiguration.getParameter("document_element_name"), objClass);
-        objXStream.processAnnotations(objClass);
         for (IADocumentReference objReference : objCache.getContents()) {
-            try (FileReader objReader = new FileReader(objReference.getFile())) {
-                IADocument objDocument = (IADocument)objClass.cast(objXStream.fromXML(objReader));
-                objDocument.setDocumentId(objReference.getDocumentId());
-                cDocuments.add((IADocument) objDocument);
-            } catch (ClassCastException | IOException ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-            }
+            cDocuments.add(objReference.getDocumentData(objClass, mobjConfiguration.getParameter("document_element_name")));
         }
-
         return cDocuments;
     }
 
     @Override
-    public boolean getSIPFile(IADocumentReference objDocumentReference, IARetentionClass objRetentionClass) {
+    public IACache getSIPFile(IADocumentReference objDocumentReference, IARetentionClass objRetentionClass) {
         debug(this, "Creating SIP file for Document with ID: " + objDocumentReference.getDocumentId());
         IACache objTempCache = new IACache(-1, objRetentionClass);
         objTempCache.add(objDocumentReference);
-        return getSIPFile(objTempCache);
+        if (getSIPFile(objTempCache)) {
+            return objTempCache;
+        }
+        return null;
     }
 
     protected SipAssembler createSipAssembler(PackagingInformation objPackagingInformation, PdiAssembler objPdiAssembler, DigitalObjectsExtraction objDigitalObjectsExtraction) {

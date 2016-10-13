@@ -24,13 +24,15 @@ public class ActiveMQManager implements DocumentSource {
     public ActiveMQManager(PluggableObjectConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
         mobjConnectionFactory = new ActiveMQSslConnectionFactory();
-        try {
-            mobjConnectionFactory.setTrustStore(objConfiguration.getParameter("truststore"));
-            mobjConnectionFactory.setTrustStoreType("JKS");
-            mobjConnectionFactory.setTrustStorePassword(objConfiguration.getParameter("truststore_password"));
-            mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter("broker"));
-        } catch (Exception ex) {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_TRUSTSTORE, ex);
+        mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter("broker"));
+        if (mobjConfiguration.getParameter("truststore") != null) {
+            try {
+                mobjConnectionFactory.setTrustStore(objConfiguration.getParameter("truststore"));
+                mobjConnectionFactory.setTrustStoreType("JKS");
+                mobjConnectionFactory.setTrustStorePassword(objConfiguration.getParameter("truststore_password"));
+            } catch (Exception ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_TRUSTSTORE, ex);
+            }
         }
     }
 
@@ -74,37 +76,53 @@ public class ActiveMQManager implements DocumentSource {
     }
 
     @Override
-    public void initialize() {
+    public boolean initialize() {
+        boolean bReturn = false;
         try {
             mobjConnection = mobjConnectionFactory.createConnection();
             mobjConnection.setClientID("SIP_Packager-" + Thread.currentThread().getName());
             mobjConnection.start();
+            bReturn = true;
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNABLE_TO_CONNECT, ex);
         }
+
+        return bReturn;
     }
 
     @Override
-    public void shutdown() {
+    public boolean shutdown() {
+        boolean bReturn = false;
         try {
             if (mobjConnection != null) {
                 mobjConnection.close();
             }
+
+            bReturn = true;
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
+
+        return bReturn;
     }
 
     @Override
-    public void postResult(List<IADocumentReference> cDocuments) {
+    public boolean postResult(List<IADocumentReference> cDocuments) {
+        boolean bReturn = false;
         Session objSession = null;
         MessageProducer objProducer = null;
+
+        if(mobjConnection == null) {
+            return false;
+        }
+
         try {
             objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue objDestination = objSession.createQueue(mobjConfiguration.getParameter("result_queue_name"));
             objProducer = objSession.createProducer(objDestination);
             TextMessage objMessage = objSession.createTextMessage(getResultXml(cDocuments));
             objProducer.send(objDestination, objMessage);
+            bReturn = true;
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         } finally {
@@ -118,8 +136,11 @@ public class ActiveMQManager implements DocumentSource {
                 }
             } catch (JMSException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+                bReturn = false;
             }
         }
+
+        return bReturn;
     }
 
     private String getResultXml(List<IADocumentReference> cDocuments) {
@@ -131,16 +152,13 @@ public class ActiveMQManager implements DocumentSource {
             for (String sResultValue : cResultValues) {
                 switch (sResultValue) {
                     case "{ERROR}":
-                        cValues[iCurrent++] = String.valueOf(objReference.getErrorCode());
+                        cValues[iCurrent++] = String.format("%04d", objReference.getErrorCode());
                         break;
                     case "{MESSAGE}":
                         cValues[iCurrent++] = objReference.getErrorMessage();
                         break;
                     case "{ID}":
                         cValues[iCurrent++] = objReference.getDocumentId();
-                        break;
-                    case "{STATUS}":
-                        cValues[iCurrent++] = objReference.getErrorCode() == 0 ? mobjConfiguration.getParameter("result_success") : mobjConfiguration.getParameter("result_error");
                         break;
                     default:
                         cValues[iCurrent++] = cValues[iCurrent];

@@ -23,5 +23,5 @@ public interface SipManager {
      * @param objRetentionClass The retention class that applies to objDocument
      * @return a boolean value indication whether creation was successful
      */
-    boolean getSIPFile(IADocumentReference objDocument, IARetentionClass objRetentionClass);
+    IACache getSIPFile(IADocumentReference objDocument, IARetentionClass objRetentionClass);
 }

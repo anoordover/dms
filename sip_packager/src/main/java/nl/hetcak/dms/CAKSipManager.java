@@ -7,7 +7,6 @@ import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.sip.AMPSipManager;
-import com.amplexor.ia.sip.SipManager;
 import com.emc.ia.sdk.sip.assembly.FileGenerationMetrics;
 import com.emc.ia.sdk.sip.assembly.FileGenerator;
 import com.emc.ia.sdk.sip.assembly.PackagingInformation;
@@ -46,7 +45,7 @@ public class CAKSipManager extends AMPSipManager {
         List<IADocument> cDocuments = retrieveDocuments(objCache);
         try {
             if (!cDocuments.isEmpty()) {
-                boolean bIsFallback = objCache.getDocumentIdentifier().equals("Fallback");
+                boolean bIsFallback = "Fallback".equals(objCache.getDocumentIdentifier());
                 objCache.setTargetApplication(bIsFallback ? mobjConfiguration.getParameter("fallback_application_name") : mobjConfiguration.getApplicationName());
                 SipAssembler<IADocument> objSipAssembler = createSipAssembler(getCAKPackageInformation(objCache.getRetentionClass(), bIsFallback), getPdiAssembler(), getDigitalObjects());
                 FileGenerator<IADocument> objFileGenerator = new FileGenerator<>(objSipAssembler, new File(mobjConfiguration.getSipOutputDirectory()));
@@ -72,18 +71,23 @@ public class CAKSipManager extends AMPSipManager {
             }
 
             if (new File(mobjConfiguration.getSipOutputDirectory()).getFreeSpace() < lTotalSize) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SIP_INSUFFICIENT_DISK_SPACE, ex);
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SIP_INSUFFICIENT_DISK_SPACE, objCache, ex);
             }
         }
         return bReturn;
     }
 
     @Override
-    public boolean getSIPFile(IADocumentReference objDocumentReference, IARetentionClass objRetentionClass) {
+    public IACache getSIPFile(IADocumentReference objDocumentReference, IARetentionClass objRetentionClass) {
         debug(this, "Creating SIP file for Document with ID: " + objDocumentReference.getDocumentId());
+
         IACache objTempCache = new IACache(-1, objRetentionClass);
         objTempCache.add(objDocumentReference);
-        return getSIPFile(objTempCache);
+        if(getSIPFile(objTempCache)) {
+            return objTempCache;
+        }
+
+        return null;
     }
 
     public PackagingInformation getCAKPackageInformation(IARetentionClass objRetentionClass, boolean bIsFallback) {

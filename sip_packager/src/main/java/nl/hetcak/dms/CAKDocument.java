@@ -94,4 +94,9 @@ public class CAKDocument extends IADocument {
     public void setPayload(byte[] cPayload) {
         msPayload = Base64.getEncoder().encodeToString(cPayload);
     }
+
+    @Override
+    public String getDocumentId() {
+        return mcMetadata.get("ArchiefDocumentId");
+    }
 }
