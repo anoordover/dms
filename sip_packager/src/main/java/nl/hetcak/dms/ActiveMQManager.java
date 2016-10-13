@@ -111,6 +111,11 @@ public class ActiveMQManager implements DocumentSource {
         boolean bReturn = false;
         Session objSession = null;
         MessageProducer objProducer = null;
+
+        if(mobjConnection == null) {
+            return false;
+        }
+
         try {
             objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue objDestination = objSession.createQueue(mobjConfiguration.getParameter("result_queue_name"));

@@ -50,7 +50,7 @@
         <custom_parameters>
             <source_path>C:\Users\zimmermannj\Desktop\CAK\data</source_path>
 
-            <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
+            <broker>ssl://444muleaq.ont.esb.func.cak-bz.local:10844</broker>
             <truststore>resources\truststore\truststore_ont1_mule.jks</truststore>
             <truststore_password>My0jKD3WWChHaVFrLwDNLxmaTl72f9PL</truststore_password>
 

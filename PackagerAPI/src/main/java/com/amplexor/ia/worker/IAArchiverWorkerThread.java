@@ -13,6 +13,7 @@ import com.amplexor.ia.sip.SipManager;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.rmi.server.ExportException;
 import java.util.List;
 
 import static com.amplexor.ia.Logger.debug;
@@ -91,7 +92,7 @@ class IAArchiverWorkerThread implements Runnable {
                 }
             } catch (IOException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-                WorkerManager.getWorkerManager().stop();
+                WorkerManager.getWorkerManager().signalStop(ExceptionHelper.ERROR_OTHER);
             }
         }
         while (isRunning()) {
@@ -223,7 +224,7 @@ class IAArchiverWorkerThread implements Runnable {
             return mobjDocumentSource != null && mobjMessageParser != null && mobjRetentionManager != null;
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | NullPointerException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-            WorkerManager.getWorkerManager().stop();
+            WorkerManager.getWorkerManager().signalStop(ExceptionHelper.ERROR_OTHER);
         }
         return false;
     }

@@ -7,7 +7,6 @@ import org.apache.log4j.PropertyConfigurator;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Base64;
 import java.util.Properties;
 
 import static com.amplexor.ia.Logger.info;
@@ -48,16 +47,24 @@ public class IAArchiver {
             info(IAArchiver.class, "Initializing Worker Manager");
             objWorkerManager = WorkerManager.getWorkerManager();
             objWorkerManager.initialize(objConfigManager.getConfiguration());
-            objWorkerManager.start();
-        }
-
-        if (objWorkerManager != null) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
-                    WorkerManager.getWorkerManager().stop();
+                    WorkerManager.getWorkerManager().shutdown();
                 }
             });
+        }
+
+        if (objWorkerManager != null) {
+            while (objWorkerManager.checkWorkers(objConfigManager.getConfiguration().getWorkerConfiguration())) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+                    Thread.currentThread().interrupt();
+                }
+            }
+            System.exit(objWorkerManager.getExitCode());
         }
     }
 

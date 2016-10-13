@@ -5,6 +5,7 @@ import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.configuration.ExceptionConfiguration;
 import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.metadata.IADocument;
+import com.amplexor.ia.worker.WorkerManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,7 +98,6 @@ public class ExceptionHelper {
             executeHandlers(objError, (IADocument) null, objException);
         } else {
             fatal(this, "No ExceptionConfiguration, Exiting");
-            System.exit(ERROR_OTHER);
         }
     }
 
@@ -116,7 +116,7 @@ public class ExceptionHelper {
             executeHandlers(objError, objDocument, objException);
         } else {
             fatal(this, "No ExceptionConfiguration, Exiting");
-            System.exit(ERROR_OTHER);
+            WorkerManager.getWorkerManager().signalStop(iCode);
         }
     }
 
@@ -170,7 +170,7 @@ public class ExceptionHelper {
             } else if ("log_fatal".equals(sHandler)) {
                 fatal(ExceptionHelper.this, objError.getErrorText());
                 fatal(ExceptionHelper.this, objException);
-                System.exit(objError.getErrorCode());
+                WorkerManager.getWorkerManager().signalStop(objError.getErrorCode());
             } else {
                 error(ExceptionHelper.this, "Invalid error handler " + sHandler);
                 error(ExceptionHelper.this, objException);

@@ -7,61 +7,54 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.amplexor.ia.Logger.warn;
-
 /**
  * Created by admjzimmermann on 8-9-2016.
  */
 
 public class WorkerManager {
-    private static WorkerManager mobjWorkerManager;
-
-    private Thread mobjManagerThread;
+    private static WorkerManager mobjWorkerManager = new WorkerManager();
     private List<IAArchiverWorkerThread> mcWorkers;
     private int miCurrentWorker;
 
-    private long mlDiffMillisecondsSinceLastCheck;
-    private boolean mbIsRunning;
+    private boolean mbStopFlag;
+    private int miExitCode;
+    private long lMillisecondsSinceLastCheck;
 
     private WorkerManager() {
         mcWorkers = new ArrayList<>();
     }
 
-    public static WorkerManager getWorkerManager() {
-        if (mobjWorkerManager == null) {
-            mobjWorkerManager = new WorkerManager();
-        }
-
+    public static synchronized WorkerManager getWorkerManager() {
         return mobjWorkerManager;
     }
 
+    public int getExitCode() {
+        return miExitCode;
+    }
+
     public void initialize(SIPPackagerConfiguration objConfiguration) {
+        mbStopFlag = false;
         miCurrentWorker = -1;
         for (int i = 0; i < objConfiguration.getWorkerConfiguration().getMaxWorkerThreads(); ++i) {
             mcWorkers.add(new IAArchiverWorkerThread(objConfiguration, i + 1));
             startWorker();
         }
-        mobjManagerThread = new Thread(() -> {
-            long lMillisecondsSinceLastCheck = 0;
-            while (mbIsRunning) {
-                if (Thread.currentThread().isInterrupted()) {
-                    break;
-                }
+    }
 
-                mlDiffMillisecondsSinceLastCheck = Math.abs(lMillisecondsSinceLastCheck - System.currentTimeMillis());
-                if (mlDiffMillisecondsSinceLastCheck > objConfiguration.getWorkerConfiguration().getCheckInterval()) {
-                    int iTotalProcessed = getProcessedBytes();
-                    if (shouldStopWorker(iTotalProcessed, objConfiguration.getWorkerConfiguration())) {
-                        stopWorker();
-                    } else if (shouldStartWorker(iTotalProcessed, objConfiguration.getWorkerConfiguration())) {
-                        startWorker();
-                    }
-                    lMillisecondsSinceLastCheck = System.currentTimeMillis();
-                }
-                updatePausedWorkerCaches(objConfiguration.getWorkerConfiguration());
-                waitForNextCheck();
+    public boolean checkWorkers(WorkerConfiguration objConfiguration) {
+        long mlDiffMillisecondsSinceLastCheck = Math.abs(lMillisecondsSinceLastCheck - System.currentTimeMillis());
+        if (mlDiffMillisecondsSinceLastCheck > objConfiguration.getCheckInterval()) {
+            int iTotalProcessed = getProcessedBytes();
+            if (shouldStopWorker(iTotalProcessed, objConfiguration)) {
+                stopWorker();
+            } else if (shouldStartWorker(iTotalProcessed, objConfiguration)) {
+                startWorker();
             }
-        });
+            lMillisecondsSinceLastCheck = System.currentTimeMillis();
+        }
+        updatePausedWorkerCaches(objConfiguration);
+
+        return !mbStopFlag;
     }
 
     private void updatePausedWorkerCaches(WorkerConfiguration objConfiguration) {
@@ -109,16 +102,6 @@ public class WorkerManager {
         return iReturn;
     }
 
-    private void waitForNextCheck() {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {
-            warn(this, "WorkerManager Thread was Interrupted");
-            mbIsRunning = false;
-            Thread.currentThread().interrupt();
-        }
-    }
-
     private void startWorker() {
         if (miCurrentWorker > -2) { //Start from index 0
             new Thread(mcWorkers.get(++miCurrentWorker)).start();
@@ -131,18 +114,14 @@ public class WorkerManager {
         }
     }
 
-    public synchronized void start() {
-        if (!mbIsRunning) {
-            mobjManagerThread.start();
-            mbIsRunning = true;
-        }
-    }
-
-    public synchronized void stop() {
+    public synchronized void shutdown() {
         while (miCurrentWorker > -1) {
             stopWorker();
         }
-        mbIsRunning = false;
-        mobjManagerThread.interrupt();
+    }
+
+    public synchronized void signalStop(int iExitCode) {
+        mbStopFlag = true;
+        miExitCode = iExitCode;
     }
 }
