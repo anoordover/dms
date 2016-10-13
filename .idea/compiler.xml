@@ -38,6 +38,13 @@
         <processorPath useClasspath="true" />
         <module name="sip_packager" />
       </profile>
+      <profile default="false" name="Annotation profile for request_processor" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="request_processor" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="data_generator" target="1.8" />
