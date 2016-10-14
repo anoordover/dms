@@ -44,8 +44,6 @@ public class CAKSipManagerTest {
 
         CAKSipManager csm = new CAKSipManager(isc);
         assertTrue(csm.getSIPFile(ic));
-
-
     }
 
     @Ignore

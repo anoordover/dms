@@ -1,11 +1,16 @@
 package com.amplexor.ia.ingest;
 
-import org.junit.Ignore;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by minkenbergs on 5-10-2016.
@@ -43,9 +48,27 @@ public class IAObjectTest {
         assertEquals(iaotest.getAvailableLinks(), copareMap);
     }
 
-    @Ignore
+    @Test
     public void fromJSONObject() throws Exception {
-        //// TODO: 5-10-2016 need a valid JSONObject to test
+        String s = new StringBuilder("{\n" +
+                "\"createdDate\" : \"2016-10-11T12:00:00,1234+02:00\"\n" +
+                "\"createdBy\" : \"system\"\n" +
+                "\"lastModifiedDate\" : \"2016-10-10T12:00:00,1234+02:00\"\n" +
+                "\"_links\" : {\n" +
+                "\"http://identifiers.emc.com/applications\" : {\"href\" : \"http://cwno0427:8775/systemdata/tenants/6ec37bc7-6ce9-4c14-8422-eff057646627/applications\"},\n" +
+                "\"http:\" : {\"href\" : \"http://cwno0427:8775/systemdata/tenants/6ec37bc7-6ce9-4c14-8422-eff057646627/applications\"}\n" +
+                "}\n" +
+                "\"lastModifiedBy\" : \"system\"\n" +
+                "\"name\": \"INFOARCHIVE\"\n" +
+                "\"permission\" : [\n" +
+                "{ \"groups\" : [] }\n" +
+                "]\n" +
+                "\"version\": \"1\"\n" +
+                "}").toString();
+        JSONObject jsonobject = (JSONObject) new JSONParser().parse(s);
+        IAObject parsedObject = IAObject.fromJSONObject(jsonobject);
+
+        assertEquals(parsedObject.getName(), "INFOARCHIVE");
     }
 
     @Test
