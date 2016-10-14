@@ -53,6 +53,7 @@
             <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
             <truststore>resources\truststore\truststore_ont1_mule.jks</truststore>
             <truststore_password>My0jKD3WWChHaVFrLwDNLxmaTl72f9PL</truststore_password>
+
             <!--
             <broker>ssl://muleaq1.tst.esb.func.cak-bz.local:10744</broker>
             <truststore>resources/truststore/truststore_tst_mule1.jks</truststore>
@@ -70,7 +71,6 @@
     </document_source>
     <retention_manager>
         <implementing_class>nl.hetcak.dms.CAKRetentionManager</implementing_class>
-        <retention_element_name>ArchiefDocumenttitel</retention_element_name>
         <retention_classes>
             <nl.hetcak.dms.CAKRetentionClass>
                 <name>Startbrief</name>
@@ -136,6 +136,9 @@
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
         </retention_classes>
+        <custom_parameters>
+            <retention_element_name>ArchiefDocumenttitel</retention_element_name>
+        </custom_parameters>
     </retention_manager>
     <message_parser>
         <implementing_class>nl.hetcak.dms.CAKMessageParserFallback</implementing_class>
