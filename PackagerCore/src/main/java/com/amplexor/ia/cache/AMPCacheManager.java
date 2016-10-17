@@ -36,6 +36,7 @@ public class AMPCacheManager implements CacheManager {
     protected int miNextId;
     protected Path mobjBasePath;
     protected Path mobjSavePath;
+    protected Path mobjErrorPath;
 
     public AMPCacheManager(CacheConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
@@ -61,9 +62,15 @@ public class AMPCacheManager implements CacheManager {
                     String.format("%s/%s/", mobjConfiguration.getCacheBasePath(), Thread.currentThread().getName()).replace('/', File.separatorChar));
             mobjSavePath = Paths.get(
                     String.format("%s/save", mobjBasePath.toString()).replace('/', File.separatorChar));
+            mobjErrorPath = Paths.get(
+                    String.format("%s/error", mobjBasePath.toString()).replace('/', File.separatorChar));
 
             if (!Files.exists(mobjBasePath)) {
                 Files.createDirectories(mobjBasePath);
+            }
+
+            if (!Files.exists(mobjErrorPath)) {
+                Files.createDirectories(mobjErrorPath);
             }
 
             if (!Files.exists(mobjSavePath)) {
@@ -258,6 +265,7 @@ public class AMPCacheManager implements CacheManager {
         return bReturn;
     }
 
+
     /**
      * Loads any {@link IACache}s in the current savePath(config.xml->${cachemanager}/${base_path}) and adds them to the {@link CacheManager}
      */
@@ -278,5 +286,50 @@ public class AMPCacheManager implements CacheManager {
             }
         });
         return true;
+    }
+
+    /**
+     * Save the contents of the cache under a error folder to secure the contents for later review.
+     *
+     * @param objCache The cache in which the error occurred
+     * @return
+     */
+    @Override
+    public boolean createErrorCache(IACache objCache) {
+        boolean bReturn = true;
+        String sSavePath = String.format("%s/%d/", mobjErrorPath.toString(), mobjErrorPath.toFile().listFiles().length);
+        try {
+            if (!Files.exists(Paths.get(sSavePath))) {
+                Files.createDirectories(Paths.get(sSavePath));
+            }
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        }
+
+        try {
+            try (OutputStream objFileStream = Files.newOutputStream(Paths.get(sSavePath + "Cache.xml"))) {
+                XStream objXStream = new XStream(new StaxDriver());
+                objXStream.alias("IACache", IACache.class);
+                objXStream.processAnnotations(IACache.class);
+                objXStream.toXML(objCache, objFileStream);
+            }
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            bReturn = false;
+        }
+
+        for (IADocumentReference objDocument : objCache.getContents()) {
+            try (OutputStream objFileStream = Files.newOutputStream(Paths.get(sSavePath + objDocument.getDocumentId()))) {
+                XStream objXStream = new XStream(new StaxDriver());
+                Class objClass = Thread.currentThread().getContextClassLoader().loadClass(mobjConfiguration.getParameter("document_class"));
+                objXStream.alias(mobjConfiguration.getParameter("document_element_name"), objClass);
+                objXStream.processAnnotations(objClass);
+                objXStream.toXML(objDocument.getDocumentData(objClass, mobjConfiguration.getParameter("document_element_name")), objFileStream);
+            } catch (IOException | ClassNotFoundException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+                bReturn = false;
+            }
+        }
+        return bReturn;
     }
 }

@@ -13,6 +13,13 @@ public abstract class IADocument {
     @XStreamOmitField
     private String msDocumentId;
 
+    private String msErrorText;
+    private int miErrorCode;
+
+    public IADocument() {
+        miErrorCode = 0;
+    }
+
     public String getDocumentId() {
         return msDocumentId;
     }
@@ -35,7 +42,19 @@ public abstract class IADocument {
 
     public abstract void setContent(String sKey, byte[] cContent);
 
-    public abstract void setError(String sError);
+    public void setErrorText(String sError) {
+        msErrorText = sError;
+    }
 
-    public abstract String getError();
+    public String getErrorText() {
+        return msErrorText;
+    }
+
+    public void setErrorCode(int iCode) {
+        miErrorCode = iCode;
+    }
+
+    public int getErrorCode() {
+        return miErrorCode;
+    }
 }

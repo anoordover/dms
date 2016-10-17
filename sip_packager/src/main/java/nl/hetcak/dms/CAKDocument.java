@@ -1,6 +1,7 @@
 package nl.hetcak.dms;
 
 import com.amplexor.ia.configuration.converters.ParameterConverter;
+import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -20,9 +21,6 @@ public class CAKDocument extends IADocument {
 
     @XStreamAlias("PayloadPdf")
     private String msPayload;
-
-    @XStreamOmitField
-    private String msError;
 
     public CAKDocument() {
         mcMetadata = new HashMap<>();
@@ -67,11 +65,16 @@ public class CAKDocument extends IADocument {
 
     @Override
     public byte[] loadContent(String sKey) {
-        if (KEY_ATTACHMENT.equals(sKey)) {
-            return Base64.getDecoder().decode(msPayload);
+        byte[] pReturn = new byte[0];
+        try {
+            if (KEY_ATTACHMENT.equals(sKey)) {
+                pReturn = Base64.getDecoder().decode(msPayload.trim());
+            }
+        } catch (IllegalArgumentException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
 
-        return new byte[0];
+        return pReturn;
     }
 
     @Override
@@ -79,16 +82,6 @@ public class CAKDocument extends IADocument {
         if (KEY_ATTACHMENT.equals(sKey)) {
             msPayload = Base64.getEncoder().encodeToString(cContent);
         }
-    }
-
-    @Override
-    public void setError(String sError) {
-        msError = sError;
-    }
-
-    @Override
-    public String getError() {
-        return msError;
     }
 
     public void setPayload(byte[] cPayload) {

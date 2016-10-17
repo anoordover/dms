@@ -33,23 +33,32 @@ public class CAKMessageParserFallback implements MessageParser {
             if (objInstance != null && objInstance instanceof IADocument) {
                 IADocument objParsedDocument = (IADocument) objInstance;
                 IADocument objDocument = new CAKDocument();
-                objParsedDocument.getMetadataKeys().forEach(key -> {
-                    if (!"PersoonBurgerservicenummer".equals(key)) {
-                        objDocument.setMetadata(key, objParsedDocument.getMetadata(key));
+                for (String sKey : objParsedDocument.getMetadataKeys()) {
+                    if (!"PersoonBurgerservicenummer".equals(sKey)) {
+                        objDocument.setMetadata(sKey, objParsedDocument.getMetadata(sKey));
                     }
-                });
-                objDocument.setContent(CAKDocument.KEY_ATTACHMENT, ((IADocument) objInstance).loadContent(CAKDocument.KEY_ATTACHMENT));
+                }
                 objDocument.setDocumentId(objDocument.getMetadata("ArchiefDocumentId"));
+                byte[] cPayloadData = objParsedDocument.loadContent(CAKDocument.KEY_ATTACHMENT);
+                if (cPayloadData.length > 0) {
+                    objDocument.setContent(CAKDocument.KEY_ATTACHMENT, cPayloadData);
+                } else {
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objDocument, new Exception("Error parsing PayloadPdf"));
+                }
                 objReturn.add(objDocument);
 
                 IADocument objDocumentUitwijk = new CAKDocument();
-                objParsedDocument.getMetadataKeys().forEach(key -> {
-                    if (!"ArchiefPersoonsnummer".equals(key)) {
-                        objDocumentUitwijk.setMetadata(key, objParsedDocument.getMetadata(key));
+                for (String sKey : objParsedDocument.getMetadataKeys()) {
+                    if (!"ArchiefPersoonsnummer".equals(sKey)) {
+                        objDocumentUitwijk.setMetadata(sKey, objParsedDocument.getMetadata(sKey));
                     }
-                });
-                objDocumentUitwijk.setContent(CAKDocument.KEY_ATTACHMENT, ((IADocument) objInstance).loadContent(CAKDocument.KEY_ATTACHMENT));
+                }
                 objDocumentUitwijk.setDocumentId(objDocumentUitwijk.getMetadata("ArchiefDocumentId"));
+                if (cPayloadData.length > 0) {
+                    objDocumentUitwijk.setContent(CAKDocument.KEY_ATTACHMENT, cPayloadData);
+                } else {
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objDocumentUitwijk, new Exception("Error parsing PayloadPdf"));
+                }
                 objReturn.add(objDocumentUitwijk);
 
                 info(this, "Data parsed into IADocument " + objDocument.getDocumentId());

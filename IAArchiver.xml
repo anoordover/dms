@@ -37,7 +37,7 @@
         <entity_name>ArchiefDocument</entity_name>
         <document_element_name>ArchiefDocumenten</document_element_name>
         <schema_declaration>urn:hetcak:dms:uitingarchief:2016:08</schema_declaration>
-        <sip_output_directory>target/Sips</sip_output_directory>
+        <sip_output_directory>Sips</sip_output_directory>
         <custom_parameters>
             <document_element_name>ArchiefDocument</document_element_name>
             <document_class>nl.hetcak.dms.CAKDocument</document_class>
@@ -49,15 +49,21 @@
         <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
         <custom_parameters>
             <source_path>C:\Users\zimmermannj\Desktop\CAK\data</source_path>
+            <!-- AMPLEXOR Local -->
+            <broker>tcp://infoarchive40:61616</broker>
 
+
+            <!-- DEV
             <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
             <truststore>resources\truststore\truststore_ont1_mule.jks</truststore>
             <truststore_password>My0jKD3WWChHaVFrLwDNLxmaTl72f9PL</truststore_password>
+            -->
 
-            <!--
+            <!-- TST
             <broker>ssl://muleaq1.tst.esb.func.cak-bz.local:10744</broker>
             <truststore>resources/truststore/truststore_tst_mule1.jks</truststore>
-            <truststore_password>URBq1N1uyZWQGWm5FuJ7iRVkLA0T3IUh</truststore_password> -->
+            <truststore_password>URBq1N1uyZWQGWm5FuJ7iRVkLA0T3IUh</truststore_password>
+            -->
 
             <result_format><![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
             <results_element><![CDATA[<urn:Items xmlns:urn="urn:hetcak:dms:uitingarchief:2016:08">%s</urn:Items>]]></results_element>

@@ -60,4 +60,9 @@ public interface CacheManager {
      * Loads any {@link IACache}s in the current savePath(config.xml->${cachemanager}/${base_path}) and adds them to the {@link CacheManager}
      */
     boolean loadCaches();
+
+    /**
+     * Saves the cache as an "Error" cache
+     */
+    boolean createErrorCache(IACache objCache);
 }

@@ -136,30 +136,37 @@ public class ExceptionHelper {
         executeHandlers(objError, objCache, objException);
     }
 
+    public synchronized void handleException(int iCode, IADocument objDocument, Exception objException) {
+        AMPError objError = mobjExceptionConfiguration.getError(iCode);
+        objDocument.setErrorText(objError.getErrorText());
+        objDocument.setErrorCode(objError.getErrorCode());
+        executeHandlers(objError, objDocument, objException);
+    }
+
     /**
      * Executes the handlers associated with {@link AMPError} objError
      *
      * @param objError     The error whose handlers should be invoked
-     * @param objIAItem     The cache associated with the error
+     * @param objIAItem    The cache associated with the error
      * @param objException The exception associated with this error
      */
     private void executeHandlers(AMPError objError, Object objIAItem, Exception objException) {
         List<String> cHandlers = Arrays.asList(objError.getErrorHandling().split(";"));
         for (String sHandler : cHandlers) {
             if ("notify_source".equals(sHandler)) {
-                if(objIAItem == null) {
+                if (objIAItem == null) {
                     error(ExceptionHelper.this, "DocumentSource or IADocument was not provided to error handler");
                     return;
                 }
                 List<IADocumentReference> cDocuments = new ArrayList<>();
-                if(objIAItem instanceof IACache) {
+                if (objIAItem instanceof IACache) {
                     cDocuments.addAll(((IACache) objIAItem).getContents());
                 } else if (objIAItem instanceof IADocumentReference) {
-                    cDocuments.add((IADocumentReference)objIAItem);
+                    cDocuments.add((IADocumentReference) objIAItem);
                 }
 
                 cDocuments.forEach(objIADocumentReference -> {
-                    if(objIADocumentReference.getErrorCode() == 0) {
+                    if (objIADocumentReference.getErrorCode() == 0) {
                         objIADocumentReference.setErrorCode(objError.getErrorCode());
                         objIADocumentReference.setErrorMessage(objError.getErrorText());
                     }

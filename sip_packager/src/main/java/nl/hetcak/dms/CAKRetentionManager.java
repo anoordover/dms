@@ -22,7 +22,7 @@ public class CAKRetentionManager implements RetentionManager {
         info(this, "Retrieving Retention Class for IADocument: " + objSource.getDocumentId());
 
         IARetentionClass objReturn = null;
-        String sDocumentTitle = objSource.getMetadata(mobjConfiguration.getRetentionElementName());
+        String sDocumentTitle = objSource.getMetadata(mobjConfiguration.getParameter("retention_element_name"));
         if (sDocumentTitle != null) {
             for (IARetentionClass objRetentionClass : mobjConfiguration.getRetentionClasses()) {
                 if (objRetentionClass instanceof CAKRetentionClass && ((CAKRetentionClass) objRetentionClass).getAssociatedDocumentTitle().contains(sDocumentTitle)) {

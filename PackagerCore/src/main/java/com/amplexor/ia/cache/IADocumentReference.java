@@ -3,6 +3,7 @@ package com.amplexor.ia.cache;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import java.io.*;
@@ -15,6 +16,8 @@ public class IADocumentReference {
     private String msFile;
     private String msErrorMessage;
     private int miErrorCode;
+
+    @XStreamOmitField
     private IADocument mobjDocumentData;
 
     public IADocumentReference(String sDocumentId, String sFile) {
@@ -28,8 +31,8 @@ public class IADocumentReference {
     public IADocumentReference(IADocument objDocument, String sFile) {
         msDocumentId = objDocument.getDocumentId();
         msFile = sFile;
-        msErrorMessage = null;
-        miErrorCode = 0;
+        msErrorMessage = objDocument.getErrorText();
+        miErrorCode = objDocument.getErrorCode();
         mobjDocumentData = objDocument;
     }
 

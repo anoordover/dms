@@ -111,7 +111,6 @@ public class WorkerManager {
     private void stopWorker() {
         if (miCurrentWorker > -1) {
             mcWorkers.get(miCurrentWorker--).stopWorker();
-
         }
     }
 
@@ -119,6 +118,7 @@ public class WorkerManager {
         while (miCurrentWorker > -1) {
             stopWorker();
         }
+
     }
 
     public synchronized void signalStop(int iExitCode) {

@@ -64,7 +64,6 @@ public class IAArchiver {
                     Thread.currentThread().interrupt();
                 }
             }
-            System.exit(objWorkerManager.getExitCode());
         }
     }
 
