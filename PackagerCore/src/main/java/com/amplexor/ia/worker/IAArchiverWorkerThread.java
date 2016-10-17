@@ -40,11 +40,6 @@ class IAArchiverWorkerThread implements Runnable {
     private ArchiveManager mobjArchiveManager;
     private SipManager mobjSipManager;
 
-
-    public IAArchiverWorkerThread(SIPPackagerConfiguration objConfiguration) {
-        this(objConfiguration, 1);
-    }
-
     public IAArchiverWorkerThread(SIPPackagerConfiguration objConfiguration, int iId) {
         mobjConfiguration = objConfiguration;
         miId = iId;

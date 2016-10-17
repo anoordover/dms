@@ -15,7 +15,7 @@
         </repository>
     </repositories>
     <modules>
-        <module>PackagerAPI</module>
+        <module>PackagerCore</module>
         <module>data_generator</module>
         <module>sip_packager</module>
         <module>request_processor</module>

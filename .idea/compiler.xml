@@ -24,6 +24,7 @@
         <processorPath useClasspath="true" />
         <module name="data_generator" />
         <module name="PackagerAPI" />
+        <module name="PackagerCore" />
         <module name="request_processor" />
         <module name="sip_packager" />
       </profile>
@@ -31,6 +32,7 @@
     <bytecodeTargetLevel>
       <module name="data_generator" target="1.8" />
       <module name="PackagerAPI" target="1.8" />
+      <module name="PackagerCore" target="1.8" />
       <module name="Raadplegen" target="1.8" />
       <module name="request_processor" target="1.8" />
       <module name="sip-packager" target="1.8" />

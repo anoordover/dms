@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.amplexor.ia</groupId>
-            <artifactId>PackagerAPI</artifactId>
+            <artifactId>PackagerCore</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.emc.ia/infoarchive-sip-sdk-core -->
