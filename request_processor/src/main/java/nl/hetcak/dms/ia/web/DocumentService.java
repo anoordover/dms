@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response;
 
 /**
  * Created by admjzimmermann on 13-10-2016.
- * 
+ *
  * @author Joury.Zimmermann@AMPLEXOR.com
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
