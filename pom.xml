@@ -18,7 +18,6 @@
         <module>PackagerCore</module>
         <module>data_generator</module>
         <module>sip_packager</module>
-        <module>request_processor</module>
     </modules>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
