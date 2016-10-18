@@ -49,15 +49,15 @@
         <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
         <custom_parameters>
             <source_path>C:\Users\zimmermannj\Desktop\CAK\data</source_path>
-            <!-- AMPLEXOR Local -->
+            <!-- AMPLEXOR Local
             <broker>tcp://infoarchive40:61616</broker>
+            -->
 
-
-            <!-- DEV
+            <!-- DEV -->
             <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
             <truststore>resources\truststore\truststore_ont1_mule.jks</truststore>
             <truststore_password>My0jKD3WWChHaVFrLwDNLxmaTl72f9PL</truststore_password>
-            -->
+
 
             <!-- TST
             <broker>ssl://muleaq1.tst.esb.func.cak-bz.local:10744</broker>
@@ -65,8 +65,10 @@
             <truststore_password>URBq1N1uyZWQGWm5FuJ7iRVkLA0T3IUh</truststore_password>
             -->
 
-            <result_format><![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
-            <results_element><![CDATA[<urn:Items xmlns:urn="urn:hetcak:dms:uitingarchief:2016:08">%s</urn:Items>]]></results_element>
+            <result_format>
+                <![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
+            <results_element>
+                <![CDATA[<urn:Items xmlns:urn="urn:hetcak:dms:uitingarchief:2016:08">%s</urn:Items>]]></results_element>
             <result_values>{ERROR};{ID};{MESSAGE}</result_values>
             <result_success>Geslaagd</result_success>
             <result_error>Mislukt</result_error>
@@ -148,6 +150,28 @@
     </retention_manager>
     <message_parser>
         <implementing_class>nl.hetcak.dms.CAKMessageParserFallback</implementing_class>
+        <AIU_element_name>ArchiefDocument</AIU_element_name>
+        <AIU_namespace>urn:hetcak:dms:uitingarchief:2016:08</AIU_namespace>
+        <document_id_element_name>ArchiefDocumentId</document_id_element_name>
+        <AIU_mapping>
+            <ArchiefDocumentId>{ArchiefDocumentId}</ArchiefDocumentId>
+            <ArchiefPersoonsnummer>{ArchiefPersoonsnummer}</ArchiefPersoonsnummer>
+            <PersoonBurgerservicenummer>{PersoonBurgerservicenummer}</PersoonBurgerservicenummer>
+            <ArchiefDocumenttitel>{ArchiefDocumenttitel}</ArchiefDocumenttitel>
+            <ArchiefDocumentsoort>{ArchiefDocumentsoort}</ArchiefDocumentsoort>
+            <ArchiefRegeling>{ArchiefRegeling}</ArchiefRegeling>
+            <ArchiefDocumentkenmerk>{ArchiefDocumentkenmerk}</ArchiefDocumentkenmerk>
+            <ArchiefVerzenddag>{ArchiefVerzenddag}</ArchiefVerzenddag>
+            <ArchiefDocumenttype>{ArchiefDocumenttype}</ArchiefDocumenttype>
+            <ArchiefDocumentstatus>{ArchiefDocumentstatus}</ArchiefDocumentstatus>
+            <ArchiefRegelingsjaar>{ArchiefRegelingsjaar}</ArchiefRegelingsjaar>
+            <Attachment>Attachment_{ArchiefDocumentId}.pdf</Attachment>
+        </AIU_mapping>
+        <custom_parameters>
+            <schema_location>C:\Users\admjzimmermann\Desktop\ws\dms\schemas</schema_location>
+            <schema_name>standard.xsd</schema_name>
+            <fallback_schema_name>fallback.xsd</fallback_schema_name>
+        </custom_parameters>
     </message_parser>
     <exceptions>
         <error>

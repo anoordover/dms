@@ -217,7 +217,7 @@ class IAArchiverWorkerThread implements Runnable {
             info(this, "Initializing Message Parser");
             Object objMessageParser = Thread.currentThread().getContextClassLoader()
                     .loadClass(mobjConfiguration.getMessageParser().getImplementingClass())
-                    .getConstructor(PluggableObjectConfiguration.class)
+                    .getConstructor(MessageParserConfiguration.class)
                     .newInstance(mobjConfiguration.getMessageParser());
             if (objMessageParser instanceof MessageParser) {
                 info(this, "Successfully loaded Message Parser: " + mobjConfiguration.getMessageParser().getImplementingClass());

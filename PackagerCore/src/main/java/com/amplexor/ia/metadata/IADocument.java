@@ -1,5 +1,6 @@
 package com.amplexor.ia.metadata;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import java.util.Set;
@@ -13,8 +14,14 @@ public abstract class IADocument {
     @XStreamOmitField
     private String msDocumentId;
 
+    @XStreamAlias("error_text")
     private String msErrorText;
+
+    @XStreamAlias("error_code")
     private int miErrorCode;
+
+    @XStreamAlias("aiu_data")
+    private String msAIU;
 
     public IADocument() {
         miErrorCode = 0;
@@ -56,5 +63,13 @@ public abstract class IADocument {
 
     public int getErrorCode() {
         return miErrorCode;
+    }
+
+    public void setAIU(String sAIU) {
+        msAIU = sAIU;
+    }
+
+    public String getAIU() {
+        return msAIU;
     }
 }

@@ -1,14 +1,38 @@
 package nl.hetcak.dms;
 
-import com.amplexor.ia.parsing.MessageParser;
-import com.amplexor.ia.configuration.PluggableObjectConfiguration;
+import com.amplexor.ia.configuration.MessageParserConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
+import com.amplexor.ia.parsing.MessageParser;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.util.StreamReaderDelegate;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.amplexor.ia.Logger.info;
 
@@ -16,56 +40,178 @@ import static com.amplexor.ia.Logger.info;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class CAKMessageParserFallback implements MessageParser {
+    MessageParserConfiguration mobjConfiguration;
 
-    public CAKMessageParserFallback(PluggableObjectConfiguration objConfiguration) {
-
+    public CAKMessageParserFallback(MessageParserConfiguration objConfiguration) {
+        mobjConfiguration = objConfiguration;
     }
 
     @Override
     public List<IADocument> parse(String sData) {
         info(this, "Parsing Document");
         List<IADocument> objReturn = new ArrayList<>();
+        IADocument objStandardDocument = parseDocument(sData, mobjConfiguration.getParameter("schema_name"), "PersoonBurgerservicenummer");
+        IADocument objFallbackDocument = parseDocument(sData, mobjConfiguration.getParameter("fallback_schema_name"), "ArchiefPersoonsnummer");
+        if (objStandardDocument != null) {
+            objReturn.add(objStandardDocument);
+        }
+
+        if (objFallbackDocument != null) {
+            objReturn.add(objFallbackDocument);
+        }
+
+        return objReturn;
+    }
+
+    private IADocument parseDocument(String sData, String sValidationSchema, String... cExceptions) {
+        CAKDocument objReturn = null;
+        CAKDocument objSourceDocument = null;
         XStream objXStream = new XStream(new StaxDriver());
         objXStream.alias("ArchiefDocument", CAKDocument.class);
         objXStream.processAnnotations(CAKDocument.class);
-        try {
-            Object objInstance = objXStream.fromXML(sData);
-            if (objInstance != null && objInstance instanceof IADocument) {
-                IADocument objParsedDocument = (IADocument) objInstance;
-                IADocument objDocument = new CAKDocument();
-                for (String sKey : objParsedDocument.getMetadataKeys()) {
-                    if (!"PersoonBurgerservicenummer".equals(sKey)) {
-                        objDocument.setMetadata(sKey, objParsedDocument.getMetadata(sKey));
-                    }
-                }
-                objDocument.setDocumentId(objDocument.getMetadata("ArchiefDocumentId"));
-                byte[] cPayloadData = objParsedDocument.loadContent(CAKDocument.KEY_ATTACHMENT);
-                if (cPayloadData.length > 0) {
-                    objDocument.setContent(CAKDocument.KEY_ATTACHMENT, cPayloadData);
-                } else {
-                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objDocument, new Exception("Error parsing PayloadPdf"));
-                }
-                objReturn.add(objDocument);
+        Object objStreamOutput = objXStream.fromXML(sData);
+        if (objStreamOutput instanceof CAKDocument) {
+            objSourceDocument = (CAKDocument) objStreamOutput;
+        }
 
-                IADocument objDocumentUitwijk = new CAKDocument();
-                for (String sKey : objParsedDocument.getMetadataKeys()) {
-                    if (!"ArchiefPersoonsnummer".equals(sKey)) {
-                        objDocumentUitwijk.setMetadata(sKey, objParsedDocument.getMetadata(sKey));
-                    }
-                }
-                objDocumentUitwijk.setDocumentId(objDocumentUitwijk.getMetadata("ArchiefDocumentId"));
-                if (cPayloadData.length > 0) {
-                    objDocumentUitwijk.setContent(CAKDocument.KEY_ATTACHMENT, cPayloadData);
-                } else {
-                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objDocumentUitwijk, new Exception("Error parsing PayloadPdf"));
-                }
-                objReturn.add(objDocumentUitwijk);
-
-                info(this, "Data parsed into IADocument " + objDocument.getDocumentId());
+        if (objSourceDocument != null) {
+            objReturn = parseMetadata(objSourceDocument, cExceptions);
+            byte[] cPayload = objSourceDocument.loadContent(CAKDocument.KEY_ATTACHMENT);
+            if (cPayload.length > 0) {
+                objReturn.setPayload(cPayload);
+            } else {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objReturn, new Exception("Error loading PayloadPdf"));
             }
-        } catch (Exception ex) {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_INPUT, ex);
+            if (objReturn != null) {
+                String sAIUDataFinal = createAIUData(objReturn, cExceptions);
+                validateDocument(objReturn, String.format("%s/%s", mobjConfiguration.getParameter("schema_location"), sValidationSchema));
+                objReturn.setAIU(sAIUDataFinal);
+            }
+        }
+
+        return objReturn;
+    }
+
+    private CAKDocument parseMetadata(IADocument objSourceDocument, String... cExceptions) {
+        CAKDocument objReturn = new CAKDocument();
+        for (String sKey : objSourceDocument.getMetadataKeys()) {
+            for (String sException : cExceptions) {
+                if (!sException.equals(sKey)) {
+                    if (sKey.equals(mobjConfiguration.getDocumentIdElement())) {
+                        objReturn.setDocumentId(objSourceDocument.getMetadata(sKey));
+                    }
+                    objReturn.setMetadata(sKey, objSourceDocument.getMetadata(sKey));
+                }
+            }
         }
         return objReturn;
+    }
+
+    private String createAIUData(IADocument objDocument, String... cExceptions) {
+        try {
+            DocumentBuilderFactory objFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder objBuilder = objFactory.newDocumentBuilder();
+            Document objXmlDocument = objBuilder.newDocument();
+            Element objDocumentElement = objXmlDocument.createElementNS(mobjConfiguration.getAIUNamespace(), mobjConfiguration.getAIUElementName());
+            objXmlDocument.appendChild(objDocumentElement);
+            for (Map.Entry<String, String> objMapping : mobjConfiguration.getAIUMapping().entrySet()) {
+                boolean bOmitKey = false;
+                for (String sKey : cExceptions) {
+                    if (sKey.equals(objMapping.getKey())) {
+                        bOmitKey = true;
+                        break;
+                    }
+                }
+                if (!bOmitKey) {
+                    List<Integer> cIndicesStart = new ArrayList<>();
+                    List<Integer> cIndicesEnd = new ArrayList<>();
+                    char[] cMappingCharacters = objMapping.getValue().toCharArray();
+
+                    extractIndices(cMappingCharacters, cIndicesStart, cIndicesEnd);
+                    //Ensure that opening have corresponding closing tags
+                    if (cIndicesStart.size() != cIndicesEnd.size()) {
+                        throw new IllegalArgumentException("Error in AIU_mapping, a { is missing its ending } " + objMapping.getKey());
+                    }
+                    Element objMetadataElement = objXmlDocument.createElement(objMapping.getKey());
+                    objMetadataElement.setTextContent(getAIUElementString(objMapping.getValue(), objDocument, cIndicesStart, cIndicesEnd));
+                    objDocumentElement.appendChild(objMetadataElement);
+                }
+            }
+            TransformerFactory objTransformerFactory = TransformerFactory.newInstance();
+            Transformer objTransformer = objTransformerFactory.newTransformer();
+            objTransformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            StringWriter objStringWriterDoc = new StringWriter();
+            StreamResult objResult = new StreamResult(objStringWriterDoc);
+            objTransformer.transform(new DOMSource(objXmlDocument), objResult);
+            objDocument.setAIU(objStringWriterDoc.toString());
+
+            StringWriter objStringWriterRval = new StringWriter();
+            StreamResult objResultRval = new StreamResult(objStringWriterRval);
+            for(int i = 0; i < objDocumentElement.getChildNodes().getLength(); i++) {
+                objTransformer.transform(new DOMSource(objDocumentElement.getChildNodes().item(i)), objResultRval);
+            }
+            return objStringWriterRval.toString();
+        } catch (ParserConfigurationException | TransformerException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        }
+
+        return "";
+    }
+
+    private void extractIndices(char[] cMappingCharacters, List<Integer> cIndicesStart, List<Integer> cIndicesEnd) {
+        boolean bEscaped = false;
+        for (int i = 0; i < cMappingCharacters.length; ++i) {
+            if (cMappingCharacters[i] == '{' && !bEscaped) {
+                cIndicesStart.add(i);
+            } else if (cMappingCharacters[i] == '}' && !bEscaped) {
+                cIndicesEnd.add(i);
+            } else if (cMappingCharacters[i] == '\\') {
+                bEscaped = true;
+                continue;
+            }
+
+            bEscaped = false;
+        }
+    }
+
+    private String getAIUElementString(String sData, IADocument objDocument, List<Integer> cIndicesStart, List<Integer> cIndicesEnd) {
+        int iParamCount = cIndicesStart.size();
+        int iCounter = 0;
+        int iLength = sData.length() - 1; //Dont count the '\0' character
+        StringBuilder objFormatBuilder = new StringBuilder();
+        String[] cParameters = new String[iParamCount];
+
+        if (cIndicesStart.get(0) > 0) {
+            objFormatBuilder.append(sData.substring(0, cIndicesStart.get(0)));
+        }
+
+        while (iCounter < iParamCount) {
+            String sKey = sData.substring(cIndicesStart.get(iCounter) + 1, cIndicesEnd.get(iCounter));
+            cParameters[iCounter] = objDocument.getMetadata(sKey);
+            objFormatBuilder.append("%s");
+            if (cIndicesEnd.get(iCounter) < iLength) {
+                if (iCounter + 1 < iParamCount) {
+                    objFormatBuilder.append(sData.substring(cIndicesEnd.get(iCounter) + 1, cIndicesStart.get(iCounter + 1) - 1));
+                } else {
+                    objFormatBuilder.append(sData.substring(cIndicesEnd.get(iCounter) + 1, sData.length()));
+                }
+            }
+            iCounter++;
+        }
+
+        return String.format(objFormatBuilder.toString(), cParameters);
+    }
+
+    private void validateDocument(IADocument objDocument, String sXsdFile) {
+        try {
+            SchemaFactory objSchemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema objSchema = objSchemaFactory.newSchema(new File(sXsdFile));
+            Validator objValidator = objSchema.newValidator();
+            objValidator.validate(new StreamSource(new StringReader(objDocument.getAIU())));
+        } catch (SAXException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_INPUT, objDocument, ex);
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        }
     }
 }

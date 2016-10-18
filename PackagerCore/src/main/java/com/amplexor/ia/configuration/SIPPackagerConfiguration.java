@@ -32,7 +32,7 @@ public class SIPPackagerConfiguration {
     private RetentionManagerConfiguration moRetentionManager;
 
     @XStreamAlias("message_parser")
-    private PluggableObjectConfiguration moMessageParser;
+    private MessageParserConfiguration moMessageParser;
 
     public IAArchiverConfiguration getArchiverConfiguration() {
         return moArchiverConfiguration;

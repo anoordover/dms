@@ -319,7 +319,7 @@ public class AMPCacheManager implements CacheManager {
         }
 
         for (IADocumentReference objDocument : objCache.getContents()) {
-            try (OutputStream objFileStream = Files.newOutputStream(Paths.get(sSavePath + objDocument.getDocumentId()))) {
+            try (OutputStream objFileStream = Files.newOutputStream(Paths.get(sSavePath + objDocument.getDocumentId() + ".xml"))) {
                 XStream objXStream = new XStream(new StaxDriver());
                 Class objClass = Thread.currentThread().getContextClassLoader().loadClass(mobjConfiguration.getParameter("document_class"));
                 objXStream.alias(mobjConfiguration.getParameter("document_element_name"), objClass);
