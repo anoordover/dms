@@ -18,7 +18,7 @@ public interface Credentials {
      * Sets the password.
      * @param password The Password.
      */
-    void SetPassword(String password);
+    void setPassword(String password);
     
     /**
      * Sets the security token.
@@ -68,5 +68,15 @@ public interface Credentials {
      */
     boolean isSecurityTokenValid();
     
+    /**
+     * Allows the User to set a token and ignore the username and password setting.
+     * @return true if the username and password value needs to be ignored.
+     */
+    boolean useTokenOnlyConfiguration();
     
+    /**
+     * Allows the User to set a token and ignore the username and password setting.
+     * @param useLoginToken true if the username and password value needs to be ignored.
+     */
+    void setUseLoginToken(Boolean useLoginToken);
 }

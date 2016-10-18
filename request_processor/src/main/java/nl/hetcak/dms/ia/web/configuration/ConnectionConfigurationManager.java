@@ -1,6 +1,5 @@
 package nl.hetcak.dms.ia.web.configuration;
 
-import nl.hetcak.dms.ia.web.comunication.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +30,12 @@ public class ConnectionConfigurationManager {
         return false;
     }
     
-    private Configuration loadConfiguration(File file) {
+    private ConfigurationImpl loadConfiguration(File file) {
         if(file != null) {
             try {
-                JAXBContext context = JAXBContext.newInstance(Configuration.class);
+                JAXBContext context = JAXBContext.newInstance(ConfigurationImpl.class);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
-                return (Configuration) unmarshaller.unmarshal(file);
+                return (ConfigurationImpl) unmarshaller.unmarshal(file);
             } catch (JAXBException jaxbExc) {
                 LOGGER.error("Failed to load configuration.", jaxbExc);
             }
@@ -46,10 +45,10 @@ public class ConnectionConfigurationManager {
         return null;
     }
     
-    private Configuration createConfiguration(Configuration currentConfiguration, File file) {
+    private ConfigurationImpl createConfiguration(ConfigurationImpl currentConfiguration, File file) {
         if(file != null) {
             try {
-                JAXBContext context = JAXBContext.newInstance(Configuration.class);
+                JAXBContext context = JAXBContext.newInstance(ConfigurationImpl.class);
                 Marshaller marshaller = context.createMarshaller();
                 marshaller.marshal(currentConfiguration, file);
             } catch (JAXBException jaxbExc) {
@@ -61,8 +60,8 @@ public class ConnectionConfigurationManager {
         return null;
     }
     
-    private Configuration createDefaultConfiguration() {
-        Configuration configuration = new Configuration();
+    private ConfigurationImpl createDefaultConfiguration() {
+        ConfigurationImpl configuration = new ConfigurationImpl();
         configuration.emptyConfiguration();
         return configuration;
     }

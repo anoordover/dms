@@ -10,6 +10,7 @@ import java.util.Calendar;
 public class InfoArchiveCredentials implements Credentials {
     private String username, password, securityToken, recoveryToken;
     private Calendar invalidationTime;
+    private boolean useLoginToken = false;
     
     /**
      * Sets the username.
@@ -27,7 +28,7 @@ public class InfoArchiveCredentials implements Credentials {
      * @param password The Password.
      */
     @Override
-    public void SetPassword(String password) {
+    public void setPassword(String password) {
         this.password = password;
     }
     
@@ -109,5 +110,23 @@ public class InfoArchiveCredentials implements Credentials {
     @Override
     public boolean isSecurityTokenValid() {
         return invalidationTime.before(Calendar.getInstance());
+    }
+    
+    /**
+     * Allows the User to set a token and ignore the username and password setting.
+     *
+     * @return true if the username and password value needs to be ignored.
+     */
+    @Override
+    public boolean useTokenOnlyConfiguration() {
+        return useLoginToken;
+    }
+    
+    /**
+     * Allows the User to set a token and ignore the username and password setting.
+     * @param useLoginToken true if the username and password value needs to be ignored.
+     */
+    public void setUseLoginToken(Boolean useLoginToken) {
+        this.useLoginToken = useLoginToken;
     }
 }
