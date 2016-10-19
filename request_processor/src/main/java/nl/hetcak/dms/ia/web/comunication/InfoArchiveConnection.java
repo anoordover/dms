@@ -40,5 +40,4 @@ public class InfoArchiveConnection implements Connection {
         this.credentials = credentials;
     }
     
-    
 }

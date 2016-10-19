@@ -1,5 +1,8 @@
-package nl.hetcak.dms.ia.web.configuration;
+package nl.hetcak.dms.ia.web.managers;
 
+import nl.hetcak.dms.ia.web.configuration.ConfigurationImpl;
+import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
+import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,12 +17,12 @@ import java.io.File;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class ConnectionConfigurationManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionConfigurationManager.class);
+public class ConfigurationManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationManager.class);
     private static final String DEFAULT_CONFIG_FILE_NAME = "config/request_processor.xml";
+    private static final String DEFAULT_CONFIG_FOLDER_NAME = "config";
     
-    private boolean checkConfigurationExist() {
-        File configFile = new File(DEFAULT_CONFIG_FILE_NAME);
+    private boolean checkConfigurationExist(File configFile) {
         if(configFile.exists()) {
             LOGGER.debug("Found configuration file, using path: "+configFile.getPath());
             return true;
@@ -30,22 +33,31 @@ public class ConnectionConfigurationManager {
         return false;
     }
     
-    private ConfigurationImpl loadConfiguration(File file) {
-        if(file != null) {
+    public ConfigurationImpl loadConfiguration() throws MissingConfigurationException, MisconfigurationException {
+        File file = new File(DEFAULT_CONFIG_FILE_NAME);
+        if(checkConfigurationExist(file)) {
             try {
                 JAXBContext context = JAXBContext.newInstance(ConfigurationImpl.class);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
                 return (ConfigurationImpl) unmarshaller.unmarshal(file);
             } catch (JAXBException jaxbExc) {
                 LOGGER.error("Failed to load configuration.", jaxbExc);
+                throw new MisconfigurationException("Failed to load configuration.", jaxbExc);
             }
         } else {
-            LOGGER.warn("No configuration file has been provided.");
+            LOGGER.error("Can't find configuration file at "+file.getPath());
+            throw new MissingConfigurationException("Can't find configuration file at "+file.getPath());
         }
-        return null;
     }
     
-    private ConfigurationImpl createConfiguration(ConfigurationImpl currentConfiguration, File file) {
+    public ConfigurationImpl createConfiguration(ConfigurationImpl currentConfiguration) {
+        File configFolder = new File(DEFAULT_CONFIG_FOLDER_NAME);
+        if(!configFolder.exists()) {
+            configFolder.mkdir();
+        }
+        
+        File file = new File(DEFAULT_CONFIG_FILE_NAME);
+        
         if(file != null) {
             try {
                 JAXBContext context = JAXBContext.newInstance(ConfigurationImpl.class);

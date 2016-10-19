@@ -1,6 +1,9 @@
 package nl.hetcak.dms.ia.web.util;
 
+import nl.hetcak.dms.ia.web.comunication.Connection;
+import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
+import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -13,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,6 +29,7 @@ public class InfoArchiveRequestUtil {
     public final static String CONTENT_TYPE_XML = "application/xml";
     public final static String CONTENT_TYPE_JSON = "application/hal+json";
     private final static String CONTENT_TYPE_REQUEST = "Content-Type";
+    private final static String HEADER_AUTHORIZATION = "Authorization";
     public final static String DEFAULT_CONTENT_TYPE_REQUEST = "application/x-www-form-urlencoded";
     
     private Configuration configuration;
@@ -38,7 +43,15 @@ public class InfoArchiveRequestUtil {
         return IOUtils.toString(entity.getContent(), org.apache.commons.lang3.CharEncoding.UTF_8);
     }
     
-    public HttpResponse executeGetRequest(String url, String contentType, Map<String,String> requestParameters) throws IOException {
+    /**
+     * Execute a GET request.
+     * @param url Url to use.
+     * @param contentType The body content type.
+     * @param requestParameters The request header parameters.
+     * @return the server response.
+     * @throws ServerConnectionFailureException Server interaction failure.
+     */
+    public HttpResponse executeGetRequest(String url, String contentType, Map<String,String> requestParameters) throws ServerConnectionFailureException {
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet getRequest = new HttpGet(url);
     
@@ -54,10 +67,25 @@ public class InfoArchiveRequestUtil {
             getRequest.addHeader(CONTENT_TYPE_REQUEST, contentType);
         }
         
-        return httpClient.execute(getRequest);
+        try {
+            return httpClient.execute(getRequest);
+        } catch (IOException ioExc) {
+            //Server not found, failed to interact with the server.
+            LOGGER.error("Failed to interact with server.", ioExc);
+            throw new ServerConnectionFailureException("Failed to interact with server.", ioExc);
+        }
     }
     
-    public HttpResponse executePostRequest(String url, String contentType, Map<String,String> requestParameters, String requestBody) throws IOException {
+    /**
+     * Execute a POST request.
+     * @param url Url to use.
+     * @param contentType The body content type.
+     * @param requestParameters The request header parameters.
+     * @param requestBody The request body.
+     * @return the server response.
+     * @throws IOException Server interaction failure.
+     */
+    public HttpResponse executePostRequest(String url, String contentType, Map<String,String> requestParameters, String requestBody) throws IOException, ServerConnectionFailureException {
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost postRequest = new HttpPost(url);
         
@@ -79,9 +107,21 @@ public class InfoArchiveRequestUtil {
             postRequest.addHeader(CONTENT_TYPE_REQUEST, contentType);
         }
         
-        return httpClient.execute(postRequest);
+        try {
+            return httpClient.execute(postRequest);
+        } catch (IOException ioExc) {
+            //Server not found, failed to interact with the server.
+            LOGGER.error("Failed to interact with server.", ioExc);
+            throw new ServerConnectionFailureException("Failed to interact with server.", ioExc);
+        }
     }
-
+    
+    
+    /**
+     * Creates the url used for connections.
+     * @param selector The action selector
+     * @return a usable url to start a connection.
+     */
     public String getServerUrl(String selector) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("http://");
@@ -93,5 +133,29 @@ public class InfoArchiveRequestUtil {
         return stringBuilder.toString();
     }
     
+    /**
+     * Creates the url used for connections.
+     * @param selector The action selector.
+     * @param uuid the uuid of the object.
+     * @return a usable url to start a connection.
+     */
+    public String getServerUrl(String selector, String uuid) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getServerUrl(selector));
+        stringBuilder.append("/");
+        stringBuilder.append(uuid);
+        return stringBuilder.toString();
+    }
+    
+    /**
+     * Create a map with the credentials for InfoArchive.
+     * @param credentials the logged in credentials object
+     * @return Map with the credentials.
+     */
+    public Map<String, String> createCredentialsMap(Credentials credentials){
+        Map<String, String> requestValuesMap = new HashMap<>();
+        requestValuesMap.put(HEADER_AUTHORIZATION, "Bearer "+credentials.getSecurityToken());
+        return requestValuesMap;
+    }
     
 }

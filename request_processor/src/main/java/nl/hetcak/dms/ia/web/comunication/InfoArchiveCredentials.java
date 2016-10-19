@@ -109,6 +109,9 @@ public class InfoArchiveCredentials implements Credentials {
      */
     @Override
     public boolean isSecurityTokenValid() {
+        if(invalidationTime == null) {
+            return false;
+        }
         return invalidationTime.before(Calendar.getInstance());
     }
     

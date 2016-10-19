@@ -21,4 +21,5 @@ public interface Configuration {
     
     //InfoArchive Application Settings
     String getApplicationUUID();
+    String getSearchCompositionUUID();
 }

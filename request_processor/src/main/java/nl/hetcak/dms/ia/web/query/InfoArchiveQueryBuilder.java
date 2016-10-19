@@ -50,8 +50,9 @@ public class InfoArchiveQueryBuilder {
      * @param name Name of the column.
      * @param value the value.
      */
-    public void addEquelCriteria(String name, String value) {
+    public InfoArchiveQueryBuilder addEquelCriteria(String name, String value) {
         addCriterion(name, OPERATOR_EQUEL, value);
+        return this;
     }
     
     /**
@@ -59,8 +60,9 @@ public class InfoArchiveQueryBuilder {
      * @param name Name of the column.
      * @param value the value.
      */
-    public void addNotEquelCriteria(String name, String value) {
+    public InfoArchiveQueryBuilder addNotEquelCriteria(String name, String value) {
         addCriterion(name, OPERATOR_NOT_EQUEL, value);
+        return this;
     }
     
     /**
@@ -68,8 +70,9 @@ public class InfoArchiveQueryBuilder {
      * @param name Name of the column.
      * @param value the value.
      */
-    public void addGreaterOrEquelCriteria(String name, String value) {
+    public InfoArchiveQueryBuilder addGreaterOrEquelCriteria(String name, String value) {
         addCriterion(name, OPERATOR_GREATER_OR_EQUEL, value);
+        return this;
     }
     
     /**
@@ -77,8 +80,9 @@ public class InfoArchiveQueryBuilder {
      * @param name Name of the column.
      * @param value the value.
      */
-    public void addGreaterCriteria(String name, String value) {
+    public InfoArchiveQueryBuilder addGreaterCriteria(String name, String value) {
         addCriterion(name, OPERATOR_GREATER, value);
+        return this;
     }
     
     /**
@@ -86,8 +90,9 @@ public class InfoArchiveQueryBuilder {
      * @param name Name of the column.
      * @param value the value.
      */
-    public void addLessOrEquelCriteria(String name, String value) {
+    public InfoArchiveQueryBuilder addLessOrEquelCriteria(String name, String value) {
         addCriterion(name, OPERATOR_LESS_OR_EQUEL, value);
+        return this;
     }
     
     /**
@@ -95,8 +100,9 @@ public class InfoArchiveQueryBuilder {
      * @param name Name of the column.
      * @param value the value.
      */
-    public void addLessCriteria(String name, String value) {
+    public InfoArchiveQueryBuilder addLessCriteria(String name, String value) {
         addCriterion(name, OPERATOR_LESS, value);
+        return this;
     }
     
     /**
@@ -105,7 +111,7 @@ public class InfoArchiveQueryBuilder {
      * @param value1 the value.
      * @param value2 the value.
      */
-    public void addBetweenCriteria(String name, String value1, String value2) {
+    public InfoArchiveQueryBuilder addBetweenCriteria(String name, String value1, String value2) {
         Criterion criterion = new Criterion();
         criterion.setName(name);
         criterion.setOperator(OPERATOR_BETWEEN);
@@ -113,6 +119,7 @@ public class InfoArchiveQueryBuilder {
         criterion.getValues().add(value2);
         LOGGER.debug(String.format("[%s] Added %s criteria", this.toString(), OPERATOR_BETWEEN));
         this.criterions.add(criterion);
+        return this;
     }
     
     private void addCriterion(String name, String operator, String value) {

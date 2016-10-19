@@ -7,15 +7,13 @@ import java.security.PrivilegedActionException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class LoginFailureException extends Exception {
-    public static final int ERROR_CODE = 1003;
-    
+public class MisconfigurationException extends Exception {
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public LoginFailureException() {
+    public MisconfigurationException() {
     }
     
     /**
@@ -26,7 +24,7 @@ public class LoginFailureException extends Exception {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public LoginFailureException(String message) {
+    public MisconfigurationException(String message) {
         super(message);
     }
     
@@ -44,7 +42,7 @@ public class LoginFailureException extends Exception {
      *                unknown.)
      * @since 1.4
      */
-    public LoginFailureException(String message, Throwable cause) {
+    public MisconfigurationException(String message, Throwable cause) {
         super(message, cause);
     }
     
@@ -62,7 +60,7 @@ public class LoginFailureException extends Exception {
      *              unknown.)
      * @since 1.4
      */
-    public LoginFailureException(Throwable cause) {
+    public MisconfigurationException(Throwable cause) {
         super(cause);
     }
     
@@ -80,7 +78,7 @@ public class LoginFailureException extends Exception {
      *                           be writable
      * @since 1.7
      */
-    public LoginFailureException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public MisconfigurationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

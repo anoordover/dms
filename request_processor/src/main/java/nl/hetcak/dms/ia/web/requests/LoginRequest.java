@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.LoginFailureException;
+import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class LoginRequest {
         this.infoArchiveRequestUtil = new InfoArchiveRequestUtil(configuration);
     }
     
-    public Credentials loginInfoArchive() throws LoginFailureException {
+    public Credentials loginInfoArchive() throws LoginFailureException, ServerConnectionFailureException {
         String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);
         try {
             String bodyContent = prepareLoginBody(configuration.getInfoArchiveCredentials());
@@ -51,7 +52,23 @@ public class LoginRequest {
             LOGGER.error("Could not load UTF-8 encoding.", unsupEncoExc);
             throw new LoginFailureException("Encoding UTF-8 is unsupported.", unsupEncoExc);
         } catch (IOException ioExc) {
-            LOGGER.error("Comunication or Parse error.", ioExc);
+            LOGGER.error("Parse error.", ioExc);
+            throw new LoginFailureException(ioExc);
+        }
+    }
+    
+    public Credentials refreshCredentialsInfoArchive(Credentials loggedInCredentials) throws LoginFailureException, ServerConnectionFailureException {
+        String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);
+        try {
+            String bodyContent = prepareRefreshLoginBody(loggedInCredentials);
+            HttpResponse httpResponse = infoArchiveRequestUtil.executePostRequest(serverUrl, DEFAULT_CONTENT_TYPE_REQUEST, null, bodyContent);
+            String response =  infoArchiveRequestUtil.responseReader(httpResponse);
+            return updateCredentails(configuration.getInfoArchiveCredentials(), response);
+        } catch (UnsupportedEncodingException unsupEncoExc) {
+            LOGGER.error("Could not load UTF-8 encoding.", unsupEncoExc);
+            throw new LoginFailureException("Encoding UTF-8 is unsupported.", unsupEncoExc);
+        } catch (IOException ioExc) {
+            LOGGER.error("Parse error.", ioExc);
             throw new LoginFailureException(ioExc);
         }
     }
@@ -97,6 +114,19 @@ public class LoginRequest {
         stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, "UTF-8"));
         stringBuilder.append('=');
         stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_PASSWORD, "UTF-8"));
+        
+        return stringBuilder.toString();
+    }
+    
+    private String prepareRefreshLoginBody(Credentials credentials) throws UnsupportedEncodingException {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_REFRESH, "UTF-8"));
+        stringBuilder.append('=');
+        stringBuilder.append(URLEncoder.encode(credentials.getRecoveryToken(), "UTF-8"));
+        stringBuilder.append('&');
+        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, "UTF-8"));
+        stringBuilder.append('=');
+        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_REFRESH, "UTF-8"));
         
         return stringBuilder.toString();
     }
