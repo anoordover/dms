@@ -318,6 +318,14 @@ public class AMPCacheManager implements CacheManager {
             bReturn = false;
         }
 
+        if (objCache.getSipFile() != null) {
+            try {
+                Files.copy(objCache.getSipFile(), Paths.get(String.format("%s/%s", sSavePath.toString(), objCache.getSipFile().getFileName().toString())));
+            } catch (IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            }
+        }
+
         for (IADocumentReference objDocument : objCache.getContents()) {
             try (OutputStream objFileStream = Files.newOutputStream(Paths.get(sSavePath + objDocument.getDocumentId() + ".xml"))) {
                 XStream objXStream = new XStream(new StaxDriver());

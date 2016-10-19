@@ -181,6 +181,10 @@ public class CAKMessageParserFallback implements MessageParser {
         StringBuilder objFormatBuilder = new StringBuilder();
         String[] cParameters = new String[iParamCount];
 
+        if(iParamCount == 0) {
+            return sData;
+        }
+
         if (cIndicesStart.get(0) > 0) {
             objFormatBuilder.append(sData.substring(0, cIndicesStart.get(0)));
         }

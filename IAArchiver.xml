@@ -81,71 +81,89 @@
         <implementing_class>nl.hetcak.dms.CAKRetentionManager</implementing_class>
         <retention_classes>
             <nl.hetcak.dms.CAKRetentionClass>
-                <name>Startbrief</name>
-                <associated_document_title>Z03</associated_document_title>
-                <associated_document_title>B02</associated_document_title>
+                <name>Z03</name>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
-                <name>Beschikking</name>
-                <associated_document_title>Z04</associated_document_title>
-                <associated_document_title>B03</associated_document_title>
+                <name>B02</name>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
-                <name>Betaalregeling</name>
-                <associated_document_title>Z02</associated_document_title>
-                <associated_document_title>B04</associated_document_title>
+                <name>Z04</name>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
-                <name>Bevestiging_Betaalregeling</name>
-                <associated_document_title>Z12</associated_document_title>
-                <associated_document_title>B12</associated_document_title>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Herinnering</name>
-                <associated_document_title>Z05</associated_document_title>
-                <associated_document_title>B05</associated_document_title>
+                <name>B03</name>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
-                <name>Overlijdensprofiel</name>
-                <associated_document_title>Z08</associated_document_title>
-                <handeling_nr>102.</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Storno_Al_Aanmaning</name>
-                <associated_document_title>Z10</associated_document_title>
-                <associated_document_title>B10</associated_document_title>
+                <name>Z02</name>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
-                <name>Storno_Al_Herinnering</name>
-                <associated_document_title>Z09</associated_document_title>
-                <associated_document_title>B09</associated_document_title>
+                <name>B04</name>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
-                <name>Aanmaning</name>
-                <associated_document_title>Z06</associated_document_title>
-                <associated_document_title>B06</associated_document_title>
+                <name>Z12</name>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
-                <name>Factuur</name>
-                <associated_document_title>Z01</associated_document_title>
-                <associated_document_title>B01</associated_document_title>
+                <name>B12</name>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
             <nl.hetcak.dms.CAKRetentionClass>
-                <name>Factuurspecificatie</name>
-                <associated_document_title>B21</associated_document_title>
+                <name>Z05</name>
+                <handeling_nr>10.2</handeling_nr>
+            </nl.hetcak.dms.CAKRetentionClass>
+            <nl.hetcak.dms.CAKRetentionClass>
+                <name>B05</name>
+                <handeling_nr>10.2</handeling_nr>
+            </nl.hetcak.dms.CAKRetentionClass>
+            <nl.hetcak.dms.CAKRetentionClass>
+                <name>Z08</name>
+                <handeling_nr>10.2</handeling_nr>
+            </nl.hetcak.dms.CAKRetentionClass>
+            <nl.hetcak.dms.CAKRetentionClass>
+                <name>Z10</name>
+                <handeling_nr>10.2</handeling_nr>
+            </nl.hetcak.dms.CAKRetentionClass>
+            <nl.hetcak.dms.CAKRetentionClass>
+                <name>B10</name>
+                <handeling_nr>10.2</handeling_nr>
+            </nl.hetcak.dms.CAKRetentionClass>
+            <nl.hetcak.dms.CAKRetentionClass>
+                <name>Z09</name>
+                <handeling_nr>10.2</handeling_nr>
+            </nl.hetcak.dms.CAKRetentionClass>
+            <nl.hetcak.dms.CAKRetentionClass>
+                <name>B09</name>
+                <handeling_nr>10.2</handeling_nr>
+            </nl.hetcak.dms.CAKRetentionClass>
+            <nl.hetcak.dms.CAKRetentionClass>
+                <name>Z06</name>
+                <handeling_nr>10.2</handeling_nr>
+            </nl.hetcak.dms.CAKRetentionClass>
+            <nl.hetcak.dms.CAKRetentionClass>
+                <name>B06</name>
+                <handeling_nr>10.2</handeling_nr>
+            </nl.hetcak.dms.CAKRetentionClass>
+            <nl.hetcak.dms.CAKRetentionClass>
+                <name>Z01</name>
+                <handeling_nr>10.2</handeling_nr>
+            </nl.hetcak.dms.CAKRetentionClass>
+            <nl.hetcak.dms.CAKRetentionClass>
+                <name>B01</name>
+                <handeling_nr>10.2</handeling_nr>
+            </nl.hetcak.dms.CAKRetentionClass>
+            <nl.hetcak.dms.CAKRetentionClass>
+                <name>B21</name>
                 <handeling_nr>10.2</handeling_nr>
             </nl.hetcak.dms.CAKRetentionClass>
         </retention_classes>
         <custom_parameters>
             <retention_element_name>ArchiefDocumenttitel</retention_element_name>
+            <retention_element_pdi_name>ArchiefHandelingsnummer</retention_element_pdi_name>
         </custom_parameters>
     </retention_manager>
     <message_parser>
@@ -165,6 +183,7 @@
             <ArchiefDocumenttype>{ArchiefDocumenttype}</ArchiefDocumenttype>
             <ArchiefDocumentstatus>{ArchiefDocumentstatus}</ArchiefDocumentstatus>
             <ArchiefRegelingsjaar>{ArchiefRegelingsjaar}</ArchiefRegelingsjaar>
+            <ArchiefHandelingsnummer>xxxxx</ArchiefHandelingsnummer>
             <Attachment>Attachment_{ArchiefDocumentId}.pdf</Attachment>
         </AIU_mapping>
         <custom_parameters>

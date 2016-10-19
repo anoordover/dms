@@ -93,7 +93,7 @@ public class CAKSipManager extends AMPSipManager {
     public PackagingInformation getCAKPackageInformation(IARetentionClass objRetentionClass, boolean bIsFallback) {
         GregorianCalendar objCalendar = new GregorianCalendar();
         objCalendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR) + 1);
-        objCalendar.set(Calendar.MONTH, 1);
+        objCalendar.set(Calendar.MONTH, 0);
         objCalendar.set(Calendar.DAY_OF_MONTH, 1);
         objCalendar.set(Calendar.SECOND, 0);
         objCalendar.set(Calendar.MINUTE, 0);
