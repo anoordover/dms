@@ -6,10 +6,7 @@ import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.*;
 import java.io.File;
 
 /**
@@ -22,6 +19,10 @@ public class ConfigurationManager {
     private static final String DEFAULT_CONFIG_FILE_NAME = "config/request_processor.xml";
     private static final String DEFAULT_CONFIG_FOLDER_NAME = "config";
     
+    public File getDefaultConfigurationFile() {
+        return new File(DEFAULT_CONFIG_FILE_NAME);
+    }
+    
     private boolean checkConfigurationExist(File configFile) {
         if(configFile.exists()) {
             LOGGER.debug("Found configuration file, using path: "+configFile.getPath());
@@ -33,8 +34,10 @@ public class ConfigurationManager {
         return false;
     }
     
-    public ConfigurationImpl loadConfiguration() throws MissingConfigurationException, MisconfigurationException {
-        File file = new File(DEFAULT_CONFIG_FILE_NAME);
+    public ConfigurationImpl loadConfiguration(File file) throws MissingConfigurationException, MisconfigurationException {
+        if(file == null)
+            file = new File(DEFAULT_CONFIG_FILE_NAME);
+        
         if(checkConfigurationExist(file)) {
             try {
                 JAXBContext context = JAXBContext.newInstance(ConfigurationImpl.class);
@@ -71,11 +74,4 @@ public class ConfigurationManager {
         }
         return null;
     }
-    
-    private ConfigurationImpl createDefaultConfiguration() {
-        ConfigurationImpl configuration = new ConfigurationImpl();
-        configuration.emptyConfiguration();
-        return configuration;
-    }
-    
 }

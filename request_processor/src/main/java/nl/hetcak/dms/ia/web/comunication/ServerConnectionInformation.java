@@ -5,7 +5,7 @@ package nl.hetcak.dms.ia.web.comunication;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public interface Connection {
+public interface ServerConnectionInformation {
     /**
      * Sets the server address.
      * @param serverAddress the server address.
@@ -19,9 +19,15 @@ public interface Connection {
     void setServerPort(int serverPort);
     
     /**
-     * Sets the Credentials.
-     * @param credentials the credentials.
+     * Gets the server address.
+     * @return the server address.
      */
-    void setCredentials(Credentials credentials);
-        
+    String getServerAddress();
+    
+    /**
+     * Gets the server port.
+     * @return the server port.
+     */
+    int getServerPort();
+    
 }

@@ -24,11 +24,11 @@ import java.util.List;
 public class InfoArchiveQueryBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfoArchiveQueryBuilder.class);
     private static final String OPERATOR_BETWEEN = "BETWEEN";
-    private static final String OPERATOR_EQUEL = "EQUAL";
-    private static final String OPERATOR_NOT_EQUEL = "NOT_EQUAL";
-    private static final String OPERATOR_GREATER_OR_EQUEL = "GREATER_OR_EQUAL";
+    private static final String OPERATOR_EQUAL = "EQUAL";
+    private static final String OPERATOR_NOT_EQUAL = "NOT_EQUAL";
+    private static final String OPERATOR_GREATER_OR_EQUAL = "GREATER_OR_EQUAL";
     private static final String OPERATOR_GREATER = "GREATER";
-    private static final String OPERATOR_LESS_OR_EQUEL = "LESS_OR_EQUAL";
+    private static final String OPERATOR_LESS_OR_EQUAL = "LESS_OR_EQUAL";
     private static final String OPERATOR_LESS = "LESS";
     private static final String OPERATOR_STARTS_WITH = "STARTS_WITH";
     private static final String OPERATOR_ENDS_WITH = "ENDS_WITH";
@@ -46,32 +46,32 @@ public class InfoArchiveQueryBuilder {
     }
     
     /**
-     * Added a new Equel {@link Criterion} to this query.
+     * Added a new Equal {@link Criterion} to this query.
      * @param name Name of the column.
      * @param value the value.
      */
-    public InfoArchiveQueryBuilder addEquelCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_EQUEL, value);
+    public InfoArchiveQueryBuilder addEqualCriteria(String name, String value) {
+        addCriterion(name, OPERATOR_EQUAL, value);
         return this;
     }
     
     /**
-     * Added a new Not Equel {@link Criterion} to this query.
+     * Added a new Not Equal {@link Criterion} to this query.
      * @param name Name of the column.
      * @param value the value.
      */
-    public InfoArchiveQueryBuilder addNotEquelCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_NOT_EQUEL, value);
+    public InfoArchiveQueryBuilder addNotEqualCriteria(String name, String value) {
+        addCriterion(name, OPERATOR_NOT_EQUAL, value);
         return this;
     }
     
     /**
-     * Added a new Equel or Greater {@link Criterion} to this query.
+     * Added a new Equal or Greater {@link Criterion} to this query.
      * @param name Name of the column.
      * @param value the value.
      */
-    public InfoArchiveQueryBuilder addGreaterOrEquelCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_GREATER_OR_EQUEL, value);
+    public InfoArchiveQueryBuilder addGreaterOrEqualCriteria(String name, String value) {
+        addCriterion(name, OPERATOR_GREATER_OR_EQUAL, value);
         return this;
     }
     
@@ -86,12 +86,12 @@ public class InfoArchiveQueryBuilder {
     }
     
     /**
-     * Added a new Equel or Less {@link Criterion} to this query.
+     * Added a new Equal or Less {@link Criterion} to this query.
      * @param name Name of the column.
      * @param value the value.
      */
-    public InfoArchiveQueryBuilder addLessOrEquelCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_LESS_OR_EQUEL, value);
+    public InfoArchiveQueryBuilder addLessOrEqualCriteria(String name, String value) {
+        addCriterion(name, OPERATOR_LESS_OR_EQUAL, value);
         return this;
     }
     

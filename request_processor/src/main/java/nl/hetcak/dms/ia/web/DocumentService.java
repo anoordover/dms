@@ -47,7 +47,7 @@ public class DocumentService {
                 return Response.ok(response.getAsXML()).build();
             }
         }
-        LOGGER.warn("Content grabbing attempt detected. Returning 406 - unaccepted http error.");
+        LOGGER.warn("Content grabbing attempt detected. Returning '406 - unaccepted' http error.");
         return Response.status(Response.Status.NOT_ACCEPTABLE).entity("<error><code>406</code><description>Unacceptable request content detected.</description></error>").build();
     }
 
@@ -75,7 +75,7 @@ public class DocumentService {
         stringBuilder.append("Loading config file...\n");
         ConfigurationManager configurationManager = new ConfigurationManager();
         try {
-            Configuration configuration = configurationManager.loadConfiguration();
+            Configuration configuration = configurationManager.loadConfiguration(null);
             stringBuilder.append("[OK] Config file found and loaded.\n");
         } catch (MissingConfigurationException missingcexc) {
             stringBuilder.append("[ERROR] Config file not found.\n");

@@ -3,7 +3,6 @@ package nl.hetcak.dms.ia.web.requests;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import nl.hetcak.dms.ia.web.comunication.Connection;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
@@ -62,7 +61,7 @@ public class RequestRecord {
     public RequestRecord(Configuration configuration, Credentials credentials) {
         this.configuration = configuration;
         this.credentials = credentials;
-        this.requestUtil = new InfoArchiveRequestUtil(configuration);
+        this.requestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());
         this.queryBuilder = new InfoArchiveQueryBuilder();
     }
     
@@ -75,7 +74,7 @@ public class RequestRecord {
     private HttpResponse executeListDocumentsRequest(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
-        String requestBody = queryBuilder.addEquelCriteria(VALUE_ARCHIVE_PERSON_NUMBER, archivePersonNumber).getXMLString();
+        String requestBody = queryBuilder.addEqualCriteria(VALUE_ARCHIVE_PERSON_NUMBER, archivePersonNumber).getXMLString();
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
     

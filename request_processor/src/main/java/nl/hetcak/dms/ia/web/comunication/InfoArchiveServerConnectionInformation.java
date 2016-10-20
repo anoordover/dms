@@ -5,10 +5,9 @@ package nl.hetcak.dms.ia.web.comunication;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class InfoArchiveConnection implements Connection {
+public class InfoArchiveServerConnectionInformation implements ServerConnectionInformation {
     private String serverAddress;
     private int serverPort;
-    private Credentials credentials;
     
     /**
      * Sets the server address.
@@ -31,13 +30,23 @@ public class InfoArchiveConnection implements Connection {
     }
     
     /**
-     * Sets the Credentials.
+     * Gets the server address.
      *
-     * @param credentials the credentials.
+     * @return the server address.
      */
     @Override
-    public void setCredentials(Credentials credentials) {
-        this.credentials = credentials;
+    public String getServerAddress() {
+        return serverAddress;
+    }
+    
+    /**
+     * Gets the server port.
+     *
+     * @return the server port.
+     */
+    @Override
+    public int getServerPort() {
+        return serverPort;
     }
     
 }

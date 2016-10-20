@@ -8,6 +8,8 @@ import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
 import nl.hetcak.dms.ia.web.requests.LoginRequest;
 
+import java.io.File;
+
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
@@ -15,6 +17,7 @@ import nl.hetcak.dms.ia.web.requests.LoginRequest;
  */
 public class ConnectionManager {
     private static ConnectionManager connectionManager;
+    private File configurationFile;
     private Credentials credentials;
     private Configuration configuration;
     
@@ -29,9 +32,17 @@ public class ConnectionManager {
         return connectionManager;
     }
     
+    public void setConfigurationFile(File configurationFile) {
+        if(configuration != null) {
+            configuration = null;
+            credentials = null;
+        }
+        this.configurationFile = configurationFile;
+    }
+    
     public Credentials getActiveCredentials()  throws MissingConfigurationException, MisconfigurationException,
         LoginFailureException, ServerConnectionFailureException {
-        
+              
         if(credentials == null) {
             credentials = getConfiguration().getInfoArchiveCredentials();
         }
@@ -49,15 +60,19 @@ public class ConnectionManager {
         return credentials;
     }
     
+    public void destroyManagerInstance() {
+        connectionManager = null;
+    }
+    
     public Configuration getConfiguration() throws MissingConfigurationException, MisconfigurationException {
         if(configuration == null) {
-            configuration = loadConfiguration();
+            configuration = loadConfiguration(configurationFile);
         }
         return configuration;
     }
     
-    private Configuration loadConfiguration() throws MissingConfigurationException, MisconfigurationException {
+    private Configuration loadConfiguration(File file) throws MissingConfigurationException, MisconfigurationException {
         ConfigurationManager configurationManager = new ConfigurationManager();
-        return configurationManager.loadConfiguration();
+        return configurationManager.loadConfiguration(file);
     }
 }

@@ -79,7 +79,7 @@ public class MissingConfigurationException extends Exception {
      *                           be writable
      * @since 1.7
      */
-    protected MissingConfigurationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public MissingConfigurationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -112,7 +112,7 @@ public class InfoArchiveCredentials implements Credentials {
         if(invalidationTime == null) {
             return false;
         }
-        return invalidationTime.before(Calendar.getInstance());
+        return invalidationTime.after(Calendar.getInstance());
     }
     
     /**

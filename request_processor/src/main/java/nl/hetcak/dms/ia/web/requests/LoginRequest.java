@@ -38,7 +38,7 @@ public class LoginRequest {
     
     public LoginRequest(Configuration configuration) {
         this.configuration = configuration;
-        this.infoArchiveRequestUtil = new InfoArchiveRequestUtil(configuration);
+        this.infoArchiveRequestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());
     }
     
     public Credentials loginInfoArchive() throws LoginFailureException, ServerConnectionFailureException {

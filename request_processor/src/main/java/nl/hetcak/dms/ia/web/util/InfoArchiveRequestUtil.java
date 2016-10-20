@@ -1,7 +1,7 @@
 package nl.hetcak.dms.ia.web.util;
 
-import nl.hetcak.dms.ia.web.comunication.Connection;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
+import nl.hetcak.dms.ia.web.comunication.ServerConnectionInformation;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
 import org.apache.commons.io.IOUtils;
@@ -32,10 +32,10 @@ public class InfoArchiveRequestUtil {
     private final static String HEADER_AUTHORIZATION = "Authorization";
     public final static String DEFAULT_CONTENT_TYPE_REQUEST = "application/x-www-form-urlencoded";
     
-    private Configuration configuration;
+    private ServerConnectionInformation serverConnectionInformation;
     
-    public InfoArchiveRequestUtil(Configuration configuration) {
-        this.configuration = configuration;
+    public InfoArchiveRequestUtil(ServerConnectionInformation serverConnectionInformation) {
+        this.serverConnectionInformation = serverConnectionInformation;
     }
     
     public String responseReader(HttpResponse response) throws IOException {
@@ -125,9 +125,9 @@ public class InfoArchiveRequestUtil {
     public String getServerUrl(String selector) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("http://");
-        stringBuilder.append(configuration.getInfoArchiveServerAddress());
+        stringBuilder.append(serverConnectionInformation.getServerAddress());
         stringBuilder.append(":");
-        stringBuilder.append(configuration.getInfoArchiveServerPort());
+        stringBuilder.append(serverConnectionInformation.getServerPort());
         stringBuilder.append("/");
         stringBuilder.append(selector);
         return stringBuilder.toString();

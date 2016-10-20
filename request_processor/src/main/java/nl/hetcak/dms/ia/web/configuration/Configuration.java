@@ -1,5 +1,6 @@
 package nl.hetcak.dms.ia.web.configuration;
 
+import nl.hetcak.dms.ia.web.comunication.ServerConnectionInformation;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 
 /**
@@ -15,6 +16,7 @@ public interface Configuration {
     String getInfoArchiveServerAddress();
     int getInfoArchiveServerPort();
     Credentials getInfoArchiveCredentials();
+    ServerConnectionInformation getInfoArchiveServerInformation();
     
     //Application Settings
     int getMaxResults();

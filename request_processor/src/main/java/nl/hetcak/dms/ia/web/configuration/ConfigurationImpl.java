@@ -1,6 +1,8 @@
 package nl.hetcak.dms.ia.web.configuration;
 
+import nl.hetcak.dms.ia.web.comunication.ServerConnectionInformation;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
+import nl.hetcak.dms.ia.web.comunication.InfoArchiveServerConnectionInformation;
 import nl.hetcak.dms.ia.web.comunication.InfoArchiveCredentials;
 import org.apache.commons.lang3.StringUtils;
 
@@ -90,6 +92,14 @@ public class ConfigurationImpl implements Configuration{
             credentials.setUseLoginToken(true);
         }
         return credentials;
+    }
+    
+    @Override
+    public ServerConnectionInformation getInfoArchiveServerInformation() {
+        InfoArchiveServerConnectionInformation iaconnection = new InfoArchiveServerConnectionInformation();
+        iaconnection.setServerAddress(serverAddress);
+        iaconnection.setServerPort(serverPort);
+        return iaconnection;
     }
     
     @XmlElement(name = CONF_MAX_RESULTS)
