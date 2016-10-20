@@ -7,10 +7,7 @@ import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.sip.AMPSipManager;
-import com.emc.ia.sdk.sip.assembly.FileGenerationMetrics;
-import com.emc.ia.sdk.sip.assembly.FileGenerator;
-import com.emc.ia.sdk.sip.assembly.PackagingInformation;
-import com.emc.ia.sdk.sip.assembly.SipAssembler;
+import com.emc.ia.sdk.sip.assembly.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +80,7 @@ public class CAKSipManager extends AMPSipManager {
 
         IACache objTempCache = new IACache(-1, objRetentionClass);
         objTempCache.add(objDocumentReference);
-        if(getSIPFile(objTempCache)) {
+        if (getSIPFile(objTempCache)) {
             return objTempCache;
         }
 
@@ -101,17 +98,21 @@ public class CAKSipManager extends AMPSipManager {
         objCalendar.set(Calendar.MILLISECOND, 0);
         objCalendar.setTimeZone(TimeZone.getDefault());
 
-        String sApplicationName = bIsFallback ?  mobjConfiguration.getParameter("fallback_application_name") : mobjConfiguration.getApplicationName();
+
+        String sApplicationName = bIsFallback ? mobjConfiguration.getParameter("fallback_application_name") : mobjConfiguration.getApplicationName();
         String sHoldingName = bIsFallback ? mobjConfiguration.getParameter("fallback_holding_name") : mobjConfiguration.getHoldingName();
-        return PackagingInformation.builder().dss()
-                .holding(sHoldingName)
+        PackagingInformation.PackagingInformationBuilder objBuilder = PackagingInformation.builder();
+        DataSubmissionSession.DataSubmissionSessionBuilder objDssBuilder = objBuilder.dss();
+        objDssBuilder.holding(sHoldingName)
                 .application(sApplicationName)
                 .producer(mobjConfiguration.getProducerName())
                 .entity(mobjConfiguration.getEntityName())
                 .schema(mobjConfiguration.getSchemaDeclaration())
-                .retentionClass(objRetentionClass.getName().replace(' ', '_'))
-                .baseRetentionDate(objCalendar.getTime())
-                .end().build();
+                .retentionClass(objRetentionClass.getName().replace(' ', '_'));
+        if (mobjConfiguration.getParameter("set_base_retention_date") != null && "true".equals(mobjConfiguration.getParameter("set_base_retention_date").toLowerCase())) {
+            objDssBuilder.baseRetentionDate(objCalendar.getTime());
+        }
+        return objDssBuilder.end().build();
     }
 }
 
