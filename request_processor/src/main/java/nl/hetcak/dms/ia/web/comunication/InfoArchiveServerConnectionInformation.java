@@ -7,7 +7,7 @@ package nl.hetcak.dms.ia.web.comunication;
  */
 public class InfoArchiveServerConnectionInformation implements ServerConnectionInformation {
     private String serverAddress;
-    private int serverPort;
+    private int serverPort, maxItems;
     
     /**
      * Sets the server address.
@@ -48,5 +48,26 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
     public int getServerPort() {
         return serverPort;
     }
+    
+    /**
+     * Sets the max item count.
+     *
+     * @param maxItems total items
+     */
+    @Override
+    public void setMaxItems(int maxItems) {
+        this.maxItems = maxItems;
+    }
+    
+    /**
+     * Gets the max items size.
+     *
+     * @return the max items
+     */
+    @Override
+    public int getMaxItems() {
+        return maxItems;
+    }
+    
     
 }

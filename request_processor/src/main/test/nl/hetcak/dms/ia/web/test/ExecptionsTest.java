@@ -1,9 +1,6 @@
 package nl.hetcak.dms.ia.web.test;
 
-import nl.hetcak.dms.ia.web.exceptions.LoginFailureException;
-import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
-import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
-import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
+import nl.hetcak.dms.ia.web.exceptions.*;
 import org.junit.Test;
 
 /**
@@ -13,6 +10,10 @@ import org.junit.Test;
  */
 public class ExecptionsTest {
     //zinloze tests; dit test de werking van java.lang.Exception.
+    @Test(expected = LoginFailureException.class)
+    public void throwLoginException() throws  LoginFailureException {
+        throw new LoginFailureException();
+    }
     
     @Test(expected = LoginFailureException.class)
     public void throwLoginException1() throws  LoginFailureException {
@@ -39,6 +40,11 @@ public class ExecptionsTest {
     
     //Misconfiguration
     @Test(expected = MisconfigurationException.class)
+    public void throwMisconfigurationException() throws  MisconfigurationException {
+        throw new MisconfigurationException();
+    }
+    
+    @Test(expected = MisconfigurationException.class)
     public void throwMisconfigurationException1() throws  MisconfigurationException {
         throw new MisconfigurationException("Test");
     }
@@ -62,6 +68,11 @@ public class ExecptionsTest {
     }
     
     //MissingConfigurationException
+    @Test(expected = MissingConfigurationException.class)
+    public void throwMissingconfigurationException() throws  MissingConfigurationException {
+        throw new MissingConfigurationException();
+    }
+    
     @Test(expected = MissingConfigurationException.class)
     public void throwMissingconfigurationException1() throws  MissingConfigurationException {
         throw new MissingConfigurationException("Test");
@@ -87,6 +98,11 @@ public class ExecptionsTest {
     
     //ServerConnectionFailureException
     @Test(expected = ServerConnectionFailureException.class)
+    public void throwServerConnectionFailureException() throws ServerConnectionFailureException {
+        throw new ServerConnectionFailureException();
+    }
+    
+    @Test(expected = ServerConnectionFailureException.class)
     public void throwServerConnectionFailureException1() throws ServerConnectionFailureException {
         throw new ServerConnectionFailureException("Test");
     }
@@ -108,4 +124,34 @@ public class ExecptionsTest {
         Exception error = new Exception();
         throw new ServerConnectionFailureException("Test", error, true, true);
     }
+    
+    //UnexpectedResultException
+    @Test(expected = UnexpectedResultException.class)
+    public void throwUnexpectedResultException() throws UnexpectedResultException {
+        throw new UnexpectedResultException();
+    }
+    
+    @Test(expected = UnexpectedResultException.class)
+    public void throwUnexpectedResultException1() throws UnexpectedResultException {
+        throw new UnexpectedResultException("Test");
+    }
+    
+    @Test(expected = UnexpectedResultException.class)
+    public void throwUnexpectedResultException2() throws  UnexpectedResultException {
+        Exception error = new Exception();
+        throw new UnexpectedResultException("Test", error);
+    }
+    
+    @Test(expected = UnexpectedResultException.class)
+    public void throwUnexpectedResultException3() throws  UnexpectedResultException {
+        Exception error = new Exception();
+        throw new UnexpectedResultException(error);
+    }
+    
+    @Test(expected = UnexpectedResultException.class)
+    public void throwUnexpectedResultException4() throws  UnexpectedResultException {
+        Exception error = new Exception();
+        throw new UnexpectedResultException("Test", error, true, true);
+    }
+    
 }

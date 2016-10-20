@@ -99,6 +99,7 @@ public class ConfigurationImpl implements Configuration{
         InfoArchiveServerConnectionInformation iaconnection = new InfoArchiveServerConnectionInformation();
         iaconnection.setServerAddress(serverAddress);
         iaconnection.setServerPort(serverPort);
+        iaconnection.setMaxItems(maxResults);
         return iaconnection;
     }
     

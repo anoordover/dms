@@ -30,4 +30,16 @@ public interface ServerConnectionInformation {
      */
     int getServerPort();
     
+    /**
+     * Sets the max item count.
+     * @param maxItems total items
+     */
+    void setMaxItems(int maxItems);
+    
+    /**
+     * Gets the max items size.
+     * @return the max items
+     */
+    int getMaxItems();
+    
 }

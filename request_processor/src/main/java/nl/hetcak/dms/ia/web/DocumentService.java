@@ -6,7 +6,7 @@ import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
 import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
 import nl.hetcak.dms.ia.web.managers.ConnectionManager;
-import nl.hetcak.dms.ia.web.requests.RequestRecord;
+import nl.hetcak.dms.ia.web.requests.RecordRequest;
 import nl.hetcak.dms.ia.web.restfull.consumes.ListDocumentRequest;
 import nl.hetcak.dms.ia.web.restfull.produces.ListDocumentResponse;
 import org.slf4j.Logger;
@@ -42,8 +42,8 @@ public class DocumentService {
             if(request.getArchivePersonNumber().length() > 0) {
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
     
-                RequestRecord requestRecord = new RequestRecord(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-                ListDocumentResponse response = new ListDocumentResponse(requestRecord.requestListDocuments(request.getArchivePersonNumber()));
+                RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
+                ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getArchivePersonNumber()));
                 return Response.ok(response.getAsXML()).build();
             }
         }

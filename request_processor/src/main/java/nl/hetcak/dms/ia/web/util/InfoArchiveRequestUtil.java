@@ -144,6 +144,8 @@ public class InfoArchiveRequestUtil {
         stringBuilder.append(getServerUrl(selector));
         stringBuilder.append("/");
         stringBuilder.append(uuid);
+        stringBuilder.append("?size=");
+        stringBuilder.append(serverConnectionInformation.getMaxItems());
         return stringBuilder.toString();
     }
     
