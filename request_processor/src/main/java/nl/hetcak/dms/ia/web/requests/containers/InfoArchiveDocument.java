@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.StringWriter;
 import java.util.Date;
 
@@ -21,6 +22,10 @@ import java.util.Date;
 @XmlRootElement(name = "Document")
 public class InfoArchiveDocument {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfoArchiveDocument.class);
+    
+    //Todo: Willem vragen wat ms en mobj betekent (waarschijnlijk modifier string en modifier object. een oude javascript standard.)
+    //maar een IDE kan ons vertellen welke type een var is, better kijk naar de annotatie van type zoals: String, int, boolean
+    //misschien even Willems IDE even checken als er geen gekke dingen zijn ingesteld.
     
     @XmlElement(name="ArchiefDocumentId")
     private String msArchiefDocumentId;
@@ -42,8 +47,10 @@ public class InfoArchiveDocument {
     private String msArchiefDocumentstatus;
     @XmlElement(name = "ArchiefRegelingsjaar")
     private String msArchiefRegelingsjaar;
-    @XmlElement(name = "Attachment")
+    @XmlTransient
     private String msArchiefFile;
+    @XmlElement(name = "ArchiefHandelingsnummer")
+    private String msArchiefHandelingsnummer;
 
     public String getArchiefPersoonsnummer() {
         return msArchiefPersoonsnummer;
@@ -124,13 +131,22 @@ public class InfoArchiveDocument {
     public void setArchiefRegelingsjaar(String sArchiefRegelingsjaar) {
         this.msArchiefRegelingsjaar = sArchiefRegelingsjaar;
     }
-
+    
+    @XmlTransient
     public String getArchiefFile() {
         return msArchiefFile;
     }
 
     public void setArchiefFile(String sArchiefFile) {
         this.msArchiefFile = sArchiefFile;
+    }
+    
+    public String getArchiefHandelingsnummer() {
+        return msArchiefHandelingsnummer;
+    }
+    
+    public void setArchiefHandelingsnummer(String ArchiefHandelingsnummer) {
+        this.msArchiefHandelingsnummer = ArchiefHandelingsnummer;
     }
     
     /**
@@ -141,7 +157,7 @@ public class InfoArchiveDocument {
     public String getXMLString() throws JAXBException {
         java.io.StringWriter sw = new StringWriter();
         try {
-            JAXBContext context = JAXBContext.newInstance(InfoArchiveQueryBuilder.class);
+            JAXBContext context = JAXBContext.newInstance(InfoArchiveDocument.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);

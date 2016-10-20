@@ -51,6 +51,7 @@ public class RequestRecord {
     private static final String PARSE_DOCUMENT_TYPE = "ArchiefDocumenttype";
     private static final String PARSE_DOCUMENT_STATUS = "ArchiefDocumentstatus";
     private static final String PARSE_DOCUMENT_YEAR = "ArchiefRegelingsjaar";
+    private static final String PARSE_DOCUMENT_HANDELING_NUMBER = "ArchiefHandelingsnummer";
     private static final String PARSE_DOCUMENT_ATTACHMENT = "Attachment";
     
     private Configuration configuration;
@@ -134,6 +135,8 @@ public class RequestRecord {
                     infoArchiveDocument.setArchiefRegelingsjaar(column.get(PARSE_RESPONSE_VALUE).getAsString());
                 } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_ATTACHMENT)) {
                     infoArchiveDocument.setArchiefFile(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                }else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_HANDELING_NUMBER)) {
+                    infoArchiveDocument.setArchiefHandelingsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
                 }
             }
         }

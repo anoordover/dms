@@ -1,4 +1,4 @@
-package restfull.consumes;
+package nl.hetcak.dms.ia.web.restfull.consumes;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

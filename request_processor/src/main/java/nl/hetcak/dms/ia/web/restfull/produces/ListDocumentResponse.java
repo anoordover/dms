@@ -1,11 +1,10 @@
-package restfull.produces;
+package nl.hetcak.dms.ia.web.restfull.produces;
 
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**

@@ -1,31 +1,20 @@
 package nl.hetcak.dms.ia.web;
 
-import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.configuration.ConfigurationImpl;
-import nl.hetcak.dms.ia.web.exceptions.LoginFailureException;
 import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
-import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
 import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
 import nl.hetcak.dms.ia.web.managers.ConnectionManager;
-import nl.hetcak.dms.ia.web.query.InfoArchiveQueryBuilder;
-import nl.hetcak.dms.ia.web.requests.LoginRequest;
 import nl.hetcak.dms.ia.web.requests.RequestRecord;
-import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
-import restfull.consumes.ListDocumentRequest;
-import restfull.produces.ListDocumentResponse;
+import nl.hetcak.dms.ia.web.restfull.consumes.ListDocumentRequest;
+import nl.hetcak.dms.ia.web.restfull.produces.ListDocumentResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
-import java.io.StringWriter;
-
-import static org.apache.camel.component.xslt.XsltOutput.file;
 
 /**
  * Created by admjzimmermann on 13-10-2016.
@@ -35,6 +24,8 @@ import static org.apache.camel.component.xslt.XsltOutput.file;
  */
 @Path("/rest")
 public class DocumentService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
+    
     @POST
     @Path("/listDocuments")
     @Produces(MediaType.APPLICATION_XML)
@@ -46,12 +37,18 @@ public class DocumentService {
         input.append("</request>");
     
         ListDocumentRequest request = ListDocumentRequest.unmarshalRequest(input.toString());
-        ConnectionManager connectionManager = ConnectionManager.getInstance();
-        
-        RequestRecord requestRecord = new RequestRecord(connectionManager.getConfiguration(),connectionManager.getActiveCredentials());
-        ListDocumentResponse response = new ListDocumentResponse(requestRecord.requestListDocuments(request.getArchivePersonNumber()));
-        
-        return Response.ok(response.getAsXML()).build();
+        if(request.getArchivePersonNumber() != null) {
+            //disable content grabbing with empty strings.
+            if(request.getArchivePersonNumber().length() > 0) {
+                ConnectionManager connectionManager = ConnectionManager.getInstance();
+    
+                RequestRecord requestRecord = new RequestRecord(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
+                ListDocumentResponse response = new ListDocumentResponse(requestRecord.requestListDocuments(request.getArchivePersonNumber()));
+                return Response.ok(response.getAsXML()).build();
+            }
+        }
+        LOGGER.warn("Content grabbing attempt detected. Returning 406 - unaccepted http error.");
+        return Response.status(Response.Status.NOT_ACCEPTABLE).entity("<error><code>406</code><description>Unacceptable request content detected.</description></error>").build();
     }
 
     @GET
