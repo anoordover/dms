@@ -20,6 +20,7 @@ public class ActiveMQManager implements DocumentSource {
     ActiveMQSslConnectionFactory mobjConnectionFactory;
     Connection mobjConnection;
     PluggableObjectConfiguration mobjConfiguration;
+    boolean bConnected;
 
     public ActiveMQManager(PluggableObjectConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
@@ -79,12 +80,16 @@ public class ActiveMQManager implements DocumentSource {
     public boolean initialize() {
         boolean bReturn = false;
         try {
-            mobjConnection = mobjConnectionFactory.createConnection();
-            mobjConnection.setClientID("SIP_Packager-" + Thread.currentThread().getName());
-            mobjConnection.start();
-            bReturn = true;
+            if(mobjConnection == null) {
+                mobjConnection = mobjConnectionFactory.createConnection();
+            }
+            if(!bConnected) {
+                mobjConnection.start();
+                bConnected = bReturn = true;
+            }
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNABLE_TO_CONNECT, ex);
+            shutdown();
         }
 
         return bReturn;
@@ -94,11 +99,11 @@ public class ActiveMQManager implements DocumentSource {
     public boolean shutdown() {
         boolean bReturn = false;
         try {
-            if (mobjConnection != null) {
+            if (mobjConnection != null && bConnected) {
                 mobjConnection.close();
+                bConnected = false;
+                bReturn = true;
             }
-
-            bReturn = true;
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
