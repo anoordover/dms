@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" 
+   targetNamespace="urn:hetcak:dms:uitingarchief:2016:08" xmlns:urn="urn:hetcak:dms:uitingarchief:2016:08">
+    <xs:element name="ArchiefDocument">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="ArchiefDocumentId" type="urn:Archief_DocumentId"/>
+                <xs:element name="PersoonBurgerservicenummer" type="urn:PersoonBurgerservicenummer"/>
+				<xs:element name="ArchiefDocumenttitel" type="xs:string"/>
+				<xs:element name="ArchiefDocumentsoort" type="urn:Archief_DocumentSoort" />
+				<xs:element name="ArchiefRegeling" type="urn:Archief_Regeling" />
+				<xs:element name="ArchiefDocumentkenmerk" type="urn:Archief_DocumentKenmerk" />
+				<xs:element name="ArchiefVerzenddag" type="xs:date" />
+				<xs:element name="ArchiefDocumenttype" type="urn:Archief_DocumentType" />
+				<xs:element name="ArchiefDocumentstatus" type="urn:Archief_DocumentStatus" />
+				<xs:element name="ArchiefRegelingsjaar" type="xs:gYear" />
+				<xs:element name="ArchiefHandelingsnummer" type="urn:Archief_HandelingsNummer" />
+				<xs:element name="Attachment" type="urn:Archief_Attachment" />
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+	
+	<xs:simpleType name="Archief_DocumentId">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="10" />
+			<xs:maxLength value="10" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Archief_DocumentKenmerk">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1" />
+			<xs:maxLength value="19"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Archief_DocumentSoort">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1" />
+			<xs:maxLength value="30" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Archief_DocumentType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[iI]nkomend|[iI]ntern|[uU]itgaand" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Archief_Regeling">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1" />
+			<xs:maxLength value="8" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="PersoonBurgerservicenummer">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="8" />
+			<xs:maxLength value="9" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Archief_DocumentStatus">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[cC]oncept|[dD]efinitief" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Archief_VerzendDag">
+		<xs:restriction base="xs:date">
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="Archief_HandelingsNummer">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="5" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="Archief_Attachment">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="Attachment_[0-9]{10}\.pdf" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
