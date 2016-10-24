@@ -1,9 +1,45 @@
 package nl.hetcak.dms.ia.web.requests;
 
+import nl.hetcak.dms.ia.web.comunication.Credentials;
+import nl.hetcak.dms.ia.web.configuration.Configuration;
+import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
+import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
+import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Map;
+
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class DocumentRequest {
+    private static final String DOCUMENT_REQUEST = "restapi/systemdata/search-compositions/";
+    private Configuration configuration;
+    private Credentials credentials;
+    private InfoArchiveRequestUtil requestUtil;
+    
+    public DocumentRequest(Configuration configuration, Credentials credentials) {
+        this.configuration = configuration;
+        this.credentials = credentials;
+        this.requestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());
+    }
+    
+    public ByteArrayOutputStream getContentWithContentId(String contentID) throws MisconfigurationException, ServerConnectionFailureException, IOException{
+        Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
+        String url = requestUtil.getServerContentUrl(configuration.getApplicationUUID(),contentID);
+        HttpResponse response = requestUtil.executeGetRequest(url,InfoArchiveRequestUtil.CONTENT_TYPE_JSON,requestHeader);
+        return responseToStream(response);
+    }
+    
+    private ByteArrayOutputStream responseToStream(HttpResponse response) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        IOUtils.copy(response.getEntity().getContent(),byteArrayOutputStream);
+        return byteArrayOutputStream;
+    }
+    
 }

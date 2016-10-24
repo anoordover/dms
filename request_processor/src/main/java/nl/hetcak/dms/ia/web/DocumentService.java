@@ -55,6 +55,9 @@ public class DocumentService {
     @Path("/document")
     @Produces("application/pdf")
     public Response getDocument() {
+        
+        
+        
         return Response.ok().build();
     }
     

@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class RecordRequest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RecordRequest.class);
-    private static final String SEARCH_POST_REQUEST = "restapi/systemdata/search-compositions/";
+    private static final String SEARCH_POST_REQUEST = "restapi/systemdata/search-compositions";
     private static final String CONTENT_TYPE_APP_XML = "application/xml";
     private static final String VALUE_ARCHIVE_PERSON_NUMBER = "ArchiefPersoonsnummer";
     private static final String VALUE_ARCHIVE_DOCUMENT_NUMBER = "ArchiefDocumentId";

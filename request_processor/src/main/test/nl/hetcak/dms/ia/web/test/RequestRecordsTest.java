@@ -6,11 +6,13 @@ import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
 import nl.hetcak.dms.ia.web.managers.ConnectionManager;
+import nl.hetcak.dms.ia.web.requests.DocumentRequest;
 import nl.hetcak.dms.ia.web.requests.RecordRequest;
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
 import org.junit.Test;
 
 import javax.xml.bind.JAXBException;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -37,7 +39,7 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(),credentials);
-        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("1537537507");
+        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("1724748572");
         assertNotNull(document);
         assertTrue(document.size() == 1);
     }
@@ -56,5 +58,21 @@ public class RequestRecordsTest {
         List<InfoArchiveDocument> document = recordRequest.requestListDocuments("asdfdgre");
         assertNotNull(document);
         assertTrue(document.size() == 0);
+    }
+    
+    @Test
+    public void getOneResultAndGetDocument() throws Exception {
+        File config = new File(WORKING_CONFIG);
+        ConnectionManager connectionManager = ConnectionManager.getInstance();
+        connectionManager.setConfigurationFile(config);
+        Credentials credentials = connectionManager.getActiveCredentials();
+        assertNotNull(credentials);
+        assertTrue(credentials.isSecurityTokenValid());
+        RecordRequest request = new RecordRequest(connectionManager.getConfiguration(), credentials);
+        InfoArchiveDocument document = request.requestDocument("Sd1/pNoJvJeJYFTmqT5tAw==");
+        assertNotNull(document);
+        DocumentRequest documentRequest = new DocumentRequest(connectionManager.getConfiguration(), credentials);
+        ByteArrayOutputStream documentStream = documentRequest.getContentWithContentId(document.getArchiefFile());
+        assertNotNull(documentStream);
     }
 }

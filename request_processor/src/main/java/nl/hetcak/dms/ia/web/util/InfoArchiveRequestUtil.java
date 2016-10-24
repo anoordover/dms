@@ -26,6 +26,9 @@ import java.util.Map;
  */
 public class InfoArchiveRequestUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfoArchiveRequestUtil.class);
+    public final static String DOCUEMENT_REQUEST_ACTION = "restapi/systemdata/applications";
+    public final static String DOCUEMENT_REQUEST_SELECTOR = "ci";
+    public final static String DOCUEMENT_REQUEST_PARAMETER = "?cid=";
     public final static String CONTENT_TYPE_XML = "application/xml";
     public final static String CONTENT_TYPE_JSON = "application/hal+json";
     private final static String CONTENT_TYPE_REQUEST = "Content-Type";
@@ -146,6 +149,24 @@ public class InfoArchiveRequestUtil {
         stringBuilder.append(uuid);
         stringBuilder.append("?size=");
         stringBuilder.append(serverConnectionInformation.getMaxItems());
+        return stringBuilder.toString();
+    }
+    
+    /**
+     * Creates a Server Content Request Url
+     * @param uuid The application uuid.
+     * @param cid The Content ID.
+     * @return A usable url.
+     */
+    public String getServerContentUrl(String uuid, String cid) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getServerUrl(DOCUEMENT_REQUEST_ACTION));
+        stringBuilder.append("/");
+        stringBuilder.append(uuid);
+        stringBuilder.append("/");
+        stringBuilder.append(DOCUEMENT_REQUEST_SELECTOR);
+        stringBuilder.append(DOCUEMENT_REQUEST_PARAMETER);
+        stringBuilder.append(cid);
         return stringBuilder.toString();
     }
     
