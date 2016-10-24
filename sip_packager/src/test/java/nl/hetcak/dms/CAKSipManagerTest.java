@@ -1,12 +1,14 @@
 package nl.hetcak.dms;
 
 import com.amplexor.ia.cache.IACache;
+import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.configuration.IASipConfiguration;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,14 +34,20 @@ public class CAKSipManagerTest {
 
     @Test
     public void getSipFileIACache(){
-        IACache ic = mock(IACache.class);
-        //change null to sipfile
-        when(ic.getSipFile()).thenReturn(null);
-        when(ic.getTargetApplication()).thenReturn("CAK_Klantarchief");
+        IACache ic = new IACache(1, new CAKRetentionClass("Test"));
+        ic.setTargetApplication("CAK_Klantarchief");
+        CAKDocument objDocument = new CAKDocument();
+        objDocument.setPayload(Base64.getEncoder().encode("abcdef".getBytes()));
+        ic.add(new IADocumentReference(objDocument, null));
 
         IASipConfiguration isc = mock(IASipConfiguration.class);
         when(isc.getParameter("fallback_application_name")).thenReturn("CAK_Tijdelijk_Klantarchief");
+        when(isc.getParameter("document_class")).thenReturn("nl.hetcak.dms.CAKDocument");
         when(isc.getApplicationName()).thenReturn("CAK_Klantarchief");
+        when(isc.getHoldingName()).thenReturn("CAK_Klantarchief");
+        when(isc.getSchemaDeclaration()).thenReturn("urn:hetcak:dms:uitingarchief:2016:08");
+        when(isc.getDocumentElementName()).thenReturn("ArchiefDocumenten");
+        when(isc.getEntityName()).thenReturn("ArchiefDocument");
         when(isc.getSipOutputDirectory()).thenReturn("Sips");
 
         CAKSipManager csm = new CAKSipManager(isc);
