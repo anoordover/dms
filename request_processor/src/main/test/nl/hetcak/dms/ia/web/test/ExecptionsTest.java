@@ -153,5 +153,4 @@ public class ExecptionsTest {
         Exception error = new Exception();
         throw new UnexpectedResultException("Test", error, true, true);
     }
-    
 }

@@ -16,9 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -63,7 +61,7 @@ public class DocumentService {
     @Path("/document")
     @Produces("application/pdf")
     @Consumes(MediaType.APPLICATION_XML)
-    public StreamingOutput  getDocument(String sBody) throws Exception {
+    public Response  getDocument(String sBody) throws Exception {
         StringBuilder input = new StringBuilder();
         input.append("<request>");
         input.append(sBody);
@@ -78,7 +76,7 @@ public class DocumentService {
                 InfoArchiveDocument infoArchiveDocument = recordRequest.requestDocument(documentRequest.getArchiveDocumentNumber());
                 nl.hetcak.dms.ia.web.requests.DocumentRequest iaDocumentRequest = new nl.hetcak.dms.ia.web.requests.DocumentRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ByteArrayOutputStream byteArray = iaDocumentRequest.getContentWithContentId(infoArchiveDocument.getArchiefFile());
-                return new StreamingOutput() {
+                StreamingOutput outputStream = new StreamingOutput() {
                     @Override
                     public void write(OutputStream outputStream) throws IOException, WebApplicationException {
                         try {
@@ -89,10 +87,11 @@ public class DocumentService {
                         }
                     }
                 };
+                return Response.ok(outputStream).build();
             }
         }
         LOGGER.warn("Content grabbing attempt detected.");
-        throw new Exception("Content grabbing attempt detected.");
+        return Response.status(Response.Status.NOT_ACCEPTABLE).entity("<error><code>406</code><description>Unacceptable request content detected.</description></error>").build();
     }
     
     /**
