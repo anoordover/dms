@@ -7,14 +7,22 @@ import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
 import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
 import nl.hetcak.dms.ia.web.managers.ConnectionManager;
 import nl.hetcak.dms.ia.web.requests.RecordRequest;
+import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
+import nl.hetcak.dms.ia.web.restfull.consumes.DocumentRequest;
 import nl.hetcak.dms.ia.web.restfull.consumes.ListDocumentRequest;
 import nl.hetcak.dms.ia.web.restfull.produces.ListDocumentResponse;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 /**
  * Created by admjzimmermann on 13-10-2016.
@@ -51,14 +59,40 @@ public class DocumentService {
         return Response.status(Response.Status.NOT_ACCEPTABLE).entity("<error><code>406</code><description>Unacceptable request content detected.</description></error>").build();
     }
 
-    @GET
+    @POST
     @Path("/document")
     @Produces("application/pdf")
-    public Response getDocument() {
-        
-        
-        
-        return Response.ok().build();
+    @Consumes(MediaType.APPLICATION_XML)
+    public StreamingOutput  getDocument(String sBody) throws Exception {
+        StringBuilder input = new StringBuilder();
+        input.append("<request>");
+        input.append(sBody);
+        input.append("</request>");
+    
+        DocumentRequest documentRequest = DocumentRequest.unmarshalRequest(input.toString());
+        if(documentRequest.getArchiveDocumentNumber() != null) {
+            if(documentRequest.getArchiveDocumentNumber().length() > 0) {
+                ConnectionManager connectionManager = ConnectionManager.getInstance();
+                
+                RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
+                InfoArchiveDocument infoArchiveDocument = recordRequest.requestDocument(documentRequest.getArchiveDocumentNumber());
+                nl.hetcak.dms.ia.web.requests.DocumentRequest iaDocumentRequest = new nl.hetcak.dms.ia.web.requests.DocumentRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
+                ByteArrayOutputStream byteArray = iaDocumentRequest.getContentWithContentId(infoArchiveDocument.getArchiefFile());
+                return new StreamingOutput() {
+                    @Override
+                    public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+                        try {
+                            outputStream.write(byteArray.toByteArray());
+                            outputStream.close();
+                        }catch (Exception e) {
+                            throw new WebApplicationException(e);
+                        }
+                    }
+                };
+            }
+        }
+        LOGGER.warn("Content grabbing attempt detected.");
+        throw new Exception("Content grabbing attempt detected.");
     }
     
     /**
