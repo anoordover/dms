@@ -87,6 +87,12 @@ public class ConfigurationTest {
         Assert.assertNotNull(configuration.getInfoArchiveServerAddress());
         Assert.assertNotNull(configuration.getInfoArchiveServerPort());
         Assert.assertNotNull(configuration.getSecurityToken());
+        Assert.assertFalse(configuration.hasBasicInformation());
+        configuration.setServerAddress("0.0.0.0");
+        configuration.setServerPort(1234);
+        configuration.setUsername("test");
+        configuration.setPassword("test");
+        Assert.assertTrue(configuration.hasBasicInformation());
     }
     
     /**

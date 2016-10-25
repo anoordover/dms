@@ -16,7 +16,7 @@ public class QueryTest {
     @Test
     public void testEqualQuery() throws JAXBException {
         InfoArchiveQueryBuilder queryBuilder = new InfoArchiveQueryBuilder();
-        String query = queryBuilder.addEqualCriteria("Test", "123").getXMLString();
+        String query = queryBuilder.addEqualCriteria("Test", "123").build();
         Assert.assertNotNull(query);
         Assert.assertTrue(query.contains("123"));
         Assert.assertTrue(query.contains("EQUAL"));
@@ -25,7 +25,7 @@ public class QueryTest {
     @Test
     public void testNotEqualQuery() throws JAXBException {
         InfoArchiveQueryBuilder queryBuilder = new InfoArchiveQueryBuilder();
-        String query = queryBuilder.addNotEqualCriteria("Test", "123").getXMLString();
+        String query = queryBuilder.addNotEqualCriteria("Test", "123").build();
         Assert.assertNotNull(query);
         Assert.assertTrue(query.contains("123"));
         Assert.assertTrue(query.contains("NOT_EQUAL"));
@@ -34,7 +34,7 @@ public class QueryTest {
     @Test
     public void testGreaterQuery() throws JAXBException {
         InfoArchiveQueryBuilder queryBuilder = new InfoArchiveQueryBuilder();
-        String query = queryBuilder.addGreaterCriteria("Test", "123").getXMLString();
+        String query = queryBuilder.addGreaterCriteria("Test", "123").build();
         Assert.assertNotNull(query);
         Assert.assertTrue(query.contains("123"));
         Assert.assertTrue(query.contains("GREATER"));
@@ -43,7 +43,7 @@ public class QueryTest {
     @Test
     public void testGreaterOrEqualQuery() throws JAXBException {
         InfoArchiveQueryBuilder queryBuilder = new InfoArchiveQueryBuilder();
-        String query = queryBuilder.addGreaterOrEqualCriteria("Test", "123").getXMLString();
+        String query = queryBuilder.addGreaterOrEqualCriteria("Test", "123").build();
         Assert.assertNotNull(query);
         Assert.assertTrue(query.contains("123"));
         Assert.assertTrue(query.contains("GREATER_OR_EQUAL"));
@@ -52,7 +52,7 @@ public class QueryTest {
     @Test
     public void testLessQuery() throws JAXBException {
         InfoArchiveQueryBuilder queryBuilder = new InfoArchiveQueryBuilder();
-        String query = queryBuilder.addLessCriteria("Test", "123").getXMLString();
+        String query = queryBuilder.addLessCriteria("Test", "123").build();
         Assert.assertNotNull(query);
         Assert.assertTrue(query.contains("123"));
         Assert.assertTrue(query.contains("LESS"));
@@ -61,7 +61,7 @@ public class QueryTest {
     @Test
     public void testLessOrEqualQuery() throws JAXBException {
         InfoArchiveQueryBuilder queryBuilder = new InfoArchiveQueryBuilder();
-        String query = queryBuilder.addLessOrEqualCriteria("Test", "123").getXMLString();
+        String query = queryBuilder.addLessOrEqualCriteria("Test", "123").build();
         Assert.assertNotNull(query);
         Assert.assertTrue(query.contains("123"));
         Assert.assertTrue(query.contains("LESS_OR_EQUAL"));

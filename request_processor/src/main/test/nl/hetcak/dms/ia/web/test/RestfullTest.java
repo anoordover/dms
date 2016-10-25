@@ -30,7 +30,7 @@ public class RestfullTest {
     @Test
     public void testConfigurationtResponse() throws Exception {
         DocumentService documentService = new DocumentService();
-        Response responseEntity = documentService.testData();
+        Response responseEntity = documentService.checkConfig();
         
         Assert.assertNotNull(responseEntity);
         Assert.assertNotNull(responseEntity.getEntity());

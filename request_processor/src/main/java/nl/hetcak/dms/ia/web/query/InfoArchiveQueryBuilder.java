@@ -136,7 +136,7 @@ public class InfoArchiveQueryBuilder {
      * @return XML formatted String
      * @throws JAXBException Failed to create XML exception.
      */
-    public String getXMLString() throws JAXBException {
+    public String build() throws JAXBException {
         java.io.StringWriter sw = new StringWriter();
         try {
             JAXBContext context = JAXBContext.newInstance(InfoArchiveQueryBuilder.class);

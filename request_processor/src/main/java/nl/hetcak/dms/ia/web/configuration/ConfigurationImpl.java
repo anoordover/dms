@@ -5,6 +5,8 @@ import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.comunication.InfoArchiveServerConnectionInformation;
 import nl.hetcak.dms.ia.web.comunication.InfoArchiveCredentials;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,7 +17,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 @XmlRootElement(name = "config-request-processor")
-public class ConfigurationImpl implements Configuration{
+public class ConfigurationImpl implements Configuration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationImpl.class);
     private final static String CONF_SECURITY_TOKEN = "ia_token";
     private final static String CONF_SERVER_ADDRESS = "ia_server";
     private final static String CONF_SERVER_PORT = "ia_port";
@@ -116,6 +119,49 @@ public class ConfigurationImpl implements Configuration{
     @Override
     public String getSearchCompositionUUID() {
         return searchComponentUUID;
+    }
+    
+    @Override
+    public boolean hasBasicInformation() {
+        boolean result = true;
+        Credentials credentials = getInfoArchiveCredentials();
+        if(credentials == null) {
+            return false;
+        } else {
+            try {
+                if(credentials.useTokenOnlyConfiguration()) {
+                    if(credentials.getSecurityToken().length() == 0)
+                        LOGGER.warn("Security Token not set in Token only mode.");
+                        result = false;
+                } else if(credentials.getUsername().length() == 0 || credentials.getPassword() == null) {
+                    LOGGER.warn("User credentials have no value.");
+                    result = false;
+                }
+            } catch (NullPointerException nullExc) {
+                LOGGER.error("Configuration Error in the user credentials.", nullExc);
+                result = false;
+            }
+        }
+        
+        ServerConnectionInformation serverConnectionInformation = getInfoArchiveServerInformation();
+        if(serverConnectionInformation == null) {
+            return false;
+        } else {
+            try {
+                if(serverConnectionInformation.getServerAddress().length() == 0 || serverConnectionInformation.getServerPort() == 0) {
+                    LOGGER.warn("Server information have no value.");
+                    result = false;
+                }
+                if(applicationUUID.length() == 0 || searchComponentUUID.length() == 0) {
+                    LOGGER.warn("Server uuid information have no value.");
+                    result = false;
+                }
+            } catch (NullPointerException nullExc) {
+                LOGGER.error("Configuration Error in the server connection settings.", nullExc);
+                result = false;
+            }
+        }
+        return result;
     }
     
     @XmlElement(name = CONF_LOG_PROPS)

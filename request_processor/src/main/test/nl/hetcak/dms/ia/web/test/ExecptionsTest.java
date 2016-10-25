@@ -153,4 +153,35 @@ public class ExecptionsTest {
         Exception error = new Exception();
         throw new UnexpectedResultException("Test", error, true, true);
     }
+    
+    //content grabbing exception
+    
+    @Test(expected = ContentGrabbingException.class)
+    public void throwContentGrabbingException() throws ContentGrabbingException {
+        throw new ContentGrabbingException();
+    }
+    
+    @Test(expected = ContentGrabbingException.class)
+    public void throwContentGrabbingException1() throws ContentGrabbingException {
+        throw new ContentGrabbingException("Test");
+    }
+    
+    @Test(expected = ContentGrabbingException.class)
+    public void throwContentGrabbingException2() throws  ContentGrabbingException {
+        Exception error = new Exception();
+        throw new ContentGrabbingException("Test", error);
+    }
+    
+    @Test(expected = ContentGrabbingException.class)
+    public void throwContentGrabbingException3() throws  ContentGrabbingException {
+        Exception error = new Exception();
+        throw new ContentGrabbingException(error);
+    }
+    
+    @Test(expected = ContentGrabbingException.class)
+    public void throwContentGrabbingException4() throws  ContentGrabbingException {
+        Exception error = new Exception();
+        throw new ContentGrabbingException("Test", error, true, true);
+    }
+    
 }

@@ -1,4 +1,4 @@
-package nl.hetcak.dms.ia.web.restfull.consumes;
+package nl.hetcak.dms.ia.web.restfull.consumers;
 
 import nl.hetcak.dms.ia.web.util.InfoArchiveDateUtil;
 
@@ -16,7 +16,7 @@ import java.text.ParseException;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 @XmlRootElement(name = "request")
-public class SearchDocumentRequest {
+public class SearchDocumentRequestConsumer {
     private String documentKind = "";
     private String documentSendDate1 = "";
     private String documentSendDate2 = "";
@@ -56,12 +56,12 @@ public class SearchDocumentRequest {
         this.documentSendDate2 = documentSendDate2;
     }
     
-    public static SearchDocumentRequest unmarshalRequest(String input) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(SearchDocumentRequest.class);
+    public static SearchDocumentRequestConsumer unmarshalRequest(String input) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(SearchDocumentRequestConsumer.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         
         StringReader reader = new StringReader(input);
-        return (SearchDocumentRequest) unmarshaller.unmarshal(reader);
+        return (SearchDocumentRequestConsumer) unmarshaller.unmarshal(reader);
     }
     
     public boolean hasContent() {

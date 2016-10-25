@@ -1,4 +1,4 @@
-package nl.hetcak.dms.ia.web.restfull.consumes;
+package nl.hetcak.dms.ia.web.restfull.consumers;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -12,7 +12,7 @@ import java.io.StringReader;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 @XmlRootElement(name = "request")
-public class ListDocumentRequest {
+public class ListDocumentRequestConsumer {
     protected  String archivePersonNumber;
     
     @XmlElement(name = "ArchiefPersoonsnummer")
@@ -24,11 +24,23 @@ public class ListDocumentRequest {
         this.archivePersonNumber = archivePersonNumber;
     }
     
-    public static ListDocumentRequest unmarshalRequest(String input) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(ListDocumentRequest.class);
+    
+    public boolean hasContent() {
+        if(archivePersonNumber == null){
+            return false;
+        }
+        
+        if(archivePersonNumber.length() == 0) {
+            return false;
+        }
+        return true;
+    }
+    
+    public static ListDocumentRequestConsumer unmarshalRequest(String input) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(ListDocumentRequestConsumer.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
     
         StringReader reader = new StringReader(input);
-        return (ListDocumentRequest) unmarshaller.unmarshal(reader);
+        return (ListDocumentRequestConsumer) unmarshaller.unmarshal(reader);
     }
 }

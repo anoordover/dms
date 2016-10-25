@@ -1,4 +1,4 @@
-package nl.hetcak.dms.ia.web.restfull.consumes;
+package nl.hetcak.dms.ia.web.restfull.consumers;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -13,7 +13,7 @@ import java.io.StringReader;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 @XmlRootElement(name = "request")
-public class DocumentRequest {
+public class DocumentRequestConsumer {
     private String archiveDocumentNumber, continuationNumber;
     
     @XmlElement(name = "ArchiefDocumentId")
@@ -21,24 +21,36 @@ public class DocumentRequest {
         return archiveDocumentNumber;
     }
     
-    public void setArchiveDocumentNumber(String archiveDocumentNumber) {
-        this.archiveDocumentNumber = archiveDocumentNumber;
-    }
     
     @XmlElement(name = "Volgnummer", nillable = true)
     public String getContinuationNumber() {
         return continuationNumber;
     }
     
+    public void setArchiveDocumentNumber(String archiveDocumentNumber) {
+        this.archiveDocumentNumber = archiveDocumentNumber;
+    }
+    
     public void setContinuationNumber(String continuationNumber) {
         this.continuationNumber = continuationNumber;
     }
     
-    public static DocumentRequest unmarshalRequest(String input) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(DocumentRequest.class);
+    public boolean hasContent() {
+        if(archiveDocumentNumber == null) {
+            return false;
+        }
+        
+        if(archiveDocumentNumber.length() == 0) {
+            return false;
+        }
+        return true;
+    }
+    
+    public static DocumentRequestConsumer unmarshallerRequest(String input) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(DocumentRequestConsumer.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         
         StringReader reader = new StringReader(input);
-        return (DocumentRequest) unmarshaller.unmarshal(reader);
+        return (DocumentRequestConsumer) unmarshaller.unmarshal(reader);
     }
 }

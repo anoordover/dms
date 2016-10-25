@@ -13,15 +13,55 @@ import nl.hetcak.dms.ia.web.comunication.Credentials;
  */
 public interface Configuration {
     //InfoArchive Configuration
+    /**
+     * Gets the server address.
+     * @deprecated see {@link Configuration#getInfoArchiveServerInformation()}.
+     * @return the server address.
+     */
     String getInfoArchiveServerAddress();
+    
+    /**
+     * Gets the server port.
+     * @deprecated see {@link Configuration#getInfoArchiveServerInformation()}.
+     * @return the server port.
+     */
     int getInfoArchiveServerPort();
+    
+    /**
+     * Gets the InfoArchive Credentials.
+     * @return
+     */
     Credentials getInfoArchiveCredentials();
+    
+    /**
+     * Get the sever connection information.
+     * @return the server connection information.
+     */
     ServerConnectionInformation getInfoArchiveServerInformation();
     
     //Application Settings
+    /**
+     * Get the result limit.
+     * @return the maximum results.
+     */
     int getMaxResults();
     
     //InfoArchive Application Settings
+    /**
+     * The Application UUID that should be used during a InfoArchive request.
+     * @return the Application UUID
+     */
     String getApplicationUUID();
+    
+    /**
+     * The Search Composition UUID that should be used during a InfoArchive request.
+     * @return the Search Composition UUID
+     */
     String getSearchCompositionUUID();
+    
+    /**
+     * Checks if this class has the basic settings set.
+     * @return true, if this class has the basic settings set.
+     */
+    boolean hasBasicInformation();
 }

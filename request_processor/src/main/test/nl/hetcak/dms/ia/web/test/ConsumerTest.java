@@ -1,7 +1,7 @@
 package nl.hetcak.dms.ia.web.test;
 
-import nl.hetcak.dms.ia.web.restfull.consumes.DocumentRequest;
-import nl.hetcak.dms.ia.web.restfull.consumes.ListDocumentRequest;
+import nl.hetcak.dms.ia.web.restfull.consumers.DocumentRequestConsumer;
+import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,13 +23,13 @@ public class ConsumerTest {
     
     @Test
     public void ListDocumentTest() throws JAXBException {
-        ListDocumentRequest request = ListDocumentRequest.unmarshalRequest(XML_EXAMPLE_1);
+        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_1);
         Assert.assertTrue(request.getArchivePersonNumber().contentEquals(RESULT_1));
         
-        ListDocumentRequest request2 = ListDocumentRequest.unmarshalRequest(XML_EXAMPLE_2);
+        ListDocumentRequestConsumer request2 = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_2);
         Assert.assertTrue(request2.getArchivePersonNumber().contentEquals(RESULT_2));
     
-        DocumentRequest docRequest1 = DocumentRequest.unmarshalRequest(XML_EXAMPLE_3);
+        DocumentRequestConsumer docRequest1 = DocumentRequestConsumer.unmarshallerRequest(XML_EXAMPLE_3);
         Assert.assertTrue(docRequest1.getArchiveDocumentNumber().contentEquals(RESULT_3_1));
         Assert.assertTrue(docRequest1.getContinuationNumber().contentEquals(RESULT_3_2));
     }
