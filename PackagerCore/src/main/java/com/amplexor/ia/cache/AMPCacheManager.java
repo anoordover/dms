@@ -164,7 +164,7 @@ public class AMPCacheManager implements CacheManager {
     @Override
     public void update() {
         debug(this, "Updating Caches");
-        mcCaches.stream().filter(objCache -> !objCache.isClosed()).forEach(objCache -> {
+        mcCaches.stream().filter(objCache -> objCache != null && !objCache.isClosed()).forEach(objCache -> {
             if (objCache.getSize() >= mobjConfiguration.getCacheMessageThreshold()) {
                 info(this, String.format("Closing cache %s-%d, Reason: Message Threshold Reached(%d)%n", objCache.getRetentionClass().getName(), objCache.getId(), mobjConfiguration.getCacheMessageThreshold()));
                 objCache.close();
@@ -250,6 +250,8 @@ public class AMPCacheManager implements CacheManager {
     }
 
     public boolean saveCache(IACache objCache) {
+        info(this, "Saving IACache-" + objCache.getId());
+
         boolean bReturn = false;
         Path objSave = Paths.get(mobjSavePath.toString() + File.separatorChar + "IACache-" + objCache.getId() + ".xml");
         try (OutputStream objSaveStream = Files.newOutputStream(objSave)) {
@@ -261,7 +263,6 @@ public class AMPCacheManager implements CacheManager {
         } catch (IOException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
-
         return bReturn;
     }
 
@@ -271,8 +272,10 @@ public class AMPCacheManager implements CacheManager {
      */
     @Override
     public boolean loadCaches() {
+        info(this, "Loading Saved caches");
         List<File> cSaveContents = Arrays.asList(new File(mobjSavePath.toString() + File.separatorChar).listFiles());
         cSaveContents.forEach(objCacheSaveFile -> {
+            info(this, "Loading IACache from file " + objCacheSaveFile.getAbsolutePath());
             try (InputStream objCacheSaveInput = Files.newInputStream(objCacheSaveFile.toPath())) {
                 XStream objXStream = new XStream(new StaxDriver());
                 objXStream.alias("IACache", IACache.class);

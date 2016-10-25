@@ -32,6 +32,7 @@ class IAArchiverWorkerThread implements Runnable {
     private int miProcessedBytes;
     private boolean mbRunning;
     private boolean mbShutdownFlag;
+    private boolean mbFirstTimeSetup;
     private boolean mbIngesting;
     private boolean mbIngestFlag;
 
@@ -44,6 +45,7 @@ class IAArchiverWorkerThread implements Runnable {
 
     public IAArchiverWorkerThread(SIPPackagerConfiguration objConfiguration, int iId) {
         mobjConfiguration = objConfiguration;
+        mbFirstTimeSetup = true;
         miId = iId;
         mbRunning = true;
         mobjShutdownHook = new Thread() {
@@ -77,7 +79,10 @@ class IAArchiverWorkerThread implements Runnable {
         info(this, "Setting up ExceptionHelper");
         ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfiguration.getExceptionConfiguration());
         synchronized (this) {
-            mbRunning = initialize();
+            if (mbFirstTimeSetup) {
+                mbRunning = initialize();
+                mbFirstTimeSetup = false;
+            }
         }
 
         while (isRunning()) {
@@ -94,6 +99,7 @@ class IAArchiverWorkerThread implements Runnable {
                     miProcessedBytes += objDocument.getSizeEstimate();
                     debug(this, "Retrieved document with id: " + objDocument.getDocumentId());
                     if (objDocument.getErrorCode() != 0) {
+                        error(this, "Error found in document " + objDocument.getDocumentId());
                         IADocumentReference objReference = new IADocumentReference(objDocument, null);
                         List<IADocumentReference> cTempReference = new ArrayList<>();
                         cTempReference.add(objReference);
@@ -102,7 +108,6 @@ class IAArchiverWorkerThread implements Runnable {
                     } else {
                         try {
                             mobjCacheManager.add(objDocument, mobjRetentionManager.retrieveRetentionClass(objDocument));
-                            mobjCacheManager.saveCaches();
                         } catch (IllegalArgumentException ex) {
                             IADocumentReference objReference = new IADocumentReference(objDocument.getDocumentId(), null);
                             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNKNOWN_RETENTION, objReference, ex);
@@ -110,7 +115,6 @@ class IAArchiverWorkerThread implements Runnable {
                     }
                 });
             }
-
             mobjCacheManager.update();
             ingest();
             if (mbIngestFlag) {
@@ -119,8 +123,14 @@ class IAArchiverWorkerThread implements Runnable {
 
             mbRunning = !mbShutdownFlag;
         }
-        mobjDocumentSource.shutdown();
-        info(this, "Shutting down Worker " + miId);
+        mobjCacheManager.saveCaches();
+
+        if (mbShutdownFlag) {
+            mobjDocumentSource.shutdown();
+            info(this, "Shutting down Worker " + miId);
+        } else {
+            info(this, "Worker " + miId + " going to sleep");
+        }
     }
 
     public boolean initialize() {
@@ -151,6 +161,7 @@ class IAArchiverWorkerThread implements Runnable {
     }
 
     public void ingest() {
+        debug(this, "Ingesting closed caches");
         mbIngesting = true;
         mobjCacheManager.getClosedCaches().iterator().forEachRemaining(objCache -> {
             if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache)) {
@@ -163,6 +174,7 @@ class IAArchiverWorkerThread implements Runnable {
             mobjCacheManager.cleanupCache(objCache);
         });
         mbIngesting = false;
+        debug(this, "Done Ingesting closed caches");
     }
 
     public synchronized void update() {
@@ -187,9 +199,9 @@ class IAArchiverWorkerThread implements Runnable {
         return mbIngesting;
     }
 
-    public synchronized void stopWorker() {
+    public synchronized void stopWorker(boolean bShutdown) {
         info(this, "Worker " + miId + " Received Stop command");
-        mbShutdownFlag = true;
+        mbShutdownFlag = bShutdown;
     }
 
     private boolean loadClasses() {

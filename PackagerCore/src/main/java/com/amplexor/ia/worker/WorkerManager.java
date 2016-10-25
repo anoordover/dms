@@ -46,7 +46,7 @@ public class WorkerManager {
         if (mlDiffMillisecondsSinceLastCheck > objConfiguration.getCheckInterval()) {
             int iTotalProcessed = getProcessedBytes();
             if (shouldStopWorker(iTotalProcessed, objConfiguration)) {
-                stopWorker();
+                stopWorker(false);
             } else if (shouldStartWorker(iTotalProcessed, objConfiguration)) {
                 startWorker();
             }
@@ -108,15 +108,15 @@ public class WorkerManager {
         }
     }
 
-    private void stopWorker() {
+    private void stopWorker(boolean bShutdown) {
         if (miCurrentWorker > -1) {
-            mcWorkers.get(miCurrentWorker--).stopWorker();
+            mcWorkers.get(miCurrentWorker--).stopWorker(bShutdown);
         }
     }
 
     public synchronized void shutdown() {
         while (miCurrentWorker > -1) {
-            stopWorker();
+            stopWorker(true);
         }
 
     }

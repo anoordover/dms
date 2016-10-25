@@ -8,6 +8,7 @@ import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.sip.AMPSipManager;
 import com.emc.ia.sdk.sip.assembly.*;
+import com.emc.ia.sdk.support.io.RuntimeIoException;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class CAKSipManager extends AMPSipManager {
         }
 
         boolean bReturn = false;
-        debug(this, "Retrieving documents from disk");
+        debug(this, "Retrieving document data");
         List<IADocument> cDocuments = retrieveDocuments(objCache);
         try {
             if (!cDocuments.isEmpty()) {
@@ -70,6 +71,8 @@ public class CAKSipManager extends AMPSipManager {
             if (new File(mobjConfiguration.getSipOutputDirectory()).getFreeSpace() < lTotalSize) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SIP_INSUFFICIENT_DISK_SPACE, objCache, ex);
             }
+        } catch (RuntimeIoException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
         return bReturn;
     }

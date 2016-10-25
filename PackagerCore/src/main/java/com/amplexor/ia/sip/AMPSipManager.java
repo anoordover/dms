@@ -46,8 +46,9 @@ public class AMPSipManager implements SipManager {
         }
 
         boolean bReturn = false;
-        debug(this, "Retrieving Documents from disk");
+        debug(this, "Retrieving document data");
         List<IADocument> cDocument = retrieveDocuments(objCache);
+        info(this, "Found " + cDocument.size() + " Documents in IACache-" + objCache.getId());
         try {
             if (!cDocument.isEmpty()) {
                 SipAssembler<IADocument> objSipAssembler = createSipAssembler(getPackageInformation(cDocument.get(0), objCache.getRetentionClass()), getPdiAssembler(), getDigitalObjects());

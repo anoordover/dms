@@ -61,14 +61,18 @@ public class IADocumentReference {
     }
 
     public IADocument getDocumentData(Class<?> objDocumentClass, String sAlias) {
-        if (mobjDocumentData == null && msFile != null) {
+        if (mobjDocumentData == null) {
+            if (msFile == null) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER,
+                        new Exception("Document reference not associated with a file"));
+            }
             try (InputStream objInput = new FileInputStream(new File(msFile))) {
                 XStream objXStream = new XStream(new StaxDriver());
                 objXStream.alias(sAlias, objDocumentClass);
                 objXStream.processAnnotations(objDocumentClass);
                 Object objDocumentData = objDocumentClass.cast(objXStream.fromXML(objInput));
                 if (objDocumentData instanceof IADocument) {
-                    mobjDocumentData = (IADocument)objDocumentClass.cast(objDocumentData);
+                    mobjDocumentData = (IADocument) objDocumentClass.cast(objDocumentData);
                 }
             } catch (IOException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);

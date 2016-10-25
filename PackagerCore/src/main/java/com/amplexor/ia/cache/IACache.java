@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.amplexor.ia.Logger.debug;
+
 /**
  * The {@link IACache} object contains a number of documents as well as a reference to a {@link IARetentionClass} object associated with the documents in this cache.
  * It also contains data pertaining to the time at which the cache was created and the SIP file that was generated for this cache.
@@ -66,6 +68,7 @@ public class IACache {
 
     public void close() {
         mbClosed = true;
+        debug(this, "IACache-" + miId + " Closed");
     }
 
     public long getCreated() {

@@ -4,7 +4,9 @@ import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;
+import com.sun.xml.internal.fastinfoset.Encoder;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
+import org.apache.activemq.command.ActiveMQBytesMessage;
 
 import javax.jms.*;
 
@@ -49,12 +51,18 @@ public class ActiveMQManager implements DocumentSource {
                 Destination objDestination = objSession.createQueue(mobjConfiguration.getParameter("input_queue_name") + "?consumer.prefetchSize=1");
                 objConsumer = objSession.createConsumer(objDestination);
                 Message objMessage = objConsumer.receive(Integer.parseInt(mobjConfiguration.getParameter("queue_receive_timeout")));
-                if (objMessage != null && objMessage instanceof TextMessage) {
+                if (objMessage == null) {
+                    objConsumer.close();
+                    return "";
+                }
+                if (objMessage instanceof TextMessage) {
                     TextMessage objTextMessage = (TextMessage) objMessage;
-                    debug(this, "Received Data: " + objTextMessage.getText());
                     sReturn = objTextMessage.getText();
                     objMessage.acknowledge();
+                } else if (objMessage instanceof ActiveMQBytesMessage) {
+                    ActiveMQBytesMessage objBytesMessage = (ActiveMQBytesMessage)objMessage;
                 }
+
                 objConsumer.close();
             }
         } catch (JMSException ex) {
@@ -80,10 +88,10 @@ public class ActiveMQManager implements DocumentSource {
     public boolean initialize() {
         boolean bReturn = false;
         try {
-            if(mobjConnection == null) {
+            if (mobjConnection == null) {
                 mobjConnection = mobjConnectionFactory.createConnection();
             }
-            if(!bConnected) {
+            if (!bConnected) {
                 mobjConnection.start();
                 bConnected = bReturn = true;
             }
@@ -117,7 +125,7 @@ public class ActiveMQManager implements DocumentSource {
         Session objSession = null;
         MessageProducer objProducer = null;
 
-        if(mobjConnection == null) {
+        if (mobjConnection == null) {
             return false;
         }
 

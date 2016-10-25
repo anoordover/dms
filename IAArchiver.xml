@@ -5,13 +5,13 @@
     <worker_manager>
         <max_worker_threads>4</max_worker_threads>
         <worker_shutdown_threshold>2048</worker_shutdown_threshold>
-        <worker_startup_threshold>25000</worker_startup_threshold>
+        <worker_startup_threshold>1048576</worker_startup_threshold>
         <check_interval_milliseconds>5000</check_interval_milliseconds>
     </worker_manager>
     <caching>
         <implementing_class>nl.hetcak.dms.CAKCacheManager</implementing_class>
         <base_path>Cache</base_path>
-        <message_threshold>1</message_threshold>
+        <message_threshold>10</message_threshold>
         <time_threshold>1800</time_threshold>
         <custom_parameters>
             <document_element_name>ArchiefDocument</document_element_name>
@@ -20,13 +20,13 @@
     </caching>
     <rest_api>
         <protocol>http</protocol>
-        <host>infoarchive40</host>
-        <port>8765</port>
+        <host>infoarchive-sp.back.tst.dms.func.cak-bz.local</host>
+        <port>8775</port>
         <gateway_protocol>http</gateway_protocol>
-        <gateway_host>infoarchive40</gateway_host>
+        <gateway_host>infoarchive-rp.front.tst.dms.func.cak-bz.local</gateway_host>
         <gateway_port>8080</gateway_port>
-        <ingest_user>sue@iacustomer.com</ingest_user>
-        <encrypted_ingest_password>cGFzc3dvcmQ=</encrypted_ingest_password>
+        <ingest_user>sa-infoarchive-tst</ingest_user>
+        <encrypted_ingest_password>WWZHZGZvY3VzZXIk</encrypted_ingest_password>
         <ingest_tenant>INFOARCHIVE</ingest_tenant>
     </rest_api>
     <sip>
@@ -37,7 +37,7 @@
         <entity_name>ArchiefDocument</entity_name>
         <document_element_name>ArchiefDocumenten</document_element_name>
         <schema_declaration>urn:hetcak:dms:uitingarchief:2016:08</schema_declaration>
-        <sip_output_directory>Sips</sip_output_directory>
+        <sip_output_directory>SIP</sip_output_directory>
         <custom_parameters>
             <document_element_name>ArchiefDocument</document_element_name>
             <document_class>nl.hetcak.dms.CAKDocument</document_class>
@@ -48,23 +48,9 @@
     <document_source>
         <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
         <custom_parameters>
-            <source_path>C:\Users\zimmermannj\Desktop\CAK\data</source_path>
-            <!-- AMPLEXOR Local -->
-            <broker>tcp://infoarchive40:61616</broker>
-
-
-            <!-- DEV
-            <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
-            <truststore>resources\truststore\truststore_ont1_mule.jks</truststore>
-            <truststore_password>My0jKD3WWChHaVFrLwDNLxmaTl72f9PL</truststore_password>
-            -->
-
-            <!-- TST
-            <broker>ssl://muleaq1.tst.esb.func.cak-bz.local:10744</broker>
-            <truststore>resources/truststore/truststore_tst_mule1.jks</truststore>
+            <broker>failover:(ssl://muleaq1.tst.esb.func.cak-bz.local:10744,ssl://muleaq2.tst.esb.func.cak-bz.local:10744)?randomize=false</broker>
+            <truststore>truststore\truststore_tst_mule1.jks</truststore>
             <truststore_password>URBq1N1uyZWQGWm5FuJ7iRVkLA0T3IUh</truststore_password>
-            -->
-
             <result_format>
                 <![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
             <results_element>
@@ -182,12 +168,12 @@
             <ArchiefVerzenddag>{ArchiefVerzenddag}</ArchiefVerzenddag>
             <ArchiefDocumenttype>{ArchiefDocumenttype}</ArchiefDocumenttype>
             <ArchiefDocumentstatus>{ArchiefDocumentstatus}</ArchiefDocumentstatus>
+	        <ArchiefHandelingsnummer>xxxxx</ArchiefHandelingsnummer>
             <ArchiefRegelingsjaar>{ArchiefRegelingsjaar}</ArchiefRegelingsjaar>
-            <ArchiefHandelingsnummer>xxxxx</ArchiefHandelingsnummer>
             <Attachment>Attachment_{ArchiefDocumentId}.pdf</Attachment>
         </AIU_mapping>
         <custom_parameters>
-            <schema_location>C:\Users\zimmermannj\Desktop\CAK\dms\schemas</schema_location>
+            <schema_location>schemas</schema_location>
             <schema_name>standard.xsd</schema_name>
             <fallback_schema_name>fallback.xsd</fallback_schema_name>
         </custom_parameters>

@@ -47,12 +47,6 @@ public class IAArchiver {
             info(IAArchiver.class, "Initializing Worker Manager");
             objWorkerManager = WorkerManager.getWorkerManager();
             objWorkerManager.initialize(objConfigManager.getConfiguration());
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    WorkerManager.getWorkerManager().shutdown();
-                }
-            });
         }
 
         if (objWorkerManager != null) {
@@ -64,6 +58,7 @@ public class IAArchiver {
                     Thread.currentThread().interrupt();
                 }
             }
+            objWorkerManager.shutdown();
         }
     }
 
