@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 public class RestfullTest {
     private final static String REQUEST_LIST = "<ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer>";
     private final static String REQUEST_DOCUMENT = "<ArchiefDocumentId>1268712898</ArchiefDocumentId><Volgnummer>001</Volgnummer>";
+    private final static String REQUEST_SEARCH = "<ArchiefDocumentsoort>Factuur</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2016-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-08-15T00:00:00</ArchiefVerzenddagEinde>";
         
     @Test
     public void testDefaultResponse() throws Exception {
@@ -37,11 +38,11 @@ public class RestfullTest {
         Assert.assertFalse(responseEntity.getEntity().toString().contains("[ERROR]"));
     }
     
-    @Test
+@Test
     public void testDocumentList() throws Exception {
         DocumentService documentService = new DocumentService();
         Response documentListResponse = documentService.listDocuments(REQUEST_LIST);
-    
+        
         Assert.assertNotNull(documentListResponse);
         Assert.assertTrue(documentListResponse.getStatus() == 200);
         Assert.assertNotNull(documentListResponse.getEntity());
@@ -51,6 +52,22 @@ public class RestfullTest {
         Assert.assertTrue(data.length() > 20);
         Assert.assertFalse(data.startsWith("<error>"));
     }
+    
+    @Test
+    public void testDocumentSearch() throws Exception {
+        DocumentService documentService = new DocumentService();
+        Response documentListResponse = documentService.searchDocuments(REQUEST_SEARCH);
+        
+        Assert.assertNotNull(documentListResponse);
+        Assert.assertTrue(documentListResponse.getStatus() == 200);
+        Assert.assertNotNull(documentListResponse.getEntity());
+        
+        String data = (String) documentListResponse.getEntity();
+        
+        Assert.assertTrue(data.length() > 20);
+        Assert.assertFalse(data.startsWith("<error>"));
+    }
+    
     
     @Test
     public void testDocumentListContentGrabbingCase1() throws Exception {

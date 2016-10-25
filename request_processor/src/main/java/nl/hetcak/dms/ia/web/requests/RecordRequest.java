@@ -9,6 +9,7 @@ import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
 import nl.hetcak.dms.ia.web.exceptions.UnexpectedResultException;
 import nl.hetcak.dms.ia.web.query.InfoArchiveQueryBuilder;
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
+import nl.hetcak.dms.ia.web.util.InfoArchiveDateUtil;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
@@ -40,7 +41,6 @@ public class RecordRequest {
     private static final String PARSE_RESPONSE_COLUMNS = "columns";
     private static final String PARSE_RESPONSE_NAME = "name";
     private static final String PARSE_RESPONSE_VALUE = "value";
-    private static final String PARSE_DATE_FORMAT = "yyyy-MM-dd";
     
     private static final String PARSE_DOCUMENT_ID = "ArchiefDocumentId";
     private static final String PARSE_DOCUMENT_PERSON_NUMBER = "ArchiefPersoonsnummer";
@@ -52,7 +52,7 @@ public class RecordRequest {
     private static final String PARSE_DOCUMENT_TYPE = "ArchiefDocumenttype";
     private static final String PARSE_DOCUMENT_STATUS = "ArchiefDocumentstatus";
     private static final String PARSE_DOCUMENT_YEAR = "ArchiefRegelingsjaar";
-    private static final String PARSE_DOCUMENT_HANDELING_NUMBER = "ArchiefHandelingsnummer";
+    private static final String PARSE_DOCUMENT_HANDLING_NUMBER = "ArchiefHandelingsnummer";
     private static final String PARSE_DOCUMENT_ATTACHMENT = "Attachment";
     
     private Configuration configuration;
@@ -72,7 +72,12 @@ public class RecordRequest {
         return parseDocumentList(response);
     }
     
-    public InfoArchiveDocument requestDocument(String archiveDocumentNumber)  throws JAXBException, IOException, ServerConnectionFailureException, ParseException, UnexpectedResultException {
+    public List<InfoArchiveDocument> requestListDocuments(String documentType, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException {
+        String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, sendDate1, sendDate2));
+        return parseDocumentList(response);
+    }
+    
+    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, UnexpectedResultException {
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
         List<InfoArchiveDocument> documents = parseDocumentList(response);
         if(documents.size() == 0 || documents.size() > 1) {
@@ -85,6 +90,13 @@ public class RecordRequest {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
         String requestBody = queryBuilder.addEqualCriteria(VALUE_ARCHIVE_PERSON_NUMBER, archivePersonNumber).getXMLString();
+        return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
+    }
+    
+    private HttpResponse executeListDocumentsRequest(String documentType, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException {
+        Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
+        String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
+        String requestBody = queryBuilder.addEqualCriteria(PARSE_DOCUMENT_KIND, documentType).addBetweenCriteria(PARSE_DOCUMENT_SEND_DATE, sendDate1, sendDate2).getXMLString();
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
     
@@ -122,7 +134,6 @@ public class RecordRequest {
     
     private InfoArchiveDocument parseDocument(JsonObject document) throws ParseException {
         InfoArchiveDocument infoArchiveDocument = new InfoArchiveDocument();
-        
         JsonArray columns = document.getAsJsonArray(PARSE_RESPONSE_COLUMNS);
         for (int i_column = 0; i_column < columns.size(); i_column++) {
             JsonObject column = columns.get(i_column).getAsJsonObject();
@@ -141,8 +152,8 @@ public class RecordRequest {
                 } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_CHARACTERISTIC)) {
                     infoArchiveDocument.setArchiefDocumentkenmerk(column.get(PARSE_RESPONSE_VALUE).getAsString());
                 } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_SEND_DATE)) {
-                    SimpleDateFormat dateParser = new SimpleDateFormat(PARSE_DATE_FORMAT);
-                    infoArchiveDocument.setArchiefVerzenddag(dateParser.parse(column.get(PARSE_RESPONSE_VALUE).getAsString()));
+                    infoArchiveDocument.setArchiefVerzenddag(
+                        InfoArchiveDateUtil.convertToRequestDate(column.get(PARSE_RESPONSE_VALUE).getAsString()));
                 } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_TYPE)) {
                     infoArchiveDocument.setArchiefDocumenttype(column.get(PARSE_RESPONSE_VALUE).getAsString());
                 } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_STATUS)) {
@@ -151,7 +162,7 @@ public class RecordRequest {
                     infoArchiveDocument.setArchiefRegelingsjaar(column.get(PARSE_RESPONSE_VALUE).getAsString());
                 } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_ATTACHMENT)) {
                     infoArchiveDocument.setArchiefFile(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                }else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_HANDELING_NUMBER)) {
+                }else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_HANDLING_NUMBER)) {
                     infoArchiveDocument.setArchiefHandelingsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
                 }
             }

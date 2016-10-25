@@ -26,7 +26,7 @@ public class ProducerTest {
         document1.setArchiefRegelingsjaar("2016");
         document1.setArchiefDocumentId("1");
         document1.setArchiefDocumentkenmerk("TEST");
-        document1.setArchiefVerzenddag(new Date());
+        document1.setArchiefVerzenddag("2016-08-15T00:00:00");
         document1.setArchiefDocumentsoort("TEST");
         document1.setArchiefDocumentstatus("DRAFT");
         document1.setArchiefRegeling("TEST");
@@ -38,7 +38,7 @@ public class ProducerTest {
         document2.setArchiefRegelingsjaar("2016");
         document2.setArchiefDocumentId("2");
         document2.setArchiefDocumentkenmerk("TEST");
-        document2.setArchiefVerzenddag(new Date());
+        document2.setArchiefVerzenddag("2016-08-15T00:00:00");
         document2.setArchiefDocumentsoort("TEST");
         document2.setArchiefDocumentstatus("DRAFT");
         document2.setArchiefRegeling("TEST");

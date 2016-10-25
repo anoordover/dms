@@ -40,7 +40,7 @@ public class InfoArchiveDocument {
     @XmlElement(name = "ArchiefDocumentkenmerk")
     private String msArchiefDocumentkenmerk;
     @XmlElement(name = "ArchiefVerzenddag")
-    private Date mobjArchiefVerzenddag;
+    private String mobjArchiefVerzenddag;
     @XmlElement(name = "ArchiefDocumenttype")
     private String msArchiefDocumenttype;
     @XmlElement(name = "ArchiefDocumentstatus")
@@ -100,11 +100,11 @@ public class InfoArchiveDocument {
         this.msArchiefDocumentkenmerk = sArchiefDocumentkenmerk;
     }
 
-    public Date getArchiefVerzenddag() {
+    public String getArchiefVerzenddag() {
         return mobjArchiefVerzenddag;
     }
 
-    public void setArchiefVerzenddag(Date objArchiefVerzenddag) {
+    public void setArchiefVerzenddag(String objArchiefVerzenddag) {
         this.mobjArchiefVerzenddag = objArchiefVerzenddag;
     }
 

@@ -10,6 +10,7 @@ import nl.hetcak.dms.ia.web.requests.RecordRequest;
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
 import nl.hetcak.dms.ia.web.restfull.consumes.DocumentRequest;
 import nl.hetcak.dms.ia.web.restfull.consumes.ListDocumentRequest;
+import nl.hetcak.dms.ia.web.restfull.consumes.SearchDocumentRequest;
 import nl.hetcak.dms.ia.web.restfull.produces.ListDocumentResponse;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -91,6 +92,29 @@ public class DocumentService {
             }
         }
         LOGGER.warn("Content grabbing attempt detected.");
+        return Response.status(Response.Status.NOT_ACCEPTABLE).entity("<error><code>406</code><description>Unacceptable request content detected.</description></error>").build();
+    }
+    
+    @POST
+    @Path("/searchDocuments")
+    @Produces(MediaType.APPLICATION_XML)
+    @Consumes(MediaType.APPLICATION_XML)
+    public Response searchDocuments(String sBody) throws Exception{
+        StringBuilder input = new StringBuilder();
+        input.append("<request>");
+        input.append(sBody);
+        input.append("</request>");
+        
+        SearchDocumentRequest request = SearchDocumentRequest.unmarshalRequest(input.toString());
+        //disable content grabbing with empty strings.
+        if(request.hasContent()) {
+                ConnectionManager connectionManager = ConnectionManager.getInstance();
+                RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
+                ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentKind(),request.getDocumentSendDate1AsInfoArchiveString(),request.getDocumentSendDate2AsInfoArchiveString()));
+                return Response.ok(response.getAsXML()).build();
+            
+        }
+        LOGGER.warn("Content grabbing attempt detected. Returning '406 - unaccepted' http error.");
         return Response.status(Response.Status.NOT_ACCEPTABLE).entity("<error><code>406</code><description>Unacceptable request content detected.</description></error>").build();
     }
     

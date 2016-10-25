@@ -25,7 +25,7 @@ public class DocumentRequest {
         this.archiveDocumentNumber = archiveDocumentNumber;
     }
     
-    @XmlElement(name = "Volgnummer")
+    @XmlElement(name = "Volgnummer", nillable = true)
     public String getContinuationNumber() {
         return continuationNumber;
     }
