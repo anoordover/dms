@@ -15,7 +15,7 @@ import java.io.StringReader;
 public class ListDocumentRequestConsumer {
     protected  String archivePersonNumber;
     
-    @XmlElement(name = "ArchiefPersoonsnummer")
+    @XmlElement(name = "ArchiefPersoonsnummer", required = true)
     public String getArchivePersonNumber() {
         return archivePersonNumber;
     }

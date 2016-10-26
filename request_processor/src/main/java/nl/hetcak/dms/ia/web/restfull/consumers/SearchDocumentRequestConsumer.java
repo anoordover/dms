@@ -21,7 +21,7 @@ public class SearchDocumentRequestConsumer {
     private String documentSendDate1 = "";
     private String documentSendDate2 = "";
     
-    @XmlElement(name = "ArchiefDocumentsoort")
+    @XmlElement(name = "ArchiefDocumentsoort", required = true)
     public String getDocumentKind() {
         return documentKind;
     }
@@ -30,7 +30,7 @@ public class SearchDocumentRequestConsumer {
         this.documentKind = documentKind;
     }
     
-    @XmlElement(name = "ArchiefVerzenddagBegin")
+    @XmlElement(name = "ArchiefVerzenddagBegin", required = true)
     public String getDocumentSendDate1() {
         return documentSendDate1;
     }
@@ -43,7 +43,7 @@ public class SearchDocumentRequestConsumer {
         this.documentSendDate1 = documentSendDate1;
     }
     
-    @XmlElement(name = "ArchiefVerzenddagEinde")
+    @XmlElement(name = "ArchiefVerzenddagEinde", required = true)
     public String getDocumentSendDate2() {
         return documentSendDate2;
     }

@@ -22,6 +22,7 @@ import java.util.List;
  */
 @XmlRootElement(name = "data")
 public class InfoArchiveQueryBuilder {
+    //
     private static final Logger LOGGER = LoggerFactory.getLogger(InfoArchiveQueryBuilder.class);
     private static final String OPERATOR_BETWEEN = "BETWEEN";
     private static final String OPERATOR_EQUAL = "EQUAL";
@@ -30,6 +31,8 @@ public class InfoArchiveQueryBuilder {
     private static final String OPERATOR_GREATER = "GREATER";
     private static final String OPERATOR_LESS_OR_EQUAL = "LESS_OR_EQUAL";
     private static final String OPERATOR_LESS = "LESS";
+    
+    //Text queries.
     private static final String OPERATOR_STARTS_WITH = "STARTS_WITH";
     private static final String OPERATOR_ENDS_WITH = "ENDS_WITH";
     private static final String OPERATOR_FULLTEXT = "FULLTEXT";

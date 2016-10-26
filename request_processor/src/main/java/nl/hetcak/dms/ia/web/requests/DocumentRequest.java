@@ -29,6 +29,14 @@ public class DocumentRequest {
         this.requestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());
     }
     
+    /**
+     * Get content from InfoArchive.
+     * @param contentID the id of the content.
+     * @return A byte stream.
+     * @throws MisconfigurationException problems during reading configuration.
+     * @throws ServerConnectionFailureException problems when connection to InfoArchive.
+     * @throws IOException Failed to read server response or to open a stream.
+     */
     public ByteArrayOutputStream getContentWithContentId(String contentID) throws MisconfigurationException, ServerConnectionFailureException, IOException{
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerContentUrl(configuration.getApplicationUUID(),contentID);

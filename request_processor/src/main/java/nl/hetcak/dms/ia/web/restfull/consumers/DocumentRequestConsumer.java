@@ -16,7 +16,7 @@ import java.io.StringReader;
 public class DocumentRequestConsumer {
     private String archiveDocumentNumber, continuationNumber;
     
-    @XmlElement(name = "ArchiefDocumentId")
+    @XmlElement(name = "ArchiefDocumentId", required = true)
     public String getArchiveDocumentNumber() {
         return archiveDocumentNumber;
     }

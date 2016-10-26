@@ -6,10 +6,13 @@ import org.junit.Test;
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
+ * This test will test the throw ability of the custom exceptions.
+ * They should be handled as normal exceptions.
+ *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class ExecptionsTest {
-    //zinloze tests; dit test de werking van java.lang.Exception.
+    
     @Test(expected = LoginFailureException.class)
     public void throwLoginException() throws  LoginFailureException {
         throw new LoginFailureException();

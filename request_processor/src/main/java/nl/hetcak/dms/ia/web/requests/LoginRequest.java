@@ -41,6 +41,12 @@ public class LoginRequest {
         this.infoArchiveRequestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());
     }
     
+    /**
+     * Try to login the InfoArchive server.
+     * @return active credentials.
+     * @throws LoginFailureException Failed to login.
+     * @throws ServerConnectionFailureException Failed to connect.
+     */
     public Credentials loginInfoArchive() throws LoginFailureException, ServerConnectionFailureException {
         String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);
         try {
