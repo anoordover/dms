@@ -49,6 +49,7 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+.idea/
 .idea/encodings.xml
 .idea/sonarlint/
 sip_packager/src/resources/

@@ -9,6 +9,7 @@ import java.security.PrivilegedActionException;
  */
 public class ServerConnectionFailureException extends Exception {
     public static final int ERROR_CODE = 1002;
+    public static final String ERROR_MESSAGE = "Unable to connect to server, please contact a Administrator.";
     
     /**
      * Constructs a new exception with {@code null} as its detail message.

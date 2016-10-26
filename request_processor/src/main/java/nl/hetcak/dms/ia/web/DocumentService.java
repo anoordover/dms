@@ -1,9 +1,7 @@
 package nl.hetcak.dms.ia.web;
 
 import nl.hetcak.dms.ia.web.configuration.Configuration;
-import nl.hetcak.dms.ia.web.exceptions.ContentGrabbingException;
-import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
-import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
+import nl.hetcak.dms.ia.web.exceptions.*;
 import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
 import nl.hetcak.dms.ia.web.managers.ConnectionManager;
 import nl.hetcak.dms.ia.web.requests.DocumentRequest;
@@ -32,8 +30,9 @@ import java.io.OutputStream;
 public class DocumentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
     
-    private static final String ERROR_RESPONSE_CONTENT_GRABBING = "<error><code>406</code><description>Unacceptable request content detected.</description></error>";
-    private static final String ERROR_RESPONSE_GENERIC = "<error><code>501</code><description>Something went wrong, please notify an administrator.</description></error>";
+    private static final String ERROR_RESPONSE_CONTENT_GRABBING = "Unacceptable request content detected.";
+    private static final String ERROR_RESPONSE_GENERIC = "Something went wrong, please notify an administrator.";
+    private static final String ERROR_RESPONSE_MESSAGE_TEMPLATE = "<error><code>%d</code><description>%s</description></error>";
     
     @POST
     @Path("/listDocuments")
@@ -56,11 +55,23 @@ public class DocumentService {
             }
         } catch (ContentGrabbingException cgExc) {
             LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.");
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(ERROR_RESPONSE_CONTENT_GRABBING).build();
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (MisconfigurationException misConExc) {
+            LOGGER.error(misConExc.ERROR_MESSAGE, misConExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (MissingConfigurationException missingConExc) {
+            LOGGER.error(missingConExc.ERROR_MESSAGE, missingConExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (ServerConnectionFailureException serConFailExc) {
+            LOGGER.error(serConFailExc.ERROR_MESSAGE, serConFailExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (LoginFailureException loginFailExc) {
+            LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("Something went wrong during the request.", exc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ERROR_RESPONSE_GENERIC).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
     
@@ -100,11 +111,23 @@ public class DocumentService {
             }
         } catch (ContentGrabbingException cgExc) {
             LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.");
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(ERROR_RESPONSE_CONTENT_GRABBING).build();
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (MisconfigurationException misConExc) {
+            LOGGER.error(misConExc.ERROR_MESSAGE, misConExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (MissingConfigurationException missingConExc) {
+            LOGGER.error(missingConExc.ERROR_MESSAGE, missingConExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (ServerConnectionFailureException serConFailExc) {
+            LOGGER.error(serConFailExc.ERROR_MESSAGE, serConFailExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (LoginFailureException loginFailExc) {
+            LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("Something went wrong during the request.", exc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ERROR_RESPONSE_GENERIC).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
     
@@ -131,13 +154,25 @@ public class DocumentService {
                     throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
                 }
             } catch (ContentGrabbingException cgExc) {
-                LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.");
-                return Response.status(Response.Status.NOT_ACCEPTABLE).entity(ERROR_RESPONSE_CONTENT_GRABBING).build();
-            } catch (Exception exc) {
-                //catch all error and return error output.
-                LOGGER.error("Something went wrong during the request.", exc);
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ERROR_RESPONSE_GENERIC).build();
-            }
+            LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.");
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (MisconfigurationException misConExc) {
+            LOGGER.error(misConExc.ERROR_MESSAGE, misConExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (MissingConfigurationException missingConExc) {
+            LOGGER.error(missingConExc.ERROR_MESSAGE, missingConExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (ServerConnectionFailureException serConFailExc) {
+            LOGGER.error(serConFailExc.ERROR_MESSAGE, serConFailExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (LoginFailureException loginFailExc) {
+            LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (Exception exc) {
+            //catch all error and return error output.
+            LOGGER.error("Something went wrong during the request.", exc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
+        }
     }
     
     /**

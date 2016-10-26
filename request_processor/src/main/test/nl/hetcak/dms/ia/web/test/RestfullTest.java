@@ -15,9 +15,9 @@ import javax.ws.rs.core.Response;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class RestfullTest {
-    private final static String REQUEST_LIST = "<ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer>";
-    private final static String REQUEST_DOCUMENT = "<ArchiefDocumentId>1268712898</ArchiefDocumentId><Volgnummer>001</Volgnummer>";
-    private final static String REQUEST_SEARCH = "<ArchiefDocumentsoort>Factuur</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2016-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-08-15T00:00:00</ArchiefVerzenddagEinde>";
+    private final static String REQUEST_LIST = "<ArchiefPersoonsnummer>1540580392</ArchiefPersoonsnummer>";
+    private final static String REQUEST_DOCUMENT = "<ArchiefDocumentId>1582656150</ArchiefDocumentId><Volgnummer>001</Volgnummer>";
+    private final static String REQUEST_SEARCH = "<ArchiefDocumentsoort>B12</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-08-15T00:00:00</ArchiefVerzenddagEinde>";
         
     @Test
     public void testDefaultResponse() throws Exception {
@@ -66,7 +66,7 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         
-        Assert.assertTrue(data.length() > 20);
+        Assert.assertTrue(data.length() > 1);
         Assert.assertFalse(data.startsWith("<error>"));
     }
     

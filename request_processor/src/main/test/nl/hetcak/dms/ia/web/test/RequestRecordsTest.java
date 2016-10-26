@@ -41,7 +41,7 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(),credentials);
-        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("1231189636");
+        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("1540580392");
         assertNotNull(document);
         assertTrue(document.size() > 0);
     }
@@ -71,7 +71,7 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest request = new RecordRequest(connectionManager.getConfiguration(), credentials);
-        InfoArchiveDocument document = request.requestDocument("1268712898");
+        InfoArchiveDocument document = request.requestDocument("1582656150");
         assertNotNull(document);
         DocumentRequest documentRequest = new DocumentRequest(connectionManager.getConfiguration(), credentials);
         ByteArrayOutputStream documentStream = documentRequest.getContentWithContentId(document.getArchiefFile());

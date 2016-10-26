@@ -64,4 +64,5 @@ public interface Configuration {
      * @return true, if this class has the basic settings set.
      */
     boolean hasBasicInformation();
+
 }

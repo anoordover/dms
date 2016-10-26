@@ -9,6 +9,7 @@ import java.security.PrivilegedActionException;
  */
 public class LoginFailureException extends Exception {
     public static final int ERROR_CODE = 1003;
+    public static final String ERROR_MESSAGE = "Failed to login, please contact a Administrator.";
     
     /**
      * Constructs a new exception with {@code null} as its detail message.

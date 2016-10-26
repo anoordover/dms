@@ -8,6 +8,8 @@ import java.security.PrivilegedActionException;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class ContentGrabbingException extends Exception {
+    public static final int ERROR_CODE = 0;
+    public static final String ERROR_MESSAGE = "There is a error within the request message, please contact a Administrator.";
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a

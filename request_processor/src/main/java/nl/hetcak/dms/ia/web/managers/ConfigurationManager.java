@@ -16,7 +16,7 @@ import java.io.File;
  */
 public class ConfigurationManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationManager.class);
-    private static final String DEFAULT_CONFIG_FILE_NAME = "config/request_processor.xml";
+    private static final String DEFAULT_CONFIG_FILE_NAME = "../conf/request_processor.xml";
     private static final String DEFAULT_CONFIG_FOLDER_NAME = "config";
     
     public File getDefaultConfigurationFile() {

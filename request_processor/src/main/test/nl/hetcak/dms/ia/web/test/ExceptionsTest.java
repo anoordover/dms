@@ -11,7 +11,7 @@ import org.junit.Test;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class ExecptionsTest {
+public class ExceptionsTest {
     
     @Test(expected = LoginFailureException.class)
     public void throwLoginException() throws  LoginFailureException {
@@ -186,5 +186,35 @@ public class ExecptionsTest {
         Exception error = new Exception();
         throw new ContentGrabbingException("Test", error, true, true);
     }
+
+    //ToManyResults
+    @Test(expected = ToManyResultsException.class)
+    public void throwToManyResultsException() throws ToManyResultsException {
+        throw new ToManyResultsException();
+    }
+
+    @Test(expected = ToManyResultsException.class)
+    public void throwToManyResultsException1() throws ToManyResultsException {
+        throw new ToManyResultsException("Test");
+    }
+
+    @Test(expected = ToManyResultsException.class)
+    public void throwToManyResultsException2() throws ToManyResultsException {
+        Exception error = new Exception();
+        throw new ToManyResultsException("Test", error);
+    }
+
+    @Test(expected = ToManyResultsException.class)
+    public void throwToManyResultsException3() throws ToManyResultsException {
+        Exception error = new Exception();
+        throw new ToManyResultsException(error);
+    }
+
+    @Test(expected = ToManyResultsException.class)
+    public void throwToManyResultsException4() throws ToManyResultsException {
+        Exception error = new Exception();
+        throw new ToManyResultsException("Test", error, true, true);
+    }
+
     
 }
