@@ -38,6 +38,8 @@ public class DocumentService {
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response listDocuments(String sBody) {
+        LOGGER.info("Incoming request for /listDocuemnts.");
+        LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
         input.append("<request>");
         input.append(sBody);
@@ -45,11 +47,13 @@ public class DocumentService {
         try {
             ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest(input.toString());
             if (request.hasContent()) {
+                LOGGER.info("Content is valid");
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getArchivePersonNumber()));
                 return Response.ok(response.getAsXML()).build();
             } else {
+                LOGGER.info("Content is invalid");
                 throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
             }
         } catch (ContentGrabbingException cgExc) {
@@ -79,6 +83,8 @@ public class DocumentService {
     @Produces("application/pdf")
     @Consumes(MediaType.APPLICATION_XML)
     public Response getDocument(String sBody) {
+        LOGGER.info("Incoming request for /document.");
+        LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
         input.append("<request>");
         input.append(sBody);
@@ -87,6 +93,7 @@ public class DocumentService {
         try {
             DocumentRequestConsumer documentRequestConsumer = DocumentRequestConsumer.unmarshallerRequest(input.toString());
             if (documentRequestConsumer.hasContent()) {
+                LOGGER.info("Content is valid");
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
@@ -106,6 +113,7 @@ public class DocumentService {
                 };
                 return Response.ok(outputStream).build();
             } else {
+                LOGGER.info("Content is invalid");
                 throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
             }
         } catch (ContentGrabbingException cgExc) {
@@ -135,6 +143,8 @@ public class DocumentService {
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response searchDocuments(String sBody) {
+        LOGGER.info("Incoming request for /searchDocuments.");
+        LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
         input.append("<request>");
         input.append(sBody);
@@ -144,12 +154,14 @@ public class DocumentService {
             SearchDocumentRequestConsumer request = SearchDocumentRequestConsumer.unmarshalRequest(input.toString());
             //disable content grabbing with empty strings.
             if (request.hasContent()) {
+                LOGGER.info("Content is valid");
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentKind(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
                 return Response.ok(response.getAsXML()).build();
     
-            } else {
+                } else {
+                    LOGGER.info("Content is invalid");
                     throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
                 }
             } catch (ContentGrabbingException cgExc) {

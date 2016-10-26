@@ -75,7 +75,7 @@ public class RecordRequest {
         String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, sendDate1, sendDate2));
         return parseDocumentList(response);
     }
-    
+
     //todo (throw tomanyresults exception)
     public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, UnexpectedResultException {
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
