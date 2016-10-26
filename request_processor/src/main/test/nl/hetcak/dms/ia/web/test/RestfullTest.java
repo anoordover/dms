@@ -10,6 +10,8 @@ import javax.ws.rs.core.Response;
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
+ * This Test will test the Restfull Method's.
+ *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class RestfullTest {

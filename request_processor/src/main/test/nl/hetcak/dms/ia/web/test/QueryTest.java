@@ -9,6 +9,8 @@ import javax.xml.bind.JAXBException;
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
+ * This test will test the Query Generator.
+ *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class QueryTest {

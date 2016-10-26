@@ -13,6 +13,8 @@ import java.io.File;
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
+ * This test will test the {@link ConfigurationManager}.
+ *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class ConfigurationTest {
@@ -88,6 +90,8 @@ public class ConfigurationTest {
         Assert.assertNotNull(configuration.getInfoArchiveServerPort());
         Assert.assertNotNull(configuration.getSecurityToken());
         Assert.assertFalse(configuration.hasBasicInformation());
+        
+        //fill in the basic information
         configuration.setServerAddress("0.0.0.0");
         configuration.setServerPort(1234);
         configuration.setUsername("test");

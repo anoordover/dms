@@ -32,6 +32,7 @@ public class ConsumerTest {
     private static final String RESULT_4_4 = "2016-08-01";
     private static final String RESULT_4_5 = "2016-08-15";
     
+    
     //start with the good cases.
     @Test
     public void listDocumentConsumerTest() throws JAXBException {

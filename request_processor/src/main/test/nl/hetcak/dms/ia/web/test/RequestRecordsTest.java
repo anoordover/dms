@@ -24,6 +24,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
+ * This test will test the {@link RecordRequest} class.
+ *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class RequestRecordsTest {
@@ -31,7 +33,7 @@ public class RequestRecordsTest {
     
     //external connection
     @Test(timeout = 3000)
-    public void getList() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException {
+    public void getListDocumentsFromInfoArchive() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);

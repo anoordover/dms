@@ -23,6 +23,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
+ * This Test will test the ability to setup the connection.
+ *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 
@@ -30,7 +32,6 @@ import static org.junit.Assert.assertTrue;
 public class ConnectionTest {
     private static final String WORKING_CONFIG = "test/config/working.xml";
     private static final String MISCONFIGURATION_CONFIG = "test/config/misconfig.xml";
-    private ConfigurationManager configurationManager  = new ConfigurationManager();
     
     /**
      * Try to create ConnectionManager with bad configuration file
@@ -42,6 +43,7 @@ public class ConnectionTest {
         connectionManager.setConfigurationFile(misconfig);
         Configuration configuration = connectionManager.getConfiguration();
         assertNotNull(connectionManager);
+        assertFalse(configuration.hasBasicInformation());
     }
     
     /**
