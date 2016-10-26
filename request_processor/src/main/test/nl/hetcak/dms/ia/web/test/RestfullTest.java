@@ -40,7 +40,7 @@ public class RestfullTest {
         Assert.assertFalse(responseEntity.getEntity().toString().contains("[ERROR]"));
     }
     
-@Test
+    @Test
     public void testDocumentList() throws Exception {
         DocumentService documentService = new DocumentService();
         Response documentListResponse = documentService.listDocuments(REQUEST_LIST);

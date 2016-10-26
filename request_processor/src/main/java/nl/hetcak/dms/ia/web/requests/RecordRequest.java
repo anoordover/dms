@@ -76,10 +76,12 @@ public class RecordRequest {
         return parseDocumentList(response);
     }
     
+    //todo (throw tomanyresults exception)
     public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, UnexpectedResultException {
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
         List<InfoArchiveDocument> documents = parseDocumentList(response);
         if(documents.size() == 0 || documents.size() > 1) {
+            LOGGER.error("Got "+documents.size()+" results, however the request handler expected one result.");
             throw new UnexpectedResultException("Got "+documents.size()+" results, however the request handler expected one result.");
         }
         return documents.get(0);
@@ -89,6 +91,8 @@ public class RecordRequest {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
         String requestBody = queryBuilder.addEqualCriteria(VALUE_ARCHIVE_PERSON_NUMBER, archivePersonNumber).build();
+        LOGGER.info("Executing HTTPPOST request for a List Documents based on person number.");
+        LOGGER.debug(requestBody);
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
     
@@ -96,6 +100,8 @@ public class RecordRequest {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
         String requestBody = queryBuilder.addEqualCriteria(PARSE_DOCUMENT_TITLE, documentType).addBetweenCriteria(PARSE_DOCUMENT_SEND_DATE, sendDate1, sendDate2).build();
+        LOGGER.info("Executing HTTPPOST request for a List Documents based on Document type and a between senddate constraint.");
+        LOGGER.debug(requestBody);
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
     
@@ -103,9 +109,12 @@ public class RecordRequest {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
         String requestBody = queryBuilder.addEqualCriteria(VALUE_ARCHIVE_DOCUMENT_NUMBER, archiveDocumentNumber).build();
+        LOGGER.info("Executing HTTPPOST request for a Documents based on Document Number.");
+        LOGGER.debug(requestBody);
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
-    
+
+    //todo: check if there are multiple pages with results. (throw tomanyresults exception)
     private List<InfoArchiveDocument> parseDocumentList(String response) throws ParseException {
         List<InfoArchiveDocument> documents = new ArrayList<>();
         

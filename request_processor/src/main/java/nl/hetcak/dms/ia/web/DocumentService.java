@@ -29,8 +29,7 @@ import java.io.OutputStream;
 @Path("/rest")
 public class DocumentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
-    
-    private static final String ERROR_RESPONSE_CONTENT_GRABBING = "Unacceptable request content detected.";
+
     private static final String ERROR_RESPONSE_GENERIC = "Something went wrong, please notify an administrator.";
     private static final String ERROR_RESPONSE_MESSAGE_TEMPLATE = "<error><code>%d</code><description>%s</description></error>";
     
