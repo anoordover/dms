@@ -54,6 +54,8 @@ public class ExceptionHelper {
 
     public static final int ERROR_OTHER = -1;
 
+    private static final String ERROR_FORMAT = "%s [Exception: %s]";
+
     /* Each Worker(Thread) will have it's own ExceptionHelper */
     private static final ThreadLocal<ExceptionHelper> mobjLocalInstance = new ThreadLocal<ExceptionHelper>() {
         @Override
@@ -112,7 +114,7 @@ public class ExceptionHelper {
         if (mobjExceptionConfiguration != null) {
             AMPError objError = mobjExceptionConfiguration.getError(iCode);
             objDocument.setErrorCode(iCode);
-            objDocument.setErrorMessage(objError.getErrorText());
+            objDocument.setErrorMessage(String.format(ERROR_FORMAT, objError.getErrorText(), objException.getLocalizedMessage()));
             executeHandlers(objError, objDocument, objException);
         } else {
             fatal(this, "No ExceptionConfiguration, Exiting");
@@ -131,14 +133,14 @@ public class ExceptionHelper {
         AMPError objError = mobjExceptionConfiguration.getError(iCode);
         for (IADocumentReference objDocument : objCache.getContents()) {
             objDocument.setErrorCode(iCode);
-            objDocument.setErrorMessage(objError.getErrorText());
+            objDocument.setErrorMessage(String.format(ERROR_FORMAT, objError.getErrorText(), objException.getLocalizedMessage()));
         }
         executeHandlers(objError, objCache, objException);
     }
 
     public synchronized void handleException(int iCode, IADocument objDocument, Exception objException) {
         AMPError objError = mobjExceptionConfiguration.getError(iCode);
-        objDocument.setErrorText(objError.getErrorText());
+        objDocument.setErrorText(String.format(ERROR_FORMAT, objError.getErrorText(), objException.getLocalizedMessage()));
         objDocument.setErrorCode(objError.getErrorCode());
         executeHandlers(objError, objDocument, objException);
     }

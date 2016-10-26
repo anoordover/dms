@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.amplexor.ia.Logger.info;
+
 /**
  * Created by admjzimmermann on 8-9-2016.
  */
@@ -114,14 +116,8 @@ public class WorkerManager {
         }
     }
 
-    public synchronized void shutdown() {
-        while (miCurrentWorker > -1) {
-            stopWorker(true);
-        }
-
-    }
-
     public synchronized void signalStop(int iExitCode) {
+        info(this, "Received stop signal, shutting down all workers");
         mbStopFlag = true;
         miExitCode = iExitCode;
     }

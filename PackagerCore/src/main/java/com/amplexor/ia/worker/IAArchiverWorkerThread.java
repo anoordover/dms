@@ -1,6 +1,7 @@
 package com.amplexor.ia.worker;
 
 import com.amplexor.ia.cache.CacheManager;
+import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.configuration.*;
 import com.amplexor.ia.document_source.DocumentSource;
@@ -14,12 +15,9 @@ import com.amplexor.ia.sip.SipManager;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static com.amplexor.ia.Logger.debug;
-import static com.amplexor.ia.Logger.error;
-import static com.amplexor.ia.Logger.info;
+import static com.amplexor.ia.Logger.*;
 
 /**
  * Created by admjzimmermann on 6-9-2016.
@@ -27,7 +25,6 @@ import static com.amplexor.ia.Logger.info;
 class IAArchiverWorkerThread implements Runnable {
     private SIPPackagerConfiguration mobjConfiguration;
     private int miId;
-    private Thread mobjShutdownHook;
 
     private int miProcessedBytes;
     private boolean mbRunning;
@@ -48,25 +45,6 @@ class IAArchiverWorkerThread implements Runnable {
         mbFirstTimeSetup = true;
         miId = iId;
         mbRunning = true;
-        mobjShutdownHook = new Thread() {
-            @Override
-            public void run() {
-                info(this, "Waiting for Worker-" + miId + " to shutdown");
-                while (isRunning()) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-                info(this, "Shutdown Hook for Worker-" + miId);
-                if (mobjCacheManager != null) {
-                    mobjCacheManager.saveCaches();
-                }
-
-            }
-        };
-        Runtime.getRuntime().addShutdownHook(mobjShutdownHook);
     }
 
     public synchronized boolean isRunning() {
@@ -86,16 +64,20 @@ class IAArchiverWorkerThread implements Runnable {
         }
 
         while (isRunning()) {
-            List<IADocument> cDocuments = null;
-            if (!mbIngestFlag) {
-                String sDocumentData = mobjDocumentSource.retrieveDocumentData();
-                if (!"".equals(sDocumentData)) {
-                    cDocuments = mobjMessageParser.parse(sDocumentData);
+            if (Thread.currentThread().isInterrupted()) {
+                info(this, Thread.currentThread().getName() + " was interrupted");
+                if(mobjCacheManager != null) {
+                    info(this, "Saving caches");
+                    mobjCacheManager.saveCaches();
+                    info(this, "Done saving caches");
                 }
+                mbShutdownFlag = true;
+                break;
             }
 
+            List<IADocument> cDocuments = retrieve();
             if (cDocuments != null) {
-                cDocuments.forEach(objDocument -> {
+                for (IADocument objDocument : cDocuments) {
                     miProcessedBytes += objDocument.getSizeEstimate();
                     debug(this, "Retrieved document with id: " + objDocument.getDocumentId());
                     if (objDocument.getErrorCode() != 0) {
@@ -106,14 +88,9 @@ class IAArchiverWorkerThread implements Runnable {
                         mobjDocumentSource.postResult(cTempReference);
                         return;
                     } else {
-                        try {
-                            mobjCacheManager.add(objDocument, mobjRetentionManager.retrieveRetentionClass(objDocument));
-                        } catch (IllegalArgumentException ex) {
-                            IADocumentReference objReference = new IADocumentReference(objDocument.getDocumentId(), null);
-                            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNKNOWN_RETENTION, objReference, ex);
-                        }
+                        addToCache(objDocument);
                     }
-                });
+                }
             }
             mobjCacheManager.update();
             ingest();
@@ -123,8 +100,8 @@ class IAArchiverWorkerThread implements Runnable {
 
             mbRunning = !mbShutdownFlag;
         }
-        mobjCacheManager.saveCaches();
 
+        mobjCacheManager.saveCaches();
         if (mbShutdownFlag) {
             mobjDocumentSource.shutdown();
             info(this, "Shutting down Worker " + miId);
@@ -160,10 +137,30 @@ class IAArchiverWorkerThread implements Runnable {
         return true;
     }
 
+    public List<IADocument> retrieve() {
+        List<IADocument> cDocuments = new ArrayList<>();
+        if (!mbIngestFlag) {
+            String sDocumentData = mobjDocumentSource.retrieveDocumentData();
+            if (!"".equals(sDocumentData)) {
+                cDocuments = mobjMessageParser.parse(sDocumentData);
+            }
+        }
+        return cDocuments;
+    }
+
+    public void addToCache(IADocument objDocument) {
+        try {
+            mobjCacheManager.add(objDocument, mobjRetentionManager.retrieveRetentionClass(objDocument));
+        } catch (IllegalArgumentException ex) {
+            IADocumentReference objReference = new IADocumentReference(objDocument.getDocumentId(), null);
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNKNOWN_RETENTION, objReference, ex);
+        }
+    }
+
     public void ingest() {
         debug(this, "Ingesting closed caches");
         mbIngesting = true;
-        mobjCacheManager.getClosedCaches().iterator().forEachRemaining(objCache -> {
+        for (IACache objCache : mobjCacheManager.getClosedCaches()) {
             if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache)) {
                 info(this, "Successfully Ingested SIP " + objCache.getSipFile().toString());
             } else {
@@ -172,7 +169,7 @@ class IAArchiverWorkerThread implements Runnable {
             }
             mobjDocumentSource.postResult(objCache.getContents());
             mobjCacheManager.cleanupCache(objCache);
-        });
+        }
         mbIngesting = false;
         debug(this, "Done Ingesting closed caches");
     }

@@ -4,11 +4,15 @@ import com.amplexor.ia.configuration.ConfigManager;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.worker.WorkerManager;
 import org.apache.log4j.PropertyConfigurator;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
+import java.util.Set;
 
+import static com.amplexor.ia.Logger.error;
 import static com.amplexor.ia.Logger.info;
 
 /**
@@ -24,7 +28,7 @@ public class IAArchiver {
     public static void main(String[] cArgs) {
         parseArguments(cArgs);
         ConfigManager objConfigManager = null;
-        WorkerManager objWorkerManager = null;
+        final WorkerManager objWorkerManager = WorkerManager.getWorkerManager();
         try {
             objConfigManager = new ConfigManager(configLocation);
             objConfigManager.loadConfiguration();
@@ -45,11 +49,40 @@ public class IAArchiver {
             info(IAArchiver.class, "Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
 
             info(IAArchiver.class, "Initializing Worker Manager");
-            objWorkerManager = WorkerManager.getWorkerManager();
             objWorkerManager.initialize(objConfigManager.getConfiguration());
         }
 
         if (objWorkerManager != null) {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    info(IAArchiver.class, "Starting shutdown sequence");
+                    try {
+                        Set<Thread> cRunningThreads = Thread.getAllStackTraces().keySet();
+                        info(IAArchiver.class, "Found " + cRunningThreads.size() + " Threads");
+                        for (Thread objThread : cRunningThreads) {
+                            if (objThread != Thread.currentThread()
+                                    && !objThread.isDaemon()
+                                    && objThread.getName().startsWith("IAWorker")) {
+                                info(IAArchiver.class, "Interrupting Thread " + objThread.getName());
+                                objThread.interrupt();
+                            }
+                        }
+
+                        for (Thread objThread : cRunningThreads) {
+                            if (objThread != Thread.currentThread()
+                                    && !objThread.isDaemon()
+                                    && objThread.getName().startsWith("IAWorker")) {
+                                info(IAArchiver.class, "Joining Thread " + objThread.getName());
+                                objThread.join();
+                            }
+                        }
+                    } catch (InterruptedException ex) {
+                        error(IAArchiver.class, "Shutdown interrupted!");
+                    }
+                }
+            });
+
             while (objWorkerManager.checkWorkers(objConfigManager.getConfiguration().getWorkerConfiguration())) {
                 try {
                     Thread.sleep(100);
@@ -58,7 +91,6 @@ public class IAArchiver {
                     Thread.currentThread().interrupt();
                 }
             }
-            objWorkerManager.shutdown();
         }
     }
 

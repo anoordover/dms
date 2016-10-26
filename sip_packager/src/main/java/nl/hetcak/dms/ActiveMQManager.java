@@ -1,15 +1,13 @@
 package nl.hetcak.dms;
 
 import com.amplexor.ia.cache.IADocumentReference;
-import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
+import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.exception.ExceptionHelper;
-import com.sun.xml.internal.fastinfoset.Encoder;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
 import org.apache.activemq.command.ActiveMQBytesMessage;
 
 import javax.jms.*;
-
 import java.util.List;
 
 import static com.amplexor.ia.Logger.debug;
@@ -60,7 +58,7 @@ public class ActiveMQManager implements DocumentSource {
                     sReturn = objTextMessage.getText();
                     objMessage.acknowledge();
                 } else if (objMessage instanceof ActiveMQBytesMessage) {
-                    ActiveMQBytesMessage objBytesMessage = (ActiveMQBytesMessage)objMessage;
+                    ActiveMQBytesMessage objBytesMessage = (ActiveMQBytesMessage) objMessage;
                 }
 
                 objConsumer.close();
