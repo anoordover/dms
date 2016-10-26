@@ -7,6 +7,8 @@ import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.util.Map;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class DocumentRequest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocumentRequest.class);
     private static final String DOCUMENT_REQUEST = "restapi/systemdata/search-compositions/";
     private Configuration configuration;
     private Credentials credentials;
@@ -38,15 +41,19 @@ public class DocumentRequest {
      * @throws IOException Failed to read server response or to open a stream.
      */
     public ByteArrayOutputStream getContentWithContentId(String contentID) throws MisconfigurationException, ServerConnectionFailureException, IOException{
+        LOGGER.info("Executing content request.");
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerContentUrl(configuration.getApplicationUUID(),contentID);
         HttpResponse response = requestUtil.executeGetRequest(url,InfoArchiveRequestUtil.CONTENT_TYPE_JSON,requestHeader);
+        LOGGER.info("Returning content byte stream.");
         return responseToStream(response);
     }
     
     private ByteArrayOutputStream responseToStream(HttpResponse response) throws IOException {
+        LOGGER.info("Start buffering InfoArchive document stream.");
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         IOUtils.copy(response.getEntity().getContent(),byteArrayOutputStream);
+        LOGGER.info("Returning buffered InfoArchive document stream.");
         return byteArrayOutputStream;
     }
     

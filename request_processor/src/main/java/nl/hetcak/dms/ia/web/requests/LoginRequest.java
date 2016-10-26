@@ -48,12 +48,15 @@ public class LoginRequest {
      * @throws ServerConnectionFailureException Failed to connect.
      */
     public Credentials loginInfoArchive() throws LoginFailureException, ServerConnectionFailureException {
+        LOGGER.info("Logging in to InfoArchive.");
         String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);
         try {
             String bodyContent = prepareLoginBody(configuration.getInfoArchiveCredentials());
+            LOGGER.debug("Logging in with credentials...");
             HttpResponse httpResponse = infoArchiveRequestUtil.executePostRequest(serverUrl, DEFAULT_CONTENT_TYPE_REQUEST, null, bodyContent);
             String response =  infoArchiveRequestUtil.responseReader(httpResponse);
-            return updateCredentails(configuration.getInfoArchiveCredentials(), response);
+            LOGGER.debug(response);
+            return updateCredentials(configuration.getInfoArchiveCredentials(), response);
         } catch (UnsupportedEncodingException unsupEncoExc) {
             LOGGER.error("Could not load UTF-8 encoding.", unsupEncoExc);
             throw new LoginFailureException("Encoding UTF-8 is unsupported.", unsupEncoExc);
@@ -64,12 +67,16 @@ public class LoginRequest {
     }
     
     public Credentials refreshCredentialsInfoArchive(Credentials loggedInCredentials) throws LoginFailureException, ServerConnectionFailureException {
+        LOGGER.info("Refreshing InfoArchive login token.");
         String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);
         try {
             String bodyContent = prepareRefreshLoginBody(loggedInCredentials);
+            LOGGER.debug(bodyContent);
             HttpResponse httpResponse = infoArchiveRequestUtil.executePostRequest(serverUrl, DEFAULT_CONTENT_TYPE_REQUEST, null, bodyContent);
             String response =  infoArchiveRequestUtil.responseReader(httpResponse);
-            return updateCredentails(configuration.getInfoArchiveCredentials(), response);
+            LOGGER.debug(response);
+            LOGGER.info("Returning credentials.");
+            return updateCredentials(configuration.getInfoArchiveCredentials(), response);
         } catch (UnsupportedEncodingException unsupEncoExc) {
             LOGGER.error("Could not load UTF-8 encoding.", unsupEncoExc);
             throw new LoginFailureException("Encoding UTF-8 is unsupported.", unsupEncoExc);
@@ -79,35 +86,30 @@ public class LoginRequest {
         }
     }
     
-    private Credentials updateCredentails(Credentials credentials, String serverResponse) throws LoginFailureException {
+    private Credentials updateCredentials(Credentials credentials, String serverResponse) throws LoginFailureException {
+        LOGGER.info("Updating InfoArchive Credentials.");
         JsonParser parser = new JsonParser();
         JsonObject response = parser.parse(serverResponse).getAsJsonObject();
         
-        if(response.has("expires_in")) {
+        if(response.has("expires_in") && response.has("access_token") && response.has("refresh_token")) {
             int expireSeconds = response.get("expires_in").getAsInt();
             GregorianCalendar expire = (GregorianCalendar)GregorianCalendar.getInstance();
             expire.add(Calendar.SECOND,expireSeconds);
+            LOGGER.info("InfoArchive Credentials will expire:"+expire.toString());
             credentials.setSecurityTokenInvalidationTime(expire);
-        } else {
-            throw new LoginFailureException("Failed to find expires time in response.");
-        }
-        
-        if(response.has("access_token")) {
+            LOGGER.info("Updating Tokens");
             credentials.setSecurityToken(response.get("access_token").getAsString());
-        }  else {
-            throw new LoginFailureException("Failed to find token in response.");
-        }
-    
-        if(response.has("refresh_token")) {
             credentials.setRecoveryToken(response.get("refresh_token").getAsString());
-        }  else {
-            throw new LoginFailureException("Failed to find token in response.");
+        } else {
+            throw new LoginFailureException("Failed to find expires time or tokens in response.");
         }
+        LOGGER.info("Returning updated credentials.");
         return credentials;
     }
     
     
     private String prepareLoginBody(Credentials credentials) throws UnsupportedEncodingException {
+        LOGGER.info("Prepare login body.");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(URLEncoder.encode(LOGIN_USERNAME, "UTF-8"));
         stringBuilder.append('=');
@@ -120,11 +122,13 @@ public class LoginRequest {
         stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, "UTF-8"));
         stringBuilder.append('=');
         stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_PASSWORD, "UTF-8"));
-        
+
+        LOGGER.info("Returning login body.");
         return stringBuilder.toString();
     }
     
     private String prepareRefreshLoginBody(Credentials credentials) throws UnsupportedEncodingException {
+        LOGGER.info("Prepare login refresh body.");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_REFRESH, "UTF-8"));
         stringBuilder.append('=');
@@ -133,7 +137,8 @@ public class LoginRequest {
         stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, "UTF-8"));
         stringBuilder.append('=');
         stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_REFRESH, "UTF-8"));
-        
+
+        LOGGER.info("Returning login refresh body.");
         return stringBuilder.toString();
     }
 }
