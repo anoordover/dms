@@ -205,9 +205,11 @@ public class AMPCacheManager implements CacheManager {
         if (objCache.isClosed()) {
             try { //Delete Cache folder contents and folder
                 Path objCachePath = Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCache.getId()).replace('/', File.separatorChar));
-                List<File> cFilesToClean = Arrays.asList(objCachePath.toFile().listFiles());
-                for (File objFile : cFilesToClean) {
-                    Files.deleteIfExists(objFile.toPath());
+                if(objCachePath.toFile().listFiles() != null) {
+                    List<File> cFilesToClean = Arrays.asList(objCachePath.toFile().listFiles());
+                    for (File objFile : cFilesToClean) {
+                        Files.deleteIfExists(objFile.toPath());
+                    }
                 }
                 Files.deleteIfExists(objCachePath);
             } catch (IOException ex) {

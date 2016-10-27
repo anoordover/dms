@@ -12,7 +12,7 @@
         <implementing_class>nl.hetcak.dms.CAKCacheManager</implementing_class>
         <base_path>Cache</base_path>
         <message_threshold>10</message_threshold>
-        <time_threshold>1800</time_threshold>
+        <time_threshold>30</time_threshold>
         <custom_parameters>
             <document_element_name>ArchiefDocument</document_element_name>
             <document_class>nl.hetcak.dms.CAKDocument</document_class>

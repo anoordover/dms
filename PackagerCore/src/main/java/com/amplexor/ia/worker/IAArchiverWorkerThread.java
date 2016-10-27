@@ -155,6 +155,10 @@ class IAArchiverWorkerThread implements Runnable {
         debug(this, "Ingesting closed caches");
         mbIngesting = true;
         for (IACache objCache : mobjCacheManager.getClosedCaches()) {
+            if (Thread.currentThread().isInterrupted()) {
+                break;
+            }
+
             if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache)) {
                 info(this, "Successfully Ingested SIP " + objCache.getSipFile().toString());
             } else {
