@@ -48,9 +48,10 @@
     <document_source>
         <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
         <custom_parameters>
-            <broker>failover:(ssl://muleaq1.tst.esb.func.cak-bz.local:10744,ssl://muleaq2.tst.esb.func.cak-bz.local:10744)?randomize=false</broker>
-            <truststore>truststore\truststore_tst_mule1.jks</truststore>
-            <truststore_password>URBq1N1uyZWQGWm5FuJ7iRVkLA0T3IUh</truststore_password>
+            <!-- DEV-->
+            <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
+            <truststore>resources\truststore\truststore_ont1_mule.jks</truststore>
+            <truststore_password>My0jKD3WWChHaVFrLwDNLxmaTl72f9PL</truststore_password>
             <result_format>
                 <![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
             <results_element>

@@ -59,6 +59,7 @@ public class CAKCacheManager extends AMPCacheManager {
         Files.createDirectories(objCachePath);
         objCreate.setDocumentIdentifier(bIsFallback ? "Fallback" : "Standard");
         mcCaches.add(objCreate);
+        saveCache(objCreate);
         debug(this, "Returning Cache " + objCreate.getId());
 
         return objCreate;

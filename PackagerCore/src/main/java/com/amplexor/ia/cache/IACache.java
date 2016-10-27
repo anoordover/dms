@@ -4,6 +4,7 @@ import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import java.nio.file.Path;
@@ -32,33 +33,29 @@ public class IACache {
     @XStreamAlias("retention_class")
     private IARetentionClass mobjRetentionClass;
 
-    @XStreamAlias("contents")
-    private List<IADocumentReference> mcContents;
-
     @XStreamAlias("sip_file")
     private String msSipFile;
 
     @XStreamAlias("document_identifier")
     private String msDocumentIdentifier;
 
-    @XStreamAlias("document_element_name")
-    private String msDocumentElementName;
-
-    @XStreamAlias("document_class")
-    private String msDocumentClass;
-
     @XStreamAlias("target_application")
     private String msTargetApplication;
+
+    @XStreamOmitField
+    private List<IADocumentReference> mcContents;
 
     public IACache(int iId, IARetentionClass objRetentionClass) {
         miId = iId;
         mobjRetentionClass = objRetentionClass;
         mbClosed = false;
         mlCreated = System.currentTimeMillis();
-        mcContents = new ArrayList<>();
     }
 
     public void add(IADocumentReference objReference) {
+        if(mcContents == null) {
+            mcContents = new ArrayList<>();
+        }
         mcContents.add(objReference);
     }
 
@@ -76,6 +73,9 @@ public class IACache {
     }
 
     public int getSize() {
+        if(mcContents == null) {
+            mcContents = new ArrayList<>();
+        }
         return mcContents.size();
     }
 

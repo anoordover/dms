@@ -66,11 +66,6 @@ class IAArchiverWorkerThread implements Runnable {
         while (isRunning()) {
             if (Thread.currentThread().isInterrupted()) {
                 info(this, Thread.currentThread().getName() + " was interrupted");
-                if(mobjCacheManager != null) {
-                    info(this, "Saving caches");
-                    mobjCacheManager.saveCaches();
-                    info(this, "Done saving caches");
-                }
                 mbShutdownFlag = true;
                 break;
             }
@@ -101,7 +96,6 @@ class IAArchiverWorkerThread implements Runnable {
             mbRunning = !mbShutdownFlag;
         }
 
-        mobjCacheManager.saveCaches();
         if (mbShutdownFlag) {
             mobjDocumentSource.shutdown();
             info(this, "Shutting down Worker " + miId);

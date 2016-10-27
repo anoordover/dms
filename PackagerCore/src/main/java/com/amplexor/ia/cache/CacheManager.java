@@ -51,12 +51,6 @@ public interface CacheManager {
     boolean cleanupCache(IACache objCache);
 
     /**
-     * Saves the caches currently held by the cache manager as XML files
-     * The output will be saved in the ${caching}/${base_path}
-     */
-    boolean saveCaches();
-
-    /**
      * Loads any {@link IACache}s in the current savePath(config.xml->${cachemanager}/${base_path}) and adds them to the {@link CacheManager}
      */
     boolean loadCaches();

@@ -40,8 +40,6 @@ import static com.amplexor.ia.Logger.info;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class CAKMessageParserFallback extends CAKMessageParser {
-    MessageParserConfiguration mobjConfiguration;
-
     public CAKMessageParserFallback(MessageParserConfiguration objConfiguration) {
         super(objConfiguration);
     }
