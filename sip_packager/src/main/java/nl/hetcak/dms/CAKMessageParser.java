@@ -123,7 +123,7 @@ public class CAKMessageParser implements MessageParser {
                     extractIndices(cMappingCharacters, cIndicesStart, cIndicesEnd);
                     //Ensure that opening have corresponding closing tags
                     if (cIndicesStart.size() != cIndicesEnd.size()) {
-                        throw new IllegalArgumentException("Error in AIU_mapping, a { is missing its ending } " + objMapping.getKey());
+                        throw new IllegalArgumentException("Error in AIU_mapping, a '{' is missing its closing '}' " + objMapping.getKey());
                     }
                     Element objMetadataElement = objXmlDocument.createElement(objMapping.getKey());
                     objMetadataElement.setTextContent(getAIUElementString(objMapping.getValue(), objDocument, cIndicesStart, cIndicesEnd));
