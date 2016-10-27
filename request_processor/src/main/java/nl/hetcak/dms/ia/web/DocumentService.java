@@ -108,13 +108,16 @@ public class DocumentService {
                 InfoArchiveDocument infoArchiveDocument = recordRequest.requestDocument(documentRequestConsumer.getArchiveDocumentNumber());
                 DocumentRequest iaDocumentRequest = new DocumentRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ByteArrayOutputStream byteArray = iaDocumentRequest.getContentWithContentId(infoArchiveDocument.getArchiefFile());
+                LOGGER.info("Getting Stream ready to send.");
                 StreamingOutput outputStream = new StreamingOutput() {
                     @Override
                     public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+                        LOGGER.info("Sending Stream as response.");
                         try {
                             outputStream.write(byteArray.toByteArray());
                             outputStream.close();
                         } catch (Exception e) {
+                            LOGGER.error("Error while sending stream.", e);
                             throw new WebApplicationException(e);
                         }
                     }
