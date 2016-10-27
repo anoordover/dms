@@ -19,6 +19,10 @@ import static com.amplexor.ia.Logger.info;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class IAArchiver {
+    private static final int V_MAJOR = 1;
+    private static final int V_MINOR = 0;
+    private static final int REVISION = 0;
+
     private static String configLocation = (System.getProperty("user.dir") + "/config/IAArchiver.xml").replace('/', File.separatorChar);
 
     private IAArchiver() {
