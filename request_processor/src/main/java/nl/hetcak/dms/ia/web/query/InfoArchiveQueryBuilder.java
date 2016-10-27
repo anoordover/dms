@@ -22,7 +22,6 @@ import java.util.List;
  */
 @XmlRootElement(name = "data")
 public class InfoArchiveQueryBuilder {
-    //
     private static final Logger LOGGER = LoggerFactory.getLogger(InfoArchiveQueryBuilder.class);
     private static final String OPERATOR_BETWEEN = "BETWEEN";
     private static final String OPERATOR_EQUAL = "EQUAL";
@@ -140,6 +139,7 @@ public class InfoArchiveQueryBuilder {
      * @throws JAXBException Failed to create XML exception.
      */
     public String build() throws JAXBException {
+        LOGGER.info("Building query for InfoArchive.");
         java.io.StringWriter sw = new StringWriter();
         try {
             JAXBContext context = JAXBContext.newInstance(InfoArchiveQueryBuilder.class);
@@ -151,6 +151,7 @@ public class InfoArchiveQueryBuilder {
             LOGGER.error("JAXB failed to create xml.", jaxExc);
             throw jaxExc;
         }
+        LOGGER.info("Returning xml query String for InfoArchive.");
         return sw.toString();
     }
     

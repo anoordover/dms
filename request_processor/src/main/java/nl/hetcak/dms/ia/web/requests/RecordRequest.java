@@ -74,7 +74,9 @@ public class RecordRequest {
     }
     
     public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
+        LOGGER.info("Starting List Documents request for person number:"+archivePersonNumber);
         String response = requestUtil.responseReader(executeListDocumentsRequest(archivePersonNumber));
+        LOGGER.info("Parsing results");
         List<InfoArchiveDocument> result = parseDocumentList(response);
         if(result.size() == 0) {
             String errorMessage = "Got 0 results for documents with person number:"+archivePersonNumber+", the request handler expected at least one result.";
@@ -82,11 +84,14 @@ public class RecordRequest {
             LOGGER.debug(response);
             throw new NoContentAvailableException(errorMessage);
         }
+        LOGGER.info("Returning List.");
         return result;
     }
     
     public List<InfoArchiveDocument> requestListDocuments(String documentType, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException,ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
+        LOGGER.info("Starting List Documents request for document type:"+documentType+" and send date between "+sendDate1+" and "+sendDate2);
         String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, sendDate1, sendDate2));
+        LOGGER.info("Parsing results");
         List<InfoArchiveDocument> result = parseDocumentList(response);
         if(result.size() == 0) {
             String errorMessage = "Got 0 results for document search for document type:"+documentType+" and send date between "+sendDate1+" and "+sendDate2+", the request handler expected at least one result.";
@@ -94,12 +99,14 @@ public class RecordRequest {
             LOGGER.debug(response);
             throw new NoContentAvailableException(errorMessage);
         }
+        LOGGER.info("Returning List.");
         return result;
     }
 
     public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, MultipleDocumentsException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
         LOGGER.info("Requesting document with number:" +archiveDocumentNumber);
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
+        LOGGER.info("Parsing results");
         List<InfoArchiveDocument> documents = parseDocumentList(response);
         if(documents.size() > 1) {
             String errorMessage = "Got "+documents.size()+" results for document number:"+archiveDocumentNumber+", the request handler expected at least one result.";
@@ -112,6 +119,7 @@ public class RecordRequest {
             LOGGER.debug(response);
             throw new NoContentAvailableException(errorMessage);
         }
+        LOGGER.info("Returning document.");
         return documents.get(0);
     }
     
