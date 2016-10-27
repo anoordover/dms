@@ -47,13 +47,13 @@ public class DocumentService {
         try {
             ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest(input.toString());
             if (request.hasContent()) {
-                LOGGER.info("Content is valid");
+                LOGGER.info("Request content is valid");
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getArchivePersonNumber()));
                 return Response.ok(response.getAsXML()).build();
             } else {
-                LOGGER.info("Content is invalid");
+                LOGGER.info("Request content is invalid");
                 throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
             }
         } catch (ContentGrabbingException cgExc) {
@@ -71,6 +71,9 @@ public class DocumentService {
         } catch (LoginFailureException loginFailExc) {
             LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch(ToManyResultsException tmrExc ) {
+            LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("Something went wrong during the request.", exc);
@@ -93,7 +96,7 @@ public class DocumentService {
         try {
             DocumentRequestConsumer documentRequestConsumer = DocumentRequestConsumer.unmarshallerRequest(input.toString());
             if (documentRequestConsumer.hasContent()) {
-                LOGGER.info("Content is valid");
+                LOGGER.info("Request content is valid");
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
@@ -113,7 +116,7 @@ public class DocumentService {
                 };
                 return Response.ok(outputStream).build();
             } else {
-                LOGGER.info("Content is invalid");
+                LOGGER.info("Request content is invalid");
                 throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
             }
         } catch (ContentGrabbingException cgExc) {
@@ -121,20 +124,26 @@ public class DocumentService {
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (MisconfigurationException misConExc) {
             LOGGER.error(misConExc.ERROR_MESSAGE, misConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (MissingConfigurationException missingConExc) {
             LOGGER.error(missingConExc.ERROR_MESSAGE, missingConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (ServerConnectionFailureException serConFailExc) {
             LOGGER.error(serConFailExc.ERROR_MESSAGE, serConFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (LoginFailureException loginFailExc) {
             LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (MultipleDocumentsException multiDocExc) {
+            LOGGER.error(multiDocExc.ERROR_MESSAGE, multiDocExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, multiDocExc.ERROR_CODE, multiDocExc.ERROR_MESSAGE)).build();
+        } catch(ToManyResultsException tmrExc ) {
+            LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("Something went wrong during the request.", exc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
     
@@ -154,14 +163,14 @@ public class DocumentService {
             SearchDocumentRequestConsumer request = SearchDocumentRequestConsumer.unmarshalRequest(input.toString());
             //disable content grabbing with empty strings.
             if (request.hasContent()) {
-                LOGGER.info("Content is valid");
+                LOGGER.info("Request content is valid");
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentKind(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
                 return Response.ok(response.getAsXML()).build();
     
                 } else {
-                    LOGGER.info("Content is invalid");
+                    LOGGER.info("Request content is invalid");
                     throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
                 }
             } catch (ContentGrabbingException cgExc) {
@@ -179,6 +188,9 @@ public class DocumentService {
         } catch (LoginFailureException loginFailExc) {
             LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch(ToManyResultsException tmrExc ) {
+            LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("Something went wrong during the request.", exc);

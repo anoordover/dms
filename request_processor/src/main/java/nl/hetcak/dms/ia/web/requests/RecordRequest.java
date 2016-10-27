@@ -5,7 +5,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
+import nl.hetcak.dms.ia.web.exceptions.MultipleDocumentsException;
 import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
+import nl.hetcak.dms.ia.web.exceptions.ToManyResultsException;
 import nl.hetcak.dms.ia.web.exceptions.UnexpectedResultException;
 import nl.hetcak.dms.ia.web.query.InfoArchiveQueryBuilder;
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
@@ -40,6 +42,9 @@ public class RecordRequest {
     private static final String PARSE_RESPONSE_COLUMNS = "columns";
     private static final String PARSE_RESPONSE_NAME = "name";
     private static final String PARSE_RESPONSE_VALUE = "value";
+
+    private static final String PARSE_RESPONSE_PAGE = "page";
+    private static final String PARSE_RESPONSE_TOTALELEMENTS = "totalElements";
     
     private static final String PARSE_DOCUMENT_ID = "ArchiefDocumentId";
     private static final String PARSE_DOCUMENT_PERSON_NUMBER = "ArchiefPersoonsnummer";
@@ -66,23 +71,25 @@ public class RecordRequest {
         this.queryBuilder = new InfoArchiveQueryBuilder();
     }
     
-    public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException {
+    public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, ToManyResultsException {
         String response = requestUtil.responseReader(executeListDocumentsRequest(archivePersonNumber));
         return parseDocumentList(response);
     }
     
-    public List<InfoArchiveDocument> requestListDocuments(String documentType, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException {
+    public List<InfoArchiveDocument> requestListDocuments(String documentType, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException,ToManyResultsException {
         String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, sendDate1, sendDate2));
         return parseDocumentList(response);
     }
 
     //todo (throw tomanyresults exception)
-    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, UnexpectedResultException {
+    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, MultipleDocumentsException, ToManyResultsException {
+        LOGGER.info("Requesting document with number:" +archiveDocumentNumber);
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
         List<InfoArchiveDocument> documents = parseDocumentList(response);
         if(documents.size() == 0 || documents.size() > 1) {
             LOGGER.error("Got "+documents.size()+" results, however the request handler expected one result.");
-            throw new UnexpectedResultException("Got "+documents.size()+" results, however the request handler expected one result.");
+            LOGGER.debug(response);
+            throw new MultipleDocumentsException("Got "+documents.size()+" results, however the request handler expected one result.");
         }
         return documents.get(0);
     }
@@ -114,12 +121,25 @@ public class RecordRequest {
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
 
-    //todo: check if there are multiple pages with results. (throw tomanyresults exception)
-    private List<InfoArchiveDocument> parseDocumentList(String response) throws ParseException {
+    private List<InfoArchiveDocument> parseDocumentList(String response) throws ParseException, ToManyResultsException {
         List<InfoArchiveDocument> documents = new ArrayList<>();
-        
+
         JsonParser parser = new JsonParser();
         JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
+
+        if(jsonResponse.has(PARSE_RESPONSE_PAGE)) {
+            JsonObject page = jsonResponse.getAsJsonObject(PARSE_RESPONSE_PAGE);
+            if(page.has(PARSE_RESPONSE_TOTALELEMENTS)) {
+                int totalElements = page.get(PARSE_RESPONSE_TOTALELEMENTS).getAsInt();
+                if(configuration.getMaxResults() < totalElements) {
+                    String errorMessage = "InfoArchive responded with "+totalElements+" items, this exceeds the maximum allowed items of "+configuration.getMaxResults()+" set in the configuration.";
+                    LOGGER.error(errorMessage);
+                    LOGGER.debug(response);
+                    throw new ToManyResultsException(errorMessage);
+                }
+            }
+        }
+
         if (jsonResponse.has(PARSE_RESPONSE_EMBEDDED)) {
             JsonObject embedded = jsonResponse.getAsJsonObject(PARSE_RESPONSE_EMBEDDED);
             if (embedded.has(PARSE_RESPONSE_RESULTS)) {
