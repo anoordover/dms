@@ -38,6 +38,7 @@ public class DocumentService {
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response listDocuments(String sBody) {
+        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
         LOGGER.info("Incoming request for /listDocuemnts.");
         LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
@@ -86,6 +87,7 @@ public class DocumentService {
     @Produces("application/pdf")
     @Consumes(MediaType.APPLICATION_XML)
     public Response getDocument(String sBody) {
+        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
         LOGGER.info("Incoming request for /document.");
         LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
@@ -121,7 +123,7 @@ public class DocumentService {
             }
         } catch (ContentGrabbingException cgExc) {
             LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.");
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.NOT_ACCEPTABLE).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (MisconfigurationException misConExc) {
             LOGGER.error(misConExc.ERROR_MESSAGE, misConExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
@@ -152,6 +154,7 @@ public class DocumentService {
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response searchDocuments(String sBody) {
+        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
         LOGGER.info("Incoming request for /searchDocuments.");
         LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
@@ -211,6 +214,8 @@ public class DocumentService {
     @Path("/checkConfig")
     @Produces(MediaType.TEXT_PLAIN)
     public Response checkConfig() {
+        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
+        LOGGER.info("Running log checker.");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Loading config file...\n");
         ConfigurationManager configurationManager = new ConfigurationManager();
@@ -226,7 +231,7 @@ public class DocumentService {
             stringBuilder.append("Config file found.\n");
             stringBuilder.append("[ERROR] Config file is invalid.\n");
         }
-        
+        LOGGER.info(stringBuilder.toString());
         return Response.ok(stringBuilder.toString()).build();
     }
 }

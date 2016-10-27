@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
  */
 public class RestfullTest {
     private final static String REQUEST_LIST = "<ArchiefPersoonsnummer>1971429972</ArchiefPersoonsnummer>";
-    private final static String REQUEST_DOCUMENT = "<ArchiefDocumentId>1646986803</ArchiefDocumentId><Volgnummer>001</Volgnummer>";
+    private final static String REQUEST_DOCUMENT = "<ArchiefDocumentId>1663298436</ArchiefDocumentId><Volgnummer>001</Volgnummer>";
     private final static String REQUEST_SEARCH = "<ArchiefDocumentsoort>B12</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-08-15T00:00:00</ArchiefVerzenddagEinde>";
         
     @Test

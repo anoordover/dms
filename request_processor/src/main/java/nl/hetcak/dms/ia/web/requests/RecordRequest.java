@@ -1,6 +1,7 @@
 package nl.hetcak.dms.ia.web.requests;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
@@ -44,7 +45,11 @@ public class RecordRequest {
     private static final String PARSE_RESPONSE_VALUE = "value";
 
     private static final String PARSE_RESPONSE_PAGE = "page";
-    private static final String PARSE_RESPONSE_TOTALELEMENTS = "totalElements";
+    private static final String PARSE_RESPONSE_TOTAL_ELEMENTS = "totalElements";
+
+    private static final String PARSE_RESPONSE_ERROR = "_errors";
+    private static final String PARSE_RESPONSE_ERROR_TITLE = "error";
+    private static final String PARSE_RESPONSE_ERROR_MESSAGE = "message";
     
     private static final String PARSE_DOCUMENT_ID = "ArchiefDocumentId";
     private static final String PARSE_DOCUMENT_PERSON_NUMBER = "ArchiefPersoonsnummer";
@@ -71,18 +76,18 @@ public class RecordRequest {
         this.queryBuilder = new InfoArchiveQueryBuilder();
     }
     
-    public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, ToManyResultsException {
+    public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, ToManyResultsException, UnexpectedResultException {
         String response = requestUtil.responseReader(executeListDocumentsRequest(archivePersonNumber));
         return parseDocumentList(response);
     }
     
-    public List<InfoArchiveDocument> requestListDocuments(String documentType, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException,ToManyResultsException {
+    public List<InfoArchiveDocument> requestListDocuments(String documentType, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException,ToManyResultsException, UnexpectedResultException {
         String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, sendDate1, sendDate2));
         return parseDocumentList(response);
     }
 
     //todo (throw tomanyresults exception)
-    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, MultipleDocumentsException, ToManyResultsException {
+    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, MultipleDocumentsException, ToManyResultsException, UnexpectedResultException {
         LOGGER.info("Requesting document with number:" +archiveDocumentNumber);
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
         List<InfoArchiveDocument> documents = parseDocumentList(response);
@@ -121,16 +126,39 @@ public class RecordRequest {
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
 
-    private List<InfoArchiveDocument> parseDocumentList(String response) throws ParseException, ToManyResultsException {
+    private List<InfoArchiveDocument> parseDocumentList(String response) throws ParseException, ToManyResultsException, UnexpectedResultException {
         List<InfoArchiveDocument> documents = new ArrayList<>();
 
         JsonParser parser = new JsonParser();
         JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
 
+        //responseErrorCheck
+        if(jsonResponse.has(PARSE_RESPONSE_ERROR)){
+            LOGGER.info("Got error in response.");
+            StringBuilder exceptionMessage = new StringBuilder();
+            JsonArray errors = jsonResponse.getAsJsonArray(PARSE_RESPONSE_ERROR);
+            for (int i_error = 0; i_error < errors.size(); i_error++) {
+                JsonObject error = errors.get(i_error).getAsJsonObject();
+
+                String errorTitle = error.get(PARSE_RESPONSE_ERROR_TITLE).getAsString();
+                String errorMessage = error.get(PARSE_RESPONSE_ERROR_MESSAGE).getAsString();
+
+                exceptionMessage.append(errorTitle);
+                exceptionMessage.append(" ");
+                exceptionMessage.append(errorMessage);
+                exceptionMessage.append("\n");
+            }
+
+            LOGGER.debug(response);
+            LOGGER.error(exceptionMessage.toString());
+            throw new UnexpectedResultException(exceptionMessage.toString());
+        }
+
+        //check response size
         if(jsonResponse.has(PARSE_RESPONSE_PAGE)) {
             JsonObject page = jsonResponse.getAsJsonObject(PARSE_RESPONSE_PAGE);
-            if(page.has(PARSE_RESPONSE_TOTALELEMENTS)) {
-                int totalElements = page.get(PARSE_RESPONSE_TOTALELEMENTS).getAsInt();
+            if(page.has(PARSE_RESPONSE_TOTAL_ELEMENTS)) {
+                int totalElements = page.get(PARSE_RESPONSE_TOTAL_ELEMENTS).getAsInt();
                 if(configuration.getMaxResults() < totalElements) {
                     String errorMessage = "InfoArchive responded with "+totalElements+" items, this exceeds the maximum allowed items of "+configuration.getMaxResults()+" set in the configuration.";
                     LOGGER.error(errorMessage);
@@ -140,6 +168,7 @@ public class RecordRequest {
             }
         }
 
+        //read response
         if (jsonResponse.has(PARSE_RESPONSE_EMBEDDED)) {
             JsonObject embedded = jsonResponse.getAsJsonObject(PARSE_RESPONSE_EMBEDDED);
             if (embedded.has(PARSE_RESPONSE_RESULTS)) {
