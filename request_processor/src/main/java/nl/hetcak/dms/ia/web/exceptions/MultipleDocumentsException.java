@@ -9,7 +9,7 @@ import java.security.PrivilegedActionException;
  */
 public class MultipleDocumentsException extends Exception {
     public static final int ERROR_CODE = 2008;
-    public static final String ERROR_MESSAGE = "Multiple documents detected with the same document id, please contact a Administrator.";
+    public static final String ERROR_MESSAGE = "Multiple documents detected with the same document id, please contact an Administrator.";
 
     /**
      * Constructs a new exception with {@code null} as its detail message.

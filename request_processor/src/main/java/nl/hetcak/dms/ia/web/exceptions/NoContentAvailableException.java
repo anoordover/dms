@@ -3,22 +3,20 @@ package nl.hetcak.dms.ia.web.exceptions;
 import java.security.PrivilegedActionException;
 
 /**
- * (c) 2016 AMPLEXOR International S.A., All rights reserved.
- *
- * @author Jeroen.Pelt@AMPLEXOR.com
+ * Created by jepelt on 27-10-2016.
  */
-public class LoginFailureException extends Exception {
-    public static final int ERROR_CODE = 1003;
-    public static final String ERROR_MESSAGE = "Failed to login, please contact an Administrator.";
-    
+public class NoContentAvailableException extends Exception{
+    public static final int ERROR_CODE = 2007;
+    public static final String ERROR_MESSAGE = "Document not available, please contact an administrator.";
+
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public LoginFailureException() {
+    public NoContentAvailableException() {
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message.  The
      * cause is not initialized, and may subsequently be initialized by
@@ -27,10 +25,10 @@ public class LoginFailureException extends Exception {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public LoginFailureException(String message) {
+    public NoContentAvailableException(String message) {
         super(message);
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message and
      * cause.  <p>Note that the detail message associated with
@@ -45,10 +43,10 @@ public class LoginFailureException extends Exception {
      *                unknown.)
      * @since 1.4
      */
-    public LoginFailureException(String message, Throwable cause) {
+    public NoContentAvailableException(String message, Throwable cause) {
         super(message, cause);
     }
-    
+
     /**
      * Constructs a new exception with the specified cause and a detail
      * message of <tt>(cause==null ? null : cause.toString())</tt> (which
@@ -63,10 +61,10 @@ public class LoginFailureException extends Exception {
      *              unknown.)
      * @since 1.4
      */
-    public LoginFailureException(Throwable cause) {
+    public NoContentAvailableException(Throwable cause) {
         super(cause);
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message,
      * cause, suppression enabled or disabled, and writable stack
@@ -81,7 +79,7 @@ public class LoginFailureException extends Exception {
      *                           be writable
      * @since 1.7
      */
-    public LoginFailureException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NoContentAvailableException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

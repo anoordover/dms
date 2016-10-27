@@ -8,8 +8,8 @@ import java.security.PrivilegedActionException;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class MisconfigurationException extends Exception {
-    public static final int ERROR_CODE = 0;
-    public static final String ERROR_MESSAGE = "There is a error with in the configuration file, please contact a Administrator.";
+    public static final int ERROR_CODE = 1001;
+    public static final String ERROR_MESSAGE = "There is a error with in the configuration file, please contact an Administrator.";
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a

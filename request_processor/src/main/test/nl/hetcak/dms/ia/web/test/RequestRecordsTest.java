@@ -30,7 +30,7 @@ public class RequestRecordsTest {
     
     //external connection
     @Test(timeout = 3000)
-    public void getListDocumentsFromInfoArchive() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, ToManyResultsException, UnexpectedResultException  {
+    public void getListDocumentsFromInfoArchive() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException  {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);
@@ -38,15 +38,15 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(),credentials);
-        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("1540580392");
+        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("1971429972");
         assertNotNull(document);
         assertTrue(document.size() > 0);
     }
     
     
     //external connection
-    @Test(timeout = 3000)
-    public void getEmptyList() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, ToManyResultsException, UnexpectedResultException {
+    @Test(expected = NoContentAvailableException.class ,timeout = 3000)
+    public void getEmptyList() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);
@@ -68,7 +68,7 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest request = new RecordRequest(connectionManager.getConfiguration(), credentials);
-        InfoArchiveDocument document = request.requestDocument("1582656150");
+        InfoArchiveDocument document = request.requestDocument("1663298436");
         assertNotNull(document);
         DocumentRequest documentRequest = new DocumentRequest(connectionManager.getConfiguration(), credentials);
         ByteArrayOutputStream documentStream = documentRequest.getContentWithContentId(document.getArchiefFile());

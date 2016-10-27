@@ -9,7 +9,7 @@ import java.security.PrivilegedActionException;
  */
 public class UnexpectedResultException extends Exception {
     public static final int ERROR_CODE = 1010;
-    public static final String ERROR_MESSAGE = "Something went wrong, please contact a Administrator.";
+    public static final String ERROR_MESSAGE = "Something went wrong, please contact an Administrator.";
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a

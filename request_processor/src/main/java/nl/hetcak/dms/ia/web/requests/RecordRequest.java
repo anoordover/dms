@@ -6,10 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
-import nl.hetcak.dms.ia.web.exceptions.MultipleDocumentsException;
-import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
-import nl.hetcak.dms.ia.web.exceptions.ToManyResultsException;
-import nl.hetcak.dms.ia.web.exceptions.UnexpectedResultException;
+import nl.hetcak.dms.ia.web.exceptions.*;
 import nl.hetcak.dms.ia.web.query.InfoArchiveQueryBuilder;
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
 import nl.hetcak.dms.ia.web.util.InfoArchiveDateUtil;
@@ -76,25 +73,44 @@ public class RecordRequest {
         this.queryBuilder = new InfoArchiveQueryBuilder();
     }
     
-    public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, ToManyResultsException, UnexpectedResultException {
+    public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
         String response = requestUtil.responseReader(executeListDocumentsRequest(archivePersonNumber));
-        return parseDocumentList(response);
+        List<InfoArchiveDocument> result = parseDocumentList(response);
+        if(result.size() == 0) {
+            String errorMessage = "Got 0 results for documents with person number:"+archivePersonNumber+", the request handler expected at least one result.";
+            LOGGER.error(errorMessage);
+            LOGGER.debug(response);
+            throw new NoContentAvailableException(errorMessage);
+        }
+        return result;
     }
     
-    public List<InfoArchiveDocument> requestListDocuments(String documentType, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException,ToManyResultsException, UnexpectedResultException {
+    public List<InfoArchiveDocument> requestListDocuments(String documentType, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException,ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
         String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, sendDate1, sendDate2));
-        return parseDocumentList(response);
+        List<InfoArchiveDocument> result = parseDocumentList(response);
+        if(result.size() == 0) {
+            String errorMessage = "Got 0 results for document search for document type:"+documentType+" and send date between "+sendDate1+" and "+sendDate2+", the request handler expected at least one result.";
+            LOGGER.error(errorMessage);
+            LOGGER.debug(response);
+            throw new NoContentAvailableException(errorMessage);
+        }
+        return result;
     }
 
-    //todo (throw tomanyresults exception)
-    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, MultipleDocumentsException, ToManyResultsException, UnexpectedResultException {
+    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, MultipleDocumentsException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
         LOGGER.info("Requesting document with number:" +archiveDocumentNumber);
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
         List<InfoArchiveDocument> documents = parseDocumentList(response);
-        if(documents.size() == 0 || documents.size() > 1) {
-            LOGGER.error("Got "+documents.size()+" results, however the request handler expected one result.");
+        if(documents.size() > 1) {
+            String errorMessage = "Got "+documents.size()+" results for document number:"+archiveDocumentNumber+", the request handler expected at least one result.";
+            LOGGER.error(errorMessage);
             LOGGER.debug(response);
-            throw new MultipleDocumentsException("Got "+documents.size()+" results, however the request handler expected one result.");
+            throw new MultipleDocumentsException(errorMessage);
+        } else if (documents.size() == 0) {
+            String errorMessage = "Got "+documents.size()+" results for document number:"+archiveDocumentNumber+", the request handler expected at least one result.";
+            LOGGER.error(errorMessage);
+            LOGGER.debug(response);
+            throw new NoContentAvailableException(errorMessage);
         }
         return documents.get(0);
     }
