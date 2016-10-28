@@ -38,6 +38,7 @@ public class DocumentService {
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response listDocuments(String sBody) {
+        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
         LOGGER.info("Incoming request for /listDocuemnts.");
         LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
@@ -47,34 +48,40 @@ public class DocumentService {
         try {
             ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest(input.toString());
             if (request.hasContent()) {
-                LOGGER.info("Content is valid");
+                LOGGER.info("Request content is valid");
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getArchivePersonNumber()));
                 return Response.ok(response.getAsXML()).build();
             } else {
-                LOGGER.info("Content is invalid");
+                LOGGER.info("Request content is invalid");
                 throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
             }
         } catch (ContentGrabbingException cgExc) {
-            LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.");
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            LOGGER.error("Content grabbing attempt detected. Returning http error.");
+            return Response.status(Response.Status.NOT_ACCEPTABLE).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (MisconfigurationException misConExc) {
             LOGGER.error(misConExc.ERROR_MESSAGE, misConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (MissingConfigurationException missingConExc) {
             LOGGER.error(missingConExc.ERROR_MESSAGE, missingConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (ServerConnectionFailureException serConFailExc) {
             LOGGER.error(serConFailExc.ERROR_MESSAGE, serConFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (LoginFailureException loginFailExc) {
             LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (Exception exc) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (ToManyResultsException tmrExc) {
+            LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, tmrExc.ERROR_MESSAGE)).build();
+        } catch (NoContentAvailableException noConAvaExc) {
+            LOGGER.error(noConAvaExc.ERROR_MESSAGE, noConAvaExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, noConAvaExc.ERROR_CODE, noConAvaExc.ERROR_MESSAGE)).build();
+        }catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("Something went wrong during the request.", exc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
     
@@ -83,58 +90,71 @@ public class DocumentService {
     @Produces("application/pdf")
     @Consumes(MediaType.APPLICATION_XML)
     public Response getDocument(String sBody) {
+        LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
         LOGGER.info("Incoming request for /document.");
         LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
         input.append("<request>");
         input.append(sBody);
         input.append("</request>");
-        
+
         try {
             DocumentRequestConsumer documentRequestConsumer = DocumentRequestConsumer.unmarshallerRequest(input.toString());
             if (documentRequestConsumer.hasContent()) {
-                LOGGER.info("Content is valid");
+                LOGGER.info("Request content is valid");
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
-                
+
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 InfoArchiveDocument infoArchiveDocument = recordRequest.requestDocument(documentRequestConsumer.getArchiveDocumentNumber());
                 DocumentRequest iaDocumentRequest = new DocumentRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ByteArrayOutputStream byteArray = iaDocumentRequest.getContentWithContentId(infoArchiveDocument.getArchiefFile());
+                LOGGER.info("Getting Stream ready to send.");
                 StreamingOutput outputStream = new StreamingOutput() {
                     @Override
                     public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+                        LOGGER.info("Sending Stream as response.");
                         try {
                             outputStream.write(byteArray.toByteArray());
                             outputStream.close();
                         } catch (Exception e) {
+                            LOGGER.error("Error while sending stream.", e);
                             throw new WebApplicationException(e);
                         }
                     }
                 };
                 return Response.ok(outputStream).build();
             } else {
-                LOGGER.info("Content is invalid");
+                LOGGER.info("Request content is invalid");
                 throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
             }
         } catch (ContentGrabbingException cgExc) {
-            LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.");
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            LOGGER.error("Content grabbing attempt detected. Returning http error.");
+            return Response.status(Response.Status.NOT_ACCEPTABLE).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (MisconfigurationException misConExc) {
             LOGGER.error(misConExc.ERROR_MESSAGE, misConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (MissingConfigurationException missingConExc) {
             LOGGER.error(missingConExc.ERROR_MESSAGE, missingConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (ServerConnectionFailureException serConFailExc) {
             LOGGER.error(serConFailExc.ERROR_MESSAGE, serConFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (LoginFailureException loginFailExc) {
             LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (Exception exc) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (MultipleDocumentsException multiDocExc) {
+            LOGGER.error(multiDocExc.ERROR_MESSAGE, multiDocExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, multiDocExc.ERROR_CODE, multiDocExc.ERROR_MESSAGE)).build();
+        } catch (ToManyResultsException tmrExc) {
+            LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, tmrExc.ERROR_MESSAGE)).build();
+        } catch (NoContentAvailableException noConAvaExc) {
+            LOGGER.error(noConAvaExc.ERROR_MESSAGE, noConAvaExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, noConAvaExc.ERROR_CODE, noConAvaExc.ERROR_MESSAGE)).build();
+        }catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("Something went wrong during the request.", exc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
     
@@ -143,6 +163,7 @@ public class DocumentService {
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response searchDocuments(String sBody) {
+        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
         LOGGER.info("Incoming request for /searchDocuments.");
         LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
@@ -154,14 +175,14 @@ public class DocumentService {
             SearchDocumentRequestConsumer request = SearchDocumentRequestConsumer.unmarshalRequest(input.toString());
             //disable content grabbing with empty strings.
             if (request.hasContent()) {
-                LOGGER.info("Content is valid");
+                LOGGER.info("Request content is valid");
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentKind(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
                 return Response.ok(response.getAsXML()).build();
     
                 } else {
-                    LOGGER.info("Content is invalid");
+                    LOGGER.info("Request content is invalid");
                     throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
                 }
             } catch (ContentGrabbingException cgExc) {
@@ -169,20 +190,26 @@ public class DocumentService {
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (MisconfigurationException misConExc) {
             LOGGER.error(misConExc.ERROR_MESSAGE, misConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (MissingConfigurationException missingConExc) {
             LOGGER.error(missingConExc.ERROR_MESSAGE, missingConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (ServerConnectionFailureException serConFailExc) {
             LOGGER.error(serConFailExc.ERROR_MESSAGE, serConFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
         } catch (LoginFailureException loginFailExc) {
             LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (Exception exc) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
+        } catch (ToManyResultsException tmrExc) {
+            LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, tmrExc.ERROR_MESSAGE)).build();
+        } catch (NoContentAvailableException noConAvaExc) {
+            LOGGER.error(noConAvaExc.ERROR_MESSAGE, noConAvaExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, noConAvaExc.ERROR_CODE, noConAvaExc.ERROR_MESSAGE)).build();
+        }catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("Something went wrong during the request.", exc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
     
@@ -199,6 +226,8 @@ public class DocumentService {
     @Path("/checkConfig")
     @Produces(MediaType.TEXT_PLAIN)
     public Response checkConfig() {
+        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
+        LOGGER.info("Running log checker.");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Loading config file...\n");
         ConfigurationManager configurationManager = new ConfigurationManager();
@@ -214,7 +243,7 @@ public class DocumentService {
             stringBuilder.append("Config file found.\n");
             stringBuilder.append("[ERROR] Config file is invalid.\n");
         }
-        
+        LOGGER.info(stringBuilder.toString());
         return Response.ok(stringBuilder.toString()).build();
     }
 }

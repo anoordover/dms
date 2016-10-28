@@ -1,10 +1,7 @@
 package nl.hetcak.dms.ia.web.test;
 
 import nl.hetcak.dms.ia.web.comunication.Credentials;
-import nl.hetcak.dms.ia.web.exceptions.LoginFailureException;
-import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
-import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
-import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
+import nl.hetcak.dms.ia.web.exceptions.*;
 import nl.hetcak.dms.ia.web.managers.ConnectionManager;
 import nl.hetcak.dms.ia.web.requests.DocumentRequest;
 import nl.hetcak.dms.ia.web.requests.RecordRequest;
@@ -33,7 +30,7 @@ public class RequestRecordsTest {
     
     //external connection
     @Test(timeout = 3000)
-    public void getListDocumentsFromInfoArchive() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException {
+    public void getListDocumentsFromInfoArchive() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException  {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);
@@ -41,15 +38,15 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(),credentials);
-        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("1540580392");
+        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("1971429972");
         assertNotNull(document);
         assertTrue(document.size() > 0);
     }
     
     
     //external connection
-    @Test(timeout = 3000)
-    public void getEmptyList() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException {
+    @Test(expected = NoContentAvailableException.class ,timeout = 3000)
+    public void getEmptyList() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);
@@ -71,7 +68,7 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest request = new RecordRequest(connectionManager.getConfiguration(), credentials);
-        InfoArchiveDocument document = request.requestDocument("1582656150");
+        InfoArchiveDocument document = request.requestDocument("1663298436");
         assertNotNull(document);
         DocumentRequest documentRequest = new DocumentRequest(connectionManager.getConfiguration(), credentials);
         ByteArrayOutputStream documentStream = documentRequest.getContentWithContentId(document.getArchiefFile());

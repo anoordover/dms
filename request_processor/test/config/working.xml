@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config-request-processor>
-    <ia_application_uuid>ff0f3581-f753-451a-a7ff-148238e6dc0e</ia_application_uuid>
-    <ia_searchcomposition_uuid>5f5d2b65-d650-4c2a-b936-f919afae89d8</ia_searchcomposition_uuid>
+    <ia_application_uuid>dd9eeb63-0a85-410e-a322-cc4af9febfff</ia_application_uuid>
+    <ia_searchcomposition_uuid>b9d5d3bd-04cb-49e8-8b4d-16b6432e67ef</ia_searchcomposition_uuid>
     <log4j_properties></log4j_properties>
     <maximaal_aantal_resultaten>900</maximaal_aantal_resultaten>
     <ia_token></ia_token>

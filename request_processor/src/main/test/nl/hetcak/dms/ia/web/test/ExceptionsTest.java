@@ -216,5 +216,61 @@ public class ExceptionsTest {
         throw new ToManyResultsException("Test", error, true, true);
     }
 
-    
+    //MultipleDocumentsException
+    @Test(expected = MultipleDocumentsException.class)
+    public void throwMultipleDocumentsException() throws MultipleDocumentsException {
+        throw new MultipleDocumentsException();
+    }
+
+    @Test(expected = MultipleDocumentsException.class)
+    public void throwMultipleDocumentsException1() throws MultipleDocumentsException {
+        throw new MultipleDocumentsException("Test");
+    }
+
+    @Test(expected = MultipleDocumentsException.class)
+    public void throwMultipleDocumentsException2() throws MultipleDocumentsException {
+        Exception error = new Exception();
+        throw new MultipleDocumentsException("Test", error);
+    }
+
+    @Test(expected = MultipleDocumentsException.class)
+    public void throwMultipleDocumentsException3() throws MultipleDocumentsException {
+        Exception error = new Exception();
+        throw new MultipleDocumentsException(error);
+    }
+
+    @Test(expected = MultipleDocumentsException.class)
+    public void throwMultipleDocumentsException4() throws MultipleDocumentsException {
+        Exception error = new Exception();
+        throw new MultipleDocumentsException("Test", error, true, true);
+    }
+
+    //NoContentAvailableException
+    @Test(expected = NoContentAvailableException.class)
+    public void throwNoContentAvailableException() throws NoContentAvailableException {
+        throw new NoContentAvailableException();
+    }
+
+    @Test(expected = NoContentAvailableException.class)
+    public void throwNoContentAvailableException1() throws NoContentAvailableException {
+        throw new NoContentAvailableException("Test");
+    }
+
+    @Test(expected = NoContentAvailableException.class)
+    public void throwNoContentAvailableException2() throws NoContentAvailableException {
+        Exception error = new Exception();
+        throw new NoContentAvailableException("Test", error);
+    }
+
+    @Test(expected = NoContentAvailableException.class)
+    public void throwNoContentAvailableException3() throws NoContentAvailableException {
+        Exception error = new Exception();
+        throw new NoContentAvailableException(error);
+    }
+
+    @Test(expected = NoContentAvailableException.class)
+    public void throwNoContentAvailableException4() throws NoContentAvailableException {
+        Exception error = new Exception();
+        throw new NoContentAvailableException("Test", error, true, true);
+    }
 }

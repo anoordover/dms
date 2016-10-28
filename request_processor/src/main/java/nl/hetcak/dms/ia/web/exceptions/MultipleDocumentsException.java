@@ -7,18 +7,18 @@ import java.security.PrivilegedActionException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class LoginFailureException extends Exception {
-    public static final int ERROR_CODE = 1003;
-    public static final String ERROR_MESSAGE = "Failed to login, please contact an Administrator.";
-    
+public class MultipleDocumentsException extends Exception {
+    public static final int ERROR_CODE = 2008;
+    public static final String ERROR_MESSAGE = "Multiple documents detected with the same document id, please contact an Administrator.";
+
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public LoginFailureException() {
+    public MultipleDocumentsException() {
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message.  The
      * cause is not initialized, and may subsequently be initialized by
@@ -27,10 +27,10 @@ public class LoginFailureException extends Exception {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public LoginFailureException(String message) {
+    public MultipleDocumentsException(String message) {
         super(message);
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message and
      * cause.  <p>Note that the detail message associated with
@@ -45,10 +45,10 @@ public class LoginFailureException extends Exception {
      *                unknown.)
      * @since 1.4
      */
-    public LoginFailureException(String message, Throwable cause) {
+    public MultipleDocumentsException(String message, Throwable cause) {
         super(message, cause);
     }
-    
+
     /**
      * Constructs a new exception with the specified cause and a detail
      * message of <tt>(cause==null ? null : cause.toString())</tt> (which
@@ -63,10 +63,10 @@ public class LoginFailureException extends Exception {
      *              unknown.)
      * @since 1.4
      */
-    public LoginFailureException(Throwable cause) {
+    public MultipleDocumentsException(Throwable cause) {
         super(cause);
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message,
      * cause, suppression enabled or disabled, and writable stack
@@ -81,7 +81,7 @@ public class LoginFailureException extends Exception {
      *                           be writable
      * @since 1.7
      */
-    public LoginFailureException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public MultipleDocumentsException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -35,6 +35,7 @@ public class ConfigurationManager {
     }
     
     public ConfigurationImpl loadConfiguration(File file) throws MissingConfigurationException, MisconfigurationException {
+        LOGGER.info("Loading Configuration.");
         if(file == null)
             file = new File(DEFAULT_CONFIG_FILE_NAME);
         
@@ -42,6 +43,7 @@ public class ConfigurationManager {
             try {
                 JAXBContext context = JAXBContext.newInstance(ConfigurationImpl.class);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
+                LOGGER.info("Configuration Loaded.");
                 return (ConfigurationImpl) unmarshaller.unmarshal(file);
             } catch (JAXBException jaxbExc) {
                 LOGGER.error("Failed to load configuration.", jaxbExc);
@@ -53,7 +55,8 @@ public class ConfigurationManager {
         }
     }
     
-    public ConfigurationImpl createConfiguration(ConfigurationImpl currentConfiguration) {
+    public void createConfiguration(ConfigurationImpl currentConfiguration) {
+        LOGGER.info("Create a new configuration file on the drive.");
         File configFolder = new File(DEFAULT_CONFIG_FOLDER_NAME);
         if(!configFolder.exists()) {
             configFolder.mkdir();
@@ -66,12 +69,12 @@ public class ConfigurationManager {
                 JAXBContext context = JAXBContext.newInstance(ConfigurationImpl.class);
                 Marshaller marshaller = context.createMarshaller();
                 marshaller.marshal(currentConfiguration, file);
+                LOGGER.info("Configuration file saved to drive.");
             } catch (JAXBException jaxbExc) {
                 LOGGER.error("Failed to create configuration.", jaxbExc);
             }
         } else {
             LOGGER.warn("No configuration file has been provided.");
         }
-        return null;
     }
 }

@@ -95,7 +95,7 @@ public class LoginRequest {
             int expireSeconds = response.get("expires_in").getAsInt();
             GregorianCalendar expire = (GregorianCalendar)GregorianCalendar.getInstance();
             expire.add(Calendar.SECOND,expireSeconds);
-            LOGGER.info("InfoArchive Credentials will expire:"+expire.toString());
+            LOGGER.info("InfoArchive Credentials will expire:"+expire.getTime().toString());
             credentials.setSecurityTokenInvalidationTime(expire);
             LOGGER.info("Updating Tokens");
             credentials.setSecurityToken(response.get("access_token").getAsString());
