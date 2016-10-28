@@ -23,10 +23,6 @@ import java.util.Date;
 public class InfoArchiveDocument {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfoArchiveDocument.class);
     
-    //Todo: Willem vragen wat ms en mobj betekent (waarschijnlijk modifier string en modifier object. een oude javascript standard.)
-    //maar een IDE kan ons vertellen welke type een var is, better kijk naar de annotatie van type zoals: String, int, boolean
-    //misschien even Willems IDE even checken als er geen gekke dingen zijn ingesteld.
-    
     @XmlElement(name="ArchiefDocumentId")
     private String msArchiefDocumentId;
     @XmlElement(name = "ArchiefPersoonsnummer")

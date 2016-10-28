@@ -17,7 +17,9 @@ import java.text.ParseException;
  */
 @XmlRootElement(name = "request")
 public class SearchDocumentRequestConsumer {
+    private String personNumber = "";
     private String documentKind = "";
+    private String documentCharacteristics = "";
     private String documentSendDate1 = "";
     private String documentSendDate2 = "";
     
@@ -56,6 +58,26 @@ public class SearchDocumentRequestConsumer {
         this.documentSendDate2 = documentSendDate2;
     }
     
+    
+    @XmlElement(name = "ArchiefPersoonsnummer", required = true)
+    public String getPersonNumber() {
+        return personNumber;
+    }
+    
+    public void setPersonNumber(String personNumber) {
+        this.personNumber = personNumber;
+    }
+    
+    @XmlElement(name = "ArchiefDocumentkenmerk", required = true)
+    public String getDocumentCharacteristics() {
+        return documentCharacteristics;
+    }
+    
+    
+    public void setDocumentCharacteristics(String documentCharacteristics) {
+        this.documentCharacteristics = documentCharacteristics;
+    }
+    
     public static SearchDocumentRequestConsumer unmarshalRequest(String input) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(SearchDocumentRequestConsumer.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -65,25 +87,27 @@ public class SearchDocumentRequestConsumer {
     }
     
     public boolean hasContent() {
-        if(this.documentKind == null) {
-            return false;
-        }
+        Boolean content = true;
+    
         if(this.documentSendDate1 == null) {
-            return false;
+            content =  false;
         }
         if(this.documentSendDate2 == null) {
-            return false;
-        }
-        if(this.documentKind.length() == 0) {
-            return false;
+            content =  false;
         }
         if(this.documentSendDate1.length() == 0) {
-            return false;
+            content =  false;
         }
         if(this.documentSendDate2.length() == 0) {
-            return false;
+            content =  false;
+        }
+        if(this.documentKind == null && this.documentCharacteristics == null && this.personNumber == null) {
+            content = false;
+        }
+        if(this.documentKind.length() == 0 && this.documentCharacteristics.length() == 0 && this.personNumber.length() == 0) {
+            content = false;
         }
         
-        return true;
+        return content;
     }
 }

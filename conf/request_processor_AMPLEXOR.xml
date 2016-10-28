@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config-request-processor>
+    <ia_application_uuid>ed1932ac-abe3-422f-b099-3a63361c6ebc</ia_application_uuid>
+    <ia_searchcomposition_uuid>da267633-c67d-45ee-b757-abd3273119ac</ia_searchcomposition_uuid>
+    <log4j_properties></log4j_properties>
+    <maximaal_aantal_resultaten>900</maximaal_aantal_resultaten>
+    <ia_token></ia_token>
+    <ia_server>infoarchive40</ia_server>
+    <ia_port>8080</ia_port>
+    <ia_service_usr>sue@iacustomer.com</ia_service_usr>
+    <ia_service_usr_password>password</ia_service_usr_password>
+</config-request-processor>

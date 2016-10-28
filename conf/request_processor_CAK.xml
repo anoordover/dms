@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config-request-processor>
+    <ia_application_uuid>ff0f3581-f753-451a-a7ff-148238e6dc0e</ia_application_uuid>
+    <ia_searchcomposition_uuid>5f5d2b65-d650-4c2a-b936-f919afae89d8</ia_searchcomposition_uuid>
+    <log4j_properties></log4j_properties>
+    <maximaal_aantal_resultaten>900</maximaal_aantal_resultaten>
+    <ia_token></ia_token>
+    <ia_server>infoarchive-sp.back.ont.dms.func.cak-bz.local</ia_server>
+    <ia_port>8080</ia_port>
+    <ia_service_usr>sa-infoarchive-ont</ia_service_usr>
+    <ia_service_usr_password>8TExclergywW</ia_service_usr_password>
+</config-request-processor>
