@@ -81,7 +81,7 @@ public class AMPSipManager implements SipManager {
         return bReturn;
     }
 
-    protected List<IADocument> retrieveDocuments(IACache objCache) {
+    protected synchronized List<IADocument> retrieveDocuments(IACache objCache) {
         List<IADocument> cDocuments = new ArrayList<>();
         Class<?> objClass = IADocument.class;
         try {
@@ -141,7 +141,9 @@ public class AMPSipManager implements SipManager {
         return objDocument -> {
             List<DigitalObject> cObjects = new ArrayList<>();
             for (String sKey : objDocument.getContentKeys()) {
-                DigitalObject objObject = DigitalObject.fromBytes(String.format("%s_%s.pdf", sKey, objDocument.getDocumentId()), objDocument.loadContent(sKey));
+                objDocument.loadContent(sKey);
+                DigitalObject objObject = DigitalObject.fromBytes(String.format("%s_%s.pdf", sKey, objDocument.getDocumentId()), objDocument.getContent(sKey));
+                objDocument.setContent(sKey, new byte[0]);
                 cObjects.add(objObject);
             }
             return cObjects.iterator();

@@ -13,6 +13,7 @@ import static com.amplexor.ia.Logger.error;
  * Created by admjzimmermann on 14-9-2016.
  */
 public class MultipartUtility {
+    public static final int CHUNK_SIZE = 4096;
     private static final String LINE_FEED = "\r\n";
 
     //Hides the implicit public constructor
@@ -53,6 +54,7 @@ public class MultipartUtility {
             int iRead;
             while ((iRead = objFileInput.read(objBuffer)) != -1) {
                 objConnection.getOutputStream().write(objBuffer, 0, iRead);
+                objConnection.getOutputStream().flush();
             }
             objConnection.getOutputStream().flush();
         }

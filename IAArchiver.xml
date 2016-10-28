@@ -10,8 +10,8 @@
     </worker_manager>
     <caching>
         <implementing_class>nl.hetcak.dms.CAKCacheManager</implementing_class>
-        <base_path>Cache</base_path>
-        <message_threshold>10</message_threshold>
+        <base_path>D:\Data\Cache</base_path>
+        <message_threshold>1000</message_threshold>
         <time_threshold>1800</time_threshold>
         <custom_parameters>
             <document_element_name>ArchiefDocument</document_element_name>
@@ -20,24 +20,24 @@
     </caching>
     <rest_api>
         <protocol>http</protocol>
-        <host>infoarchive-sp.back.tst.dms.func.cak-bz.local</host>
-        <port>8775</port>
+        <host>infoarchive40</host>
+        <port>8765</port>
         <gateway_protocol>http</gateway_protocol>
-        <gateway_host>infoarchive-rp.front.tst.dms.func.cak-bz.local</gateway_host>
+        <gateway_host>infoarchive40</gateway_host>
         <gateway_port>8080</gateway_port>
-        <ingest_user>sa-infoarchive-tst</ingest_user>
-        <encrypted_ingest_password>WWZHZGZvY3VzZXIk</encrypted_ingest_password>
+        <ingest_user>sue@iacustomer.com</ingest_user>
+        <encrypted_ingest_password>cGFzc3dvcmQ=</encrypted_ingest_password>
         <ingest_tenant>INFOARCHIVE</ingest_tenant>
     </rest_api>
     <sip>
-        <implementing_class>nl.hetcak.dms.CAKSipManager</implementing_class>
+        <implementing_class>nl.hetcak.dms.CAKSipManagerFallback</implementing_class>
         <holding_name>CAK_Klantarchief</holding_name>
         <application_name>CAK_Klantarchief</application_name>
         <producer_name>SIP Packager</producer_name>
         <entity_name>ArchiefDocument</entity_name>
         <document_element_name>ArchiefDocumenten</document_element_name>
         <schema_declaration>urn:hetcak:dms:uitingarchief:2016:08</schema_declaration>
-        <sip_output_directory>SIP</sip_output_directory>
+        <sip_output_directory>D:\Data\SIP</sip_output_directory>
         <custom_parameters>
             <document_element_name>ArchiefDocument</document_element_name>
             <document_class>nl.hetcak.dms.CAKDocument</document_class>
@@ -48,9 +48,11 @@
     <document_source>
         <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
         <custom_parameters>
-            <broker>failover:(ssl://muleaq1.tst.esb.func.cak-bz.local:10744,ssl://muleaq2.tst.esb.func.cak-bz.local:10744)?randomize=false</broker>
+            <broker>tcp://infoarchive40:61616</broker>
+            <!--
             <truststore>truststore\truststore_tst_mule1.jks</truststore>
             <truststore_password>URBq1N1uyZWQGWm5FuJ7iRVkLA0T3IUh</truststore_password>
+             -->
             <result_format>
                 <![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
             <results_element>
@@ -64,88 +66,34 @@
         </custom_parameters>
     </document_source>
     <retention_manager>
-        <implementing_class>nl.hetcak.dms.CAKRetentionManager</implementing_class>
+        <implementing_class>nl.hetcak.dms.CAKRetentionManagerFallback</implementing_class>
         <retention_classes>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Z03</name>
+            <nl.hetcak.dms.CAKRetentionClassFallback>
+                <name>R1</name>
                 <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>B02</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Z04</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>B03</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Z02</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>B04</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Z12</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>B12</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Z05</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>B05</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Z08</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Z10</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>B10</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Z09</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>B09</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Z06</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>B06</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Z01</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>B01</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>B21</name>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
+                <policy>R1</policy>
+                <fallback_policy>R2</fallback_policy>
+                <associated_title>Z03</associated_title>
+                <associated_title>B02</associated_title>
+                <associated_title>Z04</associated_title>
+                <associated_title>B03</associated_title>
+                <associated_title>Z02</associated_title>
+                <associated_title>B04</associated_title>
+                <associated_title>Z12</associated_title>
+                <associated_title>B12</associated_title>
+                <associated_title>Z05</associated_title>
+                <associated_title>B05</associated_title>
+                <associated_title>Z08</associated_title>
+                <associated_title>Z10</associated_title>
+                <associated_title>B10</associated_title>
+                <associated_title>Z09</associated_title>
+                <associated_title>B09</associated_title>
+                <associated_title>Z06</associated_title>
+                <associated_title>B06</associated_title>
+                <associated_title>Z01</associated_title>
+                <associated_title>B01</associated_title>
+                <associated_title>B21</associated_title>
+            </nl.hetcak.dms.CAKRetentionClassFallback>
         </retention_classes>
         <custom_parameters>
             <retention_element_name>ArchiefDocumenttitel</retention_element_name>

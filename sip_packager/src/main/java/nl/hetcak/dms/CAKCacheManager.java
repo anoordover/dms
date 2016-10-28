@@ -7,8 +7,11 @@ import com.amplexor.ia.configuration.CacheConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,6 +45,25 @@ public class CAKCacheManager extends AMPCacheManager {
         debug(this, "IADocument " + objDocument.getDocumentId() + " Saved");
 
         return bReturn;
+    }
+
+    @Override
+    public String saveDocument(IACache objCache, IADocument objDocument) throws IOException {
+        Path objDocumentPath = Paths.get(String.format("%s/%d/%s.xml", mobjBasePath.toString(), objCache.getId(), objDocument.getDocumentId()));
+        Path objPayloadPath = Paths.get(String.format("%s/%d/%s.pdf", mobjBasePath.toString(), objCache.getId(), objDocument.getDocumentId()));
+        try (OutputStream objOutputStream = Files.newOutputStream(objPayloadPath)) {
+            objOutputStream.write(objDocument.getContent(CAKDocument.KEY_ATTACHMENT));
+            objDocument.setContentFile(CAKDocument.KEY_ATTACHMENT, objPayloadPath.toString());
+            objDocument.setContent(CAKDocument.KEY_ATTACHMENT, new byte[0]);
+        }
+
+        XStream objXStream = new XStream(new DomDriver("UTF-8"));
+        objXStream.alias(mobjConfiguration.getParameter("document_element_name"), CAKDocument.class);
+        objXStream.processAnnotations(CAKDocument.class);
+        try (OutputStream objOutputStream = Files.newOutputStream(objDocumentPath)) {
+            objXStream.toXML(objDocument, objOutputStream);
+        }
+        return objDocumentPath.toString();
     }
 
     private IACache getCache(IARetentionClass objRetentionClass, boolean bIsFallback) throws IOException {
