@@ -72,13 +72,16 @@ public class DocumentService {
         } catch (LoginFailureException loginFailExc) {
             LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (ToManyResultsException tmrExc) {
+        } catch (TooManyResultsException tmrExc) {
             LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, tmrExc.ERROR_MESSAGE)).build();
         } catch (NoContentAvailableException noConAvaExc) {
             LOGGER.error(noConAvaExc.ERROR_MESSAGE, noConAvaExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, noConAvaExc.ERROR_CODE, noConAvaExc.ERROR_MESSAGE)).build();
-        }catch (Exception exc) {
+        } catch (InfoArchiveResponseException iaRespExc) {
+            LOGGER.error(iaRespExc.getMessage(), iaRespExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, iaRespExc.getErrorCode(), iaRespExc.ERROR_MESSAGE)).build();
+        } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("Something went wrong during the request.", exc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
@@ -145,13 +148,16 @@ public class DocumentService {
         } catch (MultipleDocumentsException multiDocExc) {
             LOGGER.error(multiDocExc.ERROR_MESSAGE, multiDocExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, multiDocExc.ERROR_CODE, multiDocExc.ERROR_MESSAGE)).build();
-        } catch (ToManyResultsException tmrExc) {
+        } catch (TooManyResultsException tmrExc) {
             LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, tmrExc.ERROR_MESSAGE)).build();
         } catch (NoContentAvailableException noConAvaExc) {
             LOGGER.error(noConAvaExc.ERROR_MESSAGE, noConAvaExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, noConAvaExc.ERROR_CODE, noConAvaExc.ERROR_MESSAGE)).build();
-        }catch (Exception exc) {
+        } catch (InfoArchiveResponseException iaRespExc) {
+            LOGGER.error(iaRespExc.getMessage(), iaRespExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, iaRespExc.getErrorCode(), iaRespExc.ERROR_MESSAGE)).build();
+        } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("Something went wrong during the request.", exc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
@@ -178,7 +184,7 @@ public class DocumentService {
                 LOGGER.info("Request content is valid");
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-                ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentKind(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
+                ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentKind(), request.getPersonNumber(), request.getDocumentCharacteristics(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
                 return Response.ok(response.getAsXML()).build();
     
                 } else {
@@ -200,13 +206,16 @@ public class DocumentService {
         } catch (LoginFailureException loginFailExc) {
             LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (ToManyResultsException tmrExc) {
+        } catch (TooManyResultsException tmrExc) {
             LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, tmrExc.ERROR_MESSAGE)).build();
         } catch (NoContentAvailableException noConAvaExc) {
             LOGGER.error(noConAvaExc.ERROR_MESSAGE, noConAvaExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, noConAvaExc.ERROR_CODE, noConAvaExc.ERROR_MESSAGE)).build();
-        }catch (Exception exc) {
+        } catch (InfoArchiveResponseException iaRespExc) {
+            LOGGER.error(iaRespExc.getMessage(), iaRespExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, iaRespExc.getErrorCode(), iaRespExc.ERROR_MESSAGE)).build();
+        } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("Something went wrong during the request.", exc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();

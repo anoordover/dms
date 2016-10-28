@@ -28,7 +28,7 @@ public class ConfigurationTest {
     @Test(expected = MissingConfigurationException.class, timeout = 1000)
     public void loadConfigurationFirstTime() throws  MissingConfigurationException, MisconfigurationException {
         //cleanup default config
-        File file = new File("config/request_processor.xml");
+        File file = new File("../conf/request_processor.xml");
         if(file.exists()) {
             file.delete();
         }
@@ -103,9 +103,14 @@ public class ConfigurationTest {
      * Create Test configuration
      */
     @Test
-    public void createEmptyDefaultConfig() {
+    public void createEmptyDefaultConfig() throws Exception {
+        ConfigurationManager configurationManager = new ConfigurationManager();
+        File file = new File(WORKING_CONFIG);
+        ConfigurationImpl oldConfiguration = configurationManager.loadConfiguration(file);
         ConfigurationImpl configuration = new ConfigurationImpl();
         configurationManager.createConfiguration(configuration);
+        //override file
+        configurationManager.createConfiguration(oldConfiguration);
         
     }
 }

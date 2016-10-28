@@ -1,7 +1,6 @@
 package nl.hetcak.dms.ia.web.requests;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
@@ -73,41 +72,84 @@ public class RecordRequest {
         this.queryBuilder = new InfoArchiveQueryBuilder();
     }
     
-    public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
+    public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
         LOGGER.info("Starting List Documents request for person number:"+archivePersonNumber);
         String response = requestUtil.responseReader(executeListDocumentsRequest(archivePersonNumber));
         LOGGER.info("Parsing results");
-        List<InfoArchiveDocument> result = parseDocumentList(response);
+        List<InfoArchiveDocument> result = parseDocumentList(response,true);
         if(result.size() == 0) {
             String errorMessage = "Got 0 results for documents with person number:"+archivePersonNumber+", the request handler expected at least one result.";
             LOGGER.error(errorMessage);
             LOGGER.debug(response);
             throw new NoContentAvailableException(errorMessage);
         }
-        LOGGER.info("Returning List.");
+        LOGGER.info("Returning List with "+result.size()+" documents.");
         return result;
     }
     
-    public List<InfoArchiveDocument> requestListDocuments(String documentType, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException,ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
-        LOGGER.info("Starting List Documents request for document type:"+documentType+" and send date between "+sendDate1+" and "+sendDate2);
-        String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, sendDate1, sendDate2));
+    public List<InfoArchiveDocument> requestListDocuments(String documentType, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException,TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
+        StringBuilder logString = new StringBuilder("Starting List Documents request for");
+        if(documentType != null) {
+            if(documentType.length() > 0) {
+                logString.append(" document type \"");
+                logString.append(documentType);
+                logString.append("\"");
+            } else {
+                documentType = null;
+            }
+        }
+        if(personNumber != null) {
+            if(personNumber.length() > 0) {
+                logString.append(" person number \"");
+                logString.append(personNumber);
+                logString.append("\"");
+            } else {
+                personNumber = null;
+            }
+        }
+        if(documentCharacteristics != null) {
+            if(documentCharacteristics.length() > 0) {
+                logString.append(" document characteristics \"");
+                logString.append(documentCharacteristics);
+                logString.append("\"");
+            } else {
+                documentCharacteristics = null;
+            }
+        }
+        if(sendDate1 != null && sendDate2 != null) {
+            if(sendDate1.length() > 0 && sendDate2.length() > 0) {
+                logString.append(" senddate between \"");
+                logString.append(sendDate1);
+                logString.append("\" ");
+                logString.append("till \"");
+                logString.append(sendDate2);
+                logString.append("\"");
+            } else {
+                sendDate1 = null;
+                sendDate2 = null;
+            }
+        }
+        
+        LOGGER.info(logString.toString());
+        
+        String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, personNumber, documentCharacteristics, sendDate1, sendDate2));
         LOGGER.info("Parsing results");
-        List<InfoArchiveDocument> result = parseDocumentList(response);
+        List<InfoArchiveDocument> result = parseDocumentList(response, true);
         if(result.size() == 0) {
-            String errorMessage = "Got 0 results for document search for document type:"+documentType+" and send date between "+sendDate1+" and "+sendDate2+", the request handler expected at least one result.";
+            String errorMessage = "Got 0 results, invalid search.";
             LOGGER.error(errorMessage);
             LOGGER.debug(response);
             throw new NoContentAvailableException(errorMessage);
         }
-        LOGGER.info("Returning List.");
+        LOGGER.info("Returning List with "+result.size()+" documents.");
         return result;
     }
 
-    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, MultipleDocumentsException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
+    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, MultipleDocumentsException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
         LOGGER.info("Requesting document with number:" +archiveDocumentNumber);
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
         LOGGER.info("Parsing results");
-        List<InfoArchiveDocument> documents = parseDocumentList(response);
+        List<InfoArchiveDocument> documents = parseDocumentList(response, false);
         if(documents.size() > 1) {
             String errorMessage = "Got "+documents.size()+" results for document number:"+archiveDocumentNumber+", the request handler expected at least one result.";
             LOGGER.error(errorMessage);
@@ -132,10 +174,23 @@ public class RecordRequest {
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
     
-    private HttpResponse executeListDocumentsRequest(String documentType, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException {
+    private HttpResponse executeListDocumentsRequest(String documentType, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
-        String requestBody = queryBuilder.addEqualCriteria(PARSE_DOCUMENT_TITLE, documentType).addBetweenCriteria(PARSE_DOCUMENT_SEND_DATE, sendDate1, sendDate2).build();
+        InfoArchiveQueryBuilder currentQuery = new InfoArchiveQueryBuilder();
+        if(documentType != null) {
+            currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_TITLE, documentType);
+        }
+        if(personNumber != null) {
+            currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_PERSON_NUMBER, personNumber);
+        }
+        if(documentCharacteristics != null) {
+            currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_CHARACTERISTIC, documentCharacteristics);
+        }
+        if(sendDate1 != null && sendDate2 != null) {
+            currentQuery = currentQuery.addBetweenCriteria(PARSE_DOCUMENT_SEND_DATE, sendDate1, sendDate2);
+        }
+        String requestBody = currentQuery.build();
         LOGGER.info("Executing HTTPPOST request for a List Documents based on Document type and a between senddate constraint.");
         LOGGER.debug(requestBody);
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
@@ -150,7 +205,7 @@ public class RecordRequest {
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
 
-    private List<InfoArchiveDocument> parseDocumentList(String response) throws ParseException, ToManyResultsException, UnexpectedResultException {
+    private List<InfoArchiveDocument> parseDocumentList(String response,boolean expectList) throws ParseException, TooManyResultsException, InfoArchiveResponseException {
         List<InfoArchiveDocument> documents = new ArrayList<>();
 
         JsonParser parser = new JsonParser();
@@ -161,10 +216,11 @@ public class RecordRequest {
             LOGGER.info("Got error in response.");
             StringBuilder exceptionMessage = new StringBuilder();
             JsonArray errors = jsonResponse.getAsJsonArray(PARSE_RESPONSE_ERROR);
+            String errorTitle = "";
             for (int i_error = 0; i_error < errors.size(); i_error++) {
                 JsonObject error = errors.get(i_error).getAsJsonObject();
 
-                String errorTitle = error.get(PARSE_RESPONSE_ERROR_TITLE).getAsString();
+                errorTitle = error.get(PARSE_RESPONSE_ERROR_TITLE).getAsString();
                 String errorMessage = error.get(PARSE_RESPONSE_ERROR_MESSAGE).getAsString();
 
                 exceptionMessage.append(errorTitle);
@@ -175,7 +231,9 @@ public class RecordRequest {
 
             LOGGER.debug(response);
             LOGGER.error(exceptionMessage.toString());
-            throw new UnexpectedResultException(exceptionMessage.toString());
+            InfoArchiveResponseException infoArchiveResponseException = new InfoArchiveResponseException(exceptionMessage.toString());
+            infoArchiveResponseException.setErrorCode(errorTitle, expectList);
+            throw infoArchiveResponseException;
         }
 
         //check response size
@@ -187,7 +245,7 @@ public class RecordRequest {
                     String errorMessage = "InfoArchive responded with "+totalElements+" items, this exceeds the maximum allowed items of "+configuration.getMaxResults()+" set in the configuration.";
                     LOGGER.error(errorMessage);
                     LOGGER.debug(response);
-                    throw new ToManyResultsException(errorMessage);
+                    throw new TooManyResultsException(errorMessage);
                 }
             }
         }

@@ -30,7 +30,7 @@ public class RequestRecordsTest {
     
     //external connection
     @Test(timeout = 3000)
-    public void getListDocumentsFromInfoArchive() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException  {
+    public void getListDocumentsFromInfoArchive() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException  {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);
@@ -38,7 +38,7 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(),credentials);
-        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("1971429972");
+        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("1231189636");
         assertNotNull(document);
         assertTrue(document.size() > 0);
     }
@@ -46,7 +46,7 @@ public class RequestRecordsTest {
     
     //external connection
     @Test(expected = NoContentAvailableException.class ,timeout = 3000)
-    public void getEmptyList() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, ToManyResultsException, UnexpectedResultException, NoContentAvailableException {
+    public void getEmptyList() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);
@@ -68,7 +68,7 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest request = new RecordRequest(connectionManager.getConfiguration(), credentials);
-        InfoArchiveDocument document = request.requestDocument("1663298436");
+        InfoArchiveDocument document = request.requestDocument("1268712898");
         assertNotNull(document);
         DocumentRequest documentRequest = new DocumentRequest(connectionManager.getConfiguration(), credentials);
         ByteArrayOutputStream documentStream = documentRequest.getContentWithContentId(document.getArchiefFile());

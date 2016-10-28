@@ -1,6 +1,8 @@
 package nl.hetcak.dms.ia.web.restfull.consumers;
 
 import nl.hetcak.dms.ia.web.util.InfoArchiveDateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -9,6 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.StringReader;
 import java.text.ParseException;
+import java.util.Locale;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
@@ -17,6 +20,7 @@ import java.text.ParseException;
  */
 @XmlRootElement(name = "request")
 public class SearchDocumentRequestConsumer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearchDocumentRequestConsumer.class);
     private String personNumber = "";
     private String documentKind = "";
     private String documentCharacteristics = "";
@@ -37,8 +41,13 @@ public class SearchDocumentRequestConsumer {
         return documentSendDate1;
     }
     
-    public String getDocumentSendDate1AsInfoArchiveString() throws ParseException{
-        return InfoArchiveDateUtil.convertToInfoArchiveDate(documentSendDate1);
+    public String getDocumentSendDate1AsInfoArchiveString() {
+        try {
+            return InfoArchiveDateUtil.convertToInfoArchiveDate(documentSendDate1);
+        }catch (ParseException parseExc) {
+            LOGGER.error("Can't parse string to InfoArchive format. is string empty?", parseExc);
+            return null;
+        }
     }
     
     public void setDocumentSendDate1(String documentSendDate1) {
@@ -50,8 +59,13 @@ public class SearchDocumentRequestConsumer {
         return documentSendDate2;
     }
     
-    public String getDocumentSendDate2AsInfoArchiveString() throws ParseException{
-        return InfoArchiveDateUtil.convertToInfoArchiveDate(documentSendDate2);
+    public String getDocumentSendDate2AsInfoArchiveString() {
+        try {
+            return InfoArchiveDateUtil.convertToInfoArchiveDate(documentSendDate2);
+        }catch (ParseException parseExc) {
+            LOGGER.error("Can't parse string to InfoArchive format. is string empty?", parseExc);
+            return null;
+        }
     }
     
     public void setDocumentSendDate2(String documentSendDate2) {
@@ -88,18 +102,19 @@ public class SearchDocumentRequestConsumer {
     
     public boolean hasContent() {
         Boolean content = true;
+        Boolean date = true;
     
         if(this.documentSendDate1 == null) {
-            content =  false;
+            date =  false;
         }
         if(this.documentSendDate2 == null) {
-            content =  false;
+            date =  false;
         }
         if(this.documentSendDate1.length() == 0) {
-            content =  false;
+            date =  false;
         }
         if(this.documentSendDate2.length() == 0) {
-            content =  false;
+            date =  false;
         }
         if(this.documentKind == null && this.documentCharacteristics == null && this.personNumber == null) {
             content = false;
@@ -108,6 +123,9 @@ public class SearchDocumentRequestConsumer {
             content = false;
         }
         
-        return content;
+        if(date || content) {
+            return true;
+        }
+        return false;
     }
 }

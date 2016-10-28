@@ -7,17 +7,36 @@ import java.security.PrivilegedActionException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class ToManyResultsException extends Exception {
-    public static final int ERROR_CODE = 3001;
-    public static final String ERROR_MESSAGE = "To many results, please contact an Administrator.";
+public class InfoArchiveResponseException extends Exception {
+    private int errorCode = 0;
+    public static final String ERROR_MESSAGE = "InfoArchive responded with a error, please contact an Administrator.";
+    
+    private static final String ERROR_TITLE_TIME_OUT = "SEARCH_TIMEOUT";
+    private static final int ERROR_CODE_TIME_OUT_SINGLE_DOC = 2001;
+    private static final int ERROR_CODE_TIME_OUT_LIST_DOC = 2002;
+    
+    public int getErrorCode() {
+        return errorCode;
+    }
+    
+    public void setErrorCode(String errorTitle, Boolean expectedList) {
+        if(ERROR_TITLE_TIME_OUT.contentEquals(errorTitle)) {
+            if(expectedList) {
+                this.errorCode = ERROR_CODE_TIME_OUT_LIST_DOC;
+            } else {
+                this.errorCode = ERROR_CODE_TIME_OUT_SINGLE_DOC;
+            }
+        }
+    }
+    
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public ToManyResultsException() {
+    public InfoArchiveResponseException() {
     }
-
+    
     /**
      * Constructs a new exception with the specified detail message.  The
      * cause is not initialized, and may subsequently be initialized by
@@ -26,10 +45,10 @@ public class ToManyResultsException extends Exception {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public ToManyResultsException(String message) {
+    public InfoArchiveResponseException(String message) {
         super(message);
     }
-
+    
     /**
      * Constructs a new exception with the specified detail message and
      * cause.  <p>Note that the detail message associated with
@@ -44,10 +63,10 @@ public class ToManyResultsException extends Exception {
      *                unknown.)
      * @since 1.4
      */
-    public ToManyResultsException(String message, Throwable cause) {
+    public InfoArchiveResponseException(String message, Throwable cause) {
         super(message, cause);
     }
-
+    
     /**
      * Constructs a new exception with the specified cause and a detail
      * message of <tt>(cause==null ? null : cause.toString())</tt> (which
@@ -62,10 +81,10 @@ public class ToManyResultsException extends Exception {
      *              unknown.)
      * @since 1.4
      */
-    public ToManyResultsException(Throwable cause) {
+    public InfoArchiveResponseException(Throwable cause) {
         super(cause);
     }
-
+    
     /**
      * Constructs a new exception with the specified detail message,
      * cause, suppression enabled or disabled, and writable stack
@@ -80,7 +99,7 @@ public class ToManyResultsException extends Exception {
      *                           be writable
      * @since 1.7
      */
-    public ToManyResultsException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public InfoArchiveResponseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

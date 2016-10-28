@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<config-request-processor>
-    <ia_application_uuid>dd9eeb63-0a85-410e-a322-cc4af9febfff</ia_application_uuid>
-    <ia_searchcomposition_uuid>b9d5d3bd-04cb-49e8-8b4d-16b6432e67ef</ia_searchcomposition_uuid>
-    <log4j_properties></log4j_properties>
-    <maximaal_aantal_resultaten>900</maximaal_aantal_resultaten>
-    <ia_token></ia_token>
-    <ia_server>infoarchive-sp.back.ont.dms.func.cak-bz.local</ia_server>
-    <ia_port>8080</ia_port>
-    <ia_service_usr>sa-infoarchive-ont</ia_service_usr>
-    <ia_service_usr_password>8TExclergywW</ia_service_usr_password>
-</config-request-processor>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><config-request-processor><ia_application_uuid>ed1932ac-abe3-422f-b099-3a63361c6ebc</ia_application_uuid><log4j_properties></log4j_properties><maximaal_aantal_resultaten>900</maximaal_aantal_resultaten><ia_service_usr_password>password</ia_service_usr_password><ia_searchcomposition_uuid>da267633-c67d-45ee-b757-abd3273119ac</ia_searchcomposition_uuid><ia_token></ia_token><ia_server>infoarchive40</ia_server><ia_port>8080</ia_port><ia_service_usr>sue@iacustomer.com</ia_service_usr></config-request-processor>

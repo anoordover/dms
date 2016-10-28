@@ -6,19 +6,18 @@ import java.security.PrivilegedActionException;
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
- * @deprecated will be replaced with other errors.
  */
-public class UnexpectedResultException extends Exception {
-    public static final int ERROR_CODE = 0;
-    public static final String ERROR_MESSAGE = "Something went wrong, please contact an Administrator.";
+public class TooManyResultsException extends Exception {
+    public static final int ERROR_CODE = 3001;
+    public static final String ERROR_MESSAGE = "To many results, please contact an Administrator.";
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public UnexpectedResultException() {
+    public TooManyResultsException() {
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message.  The
      * cause is not initialized, and may subsequently be initialized by
@@ -27,10 +26,10 @@ public class UnexpectedResultException extends Exception {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public UnexpectedResultException(String message) {
+    public TooManyResultsException(String message) {
         super(message);
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message and
      * cause.  <p>Note that the detail message associated with
@@ -45,10 +44,10 @@ public class UnexpectedResultException extends Exception {
      *                unknown.)
      * @since 1.4
      */
-    public UnexpectedResultException(String message, Throwable cause) {
+    public TooManyResultsException(String message, Throwable cause) {
         super(message, cause);
     }
-    
+
     /**
      * Constructs a new exception with the specified cause and a detail
      * message of <tt>(cause==null ? null : cause.toString())</tt> (which
@@ -63,10 +62,10 @@ public class UnexpectedResultException extends Exception {
      *              unknown.)
      * @since 1.4
      */
-    public UnexpectedResultException(Throwable cause) {
+    public TooManyResultsException(Throwable cause) {
         super(cause);
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message,
      * cause, suppression enabled or disabled, and writable stack
@@ -81,7 +80,7 @@ public class UnexpectedResultException extends Exception {
      *                           be writable
      * @since 1.7
      */
-    public UnexpectedResultException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public TooManyResultsException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

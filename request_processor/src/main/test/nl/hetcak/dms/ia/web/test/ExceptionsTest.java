@@ -188,32 +188,32 @@ public class ExceptionsTest {
     }
 
     //ToManyResults
-    @Test(expected = ToManyResultsException.class)
-    public void throwToManyResultsException() throws ToManyResultsException {
-        throw new ToManyResultsException();
+    @Test(expected = TooManyResultsException.class)
+    public void throwToManyResultsException() throws TooManyResultsException {
+        throw new TooManyResultsException();
     }
 
-    @Test(expected = ToManyResultsException.class)
-    public void throwToManyResultsException1() throws ToManyResultsException {
-        throw new ToManyResultsException("Test");
+    @Test(expected = TooManyResultsException.class)
+    public void throwToManyResultsException1() throws TooManyResultsException {
+        throw new TooManyResultsException("Test");
     }
 
-    @Test(expected = ToManyResultsException.class)
-    public void throwToManyResultsException2() throws ToManyResultsException {
+    @Test(expected = TooManyResultsException.class)
+    public void throwToManyResultsException2() throws TooManyResultsException {
         Exception error = new Exception();
-        throw new ToManyResultsException("Test", error);
+        throw new TooManyResultsException("Test", error);
     }
 
-    @Test(expected = ToManyResultsException.class)
-    public void throwToManyResultsException3() throws ToManyResultsException {
+    @Test(expected = TooManyResultsException.class)
+    public void throwToManyResultsException3() throws TooManyResultsException {
         Exception error = new Exception();
-        throw new ToManyResultsException(error);
+        throw new TooManyResultsException(error);
     }
 
-    @Test(expected = ToManyResultsException.class)
-    public void throwToManyResultsException4() throws ToManyResultsException {
+    @Test(expected = TooManyResultsException.class)
+    public void throwToManyResultsException4() throws TooManyResultsException {
         Exception error = new Exception();
-        throw new ToManyResultsException("Test", error, true, true);
+        throw new TooManyResultsException("Test", error, true, true);
     }
 
     //MultipleDocumentsException
@@ -272,5 +272,35 @@ public class ExceptionsTest {
     public void throwNoContentAvailableException4() throws NoContentAvailableException {
         Exception error = new Exception();
         throw new NoContentAvailableException("Test", error, true, true);
+    }
+    
+    
+    //NoContentAvailableException
+    @Test(expected = InfoArchiveResponseException.class)
+    public void throwInfoArchiveResponseException() throws InfoArchiveResponseException {
+        throw new InfoArchiveResponseException();
+    }
+    
+    @Test(expected = InfoArchiveResponseException.class)
+    public void throwInfoArchiveResponseException1() throws InfoArchiveResponseException {
+        throw new InfoArchiveResponseException("Test");
+    }
+    
+    @Test(expected = InfoArchiveResponseException.class)
+    public void throwInfoArchiveResponseException2() throws InfoArchiveResponseException {
+        Exception error = new Exception();
+        throw new InfoArchiveResponseException("Test", error);
+    }
+    
+    @Test(expected = InfoArchiveResponseException.class)
+    public void throwInfoArchiveResponseException3() throws InfoArchiveResponseException {
+        Exception error = new Exception();
+        throw new InfoArchiveResponseException(error);
+    }
+    
+    @Test(expected = InfoArchiveResponseException.class)
+    public void throwInfoArchiveResponseException4() throws InfoArchiveResponseException {
+        Exception error = new Exception();
+        throw new InfoArchiveResponseException("Test", error, true, true);
     }
 }
