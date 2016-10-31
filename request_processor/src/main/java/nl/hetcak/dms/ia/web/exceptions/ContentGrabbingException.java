@@ -7,7 +7,7 @@ import java.security.PrivilegedActionException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class ContentGrabbingException extends Exception {
+public class ContentGrabbingException extends RequestResponseException {
     public static final int ERROR_CODE = 0;
     public static final String ERROR_MESSAGE = "There is a error within the request message, please contact an Administrator.";
     /**
@@ -16,6 +16,7 @@ public class ContentGrabbingException extends Exception {
      * call to {@link #initCause}.
      */
     public ContentGrabbingException() {
+        super(ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -27,7 +28,7 @@ public class ContentGrabbingException extends Exception {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public ContentGrabbingException(String message) {
-        super(message);
+        super(ERROR_MESSAGE, ERROR_CODE, message);
     }
     
     /**
@@ -45,7 +46,7 @@ public class ContentGrabbingException extends Exception {
      * @since 1.4
      */
     public ContentGrabbingException(String message, Throwable cause) {
-        super(message, cause);
+        super(message, cause, ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -63,7 +64,7 @@ public class ContentGrabbingException extends Exception {
      * @since 1.4
      */
     public ContentGrabbingException(Throwable cause) {
-        super(cause);
+        super(cause, ERROR_CODE,ERROR_MESSAGE);
     }
     
     /**
@@ -81,6 +82,6 @@ public class ContentGrabbingException extends Exception {
      * @since 1.7
      */
     public ContentGrabbingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+        super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE,ERROR_MESSAGE);
     }
 }

@@ -88,10 +88,6 @@ public class ConnectionManager {
         LOGGER.info("Returning Active token.");
         return credentials;
     }
-    
-    public void destroyManagerInstance() {
-        connectionManager = null;
-    }
 
     /**
      * Gets the current configuration.

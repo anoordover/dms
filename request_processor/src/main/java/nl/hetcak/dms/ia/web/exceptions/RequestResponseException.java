@@ -3,21 +3,42 @@ package nl.hetcak.dms.ia.web.exceptions;
 import java.security.PrivilegedActionException;
 
 /**
- * Created by jepelt on 27-10-2016.
+ * (c) 2016 AMPLEXOR International S.A., All rights reserved.
+ *
+ * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class NoContentAvailableException extends RequestResponseException{
-    public static final int ERROR_CODE = 2007;
-    public static final String ERROR_MESSAGE = "Document not available, please contact an administrator.";
-
+public class RequestResponseException extends Exception {
+    private int errorCode = -1;
+    private String userErrorMessage;
+    
+    public int getErrorCode() {
+        return errorCode;
+    }
+    
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
+    
+    public String getUserErrorMessage() {
+        return userErrorMessage;
+    }
+    
+    public void setUserErrorMessage(String userErrorMessage) {
+        this.userErrorMessage = userErrorMessage;
+    }
+    
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
+     * @param errorCode The error code.
+     *     @param  userErrorMessage The error description that should be returned to the user.
      */
-    public NoContentAvailableException() {
-        super(ERROR_CODE, ERROR_MESSAGE);
+    public RequestResponseException(int errorCode, String userErrorMessage) {
+        this.errorCode = errorCode;
+        this.userErrorMessage = userErrorMessage;
     }
-
+    
     /**
      * Constructs a new exception with the specified detail message.  The
      * cause is not initialized, and may subsequently be initialized by
@@ -25,11 +46,15 @@ public class NoContentAvailableException extends RequestResponseException{
      *
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
+     * @param errorCode The error code.
+     *     @param  userErrorMessage The error description that should be returned to the user.
      */
-    public NoContentAvailableException(String message) {
-        super(ERROR_MESSAGE, ERROR_CODE, message);
+    public RequestResponseException(String message, int errorCode, String userErrorMessage) {
+        super(message);
+        this.errorCode = errorCode;
+        this.userErrorMessage = userErrorMessage;
     }
-
+    
     /**
      * Constructs a new exception with the specified detail message and
      * cause.  <p>Note that the detail message associated with
@@ -42,12 +67,16 @@ public class NoContentAvailableException extends RequestResponseException{
      *                {@link #getCause()} method).  (A <tt>null</tt> value is
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
+     * @param errorCode The error code.
+     *     @param  userErrorMessage The error description that should be returned to the user.
      * @since 1.4
      */
-    public NoContentAvailableException(String message, Throwable cause) {
-        super(message, cause, ERROR_CODE, ERROR_MESSAGE);
+    public RequestResponseException(String message, Throwable cause, int errorCode, String userErrorMessage) {
+        super(message, cause);
+        this.errorCode = errorCode;
+        this.userErrorMessage = userErrorMessage;
     }
-
+    
     /**
      * Constructs a new exception with the specified cause and a detail
      * message of <tt>(cause==null ? null : cause.toString())</tt> (which
@@ -60,12 +89,16 @@ public class NoContentAvailableException extends RequestResponseException{
      *              {@link #getCause()} method).  (A <tt>null</tt> value is
      *              permitted, and indicates that the cause is nonexistent or
      *              unknown.)
+     * @param errorCode The error code.
+     *     @param  userErrorMessage The error description that should be returned to the user.
      * @since 1.4
      */
-    public NoContentAvailableException(Throwable cause) {
-        super(cause, ERROR_CODE, ERROR_MESSAGE);
+    public RequestResponseException(Throwable cause, int errorCode, String userErrorMessage) {
+        super(cause);
+        this.errorCode = errorCode;
+        this.userErrorMessage = userErrorMessage;
     }
-
+    
     /**
      * Constructs a new exception with the specified detail message,
      * cause, suppression enabled or disabled, and writable stack
@@ -78,9 +111,13 @@ public class NoContentAvailableException extends RequestResponseException{
      *                           or disabled
      * @param writableStackTrace whether or not the stack trace should
      *                           be writable
+     * @param errorCode The error code.
+     *     @param  userErrorMessage The error description that should be returned to the user.
      * @since 1.7
      */
-    public NoContentAvailableException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE, ERROR_MESSAGE);
+    public RequestResponseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int errorCode, String userErrorMessage) {
+        super(message, cause, enableSuppression, writableStackTrace);
+        this.errorCode = errorCode;
+        this.userErrorMessage = userErrorMessage;
     }
 }

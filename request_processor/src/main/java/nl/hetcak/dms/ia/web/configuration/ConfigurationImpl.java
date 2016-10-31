@@ -29,8 +29,8 @@ public class ConfigurationImpl implements Configuration {
     private final static String CONF_APPLICATION_UUID = "ia_application_uuid";
     private final static String CONF_SEARCHCOMPOSITION_UUID = "ia_searchcomposition_uuid";
     
-    private  String securityToken, serverAddress, username, password, logProps, applicationUUID, searchComponentUUID;
-    private  int serverPort, maxResults;
+    private String securityToken, serverAddress, username, password, logProps, applicationUUID, searchComponentUUID;
+    private int serverPort, maxResults;
     
     
     @XmlElement(name = CONF_SECURITY_TOKEN)
@@ -90,7 +90,7 @@ public class ConfigurationImpl implements Configuration {
         credentials.setUsername(username);
         credentials.setPassword(password);
         
-        if(StringUtils.isNotBlank(securityToken)) {
+        if (StringUtils.isNotBlank(securityToken)) {
             credentials.setSecurityToken(securityToken);
             credentials.setUseLoginToken(true);
         }
@@ -107,11 +107,13 @@ public class ConfigurationImpl implements Configuration {
     }
     
     @XmlElement(name = CONF_MAX_RESULTS)
+    @Override
     public int getMaxResults() {
         return maxResults;
     }
     
     @XmlElement(name = CONF_APPLICATION_UUID)
+    @Override
     public String getApplicationUUID() {
         return applicationUUID;
     }
@@ -123,36 +125,43 @@ public class ConfigurationImpl implements Configuration {
     
     @Override
     public boolean hasBasicInformation() {
+        boolean result = checkCredentials();
+        if(result)
+            result = checkServerInformation();
+        return result;
+    }
+    
+    private boolean checkCredentials() {
         boolean result = true;
         Credentials credentials = getInfoArchiveCredentials();
-        if(credentials == null) {
-            return false;
-        } else {
-            try {
-                if(credentials.useTokenOnlyConfiguration()) {
-                    if(credentials.getSecurityToken().length() == 0)
-                        LOGGER.warn("Security Token not set in Token only mode.");
-                        result = false;
-                } else if(credentials.getUsername().length() == 0 || credentials.getPassword() == null) {
-                    LOGGER.warn("User credentials have no value.");
-                    result = false;
-                }
-            } catch (NullPointerException nullExc) {
-                LOGGER.error("Configuration Error in the user credentials.", nullExc);
+        try {
+            if (credentials.useTokenOnlyConfiguration()) {
+                if (credentials.getSecurityToken().length() == 0)
+                    LOGGER.warn("Security Token not set in Token only mode.");
+                result = false;
+            } else if (credentials.getUsername().length() == 0 || credentials.getPassword() == null) {
+                LOGGER.warn("User credentials have no value.");
                 result = false;
             }
+        } catch (NullPointerException nullExc) {
+            LOGGER.error("Configuration Error in the user credentials.", nullExc);
+            result = false;
         }
-        
+        return result;
+    }
+    
+    private boolean checkServerInformation(){
+        boolean result = true;
         ServerConnectionInformation serverConnectionInformation = getInfoArchiveServerInformation();
-        if(serverConnectionInformation == null) {
+        if (serverConnectionInformation == null) {
             return false;
         } else {
             try {
-                if(serverConnectionInformation.getServerAddress().length() == 0 || serverConnectionInformation.getServerPort() == 0) {
+                if (serverConnectionInformation.getServerAddress().length() == 0 || serverConnectionInformation.getServerPort() == 0) {
                     LOGGER.warn("Server information have no value.");
                     result = false;
                 }
-                if(applicationUUID.length() == 0 || searchComponentUUID.length() == 0) {
+                if (applicationUUID.length() == 0 || searchComponentUUID.length() == 0) {
                     LOGGER.warn("Server uuid information have no value.");
                     result = false;
                 }
@@ -194,7 +203,7 @@ public class ConfigurationImpl implements Configuration {
         return serverPort;
     }
     
-    public void emptyConfiguration(){
+    public void emptyConfiguration() {
         securityToken = "";
         serverAddress = "localhost";
         username = "";

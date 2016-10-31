@@ -7,7 +7,7 @@ import java.security.PrivilegedActionException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class MissingConfigurationException extends Exception {
+public class MissingConfigurationException extends RequestResponseException {
     public static final int ERROR_CODE = 0;
     public static final String ERROR_MESSAGE = "There is a error within the configuration file, please contact an Administrator.";
     /**
@@ -16,7 +16,7 @@ public class MissingConfigurationException extends Exception {
      * call to {@link #initCause}.
      */
     public MissingConfigurationException() {
-        super();
+        super(ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -28,7 +28,7 @@ public class MissingConfigurationException extends Exception {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public MissingConfigurationException(String message) {
-        super(message);
+        super(ERROR_MESSAGE, ERROR_CODE, message);
     }
     
     /**
@@ -46,7 +46,7 @@ public class MissingConfigurationException extends Exception {
      * @since 1.4
      */
     public MissingConfigurationException(String message, Throwable cause) {
-        super(message, cause);
+        super(message, cause, ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -64,7 +64,7 @@ public class MissingConfigurationException extends Exception {
      * @since 1.4
      */
     public MissingConfigurationException(Throwable cause) {
-        super(cause);
+        super(cause, ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -82,6 +82,6 @@ public class MissingConfigurationException extends Exception {
      * @since 1.7
      */
     public MissingConfigurationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+        super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE, ERROR_MESSAGE);
     }
 }

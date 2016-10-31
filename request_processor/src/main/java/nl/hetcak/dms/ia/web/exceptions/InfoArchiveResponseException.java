@@ -35,6 +35,7 @@ public class InfoArchiveResponseException extends Exception {
      * call to {@link #initCause}.
      */
     public InfoArchiveResponseException() {
+        super();
     }
     
     /**

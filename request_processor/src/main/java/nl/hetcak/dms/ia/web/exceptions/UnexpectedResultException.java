@@ -8,6 +8,7 @@ import java.security.PrivilegedActionException;
  * @author Jeroen.Pelt@AMPLEXOR.com
  * @deprecated will be replaced with other errors.
  */
+@Deprecated
 public class UnexpectedResultException extends Exception {
     public static final int ERROR_CODE = 0;
     public static final String ERROR_MESSAGE = "Something went wrong, please contact an Administrator.";
@@ -17,6 +18,7 @@ public class UnexpectedResultException extends Exception {
      * call to {@link #initCause}.
      */
     public UnexpectedResultException() {
+        super();
     }
     
     /**

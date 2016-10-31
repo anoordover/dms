@@ -10,6 +10,7 @@ import nl.hetcak.dms.ia.web.query.InfoArchiveQueryBuilder;
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
 import nl.hetcak.dms.ia.web.util.InfoArchiveDateUtil;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +40,10 @@ public class RecordRequest {
     private static final String PARSE_RESPONSE_COLUMNS = "columns";
     private static final String PARSE_RESPONSE_NAME = "name";
     private static final String PARSE_RESPONSE_VALUE = "value";
-
+    
     private static final String PARSE_RESPONSE_PAGE = "page";
     private static final String PARSE_RESPONSE_TOTAL_ELEMENTS = "totalElements";
-
+    
     private static final String PARSE_RESPONSE_ERROR = "_errors";
     private static final String PARSE_RESPONSE_ERROR_TITLE = "error";
     private static final String PARSE_RESPONSE_ERROR_MESSAGE = "message";
@@ -60,6 +61,9 @@ public class RecordRequest {
     private static final String PARSE_DOCUMENT_HANDLING_NUMBER = "ArchiefHandelingsnummer";
     private static final String PARSE_DOCUMENT_ATTACHMENT = "Attachment";
     
+    private static final String LOGGING_PARSING_RESULT = "Parsing results";
+    private static final String LOGGING_EXPECT_AT_LEAST_ONE_RESULT = ", the request handler expected at least one result.";
+    
     private Configuration configuration;
     private Credentials credentials;
     private InfoArchiveRequestUtil requestUtil;
@@ -73,90 +77,75 @@ public class RecordRequest {
     }
     
     public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
-        LOGGER.info("Starting List Documents request for person number:"+archivePersonNumber);
+        LOGGER.info("Starting List Documents request for person number:" + archivePersonNumber);
         String response = requestUtil.responseReader(executeListDocumentsRequest(archivePersonNumber));
-        LOGGER.info("Parsing results");
-        List<InfoArchiveDocument> result = parseDocumentList(response,true);
-        if(result.size() == 0) {
-            String errorMessage = "Got 0 results for documents with person number:"+archivePersonNumber+", the request handler expected at least one result.";
-            LOGGER.error(errorMessage);
+        LOGGER.info(LOGGING_PARSING_RESULT);
+        List<InfoArchiveDocument> result = parseDocumentList(response, true);
+        if (result.size() == 0) {
+            StringBuilder errorMessage = new StringBuilder("Got 0 results for documents with person number:");
+            errorMessage.append(archivePersonNumber);
+            errorMessage.append(LOGGING_EXPECT_AT_LEAST_ONE_RESULT);
+            LOGGER.error(errorMessage.toString());
             LOGGER.debug(response);
-            throw new NoContentAvailableException(errorMessage);
+            throw new NoContentAvailableException(errorMessage.toString());
         }
-        LOGGER.info("Returning List with "+result.size()+" documents.");
+        LOGGER.info("Returning List with " + result.size() + " documents.");
         return result;
     }
     
-    public List<InfoArchiveDocument> requestListDocuments(String documentType, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException,TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
+    public List<InfoArchiveDocument> requestListDocuments(String documentType, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
         StringBuilder logString = new StringBuilder("Starting List Documents request for");
-        if(documentType != null) {
-            if(documentType.length() > 0) {
-                logString.append(" document type \"");
-                logString.append(documentType);
-                logString.append("\"");
-            } else {
-                documentType = null;
-            }
+        if (StringUtils.isNotBlank(documentType)) {
+            logString.append(" document type \"");
+            logString.append(documentType);
+            logString.append("\"");
         }
-        if(personNumber != null) {
-            if(personNumber.length() > 0) {
-                logString.append(" person number \"");
-                logString.append(personNumber);
-                logString.append("\"");
-            } else {
-                personNumber = null;
-            }
+        if (StringUtils.isNotBlank(personNumber)) {
+            logString.append(" person number \"");
+            logString.append(personNumber);
+            logString.append("\"");
         }
-        if(documentCharacteristics != null) {
-            if(documentCharacteristics.length() > 0) {
-                logString.append(" document characteristics \"");
-                logString.append(documentCharacteristics);
-                logString.append("\"");
-            } else {
-                documentCharacteristics = null;
-            }
+        if (StringUtils.isNotBlank(documentCharacteristics)) {
+            logString.append(" document characteristics \"");
+            logString.append(documentCharacteristics);
+            logString.append("\"");
         }
-        if(sendDate1 != null && sendDate2 != null) {
-            if(sendDate1.length() > 0 && sendDate2.length() > 0) {
-                logString.append(" senddate between \"");
-                logString.append(sendDate1);
-                logString.append("\" ");
-                logString.append("till \"");
-                logString.append(sendDate2);
-                logString.append("\"");
-            } else {
-                sendDate1 = null;
-                sendDate2 = null;
-            }
+        if (StringUtils.isNotBlank(sendDate1) && StringUtils.isNotBlank(sendDate2)) {
+            logString.append(" senddate between \"");
+            logString.append(sendDate1);
+            logString.append("\" ");
+            logString.append("till \"");
+            logString.append(sendDate2);
+            logString.append("\"");
         }
         
         LOGGER.info(logString.toString());
         
         String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, personNumber, documentCharacteristics, sendDate1, sendDate2));
-        LOGGER.info("Parsing results");
+        LOGGER.info(LOGGING_PARSING_RESULT);
         List<InfoArchiveDocument> result = parseDocumentList(response, true);
-        if(result.size() == 0) {
+        if (result.size() == 0) {
             String errorMessage = "Got 0 results, invalid search.";
             LOGGER.error(errorMessage);
             LOGGER.debug(response);
             throw new NoContentAvailableException(errorMessage);
         }
-        LOGGER.info("Returning List with "+result.size()+" documents.");
+        LOGGER.info("Returning List with " + result.size() + " documents.");
         return result;
     }
-
+    
     public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, MultipleDocumentsException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
-        LOGGER.info("Requesting document with number:" +archiveDocumentNumber);
+        LOGGER.info("Requesting document with number:" + archiveDocumentNumber);
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
-        LOGGER.info("Parsing results");
+        LOGGER.info(LOGGING_PARSING_RESULT);
         List<InfoArchiveDocument> documents = parseDocumentList(response, false);
-        if(documents.size() > 1) {
-            String errorMessage = "Got "+documents.size()+" results for document number:"+archiveDocumentNumber+", the request handler expected at least one result.";
+        if (documents.size() > 1) {
+            String errorMessage = "Got " + documents.size() + " results for document number:" + archiveDocumentNumber + LOGGING_EXPECT_AT_LEAST_ONE_RESULT;
             LOGGER.error(errorMessage);
             LOGGER.debug(response);
             throw new MultipleDocumentsException(errorMessage);
         } else if (documents.size() == 0) {
-            String errorMessage = "Got "+documents.size()+" results for document number:"+archiveDocumentNumber+", the request handler expected at least one result.";
+            String errorMessage = "Got " + documents.size() + " results for document number:" + archiveDocumentNumber + LOGGING_EXPECT_AT_LEAST_ONE_RESULT;
             LOGGER.error(errorMessage);
             LOGGER.debug(response);
             throw new NoContentAvailableException(errorMessage);
@@ -178,16 +167,16 @@ public class RecordRequest {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
         InfoArchiveQueryBuilder currentQuery = new InfoArchiveQueryBuilder();
-        if(documentType != null) {
+        if (documentType != null) {
             currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_TITLE, documentType);
         }
-        if(personNumber != null) {
+        if (personNumber != null) {
             currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_PERSON_NUMBER, personNumber);
         }
-        if(documentCharacteristics != null) {
+        if (documentCharacteristics != null) {
             currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_CHARACTERISTIC, documentCharacteristics);
         }
-        if(sendDate1 != null && sendDate2 != null) {
+        if (sendDate1 != null && sendDate2 != null) {
             currentQuery = currentQuery.addBetweenCriteria(PARSE_DOCUMENT_SEND_DATE, sendDate1, sendDate2);
         }
         String requestBody = currentQuery.build();
@@ -204,71 +193,90 @@ public class RecordRequest {
         LOGGER.debug(requestBody);
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
-
-    private List<InfoArchiveDocument> parseDocumentList(String response,boolean expectList) throws ParseException, TooManyResultsException, InfoArchiveResponseException {
+    
+    private List<InfoArchiveDocument> parseDocumentList(String response, boolean expectList) throws ParseException, TooManyResultsException, InfoArchiveResponseException {
         List<InfoArchiveDocument> documents = new ArrayList<>();
-
+        
         JsonParser parser = new JsonParser();
         JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
-
+        
         //responseErrorCheck
-        if(jsonResponse.has(PARSE_RESPONSE_ERROR)){
+        if (jsonResponse.has(PARSE_RESPONSE_ERROR)) {
             LOGGER.info("Got error in response.");
             StringBuilder exceptionMessage = new StringBuilder();
             JsonArray errors = jsonResponse.getAsJsonArray(PARSE_RESPONSE_ERROR);
             String errorTitle = "";
             for (int i_error = 0; i_error < errors.size(); i_error++) {
                 JsonObject error = errors.get(i_error).getAsJsonObject();
-
+                
                 errorTitle = error.get(PARSE_RESPONSE_ERROR_TITLE).getAsString();
                 String errorMessage = error.get(PARSE_RESPONSE_ERROR_MESSAGE).getAsString();
-
+                
                 exceptionMessage.append(errorTitle);
                 exceptionMessage.append(" ");
                 exceptionMessage.append(errorMessage);
                 exceptionMessage.append("\n");
             }
-
+            
             LOGGER.debug(response);
             LOGGER.error(exceptionMessage.toString());
             InfoArchiveResponseException infoArchiveResponseException = new InfoArchiveResponseException(exceptionMessage.toString());
             infoArchiveResponseException.setErrorCode(errorTitle, expectList);
             throw infoArchiveResponseException;
         }
-
+        
         //check response size
-        if(jsonResponse.has(PARSE_RESPONSE_PAGE)) {
-            JsonObject page = jsonResponse.getAsJsonObject(PARSE_RESPONSE_PAGE);
-            if(page.has(PARSE_RESPONSE_TOTAL_ELEMENTS)) {
-                int totalElements = page.get(PARSE_RESPONSE_TOTAL_ELEMENTS).getAsInt();
-                if(configuration.getMaxResults() < totalElements) {
-                    String errorMessage = "InfoArchive responded with "+totalElements+" items, this exceeds the maximum allowed items of "+configuration.getMaxResults()+" set in the configuration.";
-                    LOGGER.error(errorMessage);
-                    LOGGER.debug(response);
-                    throw new TooManyResultsException(errorMessage);
-                }
-            }
+        int totalElements = totalElementsFromResponse(jsonResponse);
+        if (configuration.getMaxResults() < totalElements) {
+            String errorMessage = "InfoArchive responded with " + totalElements + " items, this exceeds the maximum allowed items of " + configuration.getMaxResults() + " set in the configuration.";
+            LOGGER.error(errorMessage);
+            LOGGER.debug(response);
+            throw new TooManyResultsException(errorMessage);
         }
-
+        
         //read response
         if (jsonResponse.has(PARSE_RESPONSE_EMBEDDED)) {
             JsonObject embedded = jsonResponse.getAsJsonObject(PARSE_RESPONSE_EMBEDDED);
             if (embedded.has(PARSE_RESPONSE_RESULTS)) {
                 JsonArray results = embedded.getAsJsonArray(PARSE_RESPONSE_RESULTS);
+                
                 for (int i_Results = 0; i_Results < results.size(); i_Results++) {
                     JsonObject result = results.get(i_Results).getAsJsonObject();
-                    if (result.has(PARSE_RESPONSE_ROWS)) {
-                        JsonArray rows = result.get(PARSE_RESPONSE_ROWS).getAsJsonArray();
-                        for (int i_Rows = 0; i_Rows < rows.size(); i_Rows++) {
-                            JsonObject row = rows.get(i_Rows).getAsJsonObject();
-                            documents.add(parseDocument(row));
-                        }
-                    }
+                    documents.addAll(parseResponseListDocumentsRow(result));
                 }
             }
         }
         
         return documents;
+    }
+    
+    private List<InfoArchiveDocument> parseResponseListDocumentsRow(JsonObject result) {
+        List<InfoArchiveDocument> documents = new ArrayList<>();
+        
+        if (result.has(PARSE_RESPONSE_ROWS)) {
+            JsonArray rows = result.get(PARSE_RESPONSE_ROWS).getAsJsonArray();
+            for (int i_Rows = 0; i_Rows < rows.size(); i_Rows++) {
+                JsonObject row = rows.get(i_Rows).getAsJsonObject();
+                try {
+                    documents.add(parseDocument(row));
+                } catch (ParseException parseExc) {
+                    LOGGER.error("Failed to parse document", parseExc);
+                }
+            }
+        }
+        
+        
+        return documents;
+    }
+    
+    private int totalElementsFromResponse(JsonObject jsonResponse) {
+        if (jsonResponse.has(PARSE_RESPONSE_PAGE)) {
+            JsonObject page = jsonResponse.getAsJsonObject(PARSE_RESPONSE_PAGE);
+            if (page.has(PARSE_RESPONSE_TOTAL_ELEMENTS)) {
+                return page.get(PARSE_RESPONSE_TOTAL_ELEMENTS).getAsInt();
+            }
+        }
+        return 0;
     }
     
     private InfoArchiveDocument parseDocument(JsonObject document) throws ParseException {
@@ -278,35 +286,68 @@ public class RecordRequest {
             JsonObject column = columns.get(i_column).getAsJsonObject();
             
             if (column.has(PARSE_RESPONSE_NAME)) {
-                if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_ID)) {
-                    infoArchiveDocument.setArchiefDocumentId(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_PERSON_NUMBER)) {
-                    infoArchiveDocument.setArchiefPersoonsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_TITLE)) {
-                    infoArchiveDocument.setArchiefDocumenttitel(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_KIND)) {
-                    infoArchiveDocument.setArchiefDocumentsoort(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_PROTOCOL)) {
-                    infoArchiveDocument.setArchiefRegeling(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_CHARACTERISTIC)) {
-                    infoArchiveDocument.setArchiefDocumentkenmerk(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_SEND_DATE)) {
-                    infoArchiveDocument.setArchiefVerzenddag(
-                        InfoArchiveDateUtil.convertToRequestDate(column.get(PARSE_RESPONSE_VALUE).getAsString()));
-                } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_TYPE)) {
-                    infoArchiveDocument.setArchiefDocumenttype(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_STATUS)) {
-                    infoArchiveDocument.setArchiefDocumentstatus(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_YEAR)) {
-                    infoArchiveDocument.setArchiefRegelingsjaar(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                } else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_ATTACHMENT)) {
-                    infoArchiveDocument.setArchiefFile(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                }else if (column.get(PARSE_RESPONSE_NAME).getAsString().contentEquals(PARSE_DOCUMENT_HANDLING_NUMBER)) {
-                    infoArchiveDocument.setArchiefHandelingsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                }
+                String columnName = column.get(PARSE_RESPONSE_NAME).getAsString();
+                infoArchiveDocument = parseFirstTenFields(infoArchiveDocument,columnName,column);
+                infoArchiveDocument = parseSecondTenField(infoArchiveDocument,columnName,column);
             }
         }
         
         return infoArchiveDocument;
+    }
+    
+    //(so it has come to this...) here are some methods to fix cyclomatic complexity...
+    private InfoArchiveDocument parseFirstTenFields(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column) throws ParseException {
+        switch (columnName) {
+            case PARSE_DOCUMENT_ID:
+                infoArchiveDocument.setArchiefDocumentId(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                break;
+            case PARSE_DOCUMENT_PERSON_NUMBER:
+                infoArchiveDocument.setArchiefPersoonsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                break;
+            case PARSE_DOCUMENT_TITLE:
+                infoArchiveDocument.setArchiefDocumenttitel(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                break;
+            case PARSE_DOCUMENT_KIND:
+                infoArchiveDocument.setArchiefDocumentsoort(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                break;
+            case PARSE_DOCUMENT_PROTOCOL:
+                infoArchiveDocument.setArchiefRegeling(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                break;
+            case PARSE_DOCUMENT_CHARACTERISTIC:
+                infoArchiveDocument.setArchiefDocumentkenmerk(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                break;
+            case PARSE_DOCUMENT_SEND_DATE:
+                infoArchiveDocument.setArchiefVerzenddag(InfoArchiveDateUtil.convertToRequestDate(column.get(PARSE_RESPONSE_VALUE).getAsString()));
+                break;
+            case PARSE_DOCUMENT_TYPE:
+                infoArchiveDocument.setArchiefDocumenttype(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                break;
+            case PARSE_DOCUMENT_STATUS:
+                infoArchiveDocument.setArchiefDocumentstatus(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                break;
+            default:
+                LOGGER.warn("Unknown column detected:" + columnName);
+                break;
+        }
+        return infoArchiveDocument;
+    }
+    
+    private InfoArchiveDocument parseSecondTenField(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column) {
+        switch (columnName) {
+            case PARSE_DOCUMENT_YEAR:
+                infoArchiveDocument.setArchiefRegelingsjaar(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                break;
+            case PARSE_DOCUMENT_ATTACHMENT:
+                infoArchiveDocument.setArchiefFile(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                break;
+            case PARSE_DOCUMENT_HANDLING_NUMBER:
+                infoArchiveDocument.setArchiefHandelingsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                break;
+            default:
+                LOGGER.warn("Unknown column detected:" + columnName);
+                break;
+        }
+        return infoArchiveDocument;
+        
     }
 }

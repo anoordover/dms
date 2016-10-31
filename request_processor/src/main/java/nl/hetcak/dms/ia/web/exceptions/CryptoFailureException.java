@@ -7,7 +7,7 @@ import java.security.PrivilegedActionException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class CryptoFailureException extends Exception {
+public class CryptoFailureException extends RequestResponseException {
     public static final int ERROR_CODE = 0;
     public static final String ERROR_MESSAGE = "The CryptoUtil is unable to encrypt or decrypt the Object, please contact an Administrator.";
     
@@ -17,6 +17,7 @@ public class CryptoFailureException extends Exception {
      * call to {@link #initCause}.
      */
     public CryptoFailureException() {
+        super(ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -28,7 +29,7 @@ public class CryptoFailureException extends Exception {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public CryptoFailureException(String message) {
-        super(message);
+        super(ERROR_MESSAGE, ERROR_CODE, message);
     }
     
     /**
@@ -46,7 +47,7 @@ public class CryptoFailureException extends Exception {
      * @since 1.4
      */
     public CryptoFailureException(String message, Throwable cause) {
-        super(message, cause);
+        super(message, cause, ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -64,7 +65,7 @@ public class CryptoFailureException extends Exception {
      * @since 1.4
      */
     public CryptoFailureException(Throwable cause) {
-        super(cause);
+        super(cause, ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -82,6 +83,6 @@ public class CryptoFailureException extends Exception {
      * @since 1.7
      */
     public CryptoFailureException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+        super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE, ERROR_MESSAGE);
     }
 }

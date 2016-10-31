@@ -42,8 +42,10 @@ public class ConfigService {
             }
             stringBuilder.append("[OK] Config file found and loaded.\n");
         } catch (MissingConfigurationException missingcexc) {
+            LOGGER.error("Config file not found.",missingcexc);
             stringBuilder.append("[ERROR] Config file not found.\n");
         } catch (MisconfigurationException mcexc) {
+            LOGGER.error("Config file not correctly configured.",mcexc);
             stringBuilder.append("Config file found.\n");
             stringBuilder.append("[ERROR] Config file is invalid.\n");
         }
@@ -57,15 +59,17 @@ public class ConfigService {
     public Response getRandomKey() {
         LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
         LOGGER.info("Create random key request.");
-        StreamingOutput output = new StreamingOutput() {
-            @Override
-            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                LOGGER.info("Creating new random key.");
-                outputStream.write(CryptoUtil.createRandomKey());
-                outputStream.close();
-                LOGGER.info("Returning Random key.");
-            }
+        StreamingOutput output = outputStream -> {
+            LOGGER.info("Creating new random key.");
+            outputStream.write(CryptoUtil.createRandomKey());
+            outputStream.close();
+            LOGGER.info("Returning Random key.");
         };
         return Response.ok(output).build();
+    }
+    
+    public Response getEmptyConfig() {
+        //todo
+        return Response.ok().build();
     }
 }

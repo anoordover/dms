@@ -7,7 +7,7 @@ import java.security.PrivilegedActionException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class ServerConnectionFailureException extends Exception {
+public class ServerConnectionFailureException extends RequestResponseException {
     public static final int ERROR_CODE = 1002;
     public static final String ERROR_MESSAGE = "Unable to connect to server, please contact an Administrator.";
     
@@ -17,7 +17,7 @@ public class ServerConnectionFailureException extends Exception {
      * call to {@link #initCause}.
      */
     public ServerConnectionFailureException() {
-        super();
+        super(ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -29,7 +29,7 @@ public class ServerConnectionFailureException extends Exception {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public ServerConnectionFailureException(String message) {
-        super(message);
+        super(ERROR_MESSAGE, ERROR_CODE, message);
     }
     
     /**
@@ -47,7 +47,7 @@ public class ServerConnectionFailureException extends Exception {
      * @since 1.4
      */
     public ServerConnectionFailureException(String message, Throwable cause) {
-        super(message, cause);
+        super(message, cause, ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -65,7 +65,7 @@ public class ServerConnectionFailureException extends Exception {
      * @since 1.4
      */
     public ServerConnectionFailureException(Throwable cause) {
-        super(cause);
+        super(cause, ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -83,6 +83,6 @@ public class ServerConnectionFailureException extends Exception {
      * @since 1.7
      */
     public ServerConnectionFailureException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+        super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE, ERROR_MESSAGE);
     }
 }

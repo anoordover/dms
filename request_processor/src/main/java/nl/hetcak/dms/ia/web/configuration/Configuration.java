@@ -18,6 +18,7 @@ public interface Configuration {
      * @deprecated see {@link Configuration#getInfoArchiveServerInformation()}.
      * @return the server address.
      */
+    @Deprecated
     String getInfoArchiveServerAddress();
     
     /**
@@ -25,6 +26,7 @@ public interface Configuration {
      * @deprecated see {@link Configuration#getInfoArchiveServerInformation()}.
      * @return the server port.
      */
+    @Deprecated
     int getInfoArchiveServerPort();
     
     /**

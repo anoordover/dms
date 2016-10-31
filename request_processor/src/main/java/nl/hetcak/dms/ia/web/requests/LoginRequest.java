@@ -32,6 +32,7 @@ public class LoginRequest {
     private static final String LOGIN_GRANT_PASSWORD = "password";
     private static final String LOGIN_GRANT_REFRESH = "refresh_token";
     private static final String SELECTOR_LOGIN = "login";
+    private static final String ENCODING_UTF8 = "UTF-8";
     
     private Configuration configuration;
     private InfoArchiveRequestUtil infoArchiveRequestUtil;
@@ -91,7 +92,7 @@ public class LoginRequest {
         JsonParser parser = new JsonParser();
         JsonObject response = parser.parse(serverResponse).getAsJsonObject();
         
-        if(response.has("expires_in") && response.has("access_token") && response.has("refresh_token")) {
+        if(response.has("expires_in") && response.has("access_token") && response.has(LOGIN_GRANT_REFRESH)) {
             int expireSeconds = response.get("expires_in").getAsInt();
             GregorianCalendar expire = (GregorianCalendar)GregorianCalendar.getInstance();
             expire.add(Calendar.SECOND,expireSeconds);
@@ -99,7 +100,7 @@ public class LoginRequest {
             credentials.setSecurityTokenInvalidationTime(expire);
             LOGGER.info("Updating Tokens");
             credentials.setSecurityToken(response.get("access_token").getAsString());
-            credentials.setRecoveryToken(response.get("refresh_token").getAsString());
+            credentials.setRecoveryToken(response.get(LOGIN_GRANT_REFRESH).getAsString());
         } else {
             throw new LoginFailureException("Failed to find expires time or tokens in response.");
         }
@@ -111,17 +112,17 @@ public class LoginRequest {
     private String prepareLoginBody(Credentials credentials) throws UnsupportedEncodingException {
         LOGGER.info("Prepare login body.");
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(URLEncoder.encode(LOGIN_USERNAME, "UTF-8"));
+        stringBuilder.append(URLEncoder.encode(LOGIN_USERNAME, ENCODING_UTF8));
         stringBuilder.append('=');
-        stringBuilder.append(URLEncoder.encode(credentials.getUsername(), "UTF-8"));
+        stringBuilder.append(URLEncoder.encode(credentials.getUsername(), ENCODING_UTF8));
         stringBuilder.append('&');
-        stringBuilder.append(URLEncoder.encode(LOGIN_PASSWORD, "UTF-8"));
+        stringBuilder.append(URLEncoder.encode(LOGIN_PASSWORD, ENCODING_UTF8));
         stringBuilder.append('=');
-        stringBuilder.append(URLEncoder.encode(credentials.getPassword(), "UTF-8"));
+        stringBuilder.append(URLEncoder.encode(credentials.getPassword(), ENCODING_UTF8));
         stringBuilder.append('&');
-        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, "UTF-8"));
+        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, ENCODING_UTF8));
         stringBuilder.append('=');
-        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_PASSWORD, "UTF-8"));
+        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_PASSWORD, ENCODING_UTF8));
 
         LOGGER.info("Returning login body.");
         return stringBuilder.toString();
@@ -130,13 +131,13 @@ public class LoginRequest {
     private String prepareRefreshLoginBody(Credentials credentials) throws UnsupportedEncodingException {
         LOGGER.info("Prepare login refresh body.");
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_REFRESH, "UTF-8"));
+        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_REFRESH, ENCODING_UTF8));
         stringBuilder.append('=');
-        stringBuilder.append(URLEncoder.encode(credentials.getRecoveryToken(), "UTF-8"));
+        stringBuilder.append(URLEncoder.encode(credentials.getRecoveryToken(), ENCODING_UTF8));
         stringBuilder.append('&');
-        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, "UTF-8"));
+        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, ENCODING_UTF8));
         stringBuilder.append('=');
-        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_REFRESH, "UTF-8"));
+        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_REFRESH, ENCODING_UTF8));
 
         LOGGER.info("Returning login refresh body.");
         return stringBuilder.toString();

@@ -7,7 +7,7 @@ import java.security.PrivilegedActionException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class TooManyResultsException extends Exception {
+public class TooManyResultsException extends RequestResponseException {
     public static final int ERROR_CODE = 3001;
     public static final String ERROR_MESSAGE = "To many results, please contact an Administrator.";
     /**
@@ -16,6 +16,7 @@ public class TooManyResultsException extends Exception {
      * call to {@link #initCause}.
      */
     public TooManyResultsException() {
+        super(ERROR_CODE, ERROR_MESSAGE);
     }
 
     /**
@@ -27,7 +28,7 @@ public class TooManyResultsException extends Exception {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public TooManyResultsException(String message) {
-        super(message);
+        super(ERROR_MESSAGE, ERROR_CODE, message);
     }
 
     /**
@@ -45,7 +46,7 @@ public class TooManyResultsException extends Exception {
      * @since 1.4
      */
     public TooManyResultsException(String message, Throwable cause) {
-        super(message, cause);
+        super(message, cause, ERROR_CODE, ERROR_MESSAGE);
     }
 
     /**
@@ -63,7 +64,7 @@ public class TooManyResultsException extends Exception {
      * @since 1.4
      */
     public TooManyResultsException(Throwable cause) {
-        super(cause);
+        super(cause, ERROR_CODE, ERROR_MESSAGE);
     }
 
     /**
@@ -81,6 +82,6 @@ public class TooManyResultsException extends Exception {
      * @since 1.7
      */
     public TooManyResultsException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+        super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE, ERROR_MESSAGE);
     }
 }

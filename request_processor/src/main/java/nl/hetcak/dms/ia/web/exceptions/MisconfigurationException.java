@@ -7,7 +7,7 @@ import java.security.PrivilegedActionException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class MisconfigurationException extends Exception {
+public class MisconfigurationException extends RequestResponseException {
     public static final int ERROR_CODE = 1001;
     public static final String ERROR_MESSAGE = "There is a error with in the configuration file, please contact an Administrator.";
     /**
@@ -16,6 +16,7 @@ public class MisconfigurationException extends Exception {
      * call to {@link #initCause}.
      */
     public MisconfigurationException() {
+        super(ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -27,7 +28,7 @@ public class MisconfigurationException extends Exception {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public MisconfigurationException(String message) {
-        super(message);
+        super(ERROR_MESSAGE, ERROR_CODE, message);
     }
     
     /**
@@ -45,7 +46,7 @@ public class MisconfigurationException extends Exception {
      * @since 1.4
      */
     public MisconfigurationException(String message, Throwable cause) {
-        super(message, cause);
+        super(message, cause, ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -63,7 +64,7 @@ public class MisconfigurationException extends Exception {
      * @since 1.4
      */
     public MisconfigurationException(Throwable cause) {
-        super(cause);
+        super(cause, ERROR_CODE, ERROR_MESSAGE);
     }
     
     /**
@@ -81,6 +82,6 @@ public class MisconfigurationException extends Exception {
      * @since 1.7
      */
     public MisconfigurationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+        super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE, ERROR_MESSAGE);
     }
 }

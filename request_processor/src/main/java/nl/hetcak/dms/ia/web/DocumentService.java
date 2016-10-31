@@ -29,9 +29,41 @@ import java.io.OutputStream;
 @Path("/rest")
 public class DocumentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
-
+    
+    private static final String XML_REQUEST_START = "<request>";
+    private static final String XML_REQUEST_STOP = "</request>";
     private static final String ERROR_RESPONSE_GENERIC = "Something went wrong, please notify an administrator.";
     private static final String ERROR_RESPONSE_MESSAGE_TEMPLATE = "<error><code>%d</code><description>%s</description></error>";
+    private static final String LOGGER_IO_OR_PARSE_EXC = "IO or Parsing error.";
+    private static final String LOGGER_VALID_INCOMING_REQUEST = "Incoming request content is valid.";
+    private static final String LOGGER_INVALID_INCOMING_REQUEST = "Incoming request content is invalid!";
+    private static final String ERROR_CONTENT_GRABBING = "Content grabbing attempt detected. Canceling request.";
+    
+    private RecordRequest createRecordRequest() throws RequestResponseException{
+        try {
+            ConnectionManager connectionManager = ConnectionManager.getInstance();
+            RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
+            return recordRequest;
+        } catch (RequestResponseException reqResExc){
+            LOGGER.error(reqResExc.getUserErrorMessage(), reqResExc);
+            throw reqResExc;
+        }
+    }
+    
+    private ListDocumentResponse listDocumentResponse(RecordRequest recordRequest, ListDocumentRequestConsumer request) throws RequestResponseException {
+        try{
+            return new ListDocumentResponse(recordRequest.requestListDocuments(request.getArchivePersonNumber()));
+        } catch (RequestResponseException reqresExc) {
+            LOGGER.error(reqresExc.getUserErrorMessage(),reqresExc);
+            throw reqresExc;
+        } catch (InfoArchiveResponseException iaRespExc) {
+            LOGGER.error("Got error response from InfoArchive.",iaRespExc);
+            throw new RequestResponseException(iaRespExc.getErrorCode(), "Got error response from InfoArchive.");
+        } catch (Exception exc) {
+            LOGGER.error("Io or parsing error", exc);
+            throw new RequestResponseException(-1, LOGGER_IO_OR_PARSE_EXC);
+        }
+    }
     
     @POST
     @Path("/listDocuments")
@@ -42,51 +74,68 @@ public class DocumentService {
         LOGGER.info("Incoming request for /listDocuemnts.");
         LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
-        input.append("<request>");
+        input.append(XML_REQUEST_START);
         input.append(sBody);
-        input.append("</request>");
+        input.append(XML_REQUEST_STOP);
         try {
             ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest(input.toString());
             if (request.hasContent()) {
-                LOGGER.info("Request content is valid");
-                ConnectionManager connectionManager = ConnectionManager.getInstance();
-                RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-                ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getArchivePersonNumber()));
+                LOGGER.info(LOGGER_VALID_INCOMING_REQUEST);
+                RecordRequest recordRequest = createRecordRequest();
+                ListDocumentResponse response = listDocumentResponse(recordRequest, request);
                 return Response.ok(response.getAsXML()).build();
             } else {
-                LOGGER.info("Request content is invalid");
-                throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
+                LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
+                throw new ContentGrabbingException(ERROR_CONTENT_GRABBING);
             }
-        } catch (ContentGrabbingException cgExc) {
-            LOGGER.error("Content grabbing attempt detected. Returning http error.");
-            return Response.status(Response.Status.NOT_ACCEPTABLE).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (MisconfigurationException misConExc) {
-            LOGGER.error(misConExc.ERROR_MESSAGE, misConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (MissingConfigurationException missingConExc) {
-            LOGGER.error(missingConExc.ERROR_MESSAGE, missingConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (ServerConnectionFailureException serConFailExc) {
-            LOGGER.error(serConFailExc.ERROR_MESSAGE, serConFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (LoginFailureException loginFailExc) {
-            LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (TooManyResultsException tmrExc) {
-            LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, tmrExc.ERROR_MESSAGE)).build();
-        } catch (NoContentAvailableException noConAvaExc) {
-            LOGGER.error(noConAvaExc.ERROR_MESSAGE, noConAvaExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, noConAvaExc.ERROR_CODE, noConAvaExc.ERROR_MESSAGE)).build();
-        } catch (InfoArchiveResponseException iaRespExc) {
-            LOGGER.error(iaRespExc.getMessage(), iaRespExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, iaRespExc.getErrorCode(), iaRespExc.ERROR_MESSAGE)).build();
+        } catch (RequestResponseException rrExc) {
+            LOGGER.error(rrExc.getMessage(), rrExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, rrExc.getErrorCode(), rrExc.getUserErrorMessage())).build();
         } catch (Exception exc) {
             //catch all error and return error output.
-            LOGGER.error("Something went wrong during the request.", exc);
+            LOGGER.error(ERROR_CONTENT_GRABBING, exc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
+    
+    private DocumentRequest createDocumentRequest() throws RequestResponseException{
+        try {
+            ConnectionManager connectionManager = ConnectionManager.getInstance();
+            DocumentRequest iaDocumentRequest = new DocumentRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
+            return iaDocumentRequest;
+        } catch (RequestResponseException reqresExc){
+            LOGGER.error(reqresExc.getUserErrorMessage(), reqresExc);
+            throw reqresExc;
+        }
+    }
+    
+    private InfoArchiveDocument documentResponse(RecordRequest recordRequest, DocumentRequestConsumer documentRequestConsumer) throws RequestResponseException {
+        try{
+            return recordRequest.requestDocument(documentRequestConsumer.getArchiveDocumentNumber());
+        } catch (RequestResponseException reqresExc) {
+            LOGGER.error(reqresExc.getUserErrorMessage(),reqresExc);
+            throw reqresExc;
+        } catch (InfoArchiveResponseException iaRespExc) {
+            LOGGER.error("Search for document resulted in a InfoArchive Exception.",iaRespExc);
+            throw new RequestResponseException(iaRespExc.getErrorCode(), "Search for document resulted in a InfoArchive Exception.");
+        } catch (Exception exc) {
+            LOGGER.error(LOGGER_IO_OR_PARSE_EXC, exc);
+            throw new RequestResponseException(-1, LOGGER_IO_OR_PARSE_EXC);
+        }
+    }
+    
+    private ByteArrayOutputStream documentTransfer(DocumentRequest documentRequest, InfoArchiveDocument infoArchiveDocument) throws RequestResponseException {
+        try{
+            return documentRequest.getContentWithContentId(infoArchiveDocument.getArchiefFile());
+        } catch (RequestResponseException reqResExc) {
+            LOGGER.error(reqResExc.getUserErrorMessage(),reqResExc);
+            throw reqResExc;
+        } catch (Exception exc) {
+            LOGGER.error(LOGGER_IO_OR_PARSE_EXC, exc);
+            throw new RequestResponseException(-1, LOGGER_IO_OR_PARSE_EXC);
+        }
+    }
+    
     
     @POST
     @Path("/document")
@@ -97,69 +146,36 @@ public class DocumentService {
         LOGGER.info("Incoming request for /document.");
         LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
-        input.append("<request>");
+        input.append(XML_REQUEST_START);
         input.append(sBody);
-        input.append("</request>");
+        input.append(XML_REQUEST_STOP);
 
         try {
             DocumentRequestConsumer documentRequestConsumer = DocumentRequestConsumer.unmarshallerRequest(input.toString());
             if (documentRequestConsumer.hasContent()) {
-                LOGGER.info("Request content is valid");
-                ConnectionManager connectionManager = ConnectionManager.getInstance();
-
-                RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-                InfoArchiveDocument infoArchiveDocument = recordRequest.requestDocument(documentRequestConsumer.getArchiveDocumentNumber());
-                DocumentRequest iaDocumentRequest = new DocumentRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-                ByteArrayOutputStream byteArray = iaDocumentRequest.getContentWithContentId(infoArchiveDocument.getArchiefFile());
+                LOGGER.info(LOGGER_VALID_INCOMING_REQUEST);
+                RecordRequest recordRequest = createRecordRequest();
+                DocumentRequest documentRequest = createDocumentRequest();
+                InfoArchiveDocument document = documentResponse(recordRequest, documentRequestConsumer);
+                
+                ByteArrayOutputStream byteArray = documentTransfer(documentRequest, document);
                 LOGGER.info("Getting Stream ready to send.");
-                StreamingOutput outputStream = new StreamingOutput() {
-                    @Override
-                    public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+                StreamingOutput streamingOutput = outputStream ->  {
                         LOGGER.info("Sending Stream as response.");
-                        try {
                             outputStream.write(byteArray.toByteArray());
                             outputStream.close();
-                        } catch (Exception e) {
-                            LOGGER.error("Error while sending stream.", e);
-                            throw new WebApplicationException(e);
-                        }
-                    }
                 };
-                return Response.ok(outputStream).build();
+                return Response.ok(streamingOutput).build();
             } else {
-                LOGGER.info("Request content is invalid");
-                throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
+                LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
+                throw new ContentGrabbingException(ERROR_CONTENT_GRABBING);
             }
-        } catch (ContentGrabbingException cgExc) {
-            LOGGER.error("Content grabbing attempt detected. Returning http error.");
-            return Response.status(Response.Status.NOT_ACCEPTABLE).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (MisconfigurationException misConExc) {
-            LOGGER.error(misConExc.ERROR_MESSAGE, misConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (MissingConfigurationException missingConExc) {
-            LOGGER.error(missingConExc.ERROR_MESSAGE, missingConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (ServerConnectionFailureException serConFailExc) {
-            LOGGER.error(serConFailExc.ERROR_MESSAGE, serConFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (LoginFailureException loginFailExc) {
-            LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (MultipleDocumentsException multiDocExc) {
-            LOGGER.error(multiDocExc.ERROR_MESSAGE, multiDocExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, multiDocExc.ERROR_CODE, multiDocExc.ERROR_MESSAGE)).build();
-        } catch (TooManyResultsException tmrExc) {
-            LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, tmrExc.ERROR_MESSAGE)).build();
-        } catch (NoContentAvailableException noConAvaExc) {
-            LOGGER.error(noConAvaExc.ERROR_MESSAGE, noConAvaExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, noConAvaExc.ERROR_CODE, noConAvaExc.ERROR_MESSAGE)).build();
-        } catch (InfoArchiveResponseException iaRespExc) {
-            LOGGER.error(iaRespExc.getMessage(), iaRespExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, iaRespExc.getErrorCode(), iaRespExc.ERROR_MESSAGE)).build();
+        } catch (RequestResponseException rrExc) {
+            LOGGER.error(rrExc.getMessage(), rrExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, rrExc.getErrorCode(), rrExc.getUserErrorMessage())).build();
         } catch (Exception exc) {
             //catch all error and return error output.
-            LOGGER.error("Something went wrong during the request.", exc);
+            LOGGER.error("The incoming xml could not pe parsed.", exc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
@@ -173,51 +189,33 @@ public class DocumentService {
         LOGGER.info("Incoming request for /searchDocuments.");
         LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
-        input.append("<request>");
+        input.append(XML_REQUEST_START);
         input.append(sBody);
-        input.append("</request>");
+        input.append(XML_REQUEST_STOP);
         
         try {
             SearchDocumentRequestConsumer request = SearchDocumentRequestConsumer.unmarshalRequest(input.toString());
             //disable content grabbing with empty strings.
             if (request.hasContent()) {
-                LOGGER.info("Request content is valid");
+                LOGGER.info(LOGGER_VALID_INCOMING_REQUEST);
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentKind(), request.getPersonNumber(), request.getDocumentCharacteristics(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
                 return Response.ok(response.getAsXML()).build();
     
                 } else {
-                    LOGGER.info("Request content is invalid");
-                    throw new ContentGrabbingException("Content grabbing attempt detected. Canceling request.");
+                    LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
+                    throw new ContentGrabbingException(ERROR_CONTENT_GRABBING);
                 }
             } catch (ContentGrabbingException cgExc) {
-            LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.");
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, cgExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (MisconfigurationException misConExc) {
-            LOGGER.error(misConExc.ERROR_MESSAGE, misConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, misConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (MissingConfigurationException missingConExc) {
-            LOGGER.error(missingConExc.ERROR_MESSAGE, missingConExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, missingConExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (ServerConnectionFailureException serConFailExc) {
-            LOGGER.error(serConFailExc.ERROR_MESSAGE, serConFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, serConFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (LoginFailureException loginFailExc) {
-            LOGGER.error(loginFailExc.ERROR_MESSAGE, loginFailExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, loginFailExc.ERROR_CODE, ERROR_RESPONSE_GENERIC)).build();
-        } catch (TooManyResultsException tmrExc) {
-            LOGGER.error(tmrExc.ERROR_MESSAGE, tmrExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, tmrExc.ERROR_CODE, tmrExc.ERROR_MESSAGE)).build();
-        } catch (NoContentAvailableException noConAvaExc) {
-            LOGGER.error(noConAvaExc.ERROR_MESSAGE, noConAvaExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, noConAvaExc.ERROR_CODE, noConAvaExc.ERROR_MESSAGE)).build();
-        } catch (InfoArchiveResponseException iaRespExc) {
-            LOGGER.error(iaRespExc.getMessage(), iaRespExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, iaRespExc.getErrorCode(), iaRespExc.ERROR_MESSAGE)).build();
+            LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.", cgExc);
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, ERROR_CONTENT_GRABBING, ERROR_RESPONSE_GENERIC)).build();
+        } catch (RequestResponseException rrExc) {
+            LOGGER.error(rrExc.getMessage(), rrExc);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, rrExc.getErrorCode(), rrExc.getUserErrorMessage())).build();
         } catch (Exception exc) {
             //catch all error and return error output.
-            LOGGER.error("Something went wrong during the request.", exc);
+            LOGGER.error("The incoming xml could not pe parsed.", exc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
@@ -229,30 +227,5 @@ public class DocumentService {
     @Produces(MediaType.TEXT_HTML)
     public Response defaultResponse() {
         return Response.ok("<html><head><title>DMS</title></head><body><h1>DMS Request Processor</h1><p>System running.</p></body></html>").build();
-    }
-    
-    @GET
-    @Path("/checkConfig")
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response checkConfig() {
-        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
-        LOGGER.info("Running log checker.");
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Loading config file...\n");
-        ConfigurationManager configurationManager = new ConfigurationManager();
-        try {
-            Configuration configuration = configurationManager.loadConfiguration(null);
-            if(!configuration.hasBasicInformation()) {
-                throw new MisconfigurationException("Some elements of the configuration have not been configured.");
-            }
-            stringBuilder.append("[OK] Config file found and loaded.\n");
-        } catch (MissingConfigurationException missingcexc) {
-            stringBuilder.append("[ERROR] Config file not found.\n");
-        } catch (MisconfigurationException mcexc) {
-            stringBuilder.append("Config file found.\n");
-            stringBuilder.append("[ERROR] Config file is invalid.\n");
-        }
-        LOGGER.info(stringBuilder.toString());
-        return Response.ok(stringBuilder.toString()).build();
     }
 }

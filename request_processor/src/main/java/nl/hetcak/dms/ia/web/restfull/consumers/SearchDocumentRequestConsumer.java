@@ -102,6 +102,21 @@ public class SearchDocumentRequestConsumer {
     
     public boolean hasContent() {
         Boolean content = true;
+        
+        if(this.documentKind == null && this.documentCharacteristics == null && this.personNumber == null) {
+            content = false;
+        }
+        if(this.documentKind.length() == 0 && this.documentCharacteristics.length() == 0 && this.personNumber.length() == 0) {
+            content = false;
+        }
+        
+        if(hasDate() || content) {
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean hasDate() {
         Boolean date = true;
     
         if(this.documentSendDate1 == null) {
@@ -116,16 +131,6 @@ public class SearchDocumentRequestConsumer {
         if(this.documentSendDate2.length() == 0) {
             date =  false;
         }
-        if(this.documentKind == null && this.documentCharacteristics == null && this.personNumber == null) {
-            content = false;
-        }
-        if(this.documentKind.length() == 0 && this.documentCharacteristics.length() == 0 && this.personNumber.length() == 0) {
-            content = false;
-        }
-        
-        if(date || content) {
-            return true;
-        }
-        return false;
+        return date;
     }
 }

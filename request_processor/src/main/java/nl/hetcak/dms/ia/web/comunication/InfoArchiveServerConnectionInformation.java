@@ -7,7 +7,8 @@ package nl.hetcak.dms.ia.web.comunication;
  */
 public class InfoArchiveServerConnectionInformation implements ServerConnectionInformation {
     private String serverAddress;
-    private int serverPort, maxItems;
+    private int serverPort;
+    private int maxItems;
     
     /**
      * Sets the server address.

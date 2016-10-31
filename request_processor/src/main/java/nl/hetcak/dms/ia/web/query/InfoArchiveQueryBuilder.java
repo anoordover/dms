@@ -31,11 +31,6 @@ public class InfoArchiveQueryBuilder {
     private static final String OPERATOR_LESS_OR_EQUAL = "LESS_OR_EQUAL";
     private static final String OPERATOR_LESS = "LESS";
     
-    //Text queries.
-    private static final String OPERATOR_STARTS_WITH = "STARTS_WITH";
-    private static final String OPERATOR_ENDS_WITH = "ENDS_WITH";
-    private static final String OPERATOR_FULLTEXT = "FULLTEXT";
-    
     private List<Criterion> criterions;
     
     @XmlElement(name = "criterion")
