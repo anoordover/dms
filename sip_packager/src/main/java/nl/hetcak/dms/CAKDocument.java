@@ -77,7 +77,7 @@ public class CAKDocument extends IADocument {
             try (FileInputStream objPayloadStream = new FileInputStream(objPayloadFile)) {
                 byte[] pData = new byte[(int) objPayloadFile.length()];
                 objPayloadStream.read(pData, 0, (int) objPayloadFile.length());
-                msPayload = new String(Base64.getDecoder().decode(pData));
+                msPayload = new String(Base64.getEncoder().encode(pData));
             } catch (IllegalArgumentException | IOException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }
