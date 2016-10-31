@@ -189,6 +189,7 @@ public class AMPCacheManager implements CacheManager {
     public List<IACache> getClosedCaches() {
         debug(this, "Fetching Closed Caches");
         List<IACache> objClosed = mcCaches.stream().filter(IACache::isClosed).collect(Collectors.toList());
+        mcCaches.removeAll(objClosed);
         debug(this, "Found " + objClosed.size() + " Closed Caches");
         return Collections.unmodifiableList(objClosed);
     }
@@ -205,7 +206,7 @@ public class AMPCacheManager implements CacheManager {
         if (objCache.isClosed()) {
             try { //Delete Cache folder contents and folder
                 Path objCachePath = Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCache.getId()).replace('/', File.separatorChar));
-                if(objCachePath.toFile().listFiles() != null) {
+                if (objCachePath.toFile().listFiles() != null) {
                     List<File> cFilesToClean = Arrays.asList(objCachePath.toFile().listFiles());
                     for (File objFile : cFilesToClean) {
                         Files.deleteIfExists(objFile.toPath());
@@ -223,7 +224,6 @@ public class AMPCacheManager implements CacheManager {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);
                 bReturn = false;
             }
-            mcCaches.remove(objCache);
         }
         info(this, "Cache " + objCache.getId() + " Has Been Deleted");
 
@@ -241,6 +241,7 @@ public class AMPCacheManager implements CacheManager {
         String sCacheData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + objXStream.toXML(objCache);
         try (FileOutputStream objSaveStream = new FileOutputStream(objSave.toFile())) {
             objSaveStream.write(sCacheData.getBytes(Charset.forName("UTF-8")));
+            bReturn = true;
         }
         return bReturn;
     }
@@ -278,10 +279,14 @@ public class AMPCacheManager implements CacheManager {
         if (objCache != null) {
             //Load the documents belonging to the cache
             Path objCachePath = Paths.get(String.format("%s/%d/", mobjBasePath.toString(), objCache.getId()));
-            List<File> cCacheContents = Arrays.asList(new File(objCachePath.toString()).listFiles());
-            for (File objDocumentFile : cCacheContents) {
-                debug(this, "Loading document " + objDocumentFile.getName() + " into IACache-" + objCache.getId());
-                objCache.add(new IADocumentReference(objDocumentFile.getName(), objDocumentFile.getAbsolutePath()));
+            if(objCachePath.toFile() != null) {
+                List<File> cCacheContents = Arrays.asList(objCachePath.toFile().listFiles());
+                for (File objDocumentFile : cCacheContents) {
+                    debug(this, "Loading document " + objDocumentFile.getName() + " into IACache-" + objCache.getId());
+                    if (objDocumentFile.getAbsolutePath().endsWith(".xml")) {
+                        objCache.add(new IADocumentReference(objDocumentFile.getName(), objDocumentFile.getAbsolutePath()));
+                    }
+                }
             }
             objCache.getContents().forEach(objReference -> objReference.getDocumentData(getDocumentClass(), mobjConfiguration.getParameter("document_element_name")));
             mcCaches.add(objCache);

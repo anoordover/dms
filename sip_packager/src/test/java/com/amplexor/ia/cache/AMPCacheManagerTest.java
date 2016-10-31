@@ -3,6 +3,7 @@ package com.amplexor.ia.cache;
 import com.amplexor.ia.configuration.CacheConfiguration;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
+import nl.hetcak.dms.CAKRetentionClass;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Ignore;
@@ -38,38 +39,39 @@ public class AMPCacheManagerTest {
     @Test
     public void add() throws Exception {
         IADocument iaDocument = mock(IADocument.class);
-            when(iaDocument.getDocumentId()).thenReturn("1002224232");
+        when(iaDocument.getDocumentId()).thenReturn("1002224232");
 
         IARetentionClass iaRetention = mock(IARetentionClass.class);
-            when(iaRetention.getName()).thenReturn("Startbrief");
+        when(iaRetention.getName()).thenReturn("Startbrief");
 
         CacheConfiguration cc = mock(CacheConfiguration.class);
-            when(cc.getCacheMessageThreshold()).thenReturn(1);
-            when(cc.getCacheTimeThreshold()).thenReturn(1800);
-            when(cc.getParameter("document_class")).thenReturn("nl.hetcak.dms.CAKDocument");
-            when(cc.getParameter("document_element_name")).thenReturn("ArchiefDocument");
-            when(cc.getCacheBasePath()).thenReturn("target/Cache");
+        when(cc.getCacheMessageThreshold()).thenReturn(1);
+        when(cc.getCacheTimeThreshold()).thenReturn(1800);
+        when(cc.getParameter("document_class")).thenReturn("nl.hetcak.dms.CAKDocument");
+        when(cc.getParameter("document_element_name")).thenReturn("ArchiefDocument");
+        when(cc.getCacheBasePath()).thenReturn("target/Cache");
 
         AMPCacheManager acm = new AMPCacheManager(cc);
         acm.initializeCache();
-
+        assertTrue(Files.exists(Paths.get("target/Cache/" + Thread.currentThread().getName())));
         assertTrue(acm.add(iaDocument, iaRetention));
+        assertTrue(Files.exists(Paths.get("target/Cache/" + Thread.currentThread().getName() + "/0/" + iaDocument.getDocumentId())));
     }
 
     @Test
     public void update_getClosedCaches() throws Exception {
         CacheConfiguration cc = mock(CacheConfiguration.class);
-            when(cc.getCacheMessageThreshold()).thenReturn(1);
-            when(cc.getCacheTimeThreshold()).thenReturn(1800);
-            when(cc.getParameter("document_class")).thenReturn("nl.hetcak.dms.CAKDocument");
-            when(cc.getParameter("document_element_name")).thenReturn("ArchiefDocument");
-            when(cc.getCacheBasePath()).thenReturn("target/Cache");
+        when(cc.getCacheMessageThreshold()).thenReturn(1);
+        when(cc.getCacheTimeThreshold()).thenReturn(1800);
+        when(cc.getParameter("document_class")).thenReturn("nl.hetcak.dms.CAKDocument");
+        when(cc.getParameter("document_element_name")).thenReturn("ArchiefDocument");
+        when(cc.getCacheBasePath()).thenReturn("target/Cache");
 
         IADocument iaDocument = mock(IADocument.class);
-            when(iaDocument.getDocumentId()).thenReturn("1002224232");
+        when(iaDocument.getDocumentId()).thenReturn("1002224232");
 
         IARetentionClass iaRetention = mock(IARetentionClass.class);
-            when(iaRetention.getName()).thenReturn("Startbrief");
+        when(iaRetention.getName()).thenReturn("Startbrief");
 
         AMPCacheManager acm = new AMPCacheManager(cc);
         acm.initializeCache();
@@ -81,17 +83,17 @@ public class AMPCacheManagerTest {
     @Test
     public void cleanupCache() throws Exception {
         CacheConfiguration cc = mock(CacheConfiguration.class);
-            when(cc.getCacheMessageThreshold()).thenReturn(1);
-            when(cc.getCacheTimeThreshold()).thenReturn(1800);
-            when(cc.getParameter("document_class")).thenReturn("nl.hetcak.dms.CAKDocument");
-            when(cc.getParameter("document_element_name")).thenReturn("ArchiefDocument");
-            when(cc.getCacheBasePath()).thenReturn("target/Cache");
+        when(cc.getCacheMessageThreshold()).thenReturn(1);
+        when(cc.getCacheTimeThreshold()).thenReturn(1800);
+        when(cc.getParameter("document_class")).thenReturn("nl.hetcak.dms.CAKDocument");
+        when(cc.getParameter("document_element_name")).thenReturn("ArchiefDocument");
+        when(cc.getCacheBasePath()).thenReturn("target/Cache");
 
         IADocument iaDocument = mock(IADocument.class);
-          when(iaDocument.getDocumentId()).thenReturn("1002224232");
+        when(iaDocument.getDocumentId()).thenReturn("1002224232");
 
         IARetentionClass iaRetention = mock(IARetentionClass.class);
-            when(iaRetention.getName()).thenReturn("Startbrief");
+        when(iaRetention.getName()).thenReturn("Startbrief");
 
         StringBuilder objBuilder = new StringBuilder();
         objBuilder.append("<urn:ArchiefDocument xmlns:urn=\"urn:hetcak:dms:uitingarchief:2016:08\">\n");
@@ -115,9 +117,11 @@ public class AMPCacheManagerTest {
         acm.initializeCache();
         acm.add(iaDocument, iaRetention);
         acm.update();
-        acm.getClosedCaches().get(0).close();
-        acm.getClosedCaches().get(0).setSipFile("target/main");
-        acm.cleanupCache(acm.getClosedCaches().get(0));
+        List<IACache> cClosedCaches = acm.getClosedCaches();
+        cClosedCaches.get(0).setSipFile("target/main");
+        assertTrue(Files.exists(Paths.get("target/Cache/" + Thread.currentThread().getName() + "/0/")));
+        acm.cleanupCache(cClosedCaches.get(0));
+        assertFalse(Files.exists(Paths.get("target/Cache/" + Thread.currentThread().getName() + "/0/")));
 
         assertEquals(0, acm.getClosedCaches().size());
     }
@@ -125,16 +129,19 @@ public class AMPCacheManagerTest {
     @Test
     public void saveCache() throws Exception {
         CacheConfiguration cc = mock(CacheConfiguration.class);
-            when(cc.getCacheBasePath()).thenReturn("target/Cache");
+        when(cc.getCacheBasePath()).thenReturn("target/Cache");
 
+        IACache objCache = new IACache(1, mock(IARetentionClass.class));
         AMPCacheManager acm = new AMPCacheManager(cc);
-        //assertTrue(acm.saveCaches());
+        acm.initializeCache();
+        assertTrue(acm.saveCache(objCache));
+        assertTrue(Files.exists(Paths.get("target/Cache/" + Thread.currentThread().getName() + "/save/IACache-1.xml")));
     }
 
     @Test
     public void loadCaches() throws Exception {
         CacheConfiguration cc = mock(CacheConfiguration.class);
-            when(cc.getCacheBasePath()).thenReturn("target/Cache");
+        when(cc.getCacheBasePath()).thenReturn("target/Cache");
 
         AMPCacheManager acm = new AMPCacheManager(cc);
         acm.initializeCache();
@@ -143,7 +150,7 @@ public class AMPCacheManagerTest {
 
     @AfterClass
     public static void tearDown() throws IOException {
-        FileUtils.deleteDirectory(new File("target"+File.separator+"Cache"));
+        FileUtils.deleteDirectory(new File("target" + File.separator + "Cache"));
     }
 
 

@@ -21,11 +21,11 @@ import static com.amplexor.ia.Logger.info;
 public class IAArchiver {
     private static final int V_MAJOR = 1;
     private static final int V_MINOR = 0;
-    private static final int REVISION = 2;
+    private static final int REVISION = 3;
 
     private static String configLocation = (System.getProperty("user.dir") + "/config/IAArchiver.xml").replace('/', File.separatorChar);
 
-    private IAArchiver() {
+    private IAArchiver() { //Hide implicit public constructor
 
     }
 
@@ -52,7 +52,6 @@ public class IAArchiver {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INIT_INVALID_LOG4J_PROPERTIES, ex);
             }
             info(IAArchiver.class, "Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
-
             info(IAArchiver.class, "Initializing Worker Manager");
             objWorkerManager.initialize(objConfigManager.getConfiguration());
         }

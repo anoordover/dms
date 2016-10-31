@@ -37,6 +37,7 @@ public class ExceptionHelper {
     public static final int ERROR_SOURCE_INVALID_ENCODING = 3007;
     public static final int ERROR_SOURCE_UNKNOWN_RETENTION = 3008;
     public static final int ERROR_SOURCE_STORAGE_FAILED = 3009;
+    public static final int ERROR_SOURCE_VALIDATION_FAILED = 3010;
 
     public static final int ERROR_CACHE_INSUFFICIENT_DISK_SPACE = 4001;
 

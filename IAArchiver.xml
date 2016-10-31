@@ -198,7 +198,12 @@
             <error_handling>log_error;notify_source</error_handling>
         </error>
         <error>
-            <error_code>3001</error_code>
+            <error_code>3010</error_code>
+            <error_text>Invalid XML data for archival (XSD Validation Failure)</error_text>
+            <error_handling>log_error;notify_source</error_handling>
+        </error>
+        <error>
+            <error_code>4001</error_code>
             <error_text>Insufficient Disk space</error_text>
             <error_handling>notify_source;log_fatal</error_handling>
         </error>

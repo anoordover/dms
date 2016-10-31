@@ -88,6 +88,9 @@ public class IACache {
     }
 
     public List<IADocumentReference> getContents() {
+        if(mcContents == null) {
+            mcContents = new ArrayList<>();
+        }
         return Collections.unmodifiableList(mcContents);
     }
 
