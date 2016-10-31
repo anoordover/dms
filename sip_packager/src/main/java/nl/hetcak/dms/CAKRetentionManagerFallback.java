@@ -3,18 +3,16 @@ package nl.hetcak.dms;
 import com.amplexor.ia.configuration.RetentionManagerConfiguration;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
-import com.amplexor.ia.retention.RetentionManager;
 
 import static com.amplexor.ia.Logger.info;
 
 /**
- * Created by admjzimmermann on 6-9-2016.
+ * Created by zimmermannj on 10/28/2016.
  */
-public class CAKRetentionManager implements RetentionManager {
-    protected RetentionManagerConfiguration mobjConfiguration;
+public class CAKRetentionManagerFallback extends CAKRetentionManager {
 
-    public CAKRetentionManager(RetentionManagerConfiguration objConfiguration) {
-        mobjConfiguration = objConfiguration;
+    public CAKRetentionManagerFallback(RetentionManagerConfiguration objConfiguration) {
+        super(objConfiguration);
     }
 
     @Override
@@ -25,7 +23,7 @@ public class CAKRetentionManager implements RetentionManager {
         String sMetadata = objSource.getMetadata(mobjConfiguration.getParameter("retention_element_name"));
         if (sMetadata != null) {
             for (IARetentionClass objRetentionClass : mobjConfiguration.getRetentionClasses()) {
-                if (objRetentionClass instanceof CAKRetentionClass && ((CAKRetentionClass) objRetentionClass).getAssociatedTitles().contains(sMetadata)) {
+                if (objRetentionClass instanceof CAKRetentionClassFallback && ((CAKRetentionClassFallback) objRetentionClass).getAssociatedTitles().contains(sMetadata)) {
                     objReturn = objRetentionClass;
                     objSource.setMetadata(mobjConfiguration.getParameter("retention_element_pdi_name"), ((CAKRetentionClass) objRetentionClass).getHandelingNr());
                     info(this, "Found Retention Class: " + objReturn.getName());
@@ -40,4 +38,5 @@ public class CAKRetentionManager implements RetentionManager {
 
         return objReturn;
     }
+
 }

@@ -10,12 +10,19 @@ public abstract class IARetentionClass {
     @XStreamAlias("name")
     private String msName;
 
+    @XStreamAlias("policy")
+    private String msPolicy;
+
     public IARetentionClass(String sName) {
         this.msName = sName;
     }
 
     public String getName() {
         return msName;
+    }
+
+    public String getPolicy() {
+        return msPolicy;
     }
 
 }

@@ -17,15 +17,12 @@ public class IADocumentReference {
     private String msErrorMessage;
     private int miErrorCode;
 
-    @XStreamOmitField
-    private IADocument mobjDocumentData;
 
     public IADocumentReference(String sDocumentId, String sFile) {
         msDocumentId = sDocumentId;
         msFile = sFile;
         msErrorMessage = null;
         miErrorCode = 0;
-        mobjDocumentData = null;
     }
 
     public IADocumentReference(IADocument objDocument, String sFile) {
@@ -33,7 +30,6 @@ public class IADocumentReference {
         msFile = sFile;
         msErrorMessage = objDocument.getErrorText();
         miErrorCode = objDocument.getErrorCode();
-        mobjDocumentData = objDocument;
     }
 
     public String getDocumentId() {
@@ -61,23 +57,23 @@ public class IADocumentReference {
     }
 
     public IADocument getDocumentData(Class<?> objDocumentClass, String sAlias) {
-        if (mobjDocumentData == null) {
-            if (msFile == null) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER,
-                        new Exception("Document reference not associated with a file"));
-            }
-            try (InputStream objInput = new FileInputStream(new File(msFile))) {
-                XStream objXStream = new XStream(new StaxDriver());
-                objXStream.alias(sAlias, objDocumentClass);
-                objXStream.processAnnotations(objDocumentClass);
-                Object objDocumentData = objDocumentClass.cast(objXStream.fromXML(objInput));
-                if (objDocumentData instanceof IADocument) {
-                    mobjDocumentData = (IADocument) objDocumentClass.cast(objDocumentData);
-                }
-            } catch (IOException ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-            }
+        IADocument objDocument = null;
+        if (msFile == null) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER,
+                    new Exception("Document reference not associated with a file"));
         }
-        return mobjDocumentData;
+        try (InputStream objInput = new FileInputStream(new File(msFile))) {
+            XStream objXStream = new XStream(new StaxDriver());
+            objXStream.alias(sAlias, objDocumentClass);
+            objXStream.processAnnotations(objDocumentClass);
+            Object objDocumentData = objDocumentClass.cast(objXStream.fromXML(objInput));
+            if (objDocumentData instanceof IADocument) {
+                objDocument = (IADocument) objDocumentClass.cast(objDocumentData);
+            }
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        }
+
+        return objDocument;
     }
 }
