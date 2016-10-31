@@ -1,7 +1,10 @@
 package com.amplexor.ia.ingest;
 
 import com.amplexor.ia.cache.IACache;
+import com.amplexor.ia.configuration.ConfigManager;
 import com.amplexor.ia.configuration.IAServerConfiguration;
+import com.sun.deploy.config.Config;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -14,6 +17,13 @@ import static org.mockito.Mockito.when;
  * Created by minkenbergs on 4-10-2016.
  */
 public class ArchiveManagerTest {
+    ConfigManager mobjConfigManager;
+    @Before
+    public void setup() {
+        System.out.println(System.getProperty("user.dir"));
+        mobjConfigManager = new ConfigManager("IAArchiver.xml");
+        mobjConfigManager.loadConfiguration();
+    }
 
     @Test
     public void ingestSip() throws Exception {

@@ -54,7 +54,7 @@ public class SIPPackagerConfiguration {
         return moRetentionManager;
     }
 
-    public PluggableObjectConfiguration getMessageParser() {
+    public MessageParserConfiguration getMessageParser() {
         return moMessageParser;
     }
 

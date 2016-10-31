@@ -1,5 +1,7 @@
 package com.amplexor.ia.ingest;
 
+import com.amplexor.ia.configuration.ConfigManager;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -15,6 +17,14 @@ import static org.mockito.Mockito.verify;
  * Created by minkenbergs on 4-10-2016.
  */
 public class IACredentialsTest {
+    ConfigManager mobjConfigManager;
+
+    @Before
+    public void setup() {
+        System.out.println(System.getProperty("user.dir"));
+        mobjConfigManager = new ConfigManager("IAArchiver.xml");
+        mobjConfigManager.loadConfiguration();
+    }
 
     @Test
     public void setGetUsername() throws Exception {
@@ -55,14 +65,14 @@ public class IACredentialsTest {
     @Test
     public void hasExpiredNotExpired() throws Exception {
         IACredentials iactest = new IACredentials();
-        iactest.setExpiry(System.currentTimeMillis()+10000);
+        iactest.setExpiry(System.currentTimeMillis() + 10000);
         assertFalse(iactest.hasExpired());
     }
 
     @Test
     public void hasExpiredExpired() throws Exception {
         IACredentials iactest = new IACredentials();
-        iactest.setExpiry(System.currentTimeMillis()+1);
+        iactest.setExpiry(System.currentTimeMillis() + 1);
         Thread.sleep(5);
         assertTrue(iactest.hasExpired());
     }

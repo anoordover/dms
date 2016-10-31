@@ -49,7 +49,7 @@ public class CAKMessageParser implements MessageParser {
     public List<IADocument> parse(String sData) {
         info(this, "Parsing Document");
         List<IADocument> objReturn = new ArrayList<>();
-        IADocument objStandardDocument = parseDocument(sData, mobjConfiguration.getParameter("schema_name"));
+        IADocument objStandardDocument = parseDocument(sData, mobjConfiguration.getParameter("schema_name"), "PersoonBurgerservicenummer");
         if (objStandardDocument != null) {
             objReturn.add(objStandardDocument);
         }

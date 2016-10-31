@@ -279,8 +279,9 @@ public class AMPCacheManager implements CacheManager {
         if (objCache != null) {
             //Load the documents belonging to the cache
             Path objCachePath = Paths.get(String.format("%s/%d/", mobjBasePath.toString(), objCache.getId()));
-            if(objCachePath.toFile() != null) {
-                List<File> cCacheContents = Arrays.asList(objCachePath.toFile().listFiles());
+            File objCachePathFile = objCachePath.toFile();
+            if(objCachePathFile != null && objCachePathFile.listFiles() != null) {
+                List<File> cCacheContents = Arrays.asList(objCachePathFile.listFiles());
                 for (File objDocumentFile : cCacheContents) {
                     debug(this, "Loading document " + objDocumentFile.getName() + " into IACache-" + objCache.getId());
                     if (objDocumentFile.getAbsolutePath().endsWith(".xml")) {

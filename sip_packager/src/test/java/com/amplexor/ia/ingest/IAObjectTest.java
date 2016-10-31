@@ -1,7 +1,9 @@
 package com.amplexor.ia.ingest;
 
+import com.amplexor.ia.configuration.ConfigManager;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -16,6 +18,15 @@ import static org.junit.Assert.assertNotNull;
  * Created by minkenbergs on 5-10-2016.
  */
 public class IAObjectTest {
+    ConfigManager mobjConfigManager;
+
+    @Before
+    public void setup() {
+        System.out.println(System.getProperty("user.dir"));
+        mobjConfigManager = new ConfigManager("IAArchiver.xml");
+        mobjConfigManager.loadConfiguration();
+    }
+
     @Test
     public void setgetName() throws Exception {
         IAObject iaotest = new IAObject();
