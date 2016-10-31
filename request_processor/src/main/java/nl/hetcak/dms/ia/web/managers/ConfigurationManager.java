@@ -44,20 +44,19 @@ public class ConfigurationManager {
     
     private File loadDefaultConfigFiles() {
         File file = new File(DEFAULT_CONFIG_FILE_ENCRYPTED_NAME);
-        if(!checkConfigurationExist(file)) {
-            file = null;
-        } else {
+        if(checkConfigurationExist(file)) {
             LOGGER.info("Found encrypted config file.");
             encrypted = true;
+            return file;
         }
         file = new File(DEFAULT_CONFIG_FILE_NAME);
-        if(!checkConfigurationExist(file)) {
-            file = null;
-        } else {
+        if(checkConfigurationExist(file)) {
             LOGGER.info("Found unencrypted config file.");
             LOGGER.warn("It is highly recommended that the config is encrypted.");
+            return file;
         }
-        return file;
+        LOGGER.error("No config file found.");
+        return null;
     }
     
     public ConfigurationImpl loadConfiguration(File file) throws MissingConfigurationException, MisconfigurationException {
