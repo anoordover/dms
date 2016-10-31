@@ -1,6 +1,5 @@
 package nl.hetcak.dms.ia.web.managers;
 
-import com.sun.deploy.trace.LoggerTraceListener;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.LoginFailureException;

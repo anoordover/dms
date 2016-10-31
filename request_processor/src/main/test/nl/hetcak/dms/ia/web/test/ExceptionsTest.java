@@ -129,6 +129,7 @@ public class ExceptionsTest {
     }
     
     //UnexpectedResultException
+    //deprecated
     @Test(expected = UnexpectedResultException.class)
     public void throwUnexpectedResultException() throws UnexpectedResultException {
         throw new UnexpectedResultException();
@@ -302,5 +303,35 @@ public class ExceptionsTest {
     public void throwInfoArchiveResponseException4() throws InfoArchiveResponseException {
         Exception error = new Exception();
         throw new InfoArchiveResponseException("Test", error, true, true);
+    }
+    
+    
+    //CryptoFailureException
+    @Test(expected = CryptoFailureException.class)
+    public void throwCryptoFailureException() throws CryptoFailureException {
+        throw new CryptoFailureException();
+    }
+    
+    @Test(expected = CryptoFailureException.class)
+    public void throwCryptoFailureException1() throws CryptoFailureException {
+        throw new CryptoFailureException("Test");
+    }
+    
+    @Test(expected = CryptoFailureException.class)
+    public void throwCryptoFailureException2() throws CryptoFailureException {
+        Exception error = new Exception();
+        throw new CryptoFailureException("Test", error);
+    }
+    
+    @Test(expected = CryptoFailureException.class)
+    public void throwCryptoFailureException3() throws CryptoFailureException {
+        Exception error = new Exception();
+        throw new CryptoFailureException(error);
+    }
+    
+    @Test(expected = CryptoFailureException.class)
+    public void throwCryptoFailureException4() throws CryptoFailureException {
+        Exception error = new Exception();
+        throw new CryptoFailureException("Test", error, true, true);
     }
 }
