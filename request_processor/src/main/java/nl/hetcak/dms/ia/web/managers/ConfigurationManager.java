@@ -42,23 +42,28 @@ public class ConfigurationManager {
         return false;
     }
     
+    private File loadDefaultConfigFiles() {
+        File file = new File(DEFAULT_CONFIG_FILE_ENCRYPTED_NAME);
+        if(!checkConfigurationExist(file)) {
+            file = null;
+        } else {
+            LOGGER.info("Found encrypted config file.");
+            encrypted = true;
+        }
+        file = new File(DEFAULT_CONFIG_FILE_NAME);
+        if(!checkConfigurationExist(file)) {
+            file = null;
+        } else {
+            LOGGER.info("Found unencrypted config file.");
+            LOGGER.warn("It is highly recommended that the config is encrypted.");
+        }
+        return file;
+    }
+    
     public ConfigurationImpl loadConfiguration(File file) throws MissingConfigurationException, MisconfigurationException {
         LOGGER.info("Loading Configuration.");
         if(file == null) {
-            file = new File(DEFAULT_CONFIG_FILE_ENCRYPTED_NAME);
-            if(!checkConfigurationExist(file)) {
-                file = null;
-            } else {
-                LOGGER.info("Found encrypted config file.");
-                encrypted = true;
-            }
-            file = new File(DEFAULT_CONFIG_FILE_NAME);
-            if(!checkConfigurationExist(file)) {
-                file = null;
-            } else {
-                LOGGER.info("Found unencrypted config file.");
-                LOGGER.warn("It is highly recommended that the config is encrypted.");
-            }
+            file = loadDefaultConfigFiles();
         } else {
             LOGGER.info("Config file has already been loaded or this application is running in test modes.");
             LOGGER.warn("It is highly recommended that the config is encrypted.");
@@ -73,10 +78,13 @@ public class ConfigurationManager {
             } catch (JAXBException jaxbExc) {
                 LOGGER.error("Failed to load configuration.", jaxbExc);
                 throw new MisconfigurationException("Failed to load configuration.", jaxbExc);
+            } catch (NullPointerException nullPointExc) {
+                LOGGER.error("Failed to load configuration.", nullPointExc);
+                throw new MisconfigurationException("Failed to load configuration.", nullPointExc);
             }
         } else {
-            LOGGER.error("Can't find configuration file at "+file.getPath());
-            throw new MissingConfigurationException("Can't find configuration file at "+file.getPath());
+            LOGGER.error("Can't find configuration");
+            throw new MissingConfigurationException("Can't find configuration");
         }
     }
     

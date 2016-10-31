@@ -209,7 +209,7 @@ public class DocumentService {
                 }
             } catch (ContentGrabbingException cgExc) {
             LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.", cgExc);
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, ERROR_CONTENT_GRABBING, ERROR_RESPONSE_GENERIC)).build();
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         } catch (RequestResponseException rrExc) {
             LOGGER.error(rrExc.getMessage(), rrExc);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, rrExc.getErrorCode(), rrExc.getUserErrorMessage())).build();
