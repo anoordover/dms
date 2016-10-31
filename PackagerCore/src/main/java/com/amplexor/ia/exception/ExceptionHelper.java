@@ -53,7 +53,7 @@ public class ExceptionHelper {
     public static final int ERROR_CALLBACK_UNABLE_TO_CONNECT = 7001;
     public static final int ERROR_CALLBACK_AUTHENTICATION_FAILURE = 7002;
 
-    public static final int ERROR_OTHER = -1;
+    public static final int ERROR_OTHER = 9999;
 
     private static final String ERROR_FORMAT = "%s [Exception: %s]";
 
@@ -98,7 +98,7 @@ public class ExceptionHelper {
     public synchronized void handleException(int iCode, Exception objException) {
         if (mobjExceptionConfiguration != null) {
             AMPError objError = mobjExceptionConfiguration.getError(iCode);
-            executeHandlers(objError, (IADocument) null, objException);
+            executeHandlers(objError, null, objException);
         } else {
             fatal(this, "No ExceptionConfiguration, Exiting");
         }
@@ -134,14 +134,14 @@ public class ExceptionHelper {
         AMPError objError = mobjExceptionConfiguration.getError(iCode);
         for (IADocumentReference objDocument : objCache.getContents()) {
             objDocument.setErrorCode(iCode);
-            objDocument.setErrorMessage(String.format(ERROR_FORMAT, objError.getErrorText(), objException.getLocalizedMessage()));
+            objDocument.setErrorMessage(String.format(ERROR_FORMAT, objError.getErrorText(), objException.getMessage()));
         }
         executeHandlers(objError, objCache, objException);
     }
 
     public synchronized void handleException(int iCode, IADocument objDocument, Exception objException) {
         AMPError objError = mobjExceptionConfiguration.getError(iCode);
-        objDocument.setErrorText(String.format(ERROR_FORMAT, objError.getErrorText(), objException.getLocalizedMessage()));
+        objDocument.setErrorText(String.format(ERROR_FORMAT, objError.getErrorText(), objException.getMessage()));
         objDocument.setErrorCode(objError.getErrorCode());
         executeHandlers(objError, objDocument, objException);
     }

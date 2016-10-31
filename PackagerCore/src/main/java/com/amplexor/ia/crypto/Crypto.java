@@ -1,8 +1,6 @@
 package com.amplexor.ia.crypto;
 
 import com.amplexor.ia.exception.ExceptionHelper;
-import org.apache.commons.io.Charsets;
-import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;

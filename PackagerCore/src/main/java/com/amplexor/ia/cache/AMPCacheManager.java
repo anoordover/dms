@@ -206,8 +206,9 @@ public class AMPCacheManager implements CacheManager {
         if (objCache.isClosed()) {
             try { //Delete Cache folder contents and folder
                 Path objCachePath = Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCache.getId()).replace('/', File.separatorChar));
-                if (objCachePath.toFile().listFiles() != null) {
-                    List<File> cFilesToClean = Arrays.asList(objCachePath.toFile().listFiles());
+                File[] cFilesInCache;
+                if ((cFilesInCache = objCachePath.toFile().listFiles()) != null) {
+                    List<File> cFilesToClean = Arrays.asList(cFilesInCache);
                     for (File objFile : cFilesToClean) {
                         Files.deleteIfExists(objFile.toPath());
                     }
@@ -242,6 +243,9 @@ public class AMPCacheManager implements CacheManager {
         try (FileOutputStream objSaveStream = new FileOutputStream(objSave.toFile())) {
             objSaveStream.write(sCacheData.getBytes(Charset.forName("UTF-8")));
             bReturn = true;
+        } catch (StreamException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            bReturn = false;
         }
         return bReturn;
     }
@@ -280,7 +284,7 @@ public class AMPCacheManager implements CacheManager {
             //Load the documents belonging to the cache
             Path objCachePath = Paths.get(String.format("%s/%d/", mobjBasePath.toString(), objCache.getId()));
             File objCachePathFile = objCachePath.toFile();
-            if(objCachePathFile != null && objCachePathFile.listFiles() != null) {
+            if (objCachePathFile != null && objCachePathFile.listFiles() != null) {
                 List<File> cCacheContents = Arrays.asList(objCachePathFile.listFiles());
                 for (File objDocumentFile : cCacheContents) {
                     debug(this, "Loading document " + objDocumentFile.getName() + " into IACache-" + objCache.getId());
@@ -336,7 +340,7 @@ public class AMPCacheManager implements CacheManager {
 
         if (objCache.getSipFile() != null) {
             try {
-                Files.copy(objCache.getSipFile(), Paths.get(String.format("%s/%s", sSavePath.toString(), objCache.getSipFile().getFileName().toString())));
+                Files.copy(objCache.getSipFile(), Paths.get(String.format("%s/%s", sSavePath, objCache.getSipFile().getFileName().toString())));
             } catch (IOException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             }

@@ -1,17 +1,14 @@
 package com.amplexor.ia.configuration.converters;
 
-import com.amplexor.ia.exception.ExceptionHelper;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.io.StreamException;
 
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Stream;
 
 /**
  * Custom XStream Converter class for reading a number of XML Elements and converting them to a {@link Map<String, Object>}

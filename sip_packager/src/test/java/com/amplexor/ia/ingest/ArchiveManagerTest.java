@@ -3,13 +3,9 @@ package com.amplexor.ia.ingest;
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.configuration.ConfigManager;
 import com.amplexor.ia.configuration.IAServerConfiguration;
-import com.sun.deploy.config.Config;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

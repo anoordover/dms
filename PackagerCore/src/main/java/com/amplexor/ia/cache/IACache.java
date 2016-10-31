@@ -1,11 +1,8 @@
 package com.amplexor.ia.cache;
 
-import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
-import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

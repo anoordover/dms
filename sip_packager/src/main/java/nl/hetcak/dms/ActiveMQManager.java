@@ -5,7 +5,6 @@ import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.exception.ExceptionHelper;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
-import org.apache.activemq.command.ActiveMQBytesMessage;
 
 import javax.jms.*;
 import java.util.List;
@@ -57,8 +56,6 @@ public class ActiveMQManager implements DocumentSource {
                     TextMessage objTextMessage = (TextMessage) objMessage;
                     sReturn = objTextMessage.getText();
                     objMessage.acknowledge();
-                } else if (objMessage instanceof ActiveMQBytesMessage) {
-                    ActiveMQBytesMessage objBytesMessage = (ActiveMQBytesMessage) objMessage;
                 }
 
                 objConsumer.close();

@@ -70,15 +70,8 @@ public class WorkerManager {
     }
 
     private boolean shouldStopWorker(int iProcessed, WorkerConfiguration objConfiguration) {
-        if (iProcessed < objConfiguration.getWorkerShutdownThreshold() && miCurrentWorker > 0) {
-            if (mcWorkers.get(miCurrentWorker).isIngesting()) {
-                return false;
-            }
+        return iProcessed < objConfiguration.getWorkerShutdownThreshold() && miCurrentWorker > 0 && !mcWorkers.get(miCurrentWorker).isIngesting();
 
-            return true;
-        }
-
-        return false;
     }
 
     private boolean shouldStartWorker(int iProcessed, WorkerConfiguration objConfiguration) {
@@ -87,17 +80,13 @@ public class WorkerManager {
         }
 
         //Start a new worker if the current one is ingesting
-        if (miCurrentWorker > -1 && mcWorkers.get(miCurrentWorker).isIngesting() && miCurrentWorker < (objConfiguration.getMaxWorkerThreads() - 1)) {
-            return true;
-        }
+        return miCurrentWorker > -1 && mcWorkers.get(miCurrentWorker).isIngesting() && miCurrentWorker < (objConfiguration.getMaxWorkerThreads() - 1);
 
-        return false;
     }
 
     private int getProcessedBytes() {
         int iReturn = 0;
-        for (Iterator<IAArchiverWorkerThread> objIter = mcWorkers.iterator(); objIter.hasNext(); ) {
-            IAArchiverWorkerThread objWorker = objIter.next();
+        for (IAArchiverWorkerThread objWorker : mcWorkers) {
             iReturn += objWorker.getProcessedBytes();
             objWorker.resetProcessedBytes();
         }
