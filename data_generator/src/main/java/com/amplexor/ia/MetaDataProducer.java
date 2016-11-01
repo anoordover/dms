@@ -8,9 +8,6 @@ import com.amplexor.ia.utils.TransformPDF;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
 
 import javax.jms.*;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
 import java.io.File;
 import java.util.Enumeration;
 
@@ -18,6 +15,12 @@ import java.util.Enumeration;
  * Created by admjzimmermann on 4-10-2016.
  */
 public class MetaDataProducer {
+    private static final String[] ARCHIEF_DOCUMENT_SOORT_ARRAY = {"Factuur"};
+    private static final String[] ARCHIEF_DOCUMENT_STATUS_ARRAY = {"Concept", "Definitief"};
+    private static final String[] ARCHIEF_DOCUMENT_TITEL_ARRAY = {"Z01", "Z02", "Z03", "B01", "B02", "B03"};
+    private static final String[] ARCHIEF_DOCUMENT_TYPE_ARRAY = {"Inkomend", "Intern", "Uitgaand"};
+    private static final String[] ARCHIEF_REGELING_ARRAY = {"Wlz", "Wmo"};
+
     private MetaDataProducer() { //Hide implicit public ctor
 
     }
@@ -49,7 +52,7 @@ public class MetaDataProducer {
             }
             Logger.info(MetaDataProducer.class, "Found " + iCount + "Messages in Queue: " + objConfigManager.getConfiguration().getDocumentSource().getParameter("input_queue_name"));
 
-            if (objConfigManager.getConfiguration().getDocumentSource().getParameter("queue_action").equals("clean")) {
+            if ("clean".equals(objConfigManager.getConfiguration().getDocumentSource().getParameter("queue_action"))) {
                 Logger.info(MetaDataProducer.class, "Emptying Queue");
                 MessageConsumer objConsumer = objSession.createConsumer(objDestination);
                 for (int iMsg = 0; iMsg < iCount; ++iMsg) {
@@ -73,21 +76,20 @@ public class MetaDataProducer {
             for (int i = 0; i < Integer.parseInt(objConfigManager.getConfiguration().getDocumentSource().getParameter("output_amount")); ++i) {
                 RandomGenerator rg = new RandomGenerator();
                 XmlDocument objDocument = new XmlDocument();
-                objDocument.setArchiefDocumentId(rg.generateArchiefDocumentId());
-                objDocument.setArchiefPersoonsnummer(rg.generateArchiefPersoonNummer());
-                objDocument.setPersoonBurgerservicenummer(rg.generatePersoonBurgersservicenummer());
-                objDocument.setArchiefDocumenttitel(rg.generateRandomEnum(ArchiefDocumenttitel.class));
-                objDocument.setArchiefDocumentsoort(rg.generateRandomEnum(ArchiefDocumentsoort.class));
-                objDocument.setArchiefRegeling(rg.generateRandomEnum(ArchiefRegeling.class));
-                objDocument.setArchiefDocumentkenmerk(rg.generateDocumentKenmerkNr());
-                objDocument.setVerzenddag(rg.generateVerzendDag());
-                objDocument.setArchiefDocumenttype(rg.generateRandomEnum(ArchiefDocumenttype.class));
-                objDocument.setArchiefDocumentstatus(rg.generateRandomEnum(ArchiefDocumentstatus.class));
-                objDocument.setRegelingjaar(rg.generateVerzendDag().getYear());
-                objDocument.setPayloadPdf(TransformPDF.encodeBase64(objConfigManager.getConfiguration().getDocumentSource().getParameter("pdf_path") + File.separatorChar + rg.generateIntOneToSix()));
+                objDocument.setMetadata("ArchiefDocumentId", rg.generateId(10));
+                objDocument.setMetadata("ArchiefPersoonsnummer", rg.generateId(10));
+                objDocument.setMetadata("ArchiefBurgerservicenummer", rg.generateId(9));
+                objDocument.setMetadata("ArchiefDocumenttitel", ARCHIEF_DOCUMENT_TITEL_ARRAY[rg.randomInt(ARCHIEF_DOCUMENT_TITEL_ARRAY.length - 1)]);
+                objDocument.setMetadata("ArchiefDocumentsoort", ARCHIEF_DOCUMENT_SOORT_ARRAY[rg.randomInt(ARCHIEF_DOCUMENT_SOORT_ARRAY.length - 1)]);
+                objDocument.setMetadata("ArchiefRegeling", ARCHIEF_REGELING_ARRAY[rg.randomInt(ARCHIEF_REGELING_ARRAY.length - 1)]);
+                objDocument.setMetadata("ArchiefDocumentkenmerk", rg.generateId(6));
+                objDocument.setMetadata("ArchiefVerzenddag", rg.generateVerzendDag().toString());
+                objDocument.setMetadata("ArchiefDocumenttype", ARCHIEF_DOCUMENT_TYPE_ARRAY[rg.randomInt(ARCHIEF_DOCUMENT_TYPE_ARRAY.length - 1)]);
+                objDocument.setMetadata("ArchiefDocumentstatus", ARCHIEF_DOCUMENT_STATUS_ARRAY[rg.randomInt(ARCHIEF_DOCUMENT_STATUS_ARRAY.length - 1)]);
+                objDocument.setMetadata("ArchiefRegelingsjaar", String.format("%04d", rg.generateVerzendDag().getYear()));
+                objDocument.setPayloadPdf(TransformPDF.encodeBase64(objConfigManager.getConfiguration().getDocumentSource().getParameter("pdf_path") + File.separatorChar + rg.randomInt(6)));
 
                 TextMessage objMessage = objSession.createTextMessage(objDocument.getXml());
-                Logger.info(MetaDataProducer.class, "Generated Document With ID:" + objDocument.getArchiefDocumentId());
                 objProducer.send(objMessage);
             }
             objProducer.close();
