@@ -52,24 +52,4 @@ public class ConfigService {
         LOGGER.info(stringBuilder.toString());
         return Response.ok(stringBuilder.toString()).build();
     }
-    
-    @GET
-    @Path("/createKey")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getRandomKey() {
-        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
-        LOGGER.info("Create random key request.");
-        StreamingOutput output = outputStream -> {
-            LOGGER.info("Creating new random key.");
-            outputStream.write(CryptoUtil.createRandomKey());
-            outputStream.close();
-            LOGGER.info("Returning Random key.");
-        };
-        return Response.ok(output).build();
-    }
-    
-    public Response getEmptyConfig() {
-        //todo
-        return Response.ok().build();
-    }
 }
