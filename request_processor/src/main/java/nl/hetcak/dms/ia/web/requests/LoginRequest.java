@@ -33,19 +33,20 @@ public class LoginRequest {
     private static final String LOGIN_GRANT_REFRESH = "refresh_token";
     private static final String SELECTOR_LOGIN = "login";
     private static final String ENCODING_UTF8 = "UTF-8";
-    
+
     private Configuration configuration;
     private InfoArchiveRequestUtil infoArchiveRequestUtil;
-    
+
     public LoginRequest(Configuration configuration) {
         this.configuration = configuration;
         this.infoArchiveRequestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());
     }
-    
+
     /**
      * Try to login the InfoArchive server.
+     *
      * @return active credentials.
-     * @throws LoginFailureException Failed to login.
+     * @throws LoginFailureException            Failed to login.
      * @throws ServerConnectionFailureException Failed to connect.
      */
     public Credentials loginInfoArchive() throws LoginFailureException, ServerConnectionFailureException {
@@ -55,7 +56,7 @@ public class LoginRequest {
             String bodyContent = prepareLoginBody(configuration.getInfoArchiveCredentials());
             LOGGER.debug("Logging in with credentials...");
             HttpResponse httpResponse = infoArchiveRequestUtil.executePostRequest(serverUrl, DEFAULT_CONTENT_TYPE_REQUEST, null, bodyContent);
-            String response =  infoArchiveRequestUtil.responseReader(httpResponse);
+            String response = infoArchiveRequestUtil.responseReader(httpResponse);
             LOGGER.debug(response);
             return updateCredentials(configuration.getInfoArchiveCredentials(), response);
         } catch (UnsupportedEncodingException unsupEncoExc) {
@@ -66,7 +67,7 @@ public class LoginRequest {
             throw new LoginFailureException(ioExc);
         }
     }
-    
+
     public Credentials refreshCredentialsInfoArchive(Credentials loggedInCredentials) throws LoginFailureException, ServerConnectionFailureException {
         LOGGER.info("Refreshing InfoArchive login token.");
         String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);
@@ -74,7 +75,7 @@ public class LoginRequest {
             String bodyContent = prepareRefreshLoginBody(loggedInCredentials);
             LOGGER.debug(bodyContent);
             HttpResponse httpResponse = infoArchiveRequestUtil.executePostRequest(serverUrl, DEFAULT_CONTENT_TYPE_REQUEST, null, bodyContent);
-            String response =  infoArchiveRequestUtil.responseReader(httpResponse);
+            String response = infoArchiveRequestUtil.responseReader(httpResponse);
             LOGGER.debug(response);
             LOGGER.info("Returning credentials.");
             return updateCredentials(configuration.getInfoArchiveCredentials(), response);
@@ -86,17 +87,17 @@ public class LoginRequest {
             throw new LoginFailureException(ioExc);
         }
     }
-    
+
     private Credentials updateCredentials(Credentials credentials, String serverResponse) throws LoginFailureException {
         LOGGER.info("Updating InfoArchive Credentials.");
         JsonParser parser = new JsonParser();
         JsonObject response = parser.parse(serverResponse).getAsJsonObject();
-        
-        if(response.has("expires_in") && response.has("access_token") && response.has(LOGIN_GRANT_REFRESH)) {
+
+        if (response.has("expires_in") && response.has("access_token") && response.has(LOGIN_GRANT_REFRESH)) {
             int expireSeconds = response.get("expires_in").getAsInt();
-            GregorianCalendar expire = (GregorianCalendar)GregorianCalendar.getInstance();
-            expire.add(Calendar.SECOND,expireSeconds);
-            LOGGER.info("InfoArchive Credentials will expire:"+expire.getTime().toString());
+            GregorianCalendar expire = (GregorianCalendar) GregorianCalendar.getInstance();
+            expire.add(Calendar.SECOND, expireSeconds);
+            LOGGER.info("InfoArchive Credentials will expire:" + expire.getTime().toString());
             credentials.setSecurityTokenInvalidationTime(expire);
             LOGGER.info("Updating Tokens");
             credentials.setSecurityToken(response.get("access_token").getAsString());
@@ -107,8 +108,8 @@ public class LoginRequest {
         LOGGER.info("Returning updated credentials.");
         return credentials;
     }
-    
-    
+
+
     private String prepareLoginBody(Credentials credentials) throws UnsupportedEncodingException {
         LOGGER.info("Prepare login body.");
         StringBuilder stringBuilder = new StringBuilder();
@@ -127,7 +128,7 @@ public class LoginRequest {
         LOGGER.info("Returning login body.");
         return stringBuilder.toString();
     }
-    
+
     private String prepareRefreshLoginBody(Credentials credentials) throws UnsupportedEncodingException {
         LOGGER.info("Prepare login refresh body.");
         StringBuilder stringBuilder = new StringBuilder();

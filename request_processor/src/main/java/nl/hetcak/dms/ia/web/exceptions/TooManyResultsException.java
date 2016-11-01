@@ -10,6 +10,7 @@ import java.security.PrivilegedActionException;
 public class TooManyResultsException extends RequestResponseException {
     public static final int ERROR_CODE = 3001;
     public static final String ERROR_MESSAGE = "To many results, please contact an Administrator.";
+
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a

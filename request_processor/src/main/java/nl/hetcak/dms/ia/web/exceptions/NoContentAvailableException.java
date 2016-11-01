@@ -5,7 +5,7 @@ import java.security.PrivilegedActionException;
 /**
  * Created by jepelt on 27-10-2016.
  */
-public class NoContentAvailableException extends RequestResponseException{
+public class NoContentAvailableException extends RequestResponseException {
     public static final int ERROR_CODE = 2007;
     public static final String ERROR_MESSAGE = "Document not available, please contact an administrator.";
 

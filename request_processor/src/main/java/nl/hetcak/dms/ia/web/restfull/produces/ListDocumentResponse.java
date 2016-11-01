@@ -15,14 +15,14 @@ import java.util.List;
 public class ListDocumentResponse {
     private static final Logger LOGGER = LoggerFactory.getLogger(ListDocumentResponse.class);
     List<InfoArchiveDocument> documents;
-    
+
     public ListDocumentResponse(List<InfoArchiveDocument> documents) {
         this.documents = documents;
     }
-    
+
     public String getAsXML() {
         StringBuilder stringBuilder = new StringBuilder();
-        for(InfoArchiveDocument document : documents) {
+        for (InfoArchiveDocument document : documents) {
             try {
                 stringBuilder.append(document.getXMLString());
             } catch (JAXBException jaxbExc) {

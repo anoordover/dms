@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
- *
+ * <p>
  * Creates queries that InfoArchive can use.
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
@@ -30,81 +30,88 @@ public class InfoArchiveQueryBuilder {
     private static final String OPERATOR_GREATER = "GREATER";
     private static final String OPERATOR_LESS_OR_EQUAL = "LESS_OR_EQUAL";
     private static final String OPERATOR_LESS = "LESS";
-    
+
     private List<Criterion> criterions;
-    
+
+    public InfoArchiveQueryBuilder() {
+        this.criterions = new ArrayList<>();
+    }
+
     @XmlElement(name = "criterion")
     public List<Criterion> getCriterions() {
         return criterions;
     }
-    
-    public InfoArchiveQueryBuilder() {
-        this.criterions = new ArrayList<>();
-    }
-    
+
     /**
      * Added a new Equal {@link Criterion} to this query.
-     * @param name Name of the column.
+     *
+     * @param name  Name of the column.
      * @param value the value.
      */
     public InfoArchiveQueryBuilder addEqualCriteria(String name, String value) {
         addCriterion(name, OPERATOR_EQUAL, value);
         return this;
     }
-    
+
     /**
      * Added a new Not Equal {@link Criterion} to this query.
-     * @param name Name of the column.
+     *
+     * @param name  Name of the column.
      * @param value the value.
      */
     public InfoArchiveQueryBuilder addNotEqualCriteria(String name, String value) {
         addCriterion(name, OPERATOR_NOT_EQUAL, value);
         return this;
     }
-    
+
     /**
      * Added a new Equal or Greater {@link Criterion} to this query.
-     * @param name Name of the column.
+     *
+     * @param name  Name of the column.
      * @param value the value.
      */
     public InfoArchiveQueryBuilder addGreaterOrEqualCriteria(String name, String value) {
         addCriterion(name, OPERATOR_GREATER_OR_EQUAL, value);
         return this;
     }
-    
+
     /**
      * Added a new Greater {@link Criterion} to this query.
-     * @param name Name of the column.
+     *
+     * @param name  Name of the column.
      * @param value the value.
      */
     public InfoArchiveQueryBuilder addGreaterCriteria(String name, String value) {
         addCriterion(name, OPERATOR_GREATER, value);
         return this;
     }
-    
+
     /**
      * Added a new Equal or Less {@link Criterion} to this query.
-     * @param name Name of the column.
+     *
+     * @param name  Name of the column.
      * @param value the value.
      */
     public InfoArchiveQueryBuilder addLessOrEqualCriteria(String name, String value) {
         addCriterion(name, OPERATOR_LESS_OR_EQUAL, value);
         return this;
     }
-    
+
     /**
      * Added a new Less {@link Criterion} to this query.
-     * @param name Name of the column.
+     *
+     * @param name  Name of the column.
      * @param value the value.
      */
     public InfoArchiveQueryBuilder addLessCriteria(String name, String value) {
         addCriterion(name, OPERATOR_LESS, value);
         return this;
     }
-    
+
     /**
      * Added a new Between {@link Criterion} to this query.
-     * @param name Name of the column.
+     *
+     * @param name   Name of the column.
      * @param value1 the value.
      * @param value2 the value.
      */
@@ -118,7 +125,7 @@ public class InfoArchiveQueryBuilder {
         this.criterions.add(criterion);
         return this;
     }
-    
+
     private void addCriterion(String name, String operator, String value) {
         Criterion criterion = new Criterion();
         criterion.setName(name);
@@ -127,9 +134,10 @@ public class InfoArchiveQueryBuilder {
         this.criterions.add(criterion);
         LOGGER.debug(String.format("[%s] Added %s criteria", this.toString(), operator));
     }
-    
+
     /**
      * Get the current class as XML string.
+     *
      * @return XML formatted String
      * @throws JAXBException Failed to create XML exception.
      */
@@ -149,5 +157,5 @@ public class InfoArchiveQueryBuilder {
         LOGGER.info("Returning xml query String for InfoArchive.");
         return sw.toString();
     }
-    
+
 }

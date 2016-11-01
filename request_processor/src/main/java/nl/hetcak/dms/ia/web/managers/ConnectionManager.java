@@ -20,18 +20,19 @@ public class ConnectionManager {
     private File configurationFile;
     private Credentials credentials;
     private Configuration configuration;
-    
+
     private ConnectionManager() {
         LOGGER.debug("New connectionManager created.");
     }
 
     /**
      * Gets the current instance of {@link ConnectionManager}.
+     *
      * @return the {@link ConnectionManager}
      */
     public static ConnectionManager getInstance() {
         LOGGER.info("Requesting ConnectionManager instance.");
-        if(connectionManager == null) {
+        if (connectionManager == null) {
             LOGGER.info("Creating a new ConnectionManager instance.");
             connectionManager = new ConnectionManager();
         }
@@ -41,11 +42,12 @@ public class ConnectionManager {
 
     /**
      * Set a new configuration file.
+     *
      * @param configurationFile the new configuration file.
      */
     public void setConfigurationFile(File configurationFile) {
         LOGGER.info("Setting new Configuration file.");
-        if(configuration != null) {
+        if (configuration != null) {
             LOGGER.debug("Unload existing configuration and credentials.");
             configuration = null;
             credentials = null;
@@ -55,30 +57,31 @@ public class ConnectionManager {
 
     /**
      * Gets the current active Credentials.
+     *
      * @return Active credentials that are ready to be used.
-     * @throws MissingConfigurationException Can't find configuration.
-     * @throws MisconfigurationException Missing basic configuration settings.
-     * @throws LoginFailureException Wrong login information.
+     * @throws MissingConfigurationException    Can't find configuration.
+     * @throws MisconfigurationException        Missing basic configuration settings.
+     * @throws LoginFailureException            Wrong login information.
      * @throws ServerConnectionFailureException Can't connect to server.
      */
-    public Credentials getActiveCredentials()  throws RequestResponseException {
+    public Credentials getActiveCredentials() throws RequestResponseException {
         LOGGER.info("Requesting Active Credentials.");
-              
-        if(credentials == null) {
+
+        if (credentials == null) {
             LOGGER.info("No Active Credentials found. Loading credentials from config.");
             credentials = getConfiguration().getInfoArchiveCredentials();
         }
-        
-        if(!credentials.isSecurityTokenValid()) {
+
+        if (!credentials.isSecurityTokenValid()) {
             LOGGER.info("Security token is not valid. Starting LoginRequest.");
             LoginRequest loginRequest = new LoginRequest(getConfiguration());
-            
-            if(credentials.getSecurityToken() == null) {
+
+            if (credentials.getSecurityToken() == null) {
                 LOGGER.info("Requesting new security token. executing Login Request.");
                 credentials = loginRequest.loginInfoArchive();
-            } else if(credentials.getRecoveryToken() != null) {
+            } else if (credentials.getRecoveryToken() != null) {
                 LOGGER.info("Refreshing security token. executing Login Request.");
-                credentials =  loginRequest.refreshCredentialsInfoArchive(credentials);
+                credentials = loginRequest.refreshCredentialsInfoArchive(credentials);
             }
         }
         LOGGER.info("Returning Active token.");
@@ -87,15 +90,16 @@ public class ConnectionManager {
 
     /**
      * Gets the current configuration.
+     *
      * @return the {@link Configuration} object.
      * @throws MissingConfigurationException Can't find configuration
-     * @throws MisconfigurationException Missing basic configuration settings.
+     * @throws MisconfigurationException     Missing basic configuration settings.
      */
     public Configuration getConfiguration() throws RequestResponseException {
         LOGGER.info("Getting current configuration.");
-        if(configuration == null) {
+        if (configuration == null) {
             LOGGER.info("Load config file.");
-            if(configurationFile != null) {
+            if (configurationFile != null) {
                 configuration = loadConfigurationFromFile(configurationFile);
             } else {
                 ConfigurationManager configurationManager = ConfigurationManager.getInstance();
@@ -105,7 +109,7 @@ public class ConnectionManager {
         LOGGER.info("Returning config file.");
         return configuration;
     }
-    
+
     private Configuration loadConfigurationFromFile(File file) throws RequestResponseException {
         ConfigurationManager configurationManager = ConfigurationManager.getInstance();
         configurationManager.setCustomConfigFile(file);

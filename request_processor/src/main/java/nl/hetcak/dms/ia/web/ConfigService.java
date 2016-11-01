@@ -2,7 +2,6 @@ package nl.hetcak.dms.ia.web;
 
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
-import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
 import org.slf4j.Logger;
@@ -22,18 +21,18 @@ import javax.ws.rs.core.Response;
 @Path("/config")
 public class ConfigService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigService.class);
-    
+
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public Response checkConfig() {
-        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
+        LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
         LOGGER.info("Running log checker.");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Loading config file...\n");
         ConfigurationManager configurationManager = ConfigurationManager.getInstance();
         try {
             Configuration configuration = configurationManager.loadConfiguration(false);
-            if(!configuration.hasBasicInformation()) {
+            if (!configuration.hasBasicInformation()) {
                 throw new MisconfigurationException("Some elements of the configuration have not been configured.");
             }
             stringBuilder.append("[OK] Config file found and loaded.\n");

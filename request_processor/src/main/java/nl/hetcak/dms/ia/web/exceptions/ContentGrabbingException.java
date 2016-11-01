@@ -10,6 +10,7 @@ import java.security.PrivilegedActionException;
 public class ContentGrabbingException extends RequestResponseException {
     public static final int ERROR_CODE = 0;
     public static final String ERROR_MESSAGE = "There is a error within the request message, please contact an Administrator.";
+
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
@@ -18,7 +19,7 @@ public class ContentGrabbingException extends RequestResponseException {
     public ContentGrabbingException() {
         super(ERROR_CODE, ERROR_MESSAGE);
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message.  The
      * cause is not initialized, and may subsequently be initialized by
@@ -30,7 +31,7 @@ public class ContentGrabbingException extends RequestResponseException {
     public ContentGrabbingException(String message) {
         super(ERROR_MESSAGE, ERROR_CODE, message);
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message and
      * cause.  <p>Note that the detail message associated with
@@ -48,7 +49,7 @@ public class ContentGrabbingException extends RequestResponseException {
     public ContentGrabbingException(String message, Throwable cause) {
         super(message, cause, ERROR_CODE, ERROR_MESSAGE);
     }
-    
+
     /**
      * Constructs a new exception with the specified cause and a detail
      * message of <tt>(cause==null ? null : cause.toString())</tt> (which
@@ -64,9 +65,9 @@ public class ContentGrabbingException extends RequestResponseException {
      * @since 1.4
      */
     public ContentGrabbingException(Throwable cause) {
-        super(cause, ERROR_CODE,ERROR_MESSAGE);
+        super(cause, ERROR_CODE, ERROR_MESSAGE);
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message,
      * cause, suppression enabled or disabled, and writable stack
@@ -82,6 +83,6 @@ public class ContentGrabbingException extends RequestResponseException {
      * @since 1.7
      */
     public ContentGrabbingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE,ERROR_MESSAGE);
+        super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE, ERROR_MESSAGE);
     }
 }

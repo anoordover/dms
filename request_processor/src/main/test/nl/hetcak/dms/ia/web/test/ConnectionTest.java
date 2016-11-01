@@ -34,7 +34,7 @@ public class ConnectionTest {
      * Try to create ConnectionManager with bad configuration file
      */
     @Test(expected = MisconfigurationException.class,timeout = 1000)
-    public void createConnectionManagerWithBadConfig() throws MissingConfigurationException, MisconfigurationException, RequestResponseException {
+    public void createConnectionManagerWithBadConfig() throws RequestResponseException {
         File misconfig = new File(MISCONFIGURATION_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(misconfig);
@@ -58,7 +58,7 @@ public class ConnectionTest {
     
     //external connection
     @Test
-    public void getActiveCredentials() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, RequestResponseException {
+    public void getActiveCredentials() throws RequestResponseException {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);

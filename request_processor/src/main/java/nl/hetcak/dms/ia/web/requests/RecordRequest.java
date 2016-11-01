@@ -33,21 +33,21 @@ public class RecordRequest {
     private static final String CONTENT_TYPE_APP_XML = "application/xml";
     private static final String VALUE_ARCHIVE_PERSON_NUMBER = "ArchiefPersoonsnummer";
     private static final String VALUE_ARCHIVE_DOCUMENT_NUMBER = "ArchiefDocumentId";
-    
+
     private static final String PARSE_RESPONSE_EMBEDDED = "_embedded";
     private static final String PARSE_RESPONSE_RESULTS = "results";
     private static final String PARSE_RESPONSE_ROWS = "rows";
     private static final String PARSE_RESPONSE_COLUMNS = "columns";
     private static final String PARSE_RESPONSE_NAME = "name";
     private static final String PARSE_RESPONSE_VALUE = "value";
-    
+
     private static final String PARSE_RESPONSE_PAGE = "page";
     private static final String PARSE_RESPONSE_TOTAL_ELEMENTS = "totalElements";
-    
+
     private static final String PARSE_RESPONSE_ERROR = "_errors";
     private static final String PARSE_RESPONSE_ERROR_TITLE = "error";
     private static final String PARSE_RESPONSE_ERROR_MESSAGE = "message";
-    
+
     private static final String PARSE_DOCUMENT_ID = "ArchiefDocumentId";
     private static final String PARSE_DOCUMENT_PERSON_NUMBER = "ArchiefPersoonsnummer";
     private static final String PARSE_DOCUMENT_TITLE = "ArchiefDocumenttitel";
@@ -60,22 +60,22 @@ public class RecordRequest {
     private static final String PARSE_DOCUMENT_YEAR = "ArchiefRegelingsjaar";
     private static final String PARSE_DOCUMENT_HANDLING_NUMBER = "ArchiefHandelingsnummer";
     private static final String PARSE_DOCUMENT_ATTACHMENT = "Attachment";
-    
+
     private static final String LOGGING_PARSING_RESULT = "Parsing results";
     private static final String LOGGING_EXPECT_AT_LEAST_ONE_RESULT = ", the request handler expected at least one result.";
-    
+
     private Configuration configuration;
     private Credentials credentials;
     private InfoArchiveRequestUtil requestUtil;
     private InfoArchiveQueryBuilder queryBuilder;
-    
+
     public RecordRequest(Configuration configuration, Credentials credentials) {
         this.configuration = configuration;
         this.credentials = credentials;
         this.requestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());
         this.queryBuilder = new InfoArchiveQueryBuilder();
     }
-    
+
     public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
         LOGGER.info("Starting List Documents request for person number:" + archivePersonNumber);
         String response = requestUtil.responseReader(executeListDocumentsRequest(archivePersonNumber));
@@ -92,7 +92,7 @@ public class RecordRequest {
         LOGGER.info("Returning List with " + result.size() + " documents.");
         return result;
     }
-    
+
     public List<InfoArchiveDocument> requestListDocuments(String documentType, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
         StringBuilder logString = new StringBuilder("Starting List Documents request for");
         if (StringUtils.isNotBlank(documentType)) {
@@ -118,9 +118,9 @@ public class RecordRequest {
             logString.append(sendDate2);
             logString.append("\"");
         }
-        
+
         LOGGER.info(logString.toString());
-        
+
         String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, personNumber, documentCharacteristics, sendDate1, sendDate2));
         LOGGER.info(LOGGING_PARSING_RESULT);
         List<InfoArchiveDocument> result = parseDocumentList(response, true);
@@ -133,7 +133,7 @@ public class RecordRequest {
         LOGGER.info("Returning List with " + result.size() + " documents.");
         return result;
     }
-    
+
     public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, MultipleDocumentsException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
         LOGGER.info("Requesting document with number:" + archiveDocumentNumber);
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
@@ -153,7 +153,7 @@ public class RecordRequest {
         LOGGER.info("Returning document.");
         return documents.get(0);
     }
-    
+
     private HttpResponse executeListDocumentsRequest(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
@@ -162,7 +162,7 @@ public class RecordRequest {
         LOGGER.debug(requestBody);
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
-    
+
     private HttpResponse executeListDocumentsRequest(String documentType, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
@@ -184,7 +184,7 @@ public class RecordRequest {
         LOGGER.debug(requestBody);
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
-    
+
     private HttpResponse executeDocumentsRequest(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
@@ -193,13 +193,13 @@ public class RecordRequest {
         LOGGER.debug(requestBody);
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
-    
+
     private List<InfoArchiveDocument> parseDocumentList(String response, boolean expectList) throws ParseException, TooManyResultsException, InfoArchiveResponseException {
         List<InfoArchiveDocument> documents = new ArrayList<>();
-        
+
         JsonParser parser = new JsonParser();
         JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
-        
+
         //responseErrorCheck
         if (jsonResponse.has(PARSE_RESPONSE_ERROR)) {
             LOGGER.info("Got error in response.");
@@ -208,23 +208,23 @@ public class RecordRequest {
             String errorTitle = "";
             for (int i_error = 0; i_error < errors.size(); i_error++) {
                 JsonObject error = errors.get(i_error).getAsJsonObject();
-                
+
                 errorTitle = error.get(PARSE_RESPONSE_ERROR_TITLE).getAsString();
                 String errorMessage = error.get(PARSE_RESPONSE_ERROR_MESSAGE).getAsString();
-                
+
                 exceptionMessage.append(errorTitle);
                 exceptionMessage.append(" ");
                 exceptionMessage.append(errorMessage);
                 exceptionMessage.append("\n");
             }
-            
+
             LOGGER.debug(response);
             LOGGER.error(exceptionMessage.toString());
             InfoArchiveResponseException infoArchiveResponseException = new InfoArchiveResponseException(exceptionMessage.toString());
             infoArchiveResponseException.setErrorCode(errorTitle, expectList);
             throw infoArchiveResponseException;
         }
-        
+
         //check response size
         int totalElements = totalElementsFromResponse(jsonResponse);
         if (configuration.getMaxResults() < totalElements) {
@@ -233,26 +233,26 @@ public class RecordRequest {
             LOGGER.debug(response);
             throw new TooManyResultsException(errorMessage);
         }
-        
+
         //read response
         if (jsonResponse.has(PARSE_RESPONSE_EMBEDDED)) {
             JsonObject embedded = jsonResponse.getAsJsonObject(PARSE_RESPONSE_EMBEDDED);
             if (embedded.has(PARSE_RESPONSE_RESULTS)) {
                 JsonArray results = embedded.getAsJsonArray(PARSE_RESPONSE_RESULTS);
-                
+
                 for (int i_Results = 0; i_Results < results.size(); i_Results++) {
                     JsonObject result = results.get(i_Results).getAsJsonObject();
                     documents.addAll(parseResponseListDocumentsRow(result));
                 }
             }
         }
-        
+
         return documents;
     }
-    
+
     private List<InfoArchiveDocument> parseResponseListDocumentsRow(JsonObject result) {
         List<InfoArchiveDocument> documents = new ArrayList<>();
-        
+
         if (result.has(PARSE_RESPONSE_ROWS)) {
             JsonArray rows = result.get(PARSE_RESPONSE_ROWS).getAsJsonArray();
             for (int i_Rows = 0; i_Rows < rows.size(); i_Rows++) {
@@ -264,11 +264,11 @@ public class RecordRequest {
                 }
             }
         }
-        
-        
+
+
         return documents;
     }
-    
+
     private int totalElementsFromResponse(JsonObject jsonResponse) {
         if (jsonResponse.has(PARSE_RESPONSE_PAGE)) {
             JsonObject page = jsonResponse.getAsJsonObject(PARSE_RESPONSE_PAGE);
@@ -278,26 +278,26 @@ public class RecordRequest {
         }
         return 0;
     }
-    
+
     private InfoArchiveDocument parseDocument(JsonObject document) throws ParseException {
         LOGGER.info("Parsing Document.");
         InfoArchiveDocument infoArchiveDocument = new InfoArchiveDocument();
         JsonArray columns = document.getAsJsonArray(PARSE_RESPONSE_COLUMNS);
         for (int i_column = 0; i_column < columns.size(); i_column++) {
             JsonObject column = columns.get(i_column).getAsJsonObject();
-            
+
             if (column.has(PARSE_RESPONSE_NAME)) {
                 String columnName = column.get(PARSE_RESPONSE_NAME).getAsString();
-                LOGGER.debug("Parsing column: "+ columnName);
-                infoArchiveDocument = parseFirstTenFields(infoArchiveDocument,columnName,column);
-                infoArchiveDocument = parseSecondTenField(infoArchiveDocument,columnName,column);
+                LOGGER.debug("Parsing column: " + columnName);
+                infoArchiveDocument = parseFirstTenFields(infoArchiveDocument, columnName, column);
+                infoArchiveDocument = parseSecondTenField(infoArchiveDocument, columnName, column);
             }
         }
         LOGGER.info("Done parsing document.");
-        
+
         return infoArchiveDocument;
     }
-    
+
     //(so it has come to this...) here are some methods to fix cyclomatic complexity...
     private InfoArchiveDocument parseFirstTenFields(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column) throws ParseException {
         switch (columnName) {
@@ -333,7 +333,7 @@ public class RecordRequest {
         }
         return infoArchiveDocument;
     }
-    
+
     private InfoArchiveDocument parseSecondTenField(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column) {
         switch (columnName) {
             case PARSE_DOCUMENT_YEAR:
@@ -349,6 +349,6 @@ public class RecordRequest {
                 break;
         }
         return infoArchiveDocument;
-        
+
     }
 }

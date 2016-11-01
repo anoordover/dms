@@ -14,47 +14,7 @@ public class InfoArchiveCredentials implements Credentials {
     private String recoveryToken;
     private Calendar invalidationTime;
     private boolean useLoginToken = false;
-    
-    /**
-     * Sets the username.
-     *
-     * @param username The Username
-     */
-    @Override
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    
-    /**
-     * Sets the password.
-     *
-     * @param password The Password.
-     */
-    @Override
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    
-    /**
-     * Sets the security token.
-     *
-     * @param securityToken The Security Token
-     */
-    @Override
-    public void setSecurityToken(String securityToken) {
-        this.securityToken = securityToken;
-    }
-    
-    /**
-     * Sets the recovery token.
-     *
-     * @param recoveryToken The Recovery Token
-     */
-    @Override
-    public void setRecoveryToken(String recoveryToken) {
-        this.recoveryToken = recoveryToken;
-    }
-    
+
     /**
      * Sets the time when the security token is expired.
      *
@@ -64,7 +24,7 @@ public class InfoArchiveCredentials implements Credentials {
     public void setSecurityTokenInvalidationTime(Calendar time) {
         this.invalidationTime = time;
     }
-    
+
     /**
      * Gets the username
      *
@@ -74,7 +34,17 @@ public class InfoArchiveCredentials implements Credentials {
     public String getUsername() {
         return username;
     }
-    
+
+    /**
+     * Sets the username.
+     *
+     * @param username The Username
+     */
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     /**
      * Gets the password
      *
@@ -84,7 +54,17 @@ public class InfoArchiveCredentials implements Credentials {
     public String getPassword() {
         return password;
     }
-    
+
+    /**
+     * Sets the password.
+     *
+     * @param password The Password.
+     */
+    @Override
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     /**
      * Gets the security token.
      *
@@ -94,7 +74,17 @@ public class InfoArchiveCredentials implements Credentials {
     public String getSecurityToken() {
         return securityToken;
     }
-    
+
+    /**
+     * Sets the security token.
+     *
+     * @param securityToken The Security Token
+     */
+    @Override
+    public void setSecurityToken(String securityToken) {
+        this.securityToken = securityToken;
+    }
+
     /**
      * Gets the recovery token.
      *
@@ -104,7 +94,17 @@ public class InfoArchiveCredentials implements Credentials {
     public String getRecoveryToken() {
         return recoveryToken;
     }
-    
+
+    /**
+     * Sets the recovery token.
+     *
+     * @param recoveryToken The Recovery Token
+     */
+    @Override
+    public void setRecoveryToken(String recoveryToken) {
+        this.recoveryToken = recoveryToken;
+    }
+
     /**
      * Checks if the security token is valid.
      *
@@ -112,12 +112,12 @@ public class InfoArchiveCredentials implements Credentials {
      */
     @Override
     public boolean isSecurityTokenValid() {
-        if(invalidationTime == null) {
+        if (invalidationTime == null) {
             return false;
         }
         return invalidationTime.after(Calendar.getInstance());
     }
-    
+
     /**
      * Allows the User to set a token and ignore the username and password setting.
      *
@@ -127,9 +127,10 @@ public class InfoArchiveCredentials implements Credentials {
     public boolean useTokenOnlyConfiguration() {
         return useLoginToken;
     }
-    
+
     /**
      * Allows the User to set a token and ignore the username and password setting.
+     *
      * @param useLoginToken true if the username and password value needs to be ignored.
      */
     @Override

@@ -3,7 +3,8 @@ package nl.hetcak.dms.ia.web.restfull.consumers;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.StringReader;
 
 /**
@@ -13,34 +14,52 @@ import java.io.StringReader;
  */
 @XmlRootElement(name = "request")
 public class ListDocumentRequestConsumer {
-    protected  String archivePersonNumber;
-    
+    protected String archivePersonNumber;
+
+    /**
+     * Unmarshal the xml to a {@link ListDocumentRequestConsumer} object.
+     *
+     * @param input The xml input.
+     * @return a converted xml {#link String} to {@link ListDocumentRequestConsumer}.
+     * @throws JAXBException Errors during the unmarshalling.
+     */
+    public static ListDocumentRequestConsumer unmarshalRequest(String input) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(ListDocumentRequestConsumer.class);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+        StringReader reader = new StringReader(input);
+        return (ListDocumentRequestConsumer) unmarshaller.unmarshal(reader);
+    }
+
+    /**
+     * Gets the archive person number.
+     *
+     * @return the archive person number.
+     */
     @XmlElement(name = "ArchiefPersoonsnummer", required = true)
     public String getArchivePersonNumber() {
         return archivePersonNumber;
     }
-    
+
+    /**
+     * Sets the archive person number.
+     *
+     * @param archivePersonNumber the archive person number.
+     */
     public void setArchivePersonNumber(String archivePersonNumber) {
         this.archivePersonNumber = archivePersonNumber;
     }
-    
-    
+
+    /**
+     * Checks if this consumer object has content.
+     *
+     * @return true, if there is content.
+     */
     public boolean hasContent() {
-        if(archivePersonNumber == null){
+        if (archivePersonNumber == null) {
             return false;
         }
-        
-        if(archivePersonNumber.length() == 0) {
-            return false;
-        }
-        return true;
-    }
-    
-    public static ListDocumentRequestConsumer unmarshalRequest(String input) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(ListDocumentRequestConsumer.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-    
-        StringReader reader = new StringReader(input);
-        return (ListDocumentRequestConsumer) unmarshaller.unmarshal(reader);
+
+        return archivePersonNumber.length() != 0;
     }
 }

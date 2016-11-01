@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.StringReader;
 import java.text.ParseException;
-import java.util.Locale;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
@@ -26,110 +25,105 @@ public class SearchDocumentRequestConsumer {
     private String documentCharacteristics = "";
     private String documentSendDate1 = "";
     private String documentSendDate2 = "";
-    
+
+    public static SearchDocumentRequestConsumer unmarshalRequest(String input) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(SearchDocumentRequestConsumer.class);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+        StringReader reader = new StringReader(input);
+        return (SearchDocumentRequestConsumer) unmarshaller.unmarshal(reader);
+    }
+
     @XmlElement(name = "ArchiefDocumentsoort", required = true)
     public String getDocumentKind() {
         return documentKind;
     }
-    
+
     public void setDocumentKind(String documentKind) {
         this.documentKind = documentKind;
     }
-    
+
     @XmlElement(name = "ArchiefVerzenddagBegin", required = true)
     public String getDocumentSendDate1() {
         return documentSendDate1;
     }
-    
+
+    public void setDocumentSendDate1(String documentSendDate1) {
+        this.documentSendDate1 = documentSendDate1;
+    }
+
     public String getDocumentSendDate1AsInfoArchiveString() {
         try {
             return InfoArchiveDateUtil.convertToInfoArchiveDate(documentSendDate1);
-        }catch (ParseException parseExc) {
+        } catch (ParseException parseExc) {
             LOGGER.error("Can't parse string to InfoArchive format. is string empty?", parseExc);
             return null;
         }
     }
-    
-    public void setDocumentSendDate1(String documentSendDate1) {
-        this.documentSendDate1 = documentSendDate1;
-    }
-    
+
     @XmlElement(name = "ArchiefVerzenddagEinde", required = true)
     public String getDocumentSendDate2() {
         return documentSendDate2;
     }
-    
+
+    public void setDocumentSendDate2(String documentSendDate2) {
+        this.documentSendDate2 = documentSendDate2;
+    }
+
     public String getDocumentSendDate2AsInfoArchiveString() {
         try {
             return InfoArchiveDateUtil.convertToInfoArchiveDate(documentSendDate2);
-        }catch (ParseException parseExc) {
+        } catch (ParseException parseExc) {
             LOGGER.error("Can't parse string to InfoArchive format. is string empty?", parseExc);
             return null;
         }
     }
-    
-    public void setDocumentSendDate2(String documentSendDate2) {
-        this.documentSendDate2 = documentSendDate2;
-    }
-    
-    
+
     @XmlElement(name = "ArchiefPersoonsnummer", required = true)
     public String getPersonNumber() {
         return personNumber;
     }
-    
+
     public void setPersonNumber(String personNumber) {
         this.personNumber = personNumber;
     }
-    
+
     @XmlElement(name = "ArchiefDocumentkenmerk", required = true)
     public String getDocumentCharacteristics() {
         return documentCharacteristics;
     }
-    
-    
+
     public void setDocumentCharacteristics(String documentCharacteristics) {
         this.documentCharacteristics = documentCharacteristics;
     }
-    
-    public static SearchDocumentRequestConsumer unmarshalRequest(String input) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(SearchDocumentRequestConsumer.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        
-        StringReader reader = new StringReader(input);
-        return (SearchDocumentRequestConsumer) unmarshaller.unmarshal(reader);
-    }
-    
+
     public boolean hasContent() {
         Boolean content = true;
-        
-        if(this.documentKind == null && this.documentCharacteristics == null && this.personNumber == null) {
+
+        if (this.documentKind == null && this.documentCharacteristics == null && this.personNumber == null) {
             content = false;
         }
-        if(this.documentKind.length() == 0 && this.documentCharacteristics.length() == 0 && this.personNumber.length() == 0) {
+        if (this.documentKind.length() == 0 && this.documentCharacteristics.length() == 0 && this.personNumber.length() == 0) {
             content = false;
         }
-        
-        if(hasDate() || content) {
-            return true;
-        }
-        return false;
+
+        return hasDate() || content;
     }
-    
+
     private boolean hasDate() {
         Boolean date = true;
-    
-        if(this.documentSendDate1 == null) {
-            date =  false;
+
+        if (this.documentSendDate1 == null) {
+            date = false;
         }
-        if(this.documentSendDate2 == null) {
-            date =  false;
+        if (this.documentSendDate2 == null) {
+            date = false;
         }
-        if(this.documentSendDate1.length() == 0) {
-            date =  false;
+        if (this.documentSendDate1.length() == 0) {
+            date = false;
         }
-        if(this.documentSendDate2.length() == 0) {
-            date =  false;
+        if (this.documentSendDate2.length() == 0) {
+            date = false;
         }
         return date;
     }

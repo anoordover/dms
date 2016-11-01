@@ -25,36 +25,37 @@ public class DocumentRequest {
     private Configuration configuration;
     private Credentials credentials;
     private InfoArchiveRequestUtil requestUtil;
-    
+
     public DocumentRequest(Configuration configuration, Credentials credentials) {
         this.configuration = configuration;
         this.credentials = credentials;
         this.requestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());
     }
-    
+
     /**
      * Get content from InfoArchive.
+     *
      * @param contentID the id of the content.
      * @return A byte stream.
-     * @throws MisconfigurationException problems during reading configuration.
+     * @throws MisconfigurationException        problems during reading configuration.
      * @throws ServerConnectionFailureException problems when connection to InfoArchive.
-     * @throws IOException Failed to read server response or to open a stream.
+     * @throws IOException                      Failed to read server response or to open a stream.
      */
-    public ByteArrayOutputStream getContentWithContentId(String contentID) throws MisconfigurationException, ServerConnectionFailureException, IOException{
+    public ByteArrayOutputStream getContentWithContentId(String contentID) throws MisconfigurationException, ServerConnectionFailureException, IOException {
         LOGGER.info("Executing content request.");
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
-        String url = requestUtil.getServerContentUrl(configuration.getApplicationUUID(),contentID);
-        HttpResponse response = requestUtil.executeGetRequest(url,InfoArchiveRequestUtil.CONTENT_TYPE_JSON,requestHeader);
+        String url = requestUtil.getServerContentUrl(configuration.getApplicationUUID(), contentID);
+        HttpResponse response = requestUtil.executeGetRequest(url, InfoArchiveRequestUtil.CONTENT_TYPE_JSON, requestHeader);
         LOGGER.info("Returning content byte stream.");
         return responseToStream(response);
     }
-    
+
     private ByteArrayOutputStream responseToStream(HttpResponse response) throws IOException {
         LOGGER.info("Start buffering InfoArchive document stream.");
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        IOUtils.copy(response.getEntity().getContent(),byteArrayOutputStream);
+        IOUtils.copy(response.getEntity().getContent(), byteArrayOutputStream);
         LOGGER.info("Returning buffered InfoArchive document stream.");
         return byteArrayOutputStream;
     }
-    
+
 }

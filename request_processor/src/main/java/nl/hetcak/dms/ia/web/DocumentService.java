@@ -1,6 +1,8 @@
 package nl.hetcak.dms.ia.web;
 
-import nl.hetcak.dms.ia.web.exceptions.*;
+import nl.hetcak.dms.ia.web.exceptions.ContentGrabbingException;
+import nl.hetcak.dms.ia.web.exceptions.InfoArchiveResponseException;
+import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.managers.ConnectionManager;
 import nl.hetcak.dms.ia.web.requests.DocumentRequest;
 import nl.hetcak.dms.ia.web.requests.RecordRequest;
@@ -13,7 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import java.io.ByteArrayOutputStream;
 
 /**
@@ -25,7 +29,7 @@ import java.io.ByteArrayOutputStream;
 @Path("/rest")
 public class DocumentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
-    
+
     private static final String XML_REQUEST_START = "<request>";
     private static final String XML_REQUEST_STOP = "</request>";
     private static final String ERROR_RESPONSE_GENERIC = "Something went wrong, please notify an administrator.";
@@ -34,38 +38,38 @@ public class DocumentService {
     private static final String LOGGER_VALID_INCOMING_REQUEST = "Incoming request content is valid.";
     private static final String LOGGER_INVALID_INCOMING_REQUEST = "Incoming request content is invalid!";
     private static final String ERROR_CONTENT_GRABBING = "Content grabbing attempt detected. Canceling request.";
-    
-    private RecordRequest createRecordRequest() throws RequestResponseException{
+
+    private RecordRequest createRecordRequest() throws RequestResponseException {
         try {
             ConnectionManager connectionManager = ConnectionManager.getInstance();
             return new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-        } catch (RequestResponseException reqResExc){
+        } catch (RequestResponseException reqResExc) {
             LOGGER.error(reqResExc.getUserErrorMessage(), reqResExc);
             throw reqResExc;
         }
     }
-    
+
     private ListDocumentResponse listDocumentResponse(RecordRequest recordRequest, ListDocumentRequestConsumer request) throws RequestResponseException {
-        try{
+        try {
             return new ListDocumentResponse(recordRequest.requestListDocuments(request.getArchivePersonNumber()));
         } catch (RequestResponseException reqresExc) {
-            LOGGER.error(reqresExc.getUserErrorMessage(),reqresExc);
+            LOGGER.error(reqresExc.getUserErrorMessage(), reqresExc);
             throw reqresExc;
         } catch (InfoArchiveResponseException iaRespExc) {
-            LOGGER.error("Got error response from InfoArchive.",iaRespExc);
+            LOGGER.error("Got error response from InfoArchive.", iaRespExc);
             throw new RequestResponseException(iaRespExc.getErrorCode(), "Got error response from InfoArchive.");
         } catch (Exception exc) {
             LOGGER.error("Io or parsing error", exc);
             throw new RequestResponseException(-1, LOGGER_IO_OR_PARSE_EXC);
         }
     }
-    
+
     @POST
     @Path("/listDocuments")
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response listDocuments(String sBody) {
-        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
+        LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
         LOGGER.info("Incoming request for /listDocuemnts.");
         LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
@@ -92,45 +96,45 @@ public class DocumentService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
-    
-    private DocumentRequest createDocumentRequest() throws RequestResponseException{
+
+    private DocumentRequest createDocumentRequest() throws RequestResponseException {
         try {
             ConnectionManager connectionManager = ConnectionManager.getInstance();
             return new DocumentRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-        } catch (RequestResponseException reqresExc){
+        } catch (RequestResponseException reqresExc) {
             LOGGER.error(reqresExc.getUserErrorMessage(), reqresExc);
             throw reqresExc;
         }
     }
-    
+
     private InfoArchiveDocument documentResponse(RecordRequest recordRequest, DocumentRequestConsumer documentRequestConsumer) throws RequestResponseException {
-        try{
+        try {
             return recordRequest.requestDocument(documentRequestConsumer.getArchiveDocumentNumber());
         } catch (RequestResponseException reqresExc) {
-            LOGGER.error(reqresExc.getUserErrorMessage(),reqresExc);
+            LOGGER.error(reqresExc.getUserErrorMessage(), reqresExc);
             throw reqresExc;
         } catch (InfoArchiveResponseException iaRespExc) {
-            LOGGER.error("Search for document resulted in a InfoArchive Exception.",iaRespExc);
+            LOGGER.error("Search for document resulted in a InfoArchive Exception.", iaRespExc);
             throw new RequestResponseException(iaRespExc.getErrorCode(), "Search for document resulted in a InfoArchive Exception.");
         } catch (Exception exc) {
             LOGGER.error(LOGGER_IO_OR_PARSE_EXC, exc);
             throw new RequestResponseException(-1, LOGGER_IO_OR_PARSE_EXC);
         }
     }
-    
+
     private ByteArrayOutputStream documentTransfer(DocumentRequest documentRequest, InfoArchiveDocument infoArchiveDocument) throws RequestResponseException {
-        try{
+        try {
             return documentRequest.getContentWithContentId(infoArchiveDocument.getArchiefFile());
         } catch (RequestResponseException reqResExc) {
-            LOGGER.error(reqResExc.getUserErrorMessage(),reqResExc);
+            LOGGER.error(reqResExc.getUserErrorMessage(), reqResExc);
             throw reqResExc;
         } catch (Exception exc) {
             LOGGER.error(LOGGER_IO_OR_PARSE_EXC, exc);
             throw new RequestResponseException(-1, LOGGER_IO_OR_PARSE_EXC);
         }
     }
-    
-    
+
+
     @POST
     @Path("/document")
     @Produces("application/pdf")
@@ -151,13 +155,13 @@ public class DocumentService {
                 RecordRequest recordRequest = createRecordRequest();
                 DocumentRequest documentRequest = createDocumentRequest();
                 InfoArchiveDocument document = documentResponse(recordRequest, documentRequestConsumer);
-                
+
                 ByteArrayOutputStream byteArray = documentTransfer(documentRequest, document);
                 LOGGER.info("Getting Stream ready to send.");
-                StreamingOutput streamingOutput = outputStream ->  {
-                        LOGGER.info("Sending Stream as response.");
-                            outputStream.write(byteArray.toByteArray());
-                            outputStream.close();
+                StreamingOutput streamingOutput = outputStream -> {
+                    LOGGER.info("Sending Stream as response.");
+                    outputStream.write(byteArray.toByteArray());
+                    outputStream.close();
                 };
                 return Response.ok(streamingOutput).build();
             } else {
@@ -173,20 +177,20 @@ public class DocumentService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
-    
+
     @POST
     @Path("/searchDocuments")
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response searchDocuments(String sBody) {
-        LOGGER.info(Version.PROGRAM_NAME+" "+Version.currentVersion());
+        LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
         LOGGER.info("Incoming request for /searchDocuments.");
         LOGGER.debug(sBody);
         StringBuilder input = new StringBuilder();
         input.append(XML_REQUEST_START);
         input.append(sBody);
         input.append(XML_REQUEST_STOP);
-        
+
         try {
             SearchDocumentRequestConsumer request = SearchDocumentRequestConsumer.unmarshalRequest(input.toString());
             //disable content grabbing with empty strings.
@@ -196,12 +200,12 @@ public class DocumentService {
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentKind(), request.getPersonNumber(), request.getDocumentCharacteristics(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
                 return Response.ok(response.getAsXML()).build();
-    
-                } else {
-                    LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
-                    throw new ContentGrabbingException(ERROR_CONTENT_GRABBING);
-                }
-            } catch (ContentGrabbingException cgExc) {
+
+            } else {
+                LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
+                throw new ContentGrabbingException(ERROR_CONTENT_GRABBING);
+            }
+        } catch (ContentGrabbingException cgExc) {
             LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.", cgExc);
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         } catch (RequestResponseException rrExc) {
@@ -213,7 +217,7 @@ public class DocumentService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         }
     }
-    
+
     /**
      * Basic response
      */

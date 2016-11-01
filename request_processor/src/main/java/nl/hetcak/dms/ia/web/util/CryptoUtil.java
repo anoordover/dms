@@ -28,11 +28,12 @@ public class CryptoUtil {
     private static final String KEY_SPEC = "AES";
     private static final int IV_SIZEB = 16;
     private static final int KEY_SIZEB = 16;
-    
+
     /**
      * Decrypts the data.
+     *
      * @param cData The data that must be decrypted.
-     * @param cKey The key used for decrypting the data.
+     * @param cKey  The key used for decrypting the data.
      * @return decrypted data.
      * @throws CryptoFailureException Exception during decrypting the data.
      */
@@ -41,43 +42,44 @@ public class CryptoUtil {
         if (cData.length < 17) {
             return cReturn;
         }
-            try {
-                byte[] cIV = new byte[IV_SIZEB];
-                byte[] cInput = new byte[cData.length - 16];
-                for (int i = 0; i < cData.length; ++i) {
-                    if (i < cIV.length) {
-                        cIV[i] = cData[i];
-                    } else {
-                        cInput[i - cIV.length] = cData[i];
-                    }
+        try {
+            byte[] cIV = new byte[IV_SIZEB];
+            byte[] cInput = new byte[cData.length - 16];
+            for (int i = 0; i < cData.length; ++i) {
+                if (i < cIV.length) {
+                    cIV[i] = cData[i];
+                } else {
+                    cInput[i - cIV.length] = cData[i];
                 }
-                Cipher objCipher = Cipher.getInstance(CIPHER_INSTANCE);
-                SecretKeySpec objKeySpec = new SecretKeySpec(cKey, KEY_SPEC);
-                IvParameterSpec objIvSpec = new IvParameterSpec(cIV);
-                objCipher.init(Cipher.DECRYPT_MODE, objKeySpec, objIvSpec);
-                byte[] cOutput = objCipher.doFinal(cInput);
-                int iLength = cOutput.length - cOutput[cOutput.length - 1];
-                cReturn = Arrays.copyOf(cOutput, iLength);
-            } catch (BadPaddingException
+            }
+            Cipher objCipher = Cipher.getInstance(CIPHER_INSTANCE);
+            SecretKeySpec objKeySpec = new SecretKeySpec(cKey, KEY_SPEC);
+            IvParameterSpec objIvSpec = new IvParameterSpec(cIV);
+            objCipher.init(Cipher.DECRYPT_MODE, objKeySpec, objIvSpec);
+            byte[] cOutput = objCipher.doFinal(cInput);
+            int iLength = cOutput.length - cOutput[cOutput.length - 1];
+            cReturn = Arrays.copyOf(cOutput, iLength);
+        } catch (BadPaddingException
                 | NoSuchPaddingException
                 | NoSuchAlgorithmException
                 | InvalidAlgorithmParameterException
                 | InvalidKeyException
                 | IllegalBlockSizeException ex) {
-                CryptoFailureException cfExc = new CryptoFailureException("Failed to decrypt Object.",ex);
-                LOGGER.error("Crypto Util was unable to decrypt data.",cfExc);
-                throw cfExc;
-            }
+            CryptoFailureException cfExc = new CryptoFailureException("Failed to decrypt Object.", ex);
+            LOGGER.error("Crypto Util was unable to decrypt data.", cfExc);
+            throw cfExc;
+        }
 
         return cReturn;
     }
-    
+
     /**
      * Encrypts the data.
+     *
      * @param cData The data that should be encrypted.
-     * @param cKey The key that must be used for encrypting this data.
+     * @param cKey  The key that must be used for encrypting this data.
      * @return The encrypted data.
-     * @throws InvalidKeyException The key doesn't met the requirements.
+     * @throws InvalidKeyException    The key doesn't met the requirements.
      * @throws CryptoFailureException A exception during encryption of the data.
      */
     public static byte[] encrypt(byte[] cData, byte[] cKey) throws InvalidKeyException, CryptoFailureException {
@@ -85,7 +87,7 @@ public class CryptoUtil {
         if (cKey.length != KEY_SIZEB) {
             throw new InvalidKeyException("The key does not meet the size requirement");
         }
-        
+
         try {
             byte bPadding = (byte) Math.abs((cData.length % 16) - 16);
             byte[] cInput = Arrays.copyOf(cData, cData.length + bPadding);
@@ -103,38 +105,39 @@ public class CryptoUtil {
                 cReturn[i] = cOutput[i - IV_SIZEB];
             }
         } catch (BadPaddingException
-            | NoSuchAlgorithmException
-            | NoSuchPaddingException
-            | InvalidAlgorithmParameterException
-            | InvalidKeyException
-            | IllegalBlockSizeException ex) {
-            CryptoFailureException cfExc = new CryptoFailureException("Failed to encrypt Object.",ex);
-            LOGGER.error("Crypto Util was unable to encrypt data.",cfExc);
+                | NoSuchAlgorithmException
+                | NoSuchPaddingException
+                | InvalidAlgorithmParameterException
+                | InvalidKeyException
+                | IllegalBlockSizeException ex) {
+            CryptoFailureException cfExc = new CryptoFailureException("Failed to encrypt Object.", ex);
+            LOGGER.error("Crypto Util was unable to encrypt data.", cfExc);
             throw cfExc;
         }
-        
+
         return cReturn;
     }
-    
+
     /**
      * Creates a random key.
+     *
      * @return a secure random key.
      */
-    public static byte[] createRandomKey(){
+    public static byte[] createRandomKey() {
         SecureRandom secureRandom = new SecureRandom();
         final byte[] key = new byte[KEY_SIZEB];
         secureRandom.nextBytes(key);
         return key;
     }
-    
+
     private static byte[] generateIV() {
         byte[] cIV = new byte[IV_SIZEB];
         SecureRandom secureRandom = new SecureRandom();
         String sPhrase = "c0nv0l8t3ed";
         for (int i = 0; i < cIV.length; ++i) {
-            cIV[i] = (byte) ((byte) (secureRandom.nextDouble() * Byte.MAX_VALUE) ^ sPhrase.getBytes()[(int)(secureRandom.nextDouble() * sPhrase.length() - 1)]);
+            cIV[i] = (byte) ((byte) (secureRandom.nextDouble() * Byte.MAX_VALUE) ^ sPhrase.getBytes()[(int) (secureRandom.nextDouble() * sPhrase.length() - 1)]);
         }
-        
+
         return cIV;
     }
 }

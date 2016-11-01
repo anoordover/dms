@@ -9,27 +9,7 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
     private String serverAddress;
     private int serverPort;
     private int maxItems;
-    
-    /**
-     * Sets the server address.
-     *
-     * @param serverAddress the server address.
-     */
-    @Override
-    public void setServerAddress(String serverAddress) {
-        this.serverAddress = serverAddress;
-    }
-    
-    /**
-     * Sets the server port.
-     *
-     * @param serverPort the server port.
-     */
-    @Override
-    public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
-    }
-    
+
     /**
      * Gets the server address.
      *
@@ -39,7 +19,17 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
     public String getServerAddress() {
         return serverAddress;
     }
-    
+
+    /**
+     * Sets the server address.
+     *
+     * @param serverAddress the server address.
+     */
+    @Override
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
     /**
      * Gets the server port.
      *
@@ -49,17 +39,17 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
     public int getServerPort() {
         return serverPort;
     }
-    
+
     /**
-     * Sets the max item count.
+     * Sets the server port.
      *
-     * @param maxItems total items
+     * @param serverPort the server port.
      */
     @Override
-    public void setMaxItems(int maxItems) {
-        this.maxItems = maxItems;
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
     }
-    
+
     /**
      * Gets the max items size.
      *
@@ -69,6 +59,16 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
     public int getMaxItems() {
         return maxItems;
     }
-    
-    
+
+    /**
+     * Sets the max item count.
+     *
+     * @param maxItems total items
+     */
+    @Override
+    public void setMaxItems(int maxItems) {
+        this.maxItems = maxItems;
+    }
+
+
 }

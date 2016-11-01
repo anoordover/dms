@@ -12,6 +12,7 @@ import java.security.PrivilegedActionException;
 public class UnexpectedResultException extends Exception {
     public static final int ERROR_CODE = 0;
     public static final String ERROR_MESSAGE = "Something went wrong, please contact an Administrator.";
+
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
@@ -20,7 +21,7 @@ public class UnexpectedResultException extends Exception {
     public UnexpectedResultException() {
         super();
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message.  The
      * cause is not initialized, and may subsequently be initialized by
@@ -32,7 +33,7 @@ public class UnexpectedResultException extends Exception {
     public UnexpectedResultException(String message) {
         super(message);
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message and
      * cause.  <p>Note that the detail message associated with
@@ -50,7 +51,7 @@ public class UnexpectedResultException extends Exception {
     public UnexpectedResultException(String message, Throwable cause) {
         super(message, cause);
     }
-    
+
     /**
      * Constructs a new exception with the specified cause and a detail
      * message of <tt>(cause==null ? null : cause.toString())</tt> (which
@@ -68,7 +69,7 @@ public class UnexpectedResultException extends Exception {
     public UnexpectedResultException(Throwable cause) {
         super(cause);
     }
-    
+
     /**
      * Constructs a new exception with the specified detail message,
      * cause, suppression enabled or disabled, and writable stack

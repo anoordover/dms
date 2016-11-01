@@ -1,9 +1,9 @@
 package nl.hetcak.dms.ia.web.configuration;
 
-import nl.hetcak.dms.ia.web.comunication.ServerConnectionInformation;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
-import nl.hetcak.dms.ia.web.comunication.InfoArchiveServerConnectionInformation;
 import nl.hetcak.dms.ia.web.comunication.InfoArchiveCredentials;
+import nl.hetcak.dms.ia.web.comunication.InfoArchiveServerConnectionInformation;
+import nl.hetcak.dms.ia.web.comunication.ServerConnectionInformation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,75 +28,43 @@ public class ConfigurationImpl implements Configuration {
     private final static String CONF_MAX_RESULTS = "maximaal_aantal_resultaten";
     private final static String CONF_APPLICATION_UUID = "ia_application_uuid";
     private final static String CONF_SEARCHCOMPOSITION_UUID = "ia_searchcomposition_uuid";
-    
+
     private String securityToken, serverAddress, username, password, logProps, applicationUUID, searchComponentUUID;
     private int serverPort, maxResults;
-    
-    
+
+
     @XmlElement(name = CONF_SECURITY_TOKEN)
     public String getSecurityToken() {
         return securityToken;
     }
-    
+
     public void setSecurityToken(String securityToken) {
         this.securityToken = securityToken;
     }
-    
-    public void setServerAddress(String serverAddress) {
-        this.serverAddress = serverAddress;
-    }
-    
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    
-    public void setLogProps(String logProps) {
-        this.logProps = logProps;
-    }
-    
-    public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
-    }
-    
-    public void setMaxResults(int maxResults) {
-        this.maxResults = maxResults;
-    }
-    
-    public void setApplicationUUID(String applicationUUID) {
-        this.applicationUUID = applicationUUID;
-    }
-    
-    public void setSearchComponentUUID(String searchComponentUUID) {
-        this.searchComponentUUID = searchComponentUUID;
-    }
-    
+
     @Override
     public String getInfoArchiveServerAddress() {
         return serverAddress;
     }
-    
+
     @Override
     public int getInfoArchiveServerPort() {
         return serverPort;
     }
-    
+
     @Override
     public Credentials getInfoArchiveCredentials() {
         Credentials credentials = new InfoArchiveCredentials();
         credentials.setUsername(username);
         credentials.setPassword(password);
-        
+
         if (StringUtils.isNotBlank(securityToken)) {
             credentials.setSecurityToken(securityToken);
             credentials.setUseLoginToken(true);
         }
         return credentials;
     }
-    
+
     @Override
     public ServerConnectionInformation getInfoArchiveServerInformation() {
         InfoArchiveServerConnectionInformation iaconnection = new InfoArchiveServerConnectionInformation();
@@ -105,32 +73,40 @@ public class ConfigurationImpl implements Configuration {
         iaconnection.setMaxItems(maxResults);
         return iaconnection;
     }
-    
+
     @XmlElement(name = CONF_MAX_RESULTS)
     @Override
     public int getMaxResults() {
         return maxResults;
     }
-    
+
+    public void setMaxResults(int maxResults) {
+        this.maxResults = maxResults;
+    }
+
     @XmlElement(name = CONF_APPLICATION_UUID)
     @Override
     public String getApplicationUUID() {
         return applicationUUID;
     }
-    
+
+    public void setApplicationUUID(String applicationUUID) {
+        this.applicationUUID = applicationUUID;
+    }
+
     @Override
     public String getSearchCompositionUUID() {
         return searchComponentUUID;
     }
-    
+
     @Override
     public boolean hasBasicInformation() {
         boolean result = checkCredentials();
-        if(result)
+        if (result)
             result = checkServerInformation();
         return result;
     }
-    
+
     private boolean checkCredentials() {
         boolean result = true;
         Credentials credentials = getInfoArchiveCredentials();
@@ -149,8 +125,8 @@ public class ConfigurationImpl implements Configuration {
         }
         return result;
     }
-    
-    private boolean checkServerInformation(){
+
+    private boolean checkServerInformation() {
         boolean result = true;
         ServerConnectionInformation serverConnectionInformation = getInfoArchiveServerInformation();
         if (serverConnectionInformation == null) {
@@ -172,37 +148,61 @@ public class ConfigurationImpl implements Configuration {
         }
         return result;
     }
-    
+
     @XmlElement(name = CONF_LOG_PROPS)
     public String getLogProps() {
         return logProps;
     }
-    
+
+    public void setLogProps(String logProps) {
+        this.logProps = logProps;
+    }
+
     @XmlElement(name = CONF_SERVER_ADDRESS)
     public String getServerAddress() {
         return serverAddress;
     }
-    
+
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
     @XmlElement(name = CONF_SERVICE_USER)
     public String getUsername() {
         return username;
     }
-    
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @XmlElement(name = CONF_SERVICE_USER_PASSWORD)
     public String getPassword() {
         return password;
     }
-    
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @XmlElement(name = CONF_SEARCHCOMPOSITION_UUID)
     public String getSearchComponentUUID() {
         return searchComponentUUID;
     }
-    
+
+    public void setSearchComponentUUID(String searchComponentUUID) {
+        this.searchComponentUUID = searchComponentUUID;
+    }
+
     @XmlElement(name = CONF_SERVER_PORT)
     public int getServerPort() {
         return serverPort;
     }
-    
+
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
+    }
+
     public void emptyConfiguration() {
         securityToken = "";
         serverAddress = "localhost";
