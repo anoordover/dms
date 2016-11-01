@@ -52,7 +52,6 @@ public class IAObject {
         IAObject objReturn = new IAObject();
         objReturn.setName((String) objObject.get("name"));
         JSONObject oLinks = (JSONObject) objObject.get("_links");
-
         for (Object objKey : oLinks.keySet()) {
             JSONObject objLinkObject = (JSONObject) oLinks.get(objKey);
             String sKeytype = ((String) objKey).substring(((String) objKey).lastIndexOf('/') + 1);

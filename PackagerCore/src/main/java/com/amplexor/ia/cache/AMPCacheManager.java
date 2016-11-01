@@ -29,6 +29,10 @@ import static com.amplexor.ia.Logger.info;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class AMPCacheManager implements CacheManager {
+    private static final String IACACHE_ELEMENT_ALIAS = "IACache";
+    private static final String PROPERTY_DOCUMENT_ELEMENT_NAME = "document_element_name";
+    private static final String PROPERTY_DOCUMENT_CLASS = "document_class";
+
     protected CacheConfiguration mobjConfiguration;
     protected List<IACache> mcCaches;
 
@@ -119,7 +123,7 @@ public class AMPCacheManager implements CacheManager {
         Path objDocumentPath = Paths.get(String.format("%s/%d/%s", mobjBasePath.toString(), objCache.getId(), objDocument.getDocumentId()));
         XStream objXStream = new XStream(new DomDriver());
         Class<?> objClass = getDocumentClass();
-        objXStream.alias(mobjConfiguration.getParameter("document_element_name"), objClass);
+        objXStream.alias(mobjConfiguration.getParameter(PROPERTY_DOCUMENT_ELEMENT_NAME), objClass);
         objXStream.processAnnotations(objClass);
         String sXmlData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + objXStream.toXML(objDocument);
         try (FileOutputStream objFileOut = new FileOutputStream(objDocumentPath.toFile())) {
@@ -208,10 +212,7 @@ public class AMPCacheManager implements CacheManager {
                 Path objCachePath = Paths.get(String.format("%s/%d", mobjBasePath.toString(), objCache.getId()).replace('/', File.separatorChar));
                 File[] cFilesInCache;
                 if ((cFilesInCache = objCachePath.toFile().listFiles()) != null) {
-                    List<File> cFilesToClean = Arrays.asList(cFilesInCache);
-                    for (File objFile : cFilesToClean) {
-                        Files.deleteIfExists(objFile.toPath());
-                    }
+                    cleanupCacheFiles(cFilesInCache);
                 }
                 Files.deleteIfExists(objCachePath);
             } catch (IOException ex) {
@@ -231,13 +232,20 @@ public class AMPCacheManager implements CacheManager {
         return bReturn;
     }
 
+    private void cleanupCacheFiles(File[] cFilesInCache) throws IOException {
+        List<File> cFilesToClean = Arrays.asList(cFilesInCache);
+        for (File objFile : cFilesToClean) {
+            Files.deleteIfExists(objFile.toPath());
+        }
+    }
+
     public boolean saveCache(IACache objCache) throws IOException {
         info(this, "Saving IACache-" + objCache.getId());
 
         boolean bReturn = false;
         Path objSave = Paths.get(mobjSavePath.toString() + File.separatorChar + "IACache-" + objCache.getId() + ".xml");
         XStream objXStream = new XStream(new DomDriver());
-        objXStream.alias("IACache", IACache.class);
+        objXStream.alias(IACACHE_ELEMENT_ALIAS, IACache.class);
         objXStream.processAnnotations(IACache.class);
         String sCacheData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + objXStream.toXML(objCache);
         try (FileOutputStream objSaveStream = new FileOutputStream(objSave.toFile())) {
@@ -273,7 +281,7 @@ public class AMPCacheManager implements CacheManager {
         //Load Cache Definition
         IACache objCache = null;
         XStream objXStream = new XStream(new StaxDriver());
-        objXStream.alias("IACache", IACache.class);
+        objXStream.alias(IACACHE_ELEMENT_ALIAS, IACache.class);
         objXStream.processAnnotations(IACache.class);
         Object objCacheObj = objXStream.fromXML(objInput);
         if (objCacheObj != null && objCacheObj instanceof IACache) {
@@ -287,21 +295,30 @@ public class AMPCacheManager implements CacheManager {
             if (objCachePathFile != null && objCachePathFile.listFiles() != null) {
                 List<File> cCacheContents = Arrays.asList(objCachePathFile.listFiles());
                 for (File objDocumentFile : cCacheContents) {
-                    debug(this, "Loading document " + objDocumentFile.getName() + " into IACache-" + objCache.getId());
-                    if (objDocumentFile.getAbsolutePath().endsWith(".xml")) {
-                        objCache.add(new IADocumentReference(objDocumentFile.getName(), objDocumentFile.getAbsolutePath()));
-                    }
+                    addLoadedDocument(objCache, objDocumentFile);
                 }
             }
-            objCache.getContents().forEach(objReference -> objReference.getDocumentData(getDocumentClass(), mobjConfiguration.getParameter("document_element_name")));
+            objCache.getContents().forEach(objReference -> objReference.getDocumentData(getDocumentClass(), mobjConfiguration.getParameter(PROPERTY_DOCUMENT_ELEMENT_NAME)));
             mcCaches.add(objCache);
+        }
+    }
+
+    private void addLoadedDocument(IACache objCache, File objDocumentFile) {
+        debug(this, "Loading document " + objDocumentFile.getName() + " into IACache-" + objCache.getId());
+        if (objDocumentFile.getName().endsWith(".xml")) {
+            String sDocumentId = objDocumentFile.getName();
+            String[] sFileNameParts = objDocumentFile.getName().split(".");
+            if(sFileNameParts.length > 1) {
+                sDocumentId = sFileNameParts[0];
+            }
+            objCache.add(new IADocumentReference(sDocumentId, objDocumentFile.getAbsolutePath()));
         }
     }
 
     private Class<?> getDocumentClass() {
         Class<?> objClass = IADocument.class;
         try {
-            objClass = Thread.currentThread().getContextClassLoader().loadClass(mobjConfiguration.getParameter("document_class"));
+            objClass = Thread.currentThread().getContextClassLoader().loadClass(mobjConfiguration.getParameter(PROPERTY_DOCUMENT_CLASS));
         } catch (ClassNotFoundException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
@@ -329,7 +346,7 @@ public class AMPCacheManager implements CacheManager {
         try {
             try (OutputStream objFileStream = Files.newOutputStream(Paths.get(sSavePath + "Cache.xml"))) {
                 XStream objXStream = new XStream(new StaxDriver());
-                objXStream.alias("IACache", IACache.class);
+                objXStream.alias(IACACHE_ELEMENT_ALIAS, IACache.class);
                 objXStream.processAnnotations(IACache.class);
                 objXStream.toXML(objCache, objFileStream);
             }
@@ -349,10 +366,10 @@ public class AMPCacheManager implements CacheManager {
         for (IADocumentReference objDocument : objCache.getContents()) {
             try (OutputStream objFileStream = Files.newOutputStream(Paths.get(sSavePath + objDocument.getDocumentId() + ".xml"))) {
                 XStream objXStream = new XStream(new StaxDriver());
-                Class objClass = Thread.currentThread().getContextClassLoader().loadClass(mobjConfiguration.getParameter("document_class"));
-                objXStream.alias(mobjConfiguration.getParameter("document_element_name"), objClass);
+                Class objClass = Thread.currentThread().getContextClassLoader().loadClass(mobjConfiguration.getParameter(PROPERTY_DOCUMENT_CLASS));
+                objXStream.alias(mobjConfiguration.getParameter(PROPERTY_DOCUMENT_ELEMENT_NAME), objClass);
                 objXStream.processAnnotations(objClass);
-                objXStream.toXML(objDocument.getDocumentData(objClass, mobjConfiguration.getParameter("document_element_name")), objFileStream);
+                objXStream.toXML(objDocument.getDocumentData(objClass, mobjConfiguration.getParameter(PROPERTY_DOCUMENT_ELEMENT_NAME)), objFileStream);
             } catch (IOException | ClassNotFoundException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
                 bReturn = false;

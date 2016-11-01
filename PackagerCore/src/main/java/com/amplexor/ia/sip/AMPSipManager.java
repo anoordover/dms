@@ -45,7 +45,7 @@ public class AMPSipManager implements SipManager {
         info(this, "Found " + cDocument.size() + " Documents in IACache-" + objCache.getId());
         try {
             if (!cDocument.isEmpty()) {
-                SipAssembler<IADocument> objSipAssembler = createSipAssembler(getPackageInformation(cDocument.get(0), objCache.getRetentionClass()), getPdiAssembler(), getDigitalObjects());
+                SipAssembler<IADocument> objSipAssembler = createSipAssembler(getPackageInformation(objCache.getRetentionClass()), getPdiAssembler(), getDigitalObjects());
                 FileGenerator<IADocument> objFileGenerator = new FileGenerator<>(objSipAssembler, new File(mobjConfiguration.getSipOutputDirectory()));
                 FileGenerationMetrics objMetrics = objFileGenerator.generate(cDocument.iterator());
                 if (objMetrics.getFile() != null) {
@@ -55,9 +55,7 @@ public class AMPSipManager implements SipManager {
                     Files.delete(objTempPath);
                     debug(this, "Deleted temp file: " + objTempPath);
                     objCache.setSipFile(objSipFile.toString());
-                    if (mobjConfiguration.getSipBackupDirectory() != null) {
-                        Files.copy(objSipFile, Paths.get(mobjConfiguration.getSipBackupDirectory() + "/" + objTempPath.toString() + ".zip"));
-                    }
+                    backupSipFile(objSipFile, objTempPath);
                     bReturn = true;
                 } else {
                     ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objCache, new Exception("Error generating SIP file"));
@@ -76,6 +74,12 @@ public class AMPSipManager implements SipManager {
             }
         }
         return bReturn;
+    }
+
+    protected void backupSipFile(Path objSipFile, Path objTempPath) throws IOException {
+        if (mobjConfiguration.getSipBackupDirectory() != null) {
+            Files.copy(objSipFile, Paths.get(mobjConfiguration.getSipBackupDirectory() + "/" + objTempPath.toString() + ".zip"));
+        }
     }
 
     protected synchronized List<IADocument> retrieveDocuments(IACache objCache) {
@@ -107,8 +111,7 @@ public class AMPSipManager implements SipManager {
         return SipAssembler.forPdiAndContent(objPackagingInformation, objPdiAssembler, objDigitalObjectsExtraction);
     }
 
-    protected PackagingInformation getPackageInformation(IADocument objDocument, IARetentionClass objRetentionClass) {
-
+    protected PackagingInformation getPackageInformation(IARetentionClass objRetentionClass) {
         return PackagingInformation.builder().dss()
                 .holding(mobjConfiguration.getHoldingName())
                 .application(mobjConfiguration.getApplicationName())

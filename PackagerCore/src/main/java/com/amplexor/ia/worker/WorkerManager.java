@@ -4,7 +4,6 @@ import com.amplexor.ia.configuration.SIPPackagerConfiguration;
 import com.amplexor.ia.configuration.WorkerConfiguration;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static com.amplexor.ia.Logger.info;

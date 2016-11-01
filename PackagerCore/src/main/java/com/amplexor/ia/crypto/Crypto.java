@@ -1,6 +1,7 @@
 package com.amplexor.ia.crypto;
 
 import com.amplexor.ia.exception.ExceptionHelper;
+import org.apache.log4j.Logger;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -13,6 +14,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Random;
 
 /**
  * Created by admjzimmermann on 26-10-2016.
@@ -21,35 +23,42 @@ public class Crypto {
     private static final int IV_SIZEB = 16;
     private static final int KEY_SIZEB = 16;
 
+    private Crypto() { //Hide implicit public ctor
+
+    }
+
     public static byte[] decrypt(byte[] cData, byte[] cKey) {
         byte[] cReturn = new byte[0];
-        if (cData.length > 16) {
-            try {
-                byte[] cIV = new byte[IV_SIZEB];
-                byte[] cInput = new byte[cData.length - 16];
-                for (int i = 0; i < cData.length; ++i) {
-                    if (i < cIV.length) {
-                        cIV[i] = cData[i];
-                    } else {
-                        cInput[i - cIV.length] = cData[i];
-                    }
-                }
-                Cipher objCipher = Cipher.getInstance("AES/CBC/NoPadding");
-                SecretKeySpec objKeySpec = new SecretKeySpec(cKey, "AES");
-                IvParameterSpec objIvSpec = new IvParameterSpec(cIV);
-                objCipher.init(Cipher.DECRYPT_MODE, objKeySpec, objIvSpec);
-                byte[] cOutput = objCipher.doFinal(cInput);
-                int iLength = cOutput.length - cOutput[cOutput.length - 1];
-                cReturn = Arrays.copyOf(cOutput, iLength);
-            } catch (BadPaddingException
-                    | NoSuchPaddingException
-                    | NoSuchAlgorithmException
-                    | InvalidAlgorithmParameterException
-                    | InvalidKeyException
-                    | IllegalBlockSizeException ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-            }
+        if (cData.length < 17) {
+            return cReturn;
         }
+
+        try {
+            byte[] cIV = new byte[IV_SIZEB];
+            byte[] cInput = new byte[cData.length - 16];
+            for (int i = 0; i < cData.length; ++i) {
+                if (i < cIV.length) {
+                    cIV[i] = cData[i];
+                } else {
+                    cInput[i - cIV.length] = cData[i];
+                }
+            }
+            Cipher objCipher = Cipher.getInstance("AES/CBC/NoPadding");
+            SecretKeySpec objKeySpec = new SecretKeySpec(cKey, "AES");
+            IvParameterSpec objIvSpec = new IvParameterSpec(cIV);
+            objCipher.init(Cipher.DECRYPT_MODE, objKeySpec, objIvSpec);
+            byte[] cOutput = objCipher.doFinal(cInput);
+            int iLength = cOutput.length - cOutput[cOutput.length - 1];
+            cReturn = Arrays.copyOf(cOutput, iLength);
+        } catch (BadPaddingException
+                | NoSuchPaddingException
+                | NoSuchAlgorithmException
+                | InvalidAlgorithmParameterException
+                | InvalidKeyException
+                | IllegalBlockSizeException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        }
+
         return cReturn;
     }
 
@@ -81,7 +90,7 @@ public class Crypto {
                 | InvalidAlgorithmParameterException
                 | InvalidKeyException
                 | IllegalBlockSizeException ex) {
-            System.err.println(ex);
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
 
         return cReturn;
@@ -91,7 +100,8 @@ public class Crypto {
         byte[] cIV = new byte[IV_SIZEB];
         String sPhrase = "c0nv0l8t3ed";
         for (int i = 0; i < cIV.length; ++i) {
-            cIV[i] = (byte) ((byte) (Math.random() * Byte.MAX_VALUE) ^ sPhrase.getBytes()[(int)(Math.random() * sPhrase.length() - 1)]);
+            Random objRandom = new Random(System.currentTimeMillis());
+            cIV[i] = (byte) ((byte) (Math.random() * Byte.MAX_VALUE) ^ sPhrase.getBytes()[objRandom.nextInt(sPhrase.length() - 1)]);
         }
 
         return cIV;
@@ -99,19 +109,19 @@ public class Crypto {
 
     public static void main(String[] cArgs) {
         if (cArgs.length < 1) {
-            System.err.println("ERROR: Unsupported usage, expected: java -cp com.amplexor.ia.crypto.Crypto Crypto [password]");
+            Logger.getLogger(Crypto.class.getName()).error("ERROR: Unsupported usage, expected: java -cp com.amplexor.ia.crypto.Crypto Crypto [password]");
         } else {
-            if(cArgs[0].equals("test")) {
-                System.out.println(new String(decrypt(Base64.getDecoder().decode(cArgs[1].getBytes()), "SomeSomeKeyKey12".getBytes())));
+            if ("test".equals(cArgs[0])) {
+                Logger.getLogger(Crypto.class.getName()).info(new String(decrypt(Base64.getDecoder().decode(cArgs[1].getBytes()), "SomeSomeKeyKey12".getBytes())));
                 return;
             }
 
             try {
                 String sPassword = cArgs[0];
-                System.out.println("Encrypting " + sPassword);
-                System.out.println(Base64.getEncoder().encodeToString(encrypt(sPassword.getBytes(), "SomeSomeKeyKey12".getBytes())));
+                Logger.getLogger(Crypto.class.getName()).info("Encrypting " + sPassword);
+                Logger.getLogger(Crypto.class.getName()).info(Base64.getEncoder().encodeToString(encrypt(sPassword.getBytes(), "SomeSomeKeyKey12".getBytes())));
             } catch (InvalidKeyException ex) {
-                System.err.println(ex);
+                Logger.getLogger(Crypto.class.getName()).error(ex);
             }
         }
     }

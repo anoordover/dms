@@ -38,6 +38,7 @@ public class CAKRetentionClass extends IARetentionClass {
         return msHandelingNr;
     }
 
+    @Override
     public String getPolicy() {
         return msPolicy;
     }

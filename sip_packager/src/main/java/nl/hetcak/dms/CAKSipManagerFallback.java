@@ -42,7 +42,7 @@ public class CAKSipManagerFallback extends CAKSipManager {
                 .schema(mobjConfiguration.getSchemaDeclaration())
                 .retentionClass(!bIsFallback ?
                         ((CAKRetentionClassFallback) objRetentionClass).getPolicy() : ((CAKRetentionClassFallback) objRetentionClass).getFallbackPolicy());
-        if (mobjConfiguration.getParameter("set_base_retention_date") != null && "true".equals(mobjConfiguration.getParameter("set_base_retention_date").toLowerCase())) {
+        if (mobjConfiguration.getParameter("set_base_retention_date") != null && "true".equalsIgnoreCase(mobjConfiguration.getParameter("set_base_retention_date"))) {
             objDssBuilder.baseRetentionDate(objCalendar.getTime());
         }
         return objDssBuilder.end().build();

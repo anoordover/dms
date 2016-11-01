@@ -75,16 +75,7 @@ class IAArchiverWorkerThread implements Runnable {
                 for (IADocument objDocument : cDocuments) {
                     miProcessedBytes += objDocument.getSizeEstimate();
                     debug(this, "Retrieved document with id: " + objDocument.getDocumentId());
-                    if (objDocument.getErrorCode() != 0) {
-                        error(this, "Error found in document " + objDocument.getDocumentId());
-                        IADocumentReference objReference = new IADocumentReference(objDocument, null);
-                        List<IADocumentReference> cTempReference = new ArrayList<>();
-                        cTempReference.add(objReference);
-                        mobjDocumentSource.postResult(cTempReference);
-                        return;
-                    } else {
-                        addToCache(objDocument);
-                    }
+                    addToCache(objDocument);
                 }
             }
             mobjCacheManager.update();
@@ -144,7 +135,16 @@ class IAArchiverWorkerThread implements Runnable {
 
     public void addToCache(IADocument objDocument) {
         try {
-            mobjCacheManager.add(objDocument, mobjRetentionManager.retrieveRetentionClass(objDocument));
+            if (objDocument.getErrorCode() != 0) {
+                error(this, "Error found in document " + objDocument.getDocumentId());
+                IADocumentReference objReference = new IADocumentReference(objDocument, null);
+                List<IADocumentReference> cTempReference = new ArrayList<>();
+                cTempReference.add(objReference);
+                mobjDocumentSource.postResult(cTempReference);
+                return;
+            } else {
+                mobjCacheManager.add(objDocument, mobjRetentionManager.retrieveRetentionClass(objDocument));
+            }
         } catch (IllegalArgumentException ex) {
             IADocumentReference objReference = new IADocumentReference(objDocument.getDocumentId(), null);
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNKNOWN_RETENTION, objReference, ex);

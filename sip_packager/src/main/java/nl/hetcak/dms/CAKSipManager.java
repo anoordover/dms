@@ -112,7 +112,7 @@ public class CAKSipManager extends AMPSipManager {
                 .entity(mobjConfiguration.getEntityName())
                 .schema(mobjConfiguration.getSchemaDeclaration())
                 .retentionClass(objRetentionClass.getName().replace(' ', '_'));
-        if (mobjConfiguration.getParameter("set_base_retention_date") != null && "true".equals(mobjConfiguration.getParameter("set_base_retention_date").toLowerCase())) {
+        if (mobjConfiguration.getParameter("set_base_retention_date") != null && "true".equalsIgnoreCase(mobjConfiguration.getParameter("set_base_retention_date"))) {
             objDssBuilder.baseRetentionDate(objCalendar.getTime());
         }
         return objDssBuilder.end().build();

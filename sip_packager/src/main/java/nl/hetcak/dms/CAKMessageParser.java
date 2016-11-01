@@ -1,10 +1,9 @@
 package nl.hetcak.dms;
 
 import com.amplexor.ia.configuration.MessageParserConfiguration;
-import com.amplexor.ia.parsing.MessageParser;
-import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
+import com.amplexor.ia.parsing.MessageParser;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import org.w3c.dom.Document;
@@ -88,16 +87,20 @@ public class CAKMessageParser implements MessageParser {
     private CAKDocument parseMetadata(IADocument objSourceDocument, String... cExceptions) {
         CAKDocument objReturn = new CAKDocument();
         for (String sKey : objSourceDocument.getMetadataKeys()) {
-            for (String sException : cExceptions) {
-                if (!sException.equals(sKey)) {
-                    if (sKey.equals(mobjConfiguration.getDocumentIdElement())) {
-                        objReturn.setDocumentId(objSourceDocument.getMetadata(sKey));
-                    }
-                    objReturn.setMetadata(sKey, objSourceDocument.getMetadata(sKey));
-                }
-            }
+            setDocumentMetadata(sKey, objReturn, objSourceDocument, cExceptions);
         }
         return objReturn;
+    }
+
+    private void setDocumentMetadata(String sKey, IADocument objDocument, IADocument objSourceDocument, String... cExceptions) {
+        for (String sException : cExceptions) {
+            if (!sException.equals(sKey)) {
+                if (sKey.equals(mobjConfiguration.getDocumentIdElement())) {
+                    objDocument.setDocumentId(objSourceDocument.getMetadata(sKey));
+                }
+                objDocument.setMetadata(sKey, objSourceDocument.getMetadata(sKey));
+            }
+        }
     }
 
     private String createAIUData(IADocument objDocument, String... cExceptions) {
@@ -108,23 +111,15 @@ public class CAKMessageParser implements MessageParser {
             Element objDocumentElement = objXmlDocument.createElementNS(mobjConfiguration.getAIUNamespace(), mobjConfiguration.getAIUElementName());
             objXmlDocument.appendChild(objDocumentElement);
             for (Map.Entry<String, String> objMapping : mobjConfiguration.getAIUMapping().entrySet()) {
-                boolean bOmitKey = false;
-                for (String sKey : cExceptions) {
-                    if (sKey.equals(objMapping.getKey())) {
-                        bOmitKey = true;
-                        break;
-                    }
-                }
-                if (!bOmitKey) {
+                if (!shouldOmitKey(objMapping, cExceptions)) {
                     List<Integer> cIndicesStart = new ArrayList<>();
                     List<Integer> cIndicesEnd = new ArrayList<>();
                     char[] cMappingCharacters = objMapping.getValue().toCharArray();
 
                     extractIndices(cMappingCharacters, cIndicesStart, cIndicesEnd);
+
                     //Ensure that opening have corresponding closing tags
-                    if (cIndicesStart.size() != cIndicesEnd.size()) {
-                        throw new IllegalArgumentException("Error in AIU_mapping, a '{' is missing its closing '}' " + objMapping.getKey());
-                    }
+                    checkForTags(cIndicesStart, cIndicesEnd, objMapping);
                     Element objMetadataElement = objXmlDocument.createElement(objMapping.getKey());
                     objMetadataElement.setTextContent(getAIUElementString(objMapping.getValue(), objDocument, cIndicesStart, cIndicesEnd));
                     objDocumentElement.appendChild(objMetadataElement);
@@ -149,6 +144,22 @@ public class CAKMessageParser implements MessageParser {
         }
 
         return "";
+    }
+
+    private void checkForTags(List<Integer> cIndicesStart, List<Integer> cIndicesEnd, Map.Entry<String, String> objMapping) {
+        if (cIndicesStart.size() != cIndicesEnd.size()) {
+            throw new IllegalArgumentException("Error in AIU_mapping, a '{' is missing its closing '}' " + objMapping.getKey());
+        }
+    }
+
+    private boolean shouldOmitKey(Map.Entry<String, String> objMapping, String... cExceptions) {
+        for (String sKey : cExceptions) {
+            if (sKey.equals(objMapping.getKey())) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     private void extractIndices(char[] cMappingCharacters, List<Integer> cIndicesStart, List<Integer> cIndicesEnd) {
