@@ -16,11 +16,11 @@ import javax.ws.rs.core.Response;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class RestfullTest {
-    private final static String REQUEST_LIST = "<ArchiefPersoonsnummer>1603575962</ArchiefPersoonsnummer>";
-    private final static String REQUEST_DOCUMENT = "<ArchiefDocumentId>1268712898</ArchiefDocumentId><Volgnummer>001</Volgnummer>";
-    private final static String REQUEST_SEARCH1 = "<ArchiefDocumentsoort>Z10</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-08-15T00:00:00</ArchiefVerzenddagEinde>";
-    private final static String REQUEST_SEARCH2 = "<ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer>";
-    private final static String REQUEST_SEARCH3 = "<ArchiefDocumentkenmerk>65847</ArchiefDocumentkenmerk><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-08-15T00:00:00</ArchiefVerzenddagEinde>";
+    private final static String REQUEST_LIST = "<ArchiefPersoonsnummer>1971429972</ArchiefPersoonsnummer>";
+    private final static String REQUEST_DOCUMENT = "<ArchiefDocumentId>1663298436</ArchiefDocumentId><Volgnummer>001</Volgnummer>";
+    private final static String REQUEST_SEARCH1 = "<ArchiefDocumentsoort>Z06</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde>";
+    private final static String REQUEST_SEARCH2 = "<ArchiefPersoonsnummer>1971429972</ArchiefPersoonsnummer>";
+    private final static String REQUEST_SEARCH3 = "<ArchiefDocumentkenmerk>97348</ArchiefDocumentkenmerk><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde>";
         
     @Test
     public void testDefaultResponse() throws Exception {
@@ -33,7 +33,7 @@ public class RestfullTest {
     }
     
     @Test
-    public void testConfigurationtResponse() throws Exception {
+    public void testConfigurationResponse() throws Exception {
         ConfigService configService = new ConfigService();
         Response responseEntity = configService.checkConfig();
         

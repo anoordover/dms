@@ -20,13 +20,13 @@ import java.io.File;
 public class ConfigurationTest {
     private static final String WORKING_CONFIG = "test/config/working.xml";
     private static final String MISCONFIGURATION_CONFIG = "test/config/misconfig.xml";
-    private ConfigurationManager configurationManager  = new ConfigurationManager();
     
     /**
      * Create a load failure.
      */
     @Test(expected = MissingConfigurationException.class, timeout = 1000)
-    public void loadConfigurationFirstTime() throws  MissingConfigurationException, MisconfigurationException {
+    public void loadConfigurationFirstTime() throws Exception {
+        ConfigurationManager configurationManager  = ConfigurationManager.getInstance();
         //cleanup default config
         File file = new File("../conf/request_processor.xml");
         if(file.exists()) {
@@ -34,37 +34,44 @@ public class ConfigurationTest {
         }
         
         Assert.assertNotNull(configurationManager);
-        configurationManager.loadConfiguration(null);
+        configurationManager.setCustomConfigFile(file);
+        configurationManager.loadConfiguration(true);
     }
     
     /**
      * Create a misconfiguration.
      */
     @Test(expected = MisconfigurationException.class, timeout = 1000)
-    public void missconfiguration() throws  MissingConfigurationException, MisconfigurationException {
+    public void missconfiguration() throws Exception {
+        ConfigurationManager configurationManager  = ConfigurationManager.getInstance();
         File misconfig = new File(MISCONFIGURATION_CONFIG);
         Assert.assertNotNull(configurationManager);
-        configurationManager.loadConfiguration(misconfig);
+        configurationManager.setCustomConfigFile(misconfig);
+        configurationManager.loadConfiguration(true);
     }
     
     /**
      * Load valid configuration
      */
     @Test(timeout = 1000)
-    public void configuration() throws MissingConfigurationException, MisconfigurationException {
+    public void configuration() throws Exception {
+        ConfigurationManager configurationManager  = ConfigurationManager.getInstance();
         File working_config = new File(WORKING_CONFIG);
         Assert.assertNotNull(configurationManager);
-        configurationManager.loadConfiguration(working_config);
+        configurationManager.setCustomConfigFile(working_config);
+        configurationManager.loadConfiguration(true);
     }
     
     /**
      * ServerConnectionInformation setting tester
      */
     @Test(timeout = 1000)
-    public void connectionSettings() throws MissingConfigurationException, MisconfigurationException {
+    public void connectionSettings() throws Exception {
+        ConfigurationManager configurationManager  = ConfigurationManager.getInstance();
         File working_config = new File(WORKING_CONFIG);
         Assert.assertNotNull(configurationManager);
-        ConfigurationImpl config = configurationManager.loadConfiguration(working_config);
+        configurationManager.setCustomConfigFile(working_config);
+        ConfigurationImpl config = configurationManager.loadConfiguration(true);
         ServerConnectionInformation connectionSettings = config.getInfoArchiveServerInformation();
         Assert.assertTrue(connectionSettings.getServerAddress() != null);
         Assert.assertTrue(connectionSettings.getServerPort() > 0);
@@ -104,9 +111,10 @@ public class ConfigurationTest {
      */
     @Test
     public void createEmptyDefaultConfig() throws Exception {
-        ConfigurationManager configurationManager = new ConfigurationManager();
+        ConfigurationManager configurationManager  = ConfigurationManager.getInstance();
         File file = new File(WORKING_CONFIG);
-        ConfigurationImpl oldConfiguration = configurationManager.loadConfiguration(file);
+        configurationManager.setCustomConfigFile(file);
+        ConfigurationImpl oldConfiguration = configurationManager.loadConfiguration(true);
         ConfigurationImpl configuration = new ConfigurationImpl();
         configurationManager.createConfiguration(configuration);
         //override file

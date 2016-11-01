@@ -3,20 +3,16 @@ package nl.hetcak.dms.ia.web;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
+import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
-import nl.hetcak.dms.ia.web.util.CryptoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
@@ -34,20 +30,16 @@ public class ConfigService {
         LOGGER.info("Running log checker.");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Loading config file...\n");
-        ConfigurationManager configurationManager = new ConfigurationManager();
+        ConfigurationManager configurationManager = ConfigurationManager.getInstance();
         try {
-            Configuration configuration = configurationManager.loadConfiguration(null);
+            Configuration configuration = configurationManager.loadConfiguration(false);
             if(!configuration.hasBasicInformation()) {
                 throw new MisconfigurationException("Some elements of the configuration have not been configured.");
             }
             stringBuilder.append("[OK] Config file found and loaded.\n");
-        } catch (MissingConfigurationException missingcexc) {
-            LOGGER.error("Config file not found.",missingcexc);
+        } catch (RequestResponseException rrExc) {
+            LOGGER.error("There is a problem with the config file.", rrExc);
             stringBuilder.append("[ERROR] Config file not found.\n");
-        } catch (MisconfigurationException mcexc) {
-            LOGGER.error("Config file not correctly configured.",mcexc);
-            stringBuilder.append("Config file found.\n");
-            stringBuilder.append("[ERROR] Config file is invalid.\n");
         }
         LOGGER.info(stringBuilder.toString());
         return Response.ok(stringBuilder.toString()).build();

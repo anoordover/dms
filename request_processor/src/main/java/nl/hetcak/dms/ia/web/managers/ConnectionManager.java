@@ -2,10 +2,7 @@ package nl.hetcak.dms.ia.web.managers;
 
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
-import nl.hetcak.dms.ia.web.exceptions.LoginFailureException;
-import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
-import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
-import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
+import nl.hetcak.dms.ia.web.exceptions.*;
 import nl.hetcak.dms.ia.web.requests.LoginRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +61,7 @@ public class ConnectionManager {
      * @throws LoginFailureException Wrong login information.
      * @throws ServerConnectionFailureException Can't connect to server.
      */
-    public Credentials getActiveCredentials()  throws MissingConfigurationException, MisconfigurationException,
-        LoginFailureException, ServerConnectionFailureException {
+    public Credentials getActiveCredentials()  throws RequestResponseException {
         LOGGER.info("Requesting Active Credentials.");
               
         if(credentials == null) {
@@ -95,18 +91,24 @@ public class ConnectionManager {
      * @throws MissingConfigurationException Can't find configuration
      * @throws MisconfigurationException Missing basic configuration settings.
      */
-    public Configuration getConfiguration() throws MissingConfigurationException, MisconfigurationException {
+    public Configuration getConfiguration() throws RequestResponseException {
         LOGGER.info("Getting current configuration.");
         if(configuration == null) {
             LOGGER.info("Load config file.");
-            configuration = loadConfiguration(configurationFile);
+            if(configurationFile != null) {
+                configuration = loadConfigurationFromFile(configurationFile);
+            } else {
+                ConfigurationManager configurationManager = ConfigurationManager.getInstance();
+                configuration = configurationManager.loadConfiguration(false);
+            }
         }
         LOGGER.info("Returning config file.");
         return configuration;
     }
     
-    private Configuration loadConfiguration(File file) throws MissingConfigurationException, MisconfigurationException {
-        ConfigurationManager configurationManager = new ConfigurationManager();
-        return configurationManager.loadConfiguration(file);
+    private Configuration loadConfigurationFromFile(File file) throws RequestResponseException {
+        ConfigurationManager configurationManager = ConfigurationManager.getInstance();
+        configurationManager.setCustomConfigFile(file);
+        return configurationManager.loadConfiguration(true);
     }
 }

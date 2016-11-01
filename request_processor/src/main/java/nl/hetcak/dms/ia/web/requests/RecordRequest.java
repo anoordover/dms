@@ -280,6 +280,7 @@ public class RecordRequest {
     }
     
     private InfoArchiveDocument parseDocument(JsonObject document) throws ParseException {
+        LOGGER.info("Parsing Document.");
         InfoArchiveDocument infoArchiveDocument = new InfoArchiveDocument();
         JsonArray columns = document.getAsJsonArray(PARSE_RESPONSE_COLUMNS);
         for (int i_column = 0; i_column < columns.size(); i_column++) {
@@ -287,10 +288,12 @@ public class RecordRequest {
             
             if (column.has(PARSE_RESPONSE_NAME)) {
                 String columnName = column.get(PARSE_RESPONSE_NAME).getAsString();
+                LOGGER.debug("Parsing column: "+ columnName);
                 infoArchiveDocument = parseFirstTenFields(infoArchiveDocument,columnName,column);
                 infoArchiveDocument = parseSecondTenField(infoArchiveDocument,columnName,column);
             }
         }
+        LOGGER.info("Done parsing document.");
         
         return infoArchiveDocument;
     }
@@ -326,7 +329,6 @@ public class RecordRequest {
                 infoArchiveDocument.setArchiefDocumentstatus(column.get(PARSE_RESPONSE_VALUE).getAsString());
                 break;
             default:
-                LOGGER.warn("Unknown column detected:" + columnName);
                 break;
         }
         return infoArchiveDocument;
@@ -344,7 +346,6 @@ public class RecordRequest {
                 infoArchiveDocument.setArchiefHandelingsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
                 break;
             default:
-                LOGGER.warn("Unknown column detected:" + columnName);
                 break;
         }
         return infoArchiveDocument;

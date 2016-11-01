@@ -30,7 +30,7 @@ public class RequestRecordsTest {
     
     //external connection
     @Test(timeout = 3000)
-    public void getListDocumentsFromInfoArchive() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException  {
+    public void getListDocumentsFromInfoArchive() throws Exception  {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);
@@ -46,7 +46,7 @@ public class RequestRecordsTest {
     
     //external connection
     @Test(expected = NoContentAvailableException.class ,timeout = 3000)
-    public void getEmptyList() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, IOException, ParseException, JAXBException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
+    public void getEmptyList() throws Exception {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);

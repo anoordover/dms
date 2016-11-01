@@ -2,10 +2,7 @@ package nl.hetcak.dms.ia.web.test;
 
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
-import nl.hetcak.dms.ia.web.exceptions.LoginFailureException;
-import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
-import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
-import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
+import nl.hetcak.dms.ia.web.exceptions.*;
 import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
 import nl.hetcak.dms.ia.web.managers.ConnectionManager;
 import nl.hetcak.dms.ia.web.requests.LoginRequest;
@@ -37,7 +34,7 @@ public class ConnectionTest {
      * Try to create ConnectionManager with bad configuration file
      */
     @Test(expected = MisconfigurationException.class,timeout = 1000)
-    public void createConnectionManagerWithBadConfig() throws MissingConfigurationException, MisconfigurationException {
+    public void createConnectionManagerWithBadConfig() throws MissingConfigurationException, MisconfigurationException, RequestResponseException {
         File misconfig = new File(MISCONFIGURATION_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(misconfig);
@@ -50,7 +47,7 @@ public class ConnectionTest {
      * Try to create ConnectionManager with working configuration file.
      */
     @Test(timeout = 1000)
-    public void createConnectionManagerWithWorkingConfig() throws MissingConfigurationException, MisconfigurationException {
+    public void createConnectionManagerWithWorkingConfig() throws RequestResponseException{
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);
@@ -61,7 +58,7 @@ public class ConnectionTest {
     
     //external connection
     @Test
-    public void getActiveCredentials() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException {
+    public void getActiveCredentials() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException, RequestResponseException {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);
@@ -72,7 +69,7 @@ public class ConnectionTest {
     
     //external ServerConnectionInformation
     @Test
-    public void getActiveCredentialsWithRefreshToken() throws MissingConfigurationException, MisconfigurationException, LoginFailureException, ServerConnectionFailureException {
+    public void getActiveCredentialsWithRefreshToken() throws RequestResponseException {
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         connectionManager.setConfigurationFile(config);
