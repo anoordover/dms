@@ -1,7 +1,6 @@
 package com.amplexor.ia.data;
 
 import com.amplexor.ia.configuration.converters.LocalDateConverter;
-import com.amplexor.ia.enums.*;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 

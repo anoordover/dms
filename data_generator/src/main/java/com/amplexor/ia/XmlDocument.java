@@ -1,15 +1,12 @@
 package com.amplexor.ia;
 
 import com.amplexor.ia.configuration.converters.ParameterConverter;
-import com.amplexor.ia.data.CAKXmlDocumentData;
-import com.amplexor.ia.enums.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 

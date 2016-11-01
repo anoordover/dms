@@ -1,7 +1,6 @@
 package com.amplexor.ia;
 
 import com.amplexor.ia.configuration.ConfigManager;
-import com.amplexor.ia.enums.*;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.utils.RandomGenerator;
 import com.amplexor.ia.utils.TransformPDF;
