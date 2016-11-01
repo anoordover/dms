@@ -69,9 +69,9 @@ public class CAKMessageParser implements MessageParser {
 
         if (objSourceDocument != null) {
             objReturn = parseMetadata(objSourceDocument, cExceptions);
-            byte[] cPayload = objSourceDocument.loadContent(CAKDocument.KEY_ATTACHMENT);
+            byte[] cPayload = objSourceDocument.getContent(CAKDocument.KEY_ATTACHMENT);
             if (cPayload.length > 0) {
-                objReturn.setPayload(cPayload);
+                objReturn.setContent(CAKDocument.KEY_ATTACHMENT, cPayload);
             } else {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objReturn, new Exception("Error loading PayloadPdf"));
             }

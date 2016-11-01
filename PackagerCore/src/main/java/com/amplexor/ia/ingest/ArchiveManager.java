@@ -230,6 +230,7 @@ public class ArchiveManager {
         JSONObject objReturn;
         String sUrl = String.format("%s://%s:%d/systemdata/applications/%s/aips", mobjConfiguration.getProtocol(), mobjConfiguration.getHost(), mobjConfiguration.getPort(), objTarget.getUUID());
         HttpURLConnection objConnection = (HttpURLConnection) new URL(sUrl).openConnection();
+        objConnection.setChunkedStreamingMode(MultipartUtility.CHUNK_SIZE);
         objConnection.setUseCaches(false);
         objConnection.setDoOutput(true);
         objConnection.setDoInput(true);

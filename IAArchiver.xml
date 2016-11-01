@@ -30,14 +30,14 @@
         <ingest_tenant>INFOARCHIVE</ingest_tenant>
     </rest_api>
     <sip>
-        <implementing_class>nl.hetcak.dms.CAKSipManager</implementing_class>
+        <implementing_class>nl.hetcak.dms.CAKSipManagerFallback</implementing_class>
         <holding_name>CAK_Klantarchief</holding_name>
         <application_name>CAK_Klantarchief</application_name>
         <producer_name>SIP Packager</producer_name>
         <entity_name>ArchiefDocument</entity_name>
         <document_element_name>ArchiefDocumenten</document_element_name>
         <schema_declaration>urn:hetcak:dms:uitingarchief:2016:08</schema_declaration>
-        <sip_output_directory>SIP</sip_output_directory>
+        <sip_output_directory>D:\Data\SIP</sip_output_directory>
         <custom_parameters>
             <document_element_name>ArchiefDocument</document_element_name>
             <document_class>nl.hetcak.dms.CAKDocument</document_class>
@@ -48,10 +48,9 @@
     <document_source>
         <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
         <custom_parameters>
-            <!-- DEV-->
-            <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
-            <truststore>resources\truststore\truststore_ont1_mule.jks</truststore>
-            <truststore_password>My0jKD3WWChHaVFrLwDNLxmaTl72f9PL</truststore_password>
+            <broker>failover:(ssl://muleaq1.tst.esb.func.cak-bz.local:10744,ssl://muleaq2.tst.esb.func.cak-bz.local:10744)?randomize=false</broker>
+            <truststore>truststore\truststore_tst_mule1.jks</truststore>
+            <truststore_password>URBq1N1uyZWQGWm5FuJ7iRVkLA0T3IUh</truststore_password>
             <result_format>
                 <![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
             <results_element>
@@ -254,11 +253,6 @@
             <error_code>4001</error_code>
             <error_text>Insufficient Disk space</error_text>
             <error_handling>notify_source;log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>3010</error_code>
-            <error_text>Validation of metadata failed {EXCEPTION}</error_text>
-            <error_handling>log_error;notify_source</error_handling>
         </error>
         <error>
             <error_code>5001</error_code>

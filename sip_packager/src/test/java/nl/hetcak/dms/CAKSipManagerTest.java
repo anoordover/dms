@@ -37,7 +37,7 @@ public class CAKSipManagerTest {
         IACache ic = new IACache(1, new CAKRetentionClass("Test"));
         ic.setTargetApplication("CAK_Klantarchief");
         CAKDocument objDocument = new CAKDocument();
-        objDocument.setPayload(Base64.getEncoder().encode("abcdef".getBytes()));
+        objDocument.setContent(CAKDocument.KEY_ATTACHMENT, Base64.getEncoder().encode("abcdef".getBytes()));
         ic.add(new IADocumentReference(objDocument, null));
 
         IASipConfiguration isc = mock(IASipConfiguration.class);

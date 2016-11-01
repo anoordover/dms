@@ -7,7 +7,7 @@ import java.util.Set;
 
 /**
  * Abstract class which should be subclassed by the Client implementation of the SIP Packager
- * This class will be used to store a documents metadata and content data
+ * This class will be used to store a document's metadata and content data
  * Created by admjzimmermann on 6-9-2016.
  */
 public abstract class IADocument {
@@ -45,9 +45,13 @@ public abstract class IADocument {
 
     public abstract long getSizeEstimate();
 
-    public abstract byte[] loadContent(String sKey);
+    public abstract void loadContent(String sKey);
+
+    public abstract byte[] getContent(String sKey);
 
     public abstract void setContent(String sKey, byte[] cContent);
+ 
+    public abstract void setContentFile(String sKey, String sContentFile);
 
     public void setErrorText(String sError) {
         msErrorText = sError;
