@@ -15,6 +15,17 @@ import static com.amplexor.ia.Logger.debug;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class ActiveMQManager implements DocumentSource {
+    private static final String PARAMETER_BROKER = "broker";
+    private static final String PARAMETER_TRUSTSTORE = "truststore";
+    private static final String PARAMETER_TRUSTSTORE_PASSWORD = "truststore_password";
+    private static final String PARAMETER_INPUT_QUEUE_NAME = "input_queue_name";
+    private static final String PARAMETER_RESULT_QUEUE_NAME = "result_queue_name";
+    private static final String PARAMETER_QUEUE_RECEIVE_TIMEOUT = "queue_receive_timeout";
+    private static final String TRUSTSTORE_TYPE = "JKS";
+    private static final String PARAMETER_RESULT_VALUE = "result_value";
+    private static final String PARAMETER_RESULT_FORMAT = "result_format";
+    private static final String PARAMETER_RESULTS_ELEMENT = "results_element";
+
 
     ActiveMQSslConnectionFactory mobjConnectionFactory;
     Connection mobjConnection;
@@ -24,12 +35,12 @@ public class ActiveMQManager implements DocumentSource {
     public ActiveMQManager(PluggableObjectConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
         mobjConnectionFactory = new ActiveMQSslConnectionFactory();
-        mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter("broker"));
-        if (mobjConfiguration.getParameter("truststore") != null) {
+        mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter(PARAMETER_BROKER));
+        if (mobjConfiguration.getParameter(PARAMETER_TRUSTSTORE) != null) {
             try {
-                mobjConnectionFactory.setTrustStore(objConfiguration.getParameter("truststore"));
-                mobjConnectionFactory.setTrustStoreType("JKS");
-                mobjConnectionFactory.setTrustStorePassword(objConfiguration.getParameter("truststore_password"));
+                mobjConnectionFactory.setTrustStore(objConfiguration.getParameter(PARAMETER_TRUSTSTORE));
+                mobjConnectionFactory.setTrustStoreType(TRUSTSTORE_TYPE);
+                mobjConnectionFactory.setTrustStorePassword(objConfiguration.getParameter(PARAMETER_TRUSTSTORE_PASSWORD));
             } catch (Exception ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_TRUSTSTORE, ex);
             }
@@ -45,9 +56,9 @@ public class ActiveMQManager implements DocumentSource {
         try {
             if (mobjConnection != null) {
                 objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-                Destination objDestination = objSession.createQueue(mobjConfiguration.getParameter("input_queue_name") + "?consumer.prefetchSize=1");
+                Destination objDestination = objSession.createQueue(mobjConfiguration.getParameter(PARAMETER_INPUT_QUEUE_NAME) + "?consumer.prefetchSize=1");
                 objConsumer = objSession.createConsumer(objDestination);
-                Message objMessage = objConsumer.receive(Integer.parseInt(mobjConfiguration.getParameter("queue_receive_timeout")));
+                Message objMessage = objConsumer.receive(Integer.parseInt(mobjConfiguration.getParameter(PARAMETER_QUEUE_RECEIVE_TIMEOUT)));
                 if (objMessage == null) {
                     objConsumer.close();
                     return "";
@@ -126,7 +137,7 @@ public class ActiveMQManager implements DocumentSource {
 
         try {
             objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Queue objDestination = objSession.createQueue(mobjConfiguration.getParameter("result_queue_name"));
+            Queue objDestination = objSession.createQueue(mobjConfiguration.getParameter(PARAMETER_RESULT_QUEUE_NAME));
             objProducer = objSession.createProducer(objDestination);
             TextMessage objMessage = objSession.createTextMessage(getResultXml(cDocuments));
             objProducer.send(objDestination, objMessage);
@@ -154,7 +165,7 @@ public class ActiveMQManager implements DocumentSource {
     private String getResultXml(List<IADocumentReference> cDocuments) {
         StringBuilder objBuilder = new StringBuilder();
         for (IADocumentReference objReference : cDocuments) {
-            String[] cResultValues = mobjConfiguration.getParameter("result_values").split(";");
+            String[] cResultValues = mobjConfiguration.getParameter(PARAMETER_RESULT_VALUE).split(";");
             String[] cValues = new String[cResultValues.length];
             int iCurrent = 0;
             for (String sResultValue : cResultValues) {
@@ -173,8 +184,8 @@ public class ActiveMQManager implements DocumentSource {
                         break;
                 }
             }
-            objBuilder.append(String.format(mobjConfiguration.getParameter("result_format"), cValues));
+            objBuilder.append(String.format(mobjConfiguration.getParameter(PARAMETER_RESULT_FORMAT), cValues));
         }
-        return String.format(mobjConfiguration.getParameter("results_element"), objBuilder.toString());
+        return String.format(mobjConfiguration.getParameter(PARAMETER_RESULTS_ELEMENT), objBuilder.toString());
     }
 }

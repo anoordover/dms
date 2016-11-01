@@ -69,11 +69,15 @@ public class WorkerManager {
     }
 
     private boolean shouldStopWorker(int iProcessed, WorkerConfiguration objConfiguration) {
-        return iProcessed < objConfiguration.getWorkerShutdownThreshold() && miCurrentWorker > 0 && !mcWorkers.get(miCurrentWorker).isIngesting();
+        return iProcessed < objConfiguration.getWorkerShutdownThreshold() && miCurrentWorker > 0 && !mcWorkers.get(miCurrentWorker).isIngesting() || mbStopFlag;
 
     }
 
     private boolean shouldStartWorker(int iProcessed, WorkerConfiguration objConfiguration) {
+        if (mbStopFlag) {
+            return false;
+        }
+
         if (iProcessed > objConfiguration.getWorkerStartupThreshold() && miCurrentWorker < (objConfiguration.getMaxWorkerThreads() - 1) || miCurrentWorker == -1) {
             return true;
         }

@@ -12,6 +12,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Random;
@@ -100,7 +101,7 @@ public class Crypto {
         byte[] cIV = new byte[IV_SIZEB];
         String sPhrase = "c0nv0l8t3ed";
         for (int i = 0; i < cIV.length; ++i) {
-            Random objRandom = new Random(System.currentTimeMillis());
+            SecureRandom objRandom = new SecureRandom();
             cIV[i] = (byte) ((byte) (Math.random() * Byte.MAX_VALUE) ^ sPhrase.getBytes()[objRandom.nextInt(sPhrase.length() - 1)]);
         }
 
