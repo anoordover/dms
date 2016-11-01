@@ -2,9 +2,11 @@ package nl.hetcak.dms;
 
 import com.amplexor.ia.cache.IACache;
 import com.amplexor.ia.cache.IADocumentReference;
+import com.amplexor.ia.configuration.ConfigManager;
 import com.amplexor.ia.configuration.IASipConfiguration;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -20,45 +22,43 @@ import static org.mockito.Mockito.when;
  * Created by minkenbergs on 4-10-2016.
  */
 public class CAKSipManagerTest {
+    ConfigManager mobjConfigManager;
+
+    @Before
+    public void setup() {
+        System.out.println(System.getProperty("user.dir"));
+        mobjConfigManager = new ConfigManager("IAArchiver.xml");
+        mobjConfigManager.loadConfiguration();
+    }
 
     @Test
     public void getCAKPackageInformation() throws Exception {
         IARetentionClass irc = mock(IARetentionClass.class);
-        when(irc.getName()).thenReturn("Startbrief");
+        when(irc.getName()).thenReturn("B01");
 
-        IASipConfiguration isc = mock(IASipConfiguration.class);
-        CAKSipManager csm = new CAKSipManager(isc);
+        CAKSipManager csm = new CAKSipManager(mobjConfigManager.getConfiguration().getSipConfiguration());
 
         assertNotNull(csm.getCAKPackageInformation(irc, false));
     }
 
     @Test
-    public void getSipFileIACache(){
-        IACache ic = new IACache(1, new CAKRetentionClass("Test"));
-        ic.setTargetApplication("CAK_Klantarchief");
+    public void getSipFileIACache() throws Exception {
+        CAKCacheManager objCacheManager = new CAKCacheManager(mobjConfigManager.getConfiguration().getCacheConfiguration());
+        objCacheManager.initializeCache();
         CAKDocument objDocument = new CAKDocument();
+        objDocument.setDocumentId("1000100010");
         objDocument.setContent(CAKDocument.KEY_ATTACHMENT, Base64.getEncoder().encode("abcdef".getBytes()));
-        ic.add(new IADocumentReference(objDocument, null));
+        objCacheManager.add(objDocument, new CAKRetentionClass("Z01"));
+        objCacheManager.update();
 
-        IASipConfiguration isc = mock(IASipConfiguration.class);
-        when(isc.getParameter("fallback_application_name")).thenReturn("CAK_Tijdelijk_Klantarchief");
-        when(isc.getParameter("document_class")).thenReturn("nl.hetcak.dms.CAKDocument");
-        when(isc.getApplicationName()).thenReturn("CAK_Klantarchief");
-        when(isc.getHoldingName()).thenReturn("CAK_Klantarchief");
-        when(isc.getSchemaDeclaration()).thenReturn("urn:hetcak:dms:uitingarchief:2016:08");
-        when(isc.getDocumentElementName()).thenReturn("ArchiefDocumenten");
-        when(isc.getEntityName()).thenReturn("ArchiefDocument");
-        when(isc.getSipOutputDirectory()).thenReturn("Sips");
-
-        CAKSipManager csm = new CAKSipManager(isc);
-        assertTrue(csm.getSIPFile(ic));
+        CAKSipManager csm = new CAKSipManager(mobjConfigManager.getConfiguration().getSipConfiguration());
+        assertTrue(csm.getSIPFile(objCacheManager.getClosedCaches().get(0)));
     }
 
     @Ignore
-    public void getSipFileIAdocumentref(){
+    public void getSipFileIAdocumentref() {
         //// TODO: 7-10-2016 opnemen met Joury
     }
-
 
 
 }

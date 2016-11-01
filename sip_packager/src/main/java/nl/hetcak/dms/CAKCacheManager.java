@@ -12,6 +12,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,7 +50,7 @@ public class CAKCacheManager extends AMPCacheManager {
 
     @Override
     public String saveDocument(IACache objCache, IADocument objDocument) throws IOException {
-        Path objDocumentPath = Paths.get(String.format("%s/%d/%s.xml", mobjBasePath.toString(), objCache.getId(), objDocument.getDocumentId()));
+        Path objDocumentPath = Paths.get(String.format("%s/%d/%s", mobjBasePath.toString(), objCache.getId(), objDocument.getDocumentId()));
         Path objPayloadPath = Paths.get(String.format("%s/%d/%s.pdf", mobjBasePath.toString(), objCache.getId(), objDocument.getDocumentId()));
         try (OutputStream objOutputStream = Files.newOutputStream(objPayloadPath)) {
             objOutputStream.write(objDocument.getContent(CAKDocument.KEY_ATTACHMENT));
@@ -60,8 +61,9 @@ public class CAKCacheManager extends AMPCacheManager {
         XStream objXStream = new XStream(new DomDriver("UTF-8"));
         objXStream.alias(mobjConfiguration.getParameter("document_element_name"), CAKDocument.class);
         objXStream.processAnnotations(CAKDocument.class);
+        String sXmlData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" + objXStream.toXML(objDocument);
         try (OutputStream objOutputStream = Files.newOutputStream(objDocumentPath)) {
-            objXStream.toXML(objDocument, objOutputStream);
+            objOutputStream.write(sXmlData.getBytes(Charset.forName("UTF-8")));
         }
         return objDocumentPath.toString();
     }

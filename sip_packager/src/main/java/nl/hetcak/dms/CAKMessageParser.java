@@ -49,7 +49,7 @@ public class CAKMessageParser implements MessageParser {
     public List<IADocument> parse(String sData) {
         info(this, "Parsing Document");
         List<IADocument> objReturn = new ArrayList<>();
-        IADocument objStandardDocument = parseDocument(sData, mobjConfiguration.getParameter("schema_name"));
+        IADocument objStandardDocument = parseDocument(sData, mobjConfiguration.getParameter("schema_name"), "PersoonBurgerservicenummer");
         if (objStandardDocument != null) {
             objReturn.add(objStandardDocument);
         }
@@ -206,7 +206,7 @@ public class CAKMessageParser implements MessageParser {
             Validator objValidator = objSchema.newValidator();
             objValidator.validate(new StreamSource(new StringReader(objDocument.getAIU())));
         } catch (SAXException ex) {
-            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_INPUT, objDocument, ex);
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_VALIDATION_FAILED, objDocument, ex);
         } catch (IOException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }

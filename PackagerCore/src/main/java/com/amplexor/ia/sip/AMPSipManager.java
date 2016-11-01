@@ -8,22 +8,16 @@ import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.emc.ia.sdk.sip.assembly.*;
 import com.emc.ia.sdk.support.xml.XmlBuilder;
-import com.sun.org.apache.xerces.internal.xni.QName;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-import com.thoughtworks.xstream.io.xml.QNameMap;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static com.amplexor.ia.Logger.debug;
 import static com.amplexor.ia.Logger.info;
@@ -61,6 +55,9 @@ public class AMPSipManager implements SipManager {
                     Files.delete(objTempPath);
                     debug(this, "Deleted temp file: " + objTempPath);
                     objCache.setSipFile(objSipFile.toString());
+                    if (mobjConfiguration.getSipBackupDirectory() != null) {
+                        Files.copy(objSipFile, Paths.get(mobjConfiguration.getSipBackupDirectory() + "/" + objTempPath.toString() + ".zip"));
+                    }
                     bReturn = true;
                 } else {
                     ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objCache, new Exception("Error generating SIP file"));

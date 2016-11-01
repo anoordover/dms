@@ -2,7 +2,6 @@ package com.amplexor.ia.crypto;
 
 import org.junit.Test;
 
-import java.nio.charset.Charset;
 import java.util.Base64;
 
 import static org.junit.Assert.*;

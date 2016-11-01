@@ -28,6 +28,9 @@ public class IASipConfiguration extends PluggableObjectConfiguration {
     @XStreamAlias("sip_output_directory")
     private String msSipOutputDirectory;
 
+    @XStreamAlias("sip_backup_directory")
+    private String msSipBackupDirectory;
+
 
     public String getHoldingName() {
         return msHoldingName;
@@ -55,5 +58,9 @@ public class IASipConfiguration extends PluggableObjectConfiguration {
 
     public String getSipOutputDirectory() {
         return msSipOutputDirectory;
+    }
+
+    public String getSipBackupDirectory() {
+        return msSipBackupDirectory;
     }
 }
