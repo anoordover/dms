@@ -12,7 +12,11 @@ import java.util.Date;
 public class InfoArchiveDateUtil {
     private final static String INFOARCHIVE_DATE_FORMAT = "yyyy-MM-dd";
     private final static String REQUEST_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
-    
+
+    private InfoArchiveDateUtil() {
+        //static functions
+    }
+
     /**
      * Converts a Request Date formatted {@link String} to a InfoArchive formatted {@link String}.
      * @param requestDate The request Date {@link String}.

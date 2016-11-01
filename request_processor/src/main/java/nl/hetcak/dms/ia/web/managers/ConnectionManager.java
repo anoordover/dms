@@ -35,7 +35,7 @@ public class ConnectionManager {
             LOGGER.info("Creating a new ConnectionManager instance.");
             connectionManager = new ConnectionManager();
         }
-        LOGGER.info("returning ConnectionManager instance.");
+        LOGGER.info("Returning ConnectionManager instance.");
         return connectionManager;
     }
 
@@ -87,7 +87,7 @@ public class ConnectionManager {
 
     /**
      * Gets the current configuration.
-     * @return the c{@link Configuration} object.
+     * @return the {@link Configuration} object.
      * @throws MissingConfigurationException Can't find configuration
      * @throws MisconfigurationException Missing basic configuration settings.
      */

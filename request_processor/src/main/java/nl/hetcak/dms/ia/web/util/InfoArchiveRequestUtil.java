@@ -34,6 +34,7 @@ public class InfoArchiveRequestUtil {
     private final static String CONTENT_TYPE_REQUEST = "Content-Type";
     private final static String HEADER_AUTHORIZATION = "Authorization";
     public final static String DEFAULT_CONTENT_TYPE_REQUEST = "application/x-www-form-urlencoded";
+    private final static String LOGGER_STRING_INTERACTION_WITH_SERVER_FAILED = "Failed to interact with server.";
     
     private ServerConnectionInformation serverConnectionInformation;
     
@@ -60,8 +61,8 @@ public class InfoArchiveRequestUtil {
     
         //add headers
         if(requestParameters != null) {
-            for(String key : requestParameters.keySet()) {
-                getRequest.addHeader(key,requestParameters.get(key));
+            for(Map.Entry<String, String> entry : requestParameters.entrySet()) {
+                getRequest.addHeader(entry.getKey(),entry.getValue());
             }
         }
     
@@ -74,8 +75,8 @@ public class InfoArchiveRequestUtil {
             return httpClient.execute(getRequest);
         } catch (IOException ioExc) {
             //Server not found, failed to interact with the server.
-            LOGGER.error("Failed to interact with server.", ioExc);
-            throw new ServerConnectionFailureException("Failed to interact with server.", ioExc);
+            LOGGER.error(LOGGER_STRING_INTERACTION_WITH_SERVER_FAILED, ioExc);
+            throw new ServerConnectionFailureException(LOGGER_STRING_INTERACTION_WITH_SERVER_FAILED, ioExc);
         }
     }
     
@@ -100,8 +101,8 @@ public class InfoArchiveRequestUtil {
     
         //Add Headers
         if(requestParameters != null) {
-            for(String key : requestParameters.keySet()) {
-                postRequest.addHeader(key,requestParameters.get(key));
+            for(Map.Entry<String, String> entry : requestParameters.entrySet()) {
+                postRequest.addHeader(entry.getKey(),entry.getValue());
             }
         }
         
@@ -114,8 +115,8 @@ public class InfoArchiveRequestUtil {
             return httpClient.execute(postRequest);
         } catch (IOException ioExc) {
             //Server not found, failed to interact with the server.
-            LOGGER.error("Failed to interact with server.", ioExc);
-            throw new ServerConnectionFailureException("Failed to interact with server.", ioExc);
+            LOGGER.error(LOGGER_STRING_INTERACTION_WITH_SERVER_FAILED, ioExc);
+            throw new ServerConnectionFailureException(LOGGER_STRING_INTERACTION_WITH_SERVER_FAILED, ioExc);
         }
     }
     

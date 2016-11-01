@@ -3,7 +3,6 @@ package nl.hetcak.dms.ia.web;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Request;
 
 /**
  * Created by zimmermannj on 10/14/2016.

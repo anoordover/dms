@@ -1,8 +1,6 @@
 package nl.hetcak.dms.ia.web;
 
-import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.*;
-import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
 import nl.hetcak.dms.ia.web.managers.ConnectionManager;
 import nl.hetcak.dms.ia.web.requests.DocumentRequest;
 import nl.hetcak.dms.ia.web.requests.RecordRequest;
@@ -17,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * Created by admjzimmermann on 13-10-2016.
@@ -42,8 +38,7 @@ public class DocumentService {
     private RecordRequest createRecordRequest() throws RequestResponseException{
         try {
             ConnectionManager connectionManager = ConnectionManager.getInstance();
-            RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-            return recordRequest;
+            return new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
         } catch (RequestResponseException reqResExc){
             LOGGER.error(reqResExc.getUserErrorMessage(), reqResExc);
             throw reqResExc;
@@ -101,8 +96,7 @@ public class DocumentService {
     private DocumentRequest createDocumentRequest() throws RequestResponseException{
         try {
             ConnectionManager connectionManager = ConnectionManager.getInstance();
-            DocumentRequest iaDocumentRequest = new DocumentRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-            return iaDocumentRequest;
+            return new DocumentRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
         } catch (RequestResponseException reqresExc){
             LOGGER.error(reqresExc.getUserErrorMessage(), reqresExc);
             throw reqresExc;

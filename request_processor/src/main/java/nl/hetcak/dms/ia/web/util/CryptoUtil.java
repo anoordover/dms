@@ -38,7 +38,9 @@ public class CryptoUtil {
      */
     public static byte[] decrypt(byte[] cData, byte[] cKey) throws CryptoFailureException {
         byte[] cReturn = new byte[0];
-        if (cData.length > 16) {
+        if (cData.length < 17) {
+            return cReturn;
+        }
             try {
                 byte[] cIV = new byte[IV_SIZEB];
                 byte[] cInput = new byte[cData.length - 16];
@@ -66,7 +68,7 @@ public class CryptoUtil {
                 LOGGER.error("Crypto Util was unable to decrypt data.",cfExc);
                 throw cfExc;
             }
-        }
+
         return cReturn;
     }
     

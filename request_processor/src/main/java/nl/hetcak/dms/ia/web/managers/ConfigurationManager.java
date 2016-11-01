@@ -29,6 +29,7 @@ public class ConfigurationManager {
     private static final String LOGGER_STRING_CANT_WRITE_ENCRYPTED_FILE = "Can't write encrypted files";
 
     private Boolean encrypted = false;
+    private Boolean applyEncryption = false;
 
     private ConfigurationImpl mobjLoadedConfiguration;
     private static ConfigurationManager mobjConfigurationManager;
@@ -98,6 +99,7 @@ public class ConfigurationManager {
         if(mobjLoadedConfiguration == null) {
             mobjLoadedConfiguration = loadConfiguration(false);
         }
+        LOGGER.info("Using config in memory.");
         return mobjLoadedConfiguration;
     }
 
@@ -110,20 +112,26 @@ public class ConfigurationManager {
         encrypted = false;
     }
 
+    private File loadConfigFile(){
+        File file = loadEncryptedConfigFile();
+
+        if (file == null) {
+            LOGGER.info("No encrypted config file found.");
+            applyEncryption = true;
+            file = loadUnencryptedConfigFile();
+        }
+        return file;
+    }
+
     public ConfigurationImpl loadConfiguration(boolean onlyLoadCustom) throws RequestResponseException {
         LOGGER.info("Loading Configuration.");
         File file = mobjCustomFile;
-        boolean applyEncryption = false;
+        applyEncryption = false;
+        encrypted = false;
         if(file == null) {
             LOGGER.info("No custom config file specified.");
             if(!onlyLoadCustom) {
-                file = loadEncryptedConfigFile();
-
-                if (file == null) {
-                    LOGGER.info("No encrypted config file found.");
-                    applyEncryption = true;
-                    file = loadUnencryptedConfigFile();
-                }
+                file = loadConfigFile();
             }
         } else {
             LOGGER.info("Config file has been supplied. If this file is encrypted then reading the file will fail.");
@@ -135,8 +143,13 @@ public class ConfigurationManager {
             throw new MissingConfigurationException("Can't find configuration");
         }
 
+        LOGGER.info("Loading config:"+file.getAbsolutePath());
+        return readConfig(file);
+    }
+
+    private ConfigurationImpl readConfig(File file) throws RequestResponseException{
         try {
-        byte[] buffer = IOUtils.toByteArray(new FileInputStream(file));
+            byte[] buffer = IOUtils.toByteArray(new FileInputStream(file));
             if(encrypted)
                 buffer = decryptConfig(buffer);
             InputStream configStream = new ByteArrayInputStream(buffer);
@@ -148,9 +161,11 @@ public class ConfigurationManager {
             }
             return mobjLoadedConfiguration;
         } catch (IOException ioExc){
-            throw new MissingConfigurationException("Can''t load config.",ioExc);
+            throw new MissingConfigurationException("Can't load config.",ioExc);
         }
+
     }
+
 
     /**
      * Sets a custom file.
