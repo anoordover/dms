@@ -3,7 +3,7 @@
     <ia_application_uuid>dd9eeb63-0a85-410e-a322-cc4af9febfff</ia_application_uuid>
     <ia_searchcomposition_uuid>3efa7055-5673-43dd-8a30-11752ac0aed9</ia_searchcomposition_uuid>
     <log4j_properties></log4j_properties>
-    <max_allowed_results>2250</max_allowed_results>
+    <max_allowed_results>250</max_allowed_results>
     <max_allowed_filesize>2500000</max_allowed_filesize>
     <ia_token></ia_token>
     <ia_server>infoarchive-sp.back.ont.dms.func.cak-bz.local</ia_server>

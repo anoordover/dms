@@ -30,8 +30,8 @@ public class ConfigService {
     public Response checkConfig(@Context HttpServletRequest httpRequest) {
         LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
         Calendar calendar = Calendar.getInstance();
-        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr()+" @ "+calendar.getTime().toString());
-        LOGGER.info("Running log checker.");
+        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr());
+        LOGGER.info("Running log checker. ("+calendar.getTime().toString()+")");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Loading config file...\n");
         ConfigurationManager configurationManager = ConfigurationManager.getInstance();

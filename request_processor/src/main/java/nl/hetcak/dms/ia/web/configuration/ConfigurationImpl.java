@@ -225,7 +225,7 @@ public class ConfigurationImpl implements Configuration {
         logProps = "";
         serverPort = 8765;
         maxResults = 100;
-        maxFileSize = 50000;
+        maxFileSize = 2500000;
         applicationUUID = "000000-000000-000000";
         searchComponentUUID = "000000-000000-000000";
     }

@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -70,11 +71,11 @@ public class DocumentService {
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response listDocuments(String sBody, @Context HttpServletRequest httpRequest) {
-        LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
-        LOGGER.info("Incoming request for /listDocuments.");
-        LOGGER.debug(sBody);
         Calendar calendar = Calendar.getInstance();
-        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr()+" @ "+calendar.getTime().toString());
+        LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
+        LOGGER.info("Incoming request for /listDocuments. ("+calendar.getTime().toString()+")");
+        LOGGER.debug(sBody);
+        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr());
         StringBuilder input = new StringBuilder();
         input.append(XML_REQUEST_START);
         input.append(sBody);
@@ -143,13 +144,13 @@ public class DocumentService {
     @POST
     @Path("/document")
     @Produces("application/pdf")
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes("application/pdf")
     public Response getDocument(String sBody, @Context HttpServletRequest httpRequest) {
-        LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
-        LOGGER.info("Incoming request for /document.");
-        LOGGER.debug(sBody);
         Calendar calendar = Calendar.getInstance();
-        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr()+" @ "+calendar.getTime().toString());
+        LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
+        LOGGER.info("Incoming request for /document. ("+calendar.getTime().toString()+")");
+        LOGGER.debug(sBody);
+        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr());
         StringBuilder input = new StringBuilder();
         input.append(XML_REQUEST_START);
         input.append(sBody);
@@ -163,14 +164,13 @@ public class DocumentService {
                 DocumentRequest documentRequest = createDocumentRequest();
                 InfoArchiveDocument document = documentResponse(recordRequest, documentRequestConsumer);
 
+                LOGGER.info("Preparing document for response message.");
                 ByteArrayOutputStream byteArray = documentTransfer(documentRequest, document);
-                LOGGER.info("Getting Stream ready to send.");
-                StreamingOutput streamingOutput = outputStream -> {
-                    LOGGER.info("Sending Stream as response.");
-                    outputStream.write(byteArray.toByteArray());
-                    outputStream.close();
-                };
-                return Response.ok(streamingOutput).build();
+                LOGGER.info("Encoding PDF and storing it into the response object.");
+                 String encodedDocument = new String(Base64.getEncoder().encode(byteArray.toByteArray()));
+                document.setDocument(encodedDocument);
+                LOGGER.info("Sending response.");
+                return Response.ok(document.getXMLString()).build();
             } else {
                 LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
                 throw new ContentGrabbingException(ERROR_CONTENT_GRABBING);
@@ -190,11 +190,11 @@ public class DocumentService {
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response searchDocuments(String sBody, @Context HttpServletRequest httpRequest) {
-        LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
-        LOGGER.info("Incoming request for /searchDocuments.");
-        LOGGER.debug(sBody);
         Calendar calendar = Calendar.getInstance();
-        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr()+" @ "+calendar.getTime().toString());
+        LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
+        LOGGER.info("Incoming request for /searchDocuments. ("+calendar.getTime().toString()+")");
+        LOGGER.debug(sBody);
+        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr());
         StringBuilder input = new StringBuilder();
         input.append(XML_REQUEST_START);
         input.append(sBody);
@@ -208,6 +208,7 @@ public class DocumentService {
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
                 ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentTitle(), request.getPersonNumber(), request.getDocumentCharacteristics(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
+                LOGGER.info("Sending response.");
                 return Response.ok(response.getAsXML()).build();
 
             } else {
