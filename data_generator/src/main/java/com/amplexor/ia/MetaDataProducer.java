@@ -10,6 +10,8 @@ import javax.jms.*;
 import java.io.File;
 import java.util.Enumeration;
 
+import static com.amplexor.ia.Logger.info;
+
 /**
  * Created by admjzimmermann on 4-10-2016.
  */
@@ -35,6 +37,7 @@ public class MetaDataProducer {
             objConnectionFactory.setTrustStore(objConfigManager.getConfiguration().getDocumentSource().getParameter("truststore"));
             objConnectionFactory.setTrustStorePassword(objConfigManager.getConfiguration().getDocumentSource().getParameter("truststore_password"));
 
+            info(MetaDataProducer.class, "Connecting");
             objConnection = objConnectionFactory.createConnection();
             objConnection.start();
 
@@ -49,10 +52,10 @@ public class MetaDataProducer {
                 iCount++;
                 objEnum.nextElement();
             }
-            Logger.info(MetaDataProducer.class, "Found " + iCount + "Messages in Queue: " + objConfigManager.getConfiguration().getDocumentSource().getParameter("input_queue_name"));
+            info(MetaDataProducer.class, "Found " + iCount + "Messages in Queue: " + objConfigManager.getConfiguration().getDocumentSource().getParameter("input_queue_name"));
 
             if ("clean".equals(objConfigManager.getConfiguration().getDocumentSource().getParameter("queue_action"))) {
-                Logger.info(MetaDataProducer.class, "Emptying Queue");
+                info(MetaDataProducer.class, "Emptying Queue");
                 MessageConsumer objConsumer = objSession.createConsumer(objDestination);
                 for (int iMsg = 0; iMsg < iCount; ++iMsg) {
                     objConsumer.receive(500);
@@ -67,9 +70,11 @@ public class MetaDataProducer {
                 }
 
                 if (iCount == 0) {
-                    Logger.info(MetaDataProducer.class, "Queue Empty, Feeding Random MetaData now.");
+                    info(MetaDataProducer.class, "Queue Empty, Feeding Random MetaData now.");
                 }
             }
+
+            info(MetaDataProducer.class, "Generating " + objConfigManager.getConfiguration().getDocumentSource().getParameter("output_amount") + " Messages");
             MessageProducer objProducer = objSession.createProducer(objDestination);
             objProducer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
             for (int i = 0; i < Integer.parseInt(objConfigManager.getConfiguration().getDocumentSource().getParameter("output_amount")); ++i) {
@@ -77,7 +82,7 @@ public class MetaDataProducer {
                 XmlDocument objDocument = new XmlDocument();
                 objDocument.setMetadata("ArchiefDocumentId", rg.generateId(10));
                 objDocument.setMetadata("ArchiefPersoonsnummer", rg.generateId(10));
-                objDocument.setMetadata("ArchiefBurgerservicenummer", rg.generateId(9));
+                objDocument.setMetadata("PersoonBurgerservicenummer", rg.generateId(9));
                 objDocument.setMetadata("ArchiefDocumenttitel", ARCHIEF_DOCUMENT_TITEL_ARRAY[rg.randomInt(ARCHIEF_DOCUMENT_TITEL_ARRAY.length - 1)]);
                 objDocument.setMetadata("ArchiefDocumentsoort", ARCHIEF_DOCUMENT_SOORT_ARRAY[rg.randomInt(ARCHIEF_DOCUMENT_SOORT_ARRAY.length - 1)]);
                 objDocument.setMetadata("ArchiefRegeling", ARCHIEF_REGELING_ARRAY[rg.randomInt(ARCHIEF_REGELING_ARRAY.length - 1)]);
@@ -86,7 +91,7 @@ public class MetaDataProducer {
                 objDocument.setMetadata("ArchiefDocumenttype", ARCHIEF_DOCUMENT_TYPE_ARRAY[rg.randomInt(ARCHIEF_DOCUMENT_TYPE_ARRAY.length - 1)]);
                 objDocument.setMetadata("ArchiefDocumentstatus", ARCHIEF_DOCUMENT_STATUS_ARRAY[rg.randomInt(ARCHIEF_DOCUMENT_STATUS_ARRAY.length - 1)]);
                 objDocument.setMetadata("ArchiefRegelingsjaar", String.format("%04d", rg.generateVerzendDag().getYear()));
-                objDocument.setPayloadPdf(TransformPDF.encodeBase64(objConfigManager.getConfiguration().getDocumentSource().getParameter("pdf_path") + File.separatorChar + rg.randomInt(6)));
+                objDocument.setPayloadPdf(TransformPDF.encodeBase64(objConfigManager.getConfiguration().getDocumentSource().getParameter("pdf_path") + File.separatorChar + rg.randomInt(6) + ".pdf"));
 
                 TextMessage objMessage = objSession.createTextMessage(objDocument.getXml());
                 objProducer.send(objMessage);
@@ -94,6 +99,7 @@ public class MetaDataProducer {
             objProducer.close();
             objSession.close();
             objConnection.close();
+            info(MetaDataProducer.class, "DONE");
         } catch (Exception ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }

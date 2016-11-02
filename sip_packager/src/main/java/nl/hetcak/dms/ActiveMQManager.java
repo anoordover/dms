@@ -22,7 +22,7 @@ public class ActiveMQManager implements DocumentSource {
     private static final String PARAMETER_RESULT_QUEUE_NAME = "result_queue_name";
     private static final String PARAMETER_QUEUE_RECEIVE_TIMEOUT = "queue_receive_timeout";
     private static final String TRUSTSTORE_TYPE = "JKS";
-    private static final String PARAMETER_RESULT_VALUE = "result_value";
+    private static final String PARAMETER_RESULT_VALUES = "result_values";
     private static final String PARAMETER_RESULT_FORMAT = "result_format";
     private static final String PARAMETER_RESULTS_ELEMENT = "results_element";
 
@@ -165,7 +165,7 @@ public class ActiveMQManager implements DocumentSource {
     private String getResultXml(List<IADocumentReference> cDocuments) {
         StringBuilder objBuilder = new StringBuilder();
         for (IADocumentReference objReference : cDocuments) {
-            String[] cResultValues = mobjConfiguration.getParameter(PARAMETER_RESULT_VALUE).split(";");
+            String[] cResultValues = mobjConfiguration.getParameter(PARAMETER_RESULT_VALUES).split(";");
             String[] cValues = new String[cResultValues.length];
             int iCurrent = 0;
             for (String sResultValue : cResultValues) {

@@ -71,6 +71,10 @@ public class CAKDocument extends IADocument {
     @Override
     public void loadContent(String sKey) {
         if (KEY_ATTACHMENT.equals(sKey)) {
+            if (msPayload != null) {
+                return;
+            }
+
             File objPayloadFile = new File(msPayloadFile);
             try (FileInputStream objPayloadStream = new FileInputStream(objPayloadFile)) {
                 byte[] pData = new byte[(int) objPayloadFile.length()];
@@ -85,6 +89,11 @@ public class CAKDocument extends IADocument {
     @Override
     public void setContent(String sKey, byte[] cContent) {
         if (KEY_ATTACHMENT.equals(sKey)) {
+            if (cContent == null) {
+                msPayload = null;
+                return;
+            }
+
             msPayload = Base64.getEncoder().encodeToString(cContent);
         }
     }

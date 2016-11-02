@@ -96,6 +96,8 @@ public class IACache {
     }
 
     public Path getSipFile() {
+        if(msSipFile == null) return null;
+
         return Paths.get(msSipFile);
     }
 

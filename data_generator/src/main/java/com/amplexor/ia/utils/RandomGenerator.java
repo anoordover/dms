@@ -18,9 +18,11 @@ public class RandomGenerator {
         if (iNumCharacters == 1) {
             return String.format("%d", objRandom.nextInt(9));
         } else {
-            int iValueMin = (int) Math.pow(10.0d, (double) iNumCharacters);
-            int iValueMax = (int) Math.pow(10.0d, (double) (iNumCharacters + 1)) - 1;
-            return String.format("%d", iValueMin + objRandom.nextInt(iValueMax - iValueMin));
+            long lValueMin = (long) Math.pow(10.0d, (double) iNumCharacters - 1);
+            long lValueMax = (long) Math.pow(10.0d, (double) (iNumCharacters)) - 1;
+            long lValueDiff = lValueMax - lValueMin;
+            long lGenerated = Math.abs(objRandom.nextLong() % lValueDiff);
+            return String.format("%d", lValueMin + lGenerated);
         }
     }
 
@@ -32,6 +34,10 @@ public class RandomGenerator {
     }
 
     public int randomInt(int iMax) {
+        if(iMax == 0) {
+            return 0;
+        }
+
         return objRandom.nextInt(iMax);
     }
 }
