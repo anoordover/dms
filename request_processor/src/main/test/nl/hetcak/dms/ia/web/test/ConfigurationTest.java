@@ -65,7 +65,7 @@ public class ConfigurationTest {
     /**
      * ServerConnectionInformation setting tester
      */
-    @Test(timeout = 1000)
+    @Test(timeout = 1500)
     public void connectionSettings() throws Exception {
         ConfigurationManager configurationManager  = ConfigurationManager.getInstance();
         File working_config = new File(WORKING_CONFIG);

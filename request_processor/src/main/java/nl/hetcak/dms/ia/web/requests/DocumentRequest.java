@@ -49,17 +49,17 @@ public class DocumentRequest {
         String url = requestUtil.getServerContentUrl(configuration.getApplicationUUID(), contentID);
         HttpResponse response = requestUtil.executeGetRequest(url, InfoArchiveRequestUtil.CONTENT_TYPE_JSON, requestHeader);
         LOGGER.info("Returning content byte stream.");
-        if(response.getEntity().getContentLength() > configuration.getMaxFileSize()){
-            throw new BigFileException("File with "+response.getEntity().getContentLength()+ " bytes is blocked because it exceeds the limit of "+configuration.getMaxFileSize()+" bytes.");
-        }
         return responseToStream(response);
     }
 
-    private ByteArrayOutputStream responseToStream(HttpResponse response) throws IOException {
+    private ByteArrayOutputStream responseToStream(HttpResponse response) throws RequestResponseException, IOException {
         LOGGER.info("Start buffering InfoArchive document stream.");
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         IOUtils.copy(response.getEntity().getContent(), byteArrayOutputStream);
         LOGGER.info("Returning buffered InfoArchive document stream.");
+        if(byteArrayOutputStream.size() > configuration.getMaxFileSize()){
+            throw new BigFileException("File with "+byteArrayOutputStream.size()+ " bytes is blocked because it exceeds the limit of "+configuration.getMaxFileSize()+" bytes.");
+        }
         return byteArrayOutputStream;
     }
 

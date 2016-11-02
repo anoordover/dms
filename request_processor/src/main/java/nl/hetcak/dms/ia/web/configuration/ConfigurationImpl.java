@@ -31,7 +31,7 @@ public class ConfigurationImpl implements Configuration {
     private final static String CONF_SEARCHCOMPOSITION_UUID = "ia_searchcomposition_uuid";
 
     private String securityToken, serverAddress, username, password, logProps, applicationUUID, searchComponentUUID;
-    private int serverPort, maxResults, maxFilesize;
+    private int serverPort, maxResults, maxFileSize;
 
 
     @XmlElement(name = CONF_SECURITY_TOKEN)
@@ -89,12 +89,14 @@ public class ConfigurationImpl implements Configuration {
     @XmlElement(name = CONF_MAX_FILESIZE)
     @Override
     public int getMaxFileSize() {
-        return maxFilesize ;
+        return maxFileSize ;
     }
 
     public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;
     }
+
+    public void setMaxFileSize(int maxFileSize) { this.maxFileSize = maxFileSize; }
 
     @XmlElement(name = CONF_APPLICATION_UUID)
     @Override
@@ -223,7 +225,7 @@ public class ConfigurationImpl implements Configuration {
         logProps = "";
         serverPort = 8765;
         maxResults = 100;
-        maxFilesize = 50000;
+        maxFileSize = 50000;
         applicationUUID = "000000-000000-000000";
         searchComponentUUID = "000000-000000-000000";
     }
