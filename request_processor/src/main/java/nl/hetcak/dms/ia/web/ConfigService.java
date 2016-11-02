@@ -7,11 +7,14 @@ import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Calendar;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
@@ -24,8 +27,10 @@ public class ConfigService {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public Response checkConfig() {
+    public Response checkConfig(@Context HttpServletRequest httpRequest) {
         LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
+        Calendar calendar = Calendar.getInstance();
+        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr()+" @ "+calendar.getTime().toString());
         LOGGER.info("Running log checker.");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Loading config file...\n");

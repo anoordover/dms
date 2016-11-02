@@ -2,6 +2,7 @@ package nl.hetcak.dms.ia.web.restfull.consumers;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -24,11 +25,15 @@ public class ListDocumentRequestConsumer {
      * @throws JAXBException Errors during the unmarshalling.
      */
     public static ListDocumentRequestConsumer unmarshalRequest(String input) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(ListDocumentRequestConsumer.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(ListDocumentRequestConsumer.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
-        StringReader reader = new StringReader(input);
-        return (ListDocumentRequestConsumer) unmarshaller.unmarshal(reader);
+            StringReader reader = new StringReader(input);
+            return (ListDocumentRequestConsumer) unmarshaller.unmarshal(reader);
+        } catch (UnmarshalException unmExc) {
+            throw new JAXBException("Error in xml.", unmExc);
+        }
     }
 
     /**

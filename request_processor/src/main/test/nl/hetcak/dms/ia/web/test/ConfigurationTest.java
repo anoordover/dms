@@ -121,4 +121,17 @@ public class ConfigurationTest {
         configurationManager.createConfiguration(oldConfiguration);
         
     }
+
+
+    /**
+     * Create Test configuration
+     */
+    @Test
+    public void encrypt() throws Exception {
+        ConfigurationManager configurationManager  = ConfigurationManager.getInstance();
+        configurationManager.loadConfiguration(false);
+        configurationManager.loadConfiguration(false);
+        configurationManager.loadConfiguration(false);
+
+    }
 }

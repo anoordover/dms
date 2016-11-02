@@ -25,8 +25,10 @@ public class ConsumerTest {
     private static final String XML_EXAMPLE_3 = "<request><ArchiefDocumentId>7654324</ArchiefDocumentId><Volgnummer>001</Volgnummer></request>";
     private static final String RESULT_3_1 = "7654324";
     private static final String RESULT_3_2 = "001";
-    private static final String XML_EXAMPLE_4 = "<request><ArchiefDocumentsoort>Factuur</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2016-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-08-15T00:00:00</ArchiefVerzenddagEinde></request>";
-    private static final String RESULT_4_1 = "Factuur";
+    private static final String XML_EXAMPLE_4 = "<request><ArchiefDocumentTitle>Z01</ArchiefDocumentTitle><ArchiefDocumentkenmerk>97348</ArchiefDocumentkenmerk><ArchiefPersoonsnummer>802341</ArchiefPersoonsnummer><ArchiefVerzenddagBegin>2016-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-08-15T00:00:00</ArchiefVerzenddagEinde></request>";
+    private static final String RESULT_4_1_1 = "Z01";
+    private static final String RESULT_4_1_2 = "802341";
+    private static final String RESULT_4_1_3 = "97348";
     private static final String RESULT_4_2 = "2016-08-01T00:00:00";
     private static final String RESULT_4_3 = "2016-08-15T00:00:00";
     private static final String RESULT_4_4 = "2016-08-01";
@@ -56,7 +58,9 @@ public class ConsumerTest {
     @Test
     public void searchDocumentRequestConsumerTest() throws JAXBException, ParseException {
         SearchDocumentRequestConsumer searchRequest = SearchDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_4);
-        Assert.assertTrue(searchRequest.getDocumentKind().contentEquals(RESULT_4_1));
+        Assert.assertTrue(searchRequest.getDocumentTitle().contentEquals(RESULT_4_1_1));
+        Assert.assertTrue(searchRequest.getPersonNumber().contentEquals(RESULT_4_1_2));
+        Assert.assertTrue(searchRequest.getDocumentCharacteristics().contentEquals(RESULT_4_1_3));
         Assert.assertTrue(searchRequest.getDocumentSendDate1().contentEquals(RESULT_4_2));
         Assert.assertTrue(searchRequest.getDocumentSendDate2().contentEquals(RESULT_4_3));
         Assert.assertTrue(searchRequest.getDocumentSendDate1AsInfoArchiveString().contentEquals(RESULT_4_4));
@@ -67,7 +71,7 @@ public class ConsumerTest {
     //Bad cases
     @Test
     public void failListDocumentConsumerTest() throws JAXBException {
-        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_4);
+        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest("<request><ArchiefDocumentTitle></ArchiefDocumentTitle></request>");
         Assert.assertFalse(request.hasContent());
     }
     

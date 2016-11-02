@@ -93,11 +93,11 @@ public class RecordRequest {
         return result;
     }
 
-    public List<InfoArchiveDocument> requestListDocuments(String documentType, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
+    public List<InfoArchiveDocument> requestListDocuments(String documentTitle, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
         StringBuilder logString = new StringBuilder("Starting List Documents request for");
-        if (StringUtils.isNotBlank(documentType)) {
-            logString.append(" document type \"");
-            logString.append(documentType);
+        if (StringUtils.isNotBlank(documentTitle)) {
+            logString.append(" document title \"");
+            logString.append(documentTitle);
             logString.append("\"");
         }
         if (StringUtils.isNotBlank(personNumber)) {
@@ -121,7 +121,7 @@ public class RecordRequest {
 
         LOGGER.info(logString.toString());
 
-        String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, personNumber, documentCharacteristics, sendDate1, sendDate2));
+        String response = requestUtil.responseReader(executeListDocumentsRequest(documentTitle, personNumber, documentCharacteristics, sendDate1, sendDate2));
         LOGGER.info(LOGGING_PARSING_RESULT);
         List<InfoArchiveDocument> result = parseDocumentList(response, true, true);
         if (result.size() == 0) {
@@ -163,12 +163,12 @@ public class RecordRequest {
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
 
-    private HttpResponse executeListDocumentsRequest(String documentType, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException {
+    private HttpResponse executeListDocumentsRequest(String documentTitle, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
         InfoArchiveQueryBuilder currentQuery = new InfoArchiveQueryBuilder();
-        if (documentType != null) {
-            currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_TITLE, documentType);
+        if (documentTitle != null) {
+            currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_TITLE, documentTitle);
         }
         if (personNumber != null) {
             currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_PERSON_NUMBER, personNumber);

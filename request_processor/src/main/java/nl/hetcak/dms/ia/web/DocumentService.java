@@ -14,11 +14,15 @@ import nl.hetcak.dms.ia.web.restfull.produces.ListDocumentResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.ByteArrayOutputStream;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by admjzimmermann on 13-10-2016.
@@ -65,10 +69,12 @@ public class DocumentService {
     @Path("/listDocuments")
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
-    public Response listDocuments(String sBody) {
+    public Response listDocuments(String sBody, @Context HttpServletRequest httpRequest) {
         LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
-        LOGGER.info("Incoming request for /listDocuemnts.");
+        LOGGER.info("Incoming request for /listDocuments.");
         LOGGER.debug(sBody);
+        Calendar calendar = Calendar.getInstance();
+        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr()+" @ "+calendar.getTime().toString());
         StringBuilder input = new StringBuilder();
         input.append(XML_REQUEST_START);
         input.append(sBody);
@@ -138,10 +144,12 @@ public class DocumentService {
     @Path("/document")
     @Produces("application/pdf")
     @Consumes(MediaType.APPLICATION_XML)
-    public Response getDocument(String sBody) {
+    public Response getDocument(String sBody, @Context HttpServletRequest httpRequest) {
         LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
         LOGGER.info("Incoming request for /document.");
         LOGGER.debug(sBody);
+        Calendar calendar = Calendar.getInstance();
+        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr()+" @ "+calendar.getTime().toString());
         StringBuilder input = new StringBuilder();
         input.append(XML_REQUEST_START);
         input.append(sBody);
@@ -181,10 +189,12 @@ public class DocumentService {
     @Path("/searchDocuments")
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
-    public Response searchDocuments(String sBody) {
+    public Response searchDocuments(String sBody, @Context HttpServletRequest httpRequest) {
         LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
         LOGGER.info("Incoming request for /searchDocuments.");
         LOGGER.debug(sBody);
+        Calendar calendar = Calendar.getInstance();
+        LOGGER.info("Got Request from "+httpRequest.getRemoteAddr()+" @ "+calendar.getTime().toString());
         StringBuilder input = new StringBuilder();
         input.append(XML_REQUEST_START);
         input.append(sBody);
@@ -197,7 +207,7 @@ public class DocumentService {
                 LOGGER.info(LOGGER_VALID_INCOMING_REQUEST);
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-                ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentKind(), request.getPersonNumber(), request.getDocumentCharacteristics(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
+                ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentTitle(), request.getPersonNumber(), request.getDocumentCharacteristics(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
                 return Response.ok(response.getAsXML()).build();
 
             } else {
@@ -222,7 +232,7 @@ public class DocumentService {
      */
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public Response defaultResponse() {
+    public Response defaultResponse(@Context HttpServletRequest httpRequest) {
         return Response.ok("<html><head><title>DMS</title></head><body><h1>DMS Request Processor</h1><p>System running.</p></body></html>").build();
     }
 }

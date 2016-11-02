@@ -20,8 +20,11 @@ import java.text.ParseException;
 @XmlRootElement(name = "request")
 public class SearchDocumentRequestConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchDocumentRequestConsumer.class);
+    //ArchiefPersoonsnummer
     private String personNumber = "";
-    private String documentKind = "";
+    //ArchiefDocumentTitle
+    private String documentTitle = "";
+    //ArchiefDocumentkenmerk
     private String documentCharacteristics = "";
     private String documentSendDate1 = "";
     private String documentSendDate2 = "";
@@ -34,13 +37,13 @@ public class SearchDocumentRequestConsumer {
         return (SearchDocumentRequestConsumer) unmarshaller.unmarshal(reader);
     }
 
-    @XmlElement(name = "ArchiefDocumentsoort", required = true)
-    public String getDocumentKind() {
-        return documentKind;
+    @XmlElement(name = "ArchiefDocumentTitle", required = true)
+    public String getDocumentTitle() {
+        return documentTitle;
     }
 
-    public void setDocumentKind(String documentKind) {
-        this.documentKind = documentKind;
+    public void setDocumentTitle(String documentTitle) {
+        this.documentTitle = documentTitle;
     }
 
     @XmlElement(name = "ArchiefVerzenddagBegin", required = true)
@@ -100,10 +103,10 @@ public class SearchDocumentRequestConsumer {
     public boolean hasContent() {
         Boolean content = true;
 
-        if (this.documentKind == null && this.documentCharacteristics == null && this.personNumber == null) {
+        if (this.documentTitle == null && this.documentCharacteristics == null && this.personNumber == null) {
             content = false;
         }
-        if (this.documentKind.length() == 0 && this.documentCharacteristics.length() == 0 && this.personNumber.length() == 0) {
+        if (this.documentTitle.length() == 0 && this.documentCharacteristics.length() == 0 && this.personNumber.length() == 0) {
             content = false;
         }
 
