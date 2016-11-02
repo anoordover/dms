@@ -2,11 +2,14 @@ package nl.hetcak.dms;
 
 import com.amplexor.ia.cache.IADocumentReference;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
+import com.amplexor.ia.crypto.Crypto;
 import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.exception.ExceptionHelper;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
 
 import javax.jms.*;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 
 import static com.amplexor.ia.Logger.debug;
@@ -40,7 +43,8 @@ public class ActiveMQManager implements DocumentSource {
             try {
                 mobjConnectionFactory.setTrustStore(objConfiguration.getParameter(PARAMETER_TRUSTSTORE));
                 mobjConnectionFactory.setTrustStoreType(TRUSTSTORE_TYPE);
-                mobjConnectionFactory.setTrustStorePassword(objConfiguration.getParameter(PARAMETER_TRUSTSTORE_PASSWORD));
+                byte[] cPasswordEncrypted = Base64.getDecoder().decode(objConfiguration.getParameter(PARAMETER_TRUSTSTORE_PASSWORD).getBytes());
+                mobjConnectionFactory.setTrustStorePassword(new String(Crypto.decrypt(cPasswordEncrypted, Crypto.retrieveKey(Paths.get("data-file")))));
             } catch (Exception ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_TRUSTSTORE, ex);
             }

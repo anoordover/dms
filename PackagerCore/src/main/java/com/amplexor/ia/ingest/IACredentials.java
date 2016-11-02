@@ -1,7 +1,13 @@
 package com.amplexor.ia.ingest;
 
+import com.amplexor.ia.crypto.Crypto;
+import com.amplexor.ia.exception.ExceptionHelper;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.file.Paths;
+import java.security.InvalidKeyException;
 import java.util.Base64;
 
 /**
@@ -75,7 +81,14 @@ public class IACredentials {
     }
 
 
-    public String getLoginQuery() throws UnsupportedEncodingException {
+    public String getLoginQuery() throws IOException {
+        String sDecodedPassword = null;
+        try {
+            sDecodedPassword = new String(Crypto.decrypt(Base64.getDecoder().decode(msPassword.getBytes()), Crypto.retrieveKey(Paths.get("data-file"))));
+        } catch (InvalidKeyException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+        }
+
         StringBuilder objBuilder = new StringBuilder();
         objBuilder.append(URLEncoder.encode(IA_QUERY_USERNAME, ENCODING_UTF8));
         objBuilder.append("=");
@@ -83,7 +96,6 @@ public class IACredentials {
         objBuilder.append("&");
         objBuilder.append(URLEncoder.encode(IA_QUERY_PASS, ENCODING_UTF8));
         objBuilder.append("=");
-        String sDecodedPassword = new String(Base64.getDecoder().decode(msPassword.getBytes()));
         objBuilder.append(URLEncoder.encode(sDecodedPassword, ENCODING_UTF8));
         objBuilder.append("&");
         objBuilder.append(URLEncoder.encode(IA_QUERY_LOGIN_GRANT, ENCODING_UTF8));

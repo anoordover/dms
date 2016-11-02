@@ -11,7 +11,6 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -156,7 +155,7 @@ public class Crypto {
         }
     }
 
-    private static byte[] retrieveKey(Path objPath) throws IOException, InvalidKeyException {
+    public static byte[] retrieveKey(Path objPath) throws IOException, InvalidKeyException {
         int iSize = (int) Files.size(objPath);
         byte[] cData = new byte[iSize];
         try (InputStream objInput = Files.newInputStream(objPath)) {
@@ -171,23 +170,18 @@ public class Crypto {
     }
 
     private static byte[] retrieveKey(byte[] cData) {
-        byte[] cReturn = new byte[0];
         byte[] cBase64Key = Arrays.copyOfRange(cData, 0, 16);
         byte[] cBase64Data = Arrays.copyOfRange(cData, 16, cData.length);
         byte[] cDataEnc = Base64.getDecoder().decode(cBase64Data);
         byte[] cPlainData = decrypt(cDataEnc, cBase64Key);
-        cReturn = Base64.getDecoder().decode(cPlainData);
-
-        return cReturn;
+        return Base64.getDecoder().decode(cPlainData);
     }
 
     private static Map<String, String> getArguments(String[] cArgs) {
         Map<String, String> cReturn = new HashMap<>();
         for (int i = 0; i < cArgs.length; i += 2) {
-            if (i % 2 == 0) {
-                if (cArgs.length >= i + 1) {
-                    cReturn.put(cArgs[i], cArgs[i + 1]);
-                }
+            if (i % 2 == 0 && cArgs.length >= i + 1) {
+                cReturn.put(cArgs[i], cArgs[i + 1]);
             }
         }
         return cReturn;
@@ -208,12 +202,12 @@ public class Crypto {
         byte[] sKey = null;
         String sKeyFile = cArgsMap.get(ARG_KEYFILE);
         byte[] sData = cArgsMap.get(ARG_DATA).getBytes(Charset.forName("UTF-8"));
-        String sOutput = null;
+        String sOutput;
 
         if (cArgsMap.get(ARG_KEY) != null) {
             sKey = cArgsMap.get(ARG_KEY).getBytes(Charset.forName("UTF-8"));
         }
-        
+
         if (!Files.exists(Paths.get(sKeyFile)) && sKey == null) {
             throw new IllegalArgumentException("Neither -key or -keyfile were supplied, or the keyfile does not exist at the provided path");
         }

@@ -26,7 +26,7 @@
     <gateway_host>infoarchive-rp.front.ont.dms.func.cak-bz.local</gateway_host>
     <gateway_port>8080</gateway_port>
     <ingest_user>sa-infoarchive-ont</ingest_user>
-    <encrypted_ingest_password>OFRFeGNsZXJneXdX</encrypted_ingest_password>
+    <encrypted_ingest_password>Ml87DldfHW9PQyERchN3KLYf1O/VRlSnF2S7yK/+Oi4=</encrypted_ingest_password>
     <ingest_tenant>INFOARCHIVE</ingest_tenant>
   </rest_api>
   <sip>
@@ -51,7 +51,7 @@
     <custom_parameters>
       <broker>failover:(ssl://muleaq2.tst.esb.func.cak-bz.local:10744,ssl://muleaq1.tst.esb.func.cak-bz.local:10744)?randomize=false</broker>
       <truststore>C:\Users\admjzimmermann\Desktop\ws\dms\resources\truststore\truststore_tst_mule1.jks</truststore>
-      <truststore_password>URBq1N1uyZWQGWm5FuJ7iRVkLA0T3IUh</truststore_password>
+      <truststore_password>EQIPQj0PDiR1WAhrKBZzApV8EQApZRJQ3gjGJcDZkfS53HCEu++lJq13hSlyOztNVqp5fBnGbzxQHMtYOsqCSg==</truststore_password>
       <result_format>
         <![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
       <results_element>
