@@ -22,32 +22,22 @@ import java.util.Date;
 @XmlRootElement(name = "Document")
 public class InfoArchiveDocument {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfoArchiveDocument.class);
-    
-    @XmlElement(name="ArchiefDocumentId")
-    private String msArchiefDocumentId;
-    @XmlElement(name = "ArchiefPersoonsnummer")
-    private String msArchiefPersoonsnummer;
-    @XmlElement(name = "ArchiefDocumenttitel")
-    private String msArchiefDocumenttitel;
-    @XmlElement(name = "ArchiefDocumentsoort")
-    private String msArchiefDocumentsoort;
-    @XmlElement(name = "ArchiefRegeling")
-    private String msArchiefRegeling;
-    @XmlElement(name = "ArchiefDocumentkenmerk")
-    private String msArchiefDocumentkenmerk;
-    @XmlElement(name = "ArchiefVerzenddag")
-    private String mobjArchiefVerzenddag;
-    @XmlElement(name = "ArchiefDocumenttype")
-    private String msArchiefDocumenttype;
-    @XmlElement(name = "ArchiefDocumentstatus")
-    private String msArchiefDocumentstatus;
-    @XmlElement(name = "ArchiefRegelingsjaar")
-    private String msArchiefRegelingsjaar;
-    @XmlTransient
-    private String msArchiefFile;
-    @XmlElement(name = "ArchiefHandelingsnummer")
-    private String msArchiefHandelingsnummer;
 
+    private String msArchiefDocumentId;
+    private String msArchiefPersoonsnummer;
+    private String msArchiefDocumenttitel;
+    private String msArchiefDocumentsoort;
+    private String msArchiefRegeling;
+    private String msArchiefDocumentkenmerk;
+    private String mobjArchiefVerzenddag;
+    private String msArchiefDocumenttype;
+    private String msArchiefDocumentstatus;
+    private String msArchiefRegelingsjaar;
+    private String msArchiefFile;
+    private String msArchiefHandelingsnummer;
+    private String msDocument;
+
+    @XmlElement(name = "ArchiefPersoonsnummer")
     public String getArchiefPersoonsnummer() {
         return msArchiefPersoonsnummer;
     }
@@ -56,6 +46,7 @@ public class InfoArchiveDocument {
         this.msArchiefPersoonsnummer = sArchiefPersoonsnummer;
     }
 
+    @XmlElement(name="ArchiefDocumentId")
     public String getArchiefDocumentId() {
         return msArchiefDocumentId;
     }
@@ -64,6 +55,7 @@ public class InfoArchiveDocument {
         this.msArchiefDocumentId = sArchiefDocumentId;
     }
 
+    @XmlElement(name = "ArchiefDocumenttitel")
     public String getArchiefDocumenttitel() {
         return msArchiefDocumenttitel;
     }
@@ -72,6 +64,7 @@ public class InfoArchiveDocument {
         this.msArchiefDocumenttitel = sArchiefDocumenttitel;
     }
 
+    @XmlElement(name = "ArchiefDocumentsoort")
     public String getArchiefDocumentsoort() {
         return msArchiefDocumentsoort;
     }
@@ -80,6 +73,7 @@ public class InfoArchiveDocument {
         this.msArchiefDocumentsoort = sArchiefDocumentsoort;
     }
 
+    @XmlElement(name = "ArchiefRegeling")
     public String getArchiefRegeling() {
         return msArchiefRegeling;
     }
@@ -88,6 +82,7 @@ public class InfoArchiveDocument {
         this.msArchiefRegeling = sArchiefRegeling;
     }
 
+    @XmlElement(name = "ArchiefDocumentkenmerk")
     public String getArchiefDocumentkenmerk() {
         return msArchiefDocumentkenmerk;
     }
@@ -96,6 +91,7 @@ public class InfoArchiveDocument {
         this.msArchiefDocumentkenmerk = sArchiefDocumentkenmerk;
     }
 
+    @XmlElement(name = "ArchiefVerzenddag")
     public String getArchiefVerzenddag() {
         return mobjArchiefVerzenddag;
     }
@@ -104,6 +100,7 @@ public class InfoArchiveDocument {
         this.mobjArchiefVerzenddag = objArchiefVerzenddag;
     }
 
+    @XmlElement(name = "ArchiefDocumenttype")
     public String getArchiefDocumenttype() {
         return msArchiefDocumenttype;
     }
@@ -112,6 +109,7 @@ public class InfoArchiveDocument {
         this.msArchiefDocumenttype = sArchiefDocumenttype;
     }
 
+    @XmlElement(name = "ArchiefDocumentstatus")
     public String getArchiefDocumentstatus() {
         return msArchiefDocumentstatus;
     }
@@ -120,6 +118,7 @@ public class InfoArchiveDocument {
         this.msArchiefDocumentstatus = sArchiefDocumentstatus;
     }
 
+    @XmlElement(name = "ArchiefRegelingsjaar")
     public String getArchiefRegelingsjaar() {
         return msArchiefRegelingsjaar;
     }
@@ -136,7 +135,8 @@ public class InfoArchiveDocument {
     public void setArchiefFile(String sArchiefFile) {
         this.msArchiefFile = sArchiefFile;
     }
-    
+
+    @XmlElement(name = "ArchiefHandelingsnummer")
     public String getArchiefHandelingsnummer() {
         return msArchiefHandelingsnummer;
     }
@@ -144,7 +144,16 @@ public class InfoArchiveDocument {
     public void setArchiefHandelingsnummer(String ArchiefHandelingsnummer) {
         this.msArchiefHandelingsnummer = ArchiefHandelingsnummer;
     }
-    
+
+    @XmlElement(name = "Document")
+    public String getDocument() {
+        return msDocument;
+    }
+
+    public void setDocument(String document) {
+        this.msDocument = document;
+    }
+
     /**
      * Get the current class as XML string.
      * @return XML formatted String

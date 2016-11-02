@@ -2,7 +2,7 @@ package nl.hetcak.dms.ia.web;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
- * <p>
+ *
  * Version for logging.
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
