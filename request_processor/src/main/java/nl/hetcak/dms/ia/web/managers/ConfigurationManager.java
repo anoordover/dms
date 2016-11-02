@@ -153,8 +153,11 @@ public class ConfigurationManager {
     }
 
     private ConfigurationImpl readConfig(File file) throws RequestResponseException {
-        try {
-            byte[] buffer = IOUtils.toByteArray(new FileInputStream(file));
+        if(!file.exists()) {
+            throw new MissingConfigurationException("Config does not exist.");
+        }
+        try (FileInputStream fileInputStream = new FileInputStream(file);){
+            byte[] buffer = IOUtils.toByteArray(fileInputStream);
             if (encrypted)
                 buffer = decryptConfig(buffer);
             InputStream configStream = new ByteArrayInputStream(buffer);
@@ -164,11 +167,12 @@ public class ConfigurationManager {
                 LOGGER.warn("Config file is not encrypted. Applying encryption.");
                 encryptCurrentConfiguration();
             }
+            configStream.close();
+            fileInputStream.close();
             return mobjLoadedConfiguration;
         } catch (IOException ioExc) {
             throw new MissingConfigurationException("Can't load config.", ioExc);
         }
-
     }
 
 

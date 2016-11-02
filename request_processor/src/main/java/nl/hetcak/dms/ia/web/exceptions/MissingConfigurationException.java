@@ -8,7 +8,7 @@ import java.security.PrivilegedActionException;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class MissingConfigurationException extends RequestResponseException {
-    public static final int ERROR_CODE = 0;
+    public static final int ERROR_CODE = 1001;
     public static final String ERROR_MESSAGE = "There is a error within the configuration file, please contact an Administrator.";
 
     /**

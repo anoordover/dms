@@ -41,7 +41,7 @@ public class ConfigurationTest {
     /**
      * Create a misconfiguration.
      */
-    @Test(expected = MisconfigurationException.class, timeout = 1000)
+    @Test(expected = MisconfigurationException.class, timeout = 1250)
     public void missconfiguration() throws Exception {
         ConfigurationManager configurationManager  = ConfigurationManager.getInstance();
         File misconfig = new File(MISCONFIGURATION_CONFIG);

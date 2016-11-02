@@ -7,20 +7,22 @@ import java.security.PrivilegedActionException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class InfoArchiveResponseException extends Exception {
+public class InfoArchiveResponseException extends RequestResponseException {
     public static final String ERROR_MESSAGE = "InfoArchive responded with a error, please contact an Administrator.";
     private static final String ERROR_TITLE_TIME_OUT = "SEARCH_TIMEOUT";
     private static final int ERROR_CODE_TIME_OUT_SINGLE_DOC = 2001;
     private static final int ERROR_CODE_TIME_OUT_LIST_DOC = 2002;
-    private int errorCode = 0;
 
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
+     *
+     * @param errorCode        The error code.
+     * @param userErrorMessage The error description that should be returned to the user.
      */
-    public InfoArchiveResponseException() {
-        super();
+    public InfoArchiveResponseException(int errorCode, String userErrorMessage) {
+        super(errorCode, userErrorMessage);
     }
 
     /**
@@ -28,11 +30,13 @@ public class InfoArchiveResponseException extends Exception {
      * cause is not initialized, and may subsequently be initialized by
      * a call to {@link #initCause}.
      *
-     * @param message the detail message. The detail message is saved for
-     *                later retrieval by the {@link #getMessage()} method.
+     * @param message          the detail message. The detail message is saved for
+     *                         later retrieval by the {@link #getMessage()} method.
+     * @param errorCode        The error code.
+     * @param userErrorMessage The error description that should be returned to the user.
      */
-    public InfoArchiveResponseException(String message) {
-        super(message);
+    public InfoArchiveResponseException(String message, int errorCode, String userErrorMessage) {
+        super(message, errorCode, userErrorMessage);
     }
 
     /**
@@ -41,16 +45,18 @@ public class InfoArchiveResponseException extends Exception {
      * {@code cause} is <i>not</i> automatically incorporated in
      * this exception's detail message.
      *
-     * @param message the detail message (which is saved for later retrieval
-     *                by the {@link #getMessage()} method).
-     * @param cause   the cause (which is saved for later retrieval by the
-     *                {@link #getCause()} method).  (A <tt>null</tt> value is
-     *                permitted, and indicates that the cause is nonexistent or
-     *                unknown.)
+     * @param message          the detail message (which is saved for later retrieval
+     *                         by the {@link #getMessage()} method).
+     * @param cause            the cause (which is saved for later retrieval by the
+     *                         {@link #getCause()} method).  (A <tt>null</tt> value is
+     *                         permitted, and indicates that the cause is nonexistent or
+     *                         unknown.)
+     * @param errorCode        The error code.
+     * @param userErrorMessage The error description that should be returned to the user.
      * @since 1.4
      */
-    public InfoArchiveResponseException(String message, Throwable cause) {
-        super(message, cause);
+    public InfoArchiveResponseException(String message, Throwable cause, int errorCode, String userErrorMessage) {
+        super(message, cause, errorCode, userErrorMessage);
     }
 
     /**
@@ -61,14 +67,16 @@ public class InfoArchiveResponseException extends Exception {
      * wrappers for other throwables (for example, {@link
      * PrivilegedActionException}).
      *
-     * @param cause the cause (which is saved for later retrieval by the
-     *              {@link #getCause()} method).  (A <tt>null</tt> value is
-     *              permitted, and indicates that the cause is nonexistent or
-     *              unknown.)
+     * @param cause            the cause (which is saved for later retrieval by the
+     *                         {@link #getCause()} method).  (A <tt>null</tt> value is
+     *                         permitted, and indicates that the cause is nonexistent or
+     *                         unknown.)
+     * @param errorCode        The error code.
+     * @param userErrorMessage The error description that should be returned to the user.
      * @since 1.4
      */
-    public InfoArchiveResponseException(Throwable cause) {
-        super(cause);
+    public InfoArchiveResponseException(Throwable cause, int errorCode, String userErrorMessage) {
+        super(cause, errorCode, userErrorMessage);
     }
 
     /**
@@ -83,23 +91,22 @@ public class InfoArchiveResponseException extends Exception {
      *                           or disabled
      * @param writableStackTrace whether or not the stack trace should
      *                           be writable
+     * @param errorCode          The error code.
+     * @param userErrorMessage   The error description that should be returned to the user.
      * @since 1.7
      */
-    public InfoArchiveResponseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public InfoArchiveResponseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int errorCode, String userErrorMessage) {
+        super(message, cause, enableSuppression, writableStackTrace, errorCode, userErrorMessage);
     }
 
-    public int getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(String errorTitle, Boolean expectedList) {
+    public static int defineErrorCode(String errorTitle, Boolean expectedList) {
         if (ERROR_TITLE_TIME_OUT.contentEquals(errorTitle)) {
             if (expectedList) {
-                this.errorCode = ERROR_CODE_TIME_OUT_LIST_DOC;
+                return ERROR_CODE_TIME_OUT_LIST_DOC;
             } else {
-                this.errorCode = ERROR_CODE_TIME_OUT_SINGLE_DOC;
+                return ERROR_CODE_TIME_OUT_SINGLE_DOC;
             }
         }
+        return 0;
     }
 }

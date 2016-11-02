@@ -2,7 +2,9 @@ package nl.hetcak.dms.ia.web.requests;
 
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
+import nl.hetcak.dms.ia.web.exceptions.BigFileException;
 import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
+import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
 import org.apache.commons.io.IOUtils;
@@ -41,12 +43,15 @@ public class DocumentRequest {
      * @throws ServerConnectionFailureException problems when connection to InfoArchive.
      * @throws IOException                      Failed to read server response or to open a stream.
      */
-    public ByteArrayOutputStream getContentWithContentId(String contentID) throws MisconfigurationException, ServerConnectionFailureException, IOException {
+    public ByteArrayOutputStream getContentWithContentId(String contentID) throws RequestResponseException, IOException {
         LOGGER.info("Executing content request.");
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerContentUrl(configuration.getApplicationUUID(), contentID);
         HttpResponse response = requestUtil.executeGetRequest(url, InfoArchiveRequestUtil.CONTENT_TYPE_JSON, requestHeader);
         LOGGER.info("Returning content byte stream.");
+        if(response.getEntity().getContentLength() > configuration.getMaxFileSize()){
+            throw new BigFileException("File with "+response.getEntity().getContentLength()+ " bytes is blocked because it exceeds the limit of "+configuration.getMaxFileSize()+" bytes.");
+        }
         return responseToStream(response);
     }
 

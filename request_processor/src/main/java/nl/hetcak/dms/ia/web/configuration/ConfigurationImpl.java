@@ -25,12 +25,13 @@ public class ConfigurationImpl implements Configuration {
     private final static String CONF_SERVICE_USER = "ia_service_usr";
     private final static String CONF_SERVICE_USER_PASSWORD = "ia_service_usr_password";
     private final static String CONF_LOG_PROPS = "log4j_properties";
-    private final static String CONF_MAX_RESULTS = "maximaal_aantal_resultaten";
+    private final static String CONF_MAX_FILESIZE = "max_allowed_filesize";
+    private final static String CONF_MAX_RESULTS = "max_allowed_results";
     private final static String CONF_APPLICATION_UUID = "ia_application_uuid";
     private final static String CONF_SEARCHCOMPOSITION_UUID = "ia_searchcomposition_uuid";
 
     private String securityToken, serverAddress, username, password, logProps, applicationUUID, searchComponentUUID;
-    private int serverPort, maxResults;
+    private int serverPort, maxResults, maxFilesize;
 
 
     @XmlElement(name = CONF_SECURITY_TOKEN)
@@ -78,6 +79,17 @@ public class ConfigurationImpl implements Configuration {
     @Override
     public int getMaxResults() {
         return maxResults;
+    }
+
+    /**
+     * Get the file size limit.
+     *
+     * @return the maximum file size.
+     */
+    @XmlElement(name = CONF_MAX_FILESIZE)
+    @Override
+    public int getMaxFileSize() {
+        return maxFilesize ;
     }
 
     public void setMaxResults(int maxResults) {
@@ -211,6 +223,7 @@ public class ConfigurationImpl implements Configuration {
         logProps = "";
         serverPort = 8765;
         maxResults = 100;
+        maxFilesize = 50000;
         applicationUUID = "000000-000000-000000";
         searchComponentUUID = "000000-000000-000000";
     }

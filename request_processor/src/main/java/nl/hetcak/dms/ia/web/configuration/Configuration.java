@@ -55,6 +55,13 @@ public interface Configuration {
      */
     int getMaxResults();
 
+    /**
+     * Get the file size limit.
+     *
+     * @return the maximum file size.
+     */
+    int getMaxFileSize();
+
     //InfoArchive Application Settings
 
     /**

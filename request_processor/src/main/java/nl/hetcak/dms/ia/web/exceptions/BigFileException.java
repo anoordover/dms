@@ -7,16 +7,16 @@ import java.security.PrivilegedActionException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class CryptoFailureException extends RequestResponseException {
-    public static final int ERROR_CODE = 1001;
-    public static final String ERROR_MESSAGE = "The CryptoUtil is unable to encrypt or decrypt the Object, please contact an Administrator.";
+public class BigFileException extends RequestResponseException {
+    public static final int ERROR_CODE = 2004;
+    public static final String ERROR_MESSAGE = "The file your are requesting is too big, please contact an Administrator.";
 
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public CryptoFailureException() {
+    public BigFileException() {
         super(ERROR_CODE, ERROR_MESSAGE);
     }
 
@@ -25,11 +25,11 @@ public class CryptoFailureException extends RequestResponseException {
      * cause is not initialized, and may subsequently be initialized by
      * a call to {@link #initCause}.
      *
-     * @param message the detail message. The detail message is saved for
-     *                later retrieval by the {@link #getMessage()} method.
+     * @param message          the detail message. The detail message is saved for
+     *                         later retrieval by the {@link #getMessage()} method.
      */
-    public CryptoFailureException(String message) {
-        super(ERROR_MESSAGE, ERROR_CODE, message);
+    public BigFileException(String message) {
+        super(message, ERROR_CODE, ERROR_MESSAGE);
     }
 
     /**
@@ -38,15 +38,15 @@ public class CryptoFailureException extends RequestResponseException {
      * {@code cause} is <i>not</i> automatically incorporated in
      * this exception's detail message.
      *
-     * @param message the detail message (which is saved for later retrieval
-     *                by the {@link #getMessage()} method).
-     * @param cause   the cause (which is saved for later retrieval by the
-     *                {@link #getCause()} method).  (A <tt>null</tt> value is
-     *                permitted, and indicates that the cause is nonexistent or
-     *                unknown.)
+     * @param message          the detail message (which is saved for later retrieval
+     *                         by the {@link #getMessage()} method).
+     * @param cause            the cause (which is saved for later retrieval by the
+     *                         {@link #getCause()} method).  (A <tt>null</tt> value is
+     *                         permitted, and indicates that the cause is nonexistent or
+     *                         unknown.)
      * @since 1.4
      */
-    public CryptoFailureException(String message, Throwable cause) {
+    public BigFileException(String message, Throwable cause) {
         super(message, cause, ERROR_CODE, ERROR_MESSAGE);
     }
 
@@ -58,13 +58,13 @@ public class CryptoFailureException extends RequestResponseException {
      * wrappers for other throwables (for example, {@link
      * PrivilegedActionException}).
      *
-     * @param cause the cause (which is saved for later retrieval by the
-     *              {@link #getCause()} method).  (A <tt>null</tt> value is
-     *              permitted, and indicates that the cause is nonexistent or
-     *              unknown.)
+     * @param cause            the cause (which is saved for later retrieval by the
+     *                         {@link #getCause()} method).  (A <tt>null</tt> value is
+     *                         permitted, and indicates that the cause is nonexistent or
+     *                         unknown.)
      * @since 1.4
      */
-    public CryptoFailureException(Throwable cause) {
+    public BigFileException(Throwable cause) {
         super(cause, ERROR_CODE, ERROR_MESSAGE);
     }
 
@@ -82,7 +82,7 @@ public class CryptoFailureException extends RequestResponseException {
      *                           be writable
      * @since 1.7
      */
-    public CryptoFailureException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public BigFileException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE, ERROR_MESSAGE);
     }
 }

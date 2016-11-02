@@ -191,30 +191,30 @@ public class ExceptionsTest {
     //ToManyResults
     @Test(expected = TooManyResultsException.class)
     public void throwToManyResultsException() throws TooManyResultsException {
-        throw new TooManyResultsException();
+        throw new TooManyResultsException(2003);
     }
 
     @Test(expected = TooManyResultsException.class)
     public void throwToManyResultsException1() throws TooManyResultsException {
-        throw new TooManyResultsException("Test");
+        throw new TooManyResultsException(3001, "Test");
     }
 
     @Test(expected = TooManyResultsException.class)
     public void throwToManyResultsException2() throws TooManyResultsException {
         Exception error = new Exception();
-        throw new TooManyResultsException("Test", error);
+        throw new TooManyResultsException(2003, "Test", error);
     }
 
     @Test(expected = TooManyResultsException.class)
     public void throwToManyResultsException3() throws TooManyResultsException {
         Exception error = new Exception();
-        throw new TooManyResultsException(error);
+        throw new TooManyResultsException(3001, error);
     }
 
     @Test(expected = TooManyResultsException.class)
     public void throwToManyResultsException4() throws TooManyResultsException {
         Exception error = new Exception();
-        throw new TooManyResultsException("Test", error, true, true);
+        throw new TooManyResultsException(2003, "Test", error, true, true);
     }
 
     //MultipleDocumentsException
@@ -249,60 +249,60 @@ public class ExceptionsTest {
     //NoContentAvailableException
     @Test(expected = NoContentAvailableException.class)
     public void throwNoContentAvailableException() throws NoContentAvailableException {
-        throw new NoContentAvailableException();
+        throw new NoContentAvailableException(2000);
     }
 
     @Test(expected = NoContentAvailableException.class)
     public void throwNoContentAvailableException1() throws NoContentAvailableException {
-        throw new NoContentAvailableException("Test");
+        throw new NoContentAvailableException("Test",2000);
     }
 
     @Test(expected = NoContentAvailableException.class)
     public void throwNoContentAvailableException2() throws NoContentAvailableException {
         Exception error = new Exception();
-        throw new NoContentAvailableException("Test", error);
+        throw new NoContentAvailableException("Test", error,2000);
     }
 
     @Test(expected = NoContentAvailableException.class)
     public void throwNoContentAvailableException3() throws NoContentAvailableException {
         Exception error = new Exception();
-        throw new NoContentAvailableException(error);
+        throw new NoContentAvailableException(error,2000);
     }
 
     @Test(expected = NoContentAvailableException.class)
     public void throwNoContentAvailableException4() throws NoContentAvailableException {
         Exception error = new Exception();
-        throw new NoContentAvailableException("Test", error, true, true);
+        throw new NoContentAvailableException("Test", error, true, true,2000);
     }
     
     
     //NoContentAvailableException
     @Test(expected = InfoArchiveResponseException.class)
     public void throwInfoArchiveResponseException() throws InfoArchiveResponseException {
-        throw new InfoArchiveResponseException();
+        throw new InfoArchiveResponseException(3003,"error");
     }
     
     @Test(expected = InfoArchiveResponseException.class)
     public void throwInfoArchiveResponseException1() throws InfoArchiveResponseException {
-        throw new InfoArchiveResponseException("Test");
+        throw new InfoArchiveResponseException("Test",3003,"error");
     }
     
     @Test(expected = InfoArchiveResponseException.class)
     public void throwInfoArchiveResponseException2() throws InfoArchiveResponseException {
         Exception error = new Exception();
-        throw new InfoArchiveResponseException("Test", error);
+        throw new InfoArchiveResponseException("Test", error,3003,"error");
     }
     
     @Test(expected = InfoArchiveResponseException.class)
     public void throwInfoArchiveResponseException3() throws InfoArchiveResponseException {
         Exception error = new Exception();
-        throw new InfoArchiveResponseException(error);
+        throw new InfoArchiveResponseException(error,3003,"error");
     }
     
     @Test(expected = InfoArchiveResponseException.class)
     public void throwInfoArchiveResponseException4() throws InfoArchiveResponseException {
         Exception error = new Exception();
-        throw new InfoArchiveResponseException("Test", error, true, true);
+        throw new InfoArchiveResponseException("Test", error, true, true,3003,"error");
     }
     
     
@@ -333,5 +333,35 @@ public class ExceptionsTest {
     public void throwCryptoFailureException4() throws CryptoFailureException {
         Exception error = new Exception();
         throw new CryptoFailureException("Test", error, true, true);
+    }
+
+
+    //BigFileException
+    @Test(expected = BigFileException.class)
+    public void throwBigFileException() throws BigFileException {
+        throw new BigFileException();
+    }
+
+    @Test(expected = BigFileException.class)
+    public void throwBigFileException1() throws BigFileException {
+        throw new BigFileException("Test");
+    }
+
+    @Test(expected = BigFileException.class)
+    public void throwBigFileException2() throws BigFileException {
+        Exception error = new Exception();
+        throw new BigFileException("Test", error);
+    }
+
+    @Test(expected = BigFileException.class)
+    public void throwBigFileException3() throws BigFileException {
+        Exception error = new Exception();
+        throw new BigFileException(error);
+    }
+
+    @Test(expected = BigFileException.class)
+    public void throwBigFileException4() throws BigFileException {
+        Exception error = new Exception();
+        throw new BigFileException("Test", error, true, true);
     }
 }

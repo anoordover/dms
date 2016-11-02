@@ -80,14 +80,14 @@ public class RecordRequest {
         LOGGER.info("Starting List Documents request for person number:" + archivePersonNumber);
         String response = requestUtil.responseReader(executeListDocumentsRequest(archivePersonNumber));
         LOGGER.info(LOGGING_PARSING_RESULT);
-        List<InfoArchiveDocument> result = parseDocumentList(response, true);
+        List<InfoArchiveDocument> result = parseDocumentList(response, true, false);
         if (result.size() == 0) {
             StringBuilder errorMessage = new StringBuilder("Got 0 results for documents with person number:");
             errorMessage.append(archivePersonNumber);
             errorMessage.append(LOGGING_EXPECT_AT_LEAST_ONE_RESULT);
             LOGGER.error(errorMessage.toString());
             LOGGER.debug(response);
-            throw new NoContentAvailableException(errorMessage.toString());
+            throw new NoContentAvailableException(errorMessage.toString(),NoContentAvailableException.ERROR_CODE_NO_DOCUMENT_LIST);
         }
         LOGGER.info("Returning List with " + result.size() + " documents.");
         return result;
@@ -123,12 +123,12 @@ public class RecordRequest {
 
         String response = requestUtil.responseReader(executeListDocumentsRequest(documentType, personNumber, documentCharacteristics, sendDate1, sendDate2));
         LOGGER.info(LOGGING_PARSING_RESULT);
-        List<InfoArchiveDocument> result = parseDocumentList(response, true);
+        List<InfoArchiveDocument> result = parseDocumentList(response, true, true);
         if (result.size() == 0) {
             String errorMessage = "Got 0 results, invalid search.";
             LOGGER.error(errorMessage);
             LOGGER.debug(response);
-            throw new NoContentAvailableException(errorMessage);
+            throw new NoContentAvailableException(errorMessage, NoContentAvailableException.ERROR_CODE_NO_DOCUMENT_LIST);
         }
         LOGGER.info("Returning List with " + result.size() + " documents.");
         return result;
@@ -138,7 +138,7 @@ public class RecordRequest {
         LOGGER.info("Requesting document with number:" + archiveDocumentNumber);
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
         LOGGER.info(LOGGING_PARSING_RESULT);
-        List<InfoArchiveDocument> documents = parseDocumentList(response, false);
+        List<InfoArchiveDocument> documents = parseDocumentList(response, false, false);
         if (documents.size() > 1) {
             String errorMessage = "Got " + documents.size() + " results for document number:" + archiveDocumentNumber + LOGGING_EXPECT_AT_LEAST_ONE_RESULT;
             LOGGER.error(errorMessage);
@@ -148,7 +148,7 @@ public class RecordRequest {
             String errorMessage = "Got " + documents.size() + " results for document number:" + archiveDocumentNumber + LOGGING_EXPECT_AT_LEAST_ONE_RESULT;
             LOGGER.error(errorMessage);
             LOGGER.debug(response);
-            throw new NoContentAvailableException(errorMessage);
+            throw new NoContentAvailableException(errorMessage, NoContentAvailableException.ERROR_CODE_NO_CONTENT);
         }
         LOGGER.info("Returning document.");
         return documents.get(0);
@@ -194,8 +194,9 @@ public class RecordRequest {
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
 
-    private List<InfoArchiveDocument> parseDocumentList(String response, boolean expectList) throws ParseException, TooManyResultsException, InfoArchiveResponseException {
+    private List<InfoArchiveDocument> parseDocumentList(String response, boolean expectList, boolean isSearchResults) throws ParseException, TooManyResultsException, InfoArchiveResponseException {
         List<InfoArchiveDocument> documents = new ArrayList<>();
+        TooManyResultsException tooManyResultsException = null;
 
         JsonParser parser = new JsonParser();
         JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
@@ -220,8 +221,9 @@ public class RecordRequest {
 
             LOGGER.debug(response);
             LOGGER.error(exceptionMessage.toString());
-            InfoArchiveResponseException infoArchiveResponseException = new InfoArchiveResponseException(exceptionMessage.toString());
-            infoArchiveResponseException.setErrorCode(errorTitle, expectList);
+
+            int errorCode = InfoArchiveResponseException.defineErrorCode(exceptionMessage.toString(), expectList);
+            InfoArchiveResponseException infoArchiveResponseException = new InfoArchiveResponseException(errorCode, InfoArchiveResponseException.ERROR_MESSAGE);
             throw infoArchiveResponseException;
         }
 
@@ -231,7 +233,8 @@ public class RecordRequest {
             String errorMessage = "InfoArchive responded with " + totalElements + " items, this exceeds the maximum allowed items of " + configuration.getMaxResults() + " set in the configuration.";
             LOGGER.error(errorMessage);
             LOGGER.debug(response);
-            throw new TooManyResultsException(errorMessage);
+            tooManyResultsException = new TooManyResultsException(TooManyResultsException.defineErrorCode(isSearchResults) ,errorMessage);
+
         }
 
         //read response
@@ -247,6 +250,10 @@ public class RecordRequest {
             }
         }
 
+        if(tooManyResultsException != null) {
+            tooManyResultsException.getDocumentsToDisplay().addAll(documents);
+            throw tooManyResultsException;
+        }
         return documents;
     }
 
@@ -264,8 +271,6 @@ public class RecordRequest {
                 }
             }
         }
-
-
         return documents;
     }
 

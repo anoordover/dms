@@ -8,7 +8,8 @@ import java.security.PrivilegedActionException;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class TooManyResultsException extends RequestResponseException {
-    public static final int ERROR_CODE = 3001;
+    public static final int ERROR_CODE_SEARCH = 3001;
+    public static final int ERROR_CODE_LIST = 2003;
     public static final String ERROR_MESSAGE = "To many results, please contact an Administrator.";
 
     /**
@@ -16,8 +17,8 @@ public class TooManyResultsException extends RequestResponseException {
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public TooManyResultsException() {
-        super(ERROR_CODE, ERROR_MESSAGE);
+    public TooManyResultsException(int errorCode) {
+        super(errorCode, ERROR_MESSAGE);
     }
 
     /**
@@ -28,8 +29,8 @@ public class TooManyResultsException extends RequestResponseException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public TooManyResultsException(String message) {
-        super(ERROR_MESSAGE, ERROR_CODE, message);
+    public TooManyResultsException(int errorCode, String message) {
+        super(ERROR_MESSAGE, errorCode, message);
     }
 
     /**
@@ -46,8 +47,8 @@ public class TooManyResultsException extends RequestResponseException {
      *                unknown.)
      * @since 1.4
      */
-    public TooManyResultsException(String message, Throwable cause) {
-        super(message, cause, ERROR_CODE, ERROR_MESSAGE);
+    public TooManyResultsException(int errorCode, String message, Throwable cause) {
+        super(message, cause, errorCode, ERROR_MESSAGE);
     }
 
     /**
@@ -64,8 +65,8 @@ public class TooManyResultsException extends RequestResponseException {
      *              unknown.)
      * @since 1.4
      */
-    public TooManyResultsException(Throwable cause) {
-        super(cause, ERROR_CODE, ERROR_MESSAGE);
+    public TooManyResultsException(int errorCode, Throwable cause) {
+        super(cause, errorCode, ERROR_MESSAGE);
     }
 
     /**
@@ -82,7 +83,13 @@ public class TooManyResultsException extends RequestResponseException {
      *                           be writable
      * @since 1.7
      */
-    public TooManyResultsException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE, ERROR_MESSAGE);
+    public TooManyResultsException(int errorCode, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace, errorCode, ERROR_MESSAGE);
+    }
+
+    public static int defineErrorCode(boolean isSearchRequest) {
+        if(isSearchRequest)
+            return ERROR_CODE_SEARCH;
+        return ERROR_CODE_LIST;
     }
 }

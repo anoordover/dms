@@ -1,6 +1,10 @@
 package nl.hetcak.dms.ia.web.exceptions;
 
+import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
+
 import java.security.PrivilegedActionException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
@@ -10,6 +14,7 @@ import java.security.PrivilegedActionException;
 public class RequestResponseException extends Exception {
     private int errorCode = -1;
     private String userErrorMessage;
+    private List<InfoArchiveDocument> documentsToDisplay = new ArrayList<>();
 
     /**
      * Constructs a new exception with {@code null} as its detail message.
@@ -140,5 +145,9 @@ public class RequestResponseException extends Exception {
      */
     public void setUserErrorMessage(String userErrorMessage) {
         this.userErrorMessage = userErrorMessage;
+    }
+
+    public List<InfoArchiveDocument> getDocumentsToDisplay() {
+        return documentsToDisplay;
     }
 }

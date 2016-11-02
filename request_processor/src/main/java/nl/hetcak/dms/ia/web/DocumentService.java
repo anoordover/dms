@@ -37,7 +37,7 @@ public class DocumentService {
     private static final String LOGGER_IO_OR_PARSE_EXC = "IO or Parsing error.";
     private static final String LOGGER_VALID_INCOMING_REQUEST = "Incoming request content is valid.";
     private static final String LOGGER_INVALID_INCOMING_REQUEST = "Incoming request content is invalid!";
-    private static final String ERROR_CONTENT_GRABBING = "Content grabbing attempt detected. Canceling request.";
+    private static final String ERROR_CONTENT_GRABBING = "The request is missing values. please notify an administrator if you can't correct it.";
 
     private RecordRequest createRecordRequest() throws RequestResponseException {
         try {
@@ -55,10 +55,7 @@ public class DocumentService {
         } catch (RequestResponseException reqresExc) {
             LOGGER.error(reqresExc.getUserErrorMessage(), reqresExc);
             throw reqresExc;
-        } catch (InfoArchiveResponseException iaRespExc) {
-            LOGGER.error("Got error response from InfoArchive.", iaRespExc);
-            throw new RequestResponseException(iaRespExc.getErrorCode(), "Got error response from InfoArchive.");
-        } catch (Exception exc) {
+        }  catch (Exception exc) {
             LOGGER.error("Io or parsing error", exc);
             throw new RequestResponseException(-1, LOGGER_IO_OR_PARSE_EXC);
         }
@@ -89,7 +86,12 @@ public class DocumentService {
             }
         } catch (RequestResponseException rrExc) {
             LOGGER.error(rrExc.getMessage(), rrExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, rrExc.getErrorCode(), rrExc.getUserErrorMessage())).build();
+            StringBuilder errorResponse = new StringBuilder(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, rrExc.getErrorCode(), rrExc.getUserErrorMessage()));
+            if(rrExc.getDocumentsToDisplay().size() > 0) {
+                ListDocumentResponse response = new ListDocumentResponse(rrExc.getDocumentsToDisplay());
+                errorResponse.append(response.getAsXML());
+            }
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(errorResponse.toString()).build();
         } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error(ERROR_CONTENT_GRABBING, exc);
@@ -113,9 +115,6 @@ public class DocumentService {
         } catch (RequestResponseException reqresExc) {
             LOGGER.error(reqresExc.getUserErrorMessage(), reqresExc);
             throw reqresExc;
-        } catch (InfoArchiveResponseException iaRespExc) {
-            LOGGER.error("Search for document resulted in a InfoArchive Exception.", iaRespExc);
-            throw new RequestResponseException(iaRespExc.getErrorCode(), "Search for document resulted in a InfoArchive Exception.");
         } catch (Exception exc) {
             LOGGER.error(LOGGER_IO_OR_PARSE_EXC, exc);
             throw new RequestResponseException(-1, LOGGER_IO_OR_PARSE_EXC);
