@@ -5,6 +5,7 @@ import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.parsing.MessageParser;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.StreamException;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,12 +59,16 @@ public class CAKMessageParser implements MessageParser {
     protected IADocument parseDocument(String sData, String sValidationSchema, String... cExceptions) {
         CAKDocument objReturn = null;
         CAKDocument objSourceDocument = null;
-        XStream objXStream = new XStream(new StaxDriver());
-        objXStream.alias("ArchiefDocument", CAKDocument.class);
-        objXStream.processAnnotations(CAKDocument.class);
-        Object objStreamOutput = objXStream.fromXML(sData);
-        if (objStreamOutput instanceof CAKDocument) {
-            objSourceDocument = (CAKDocument) objStreamOutput;
+        try {
+            XStream objXStream = new XStream(new StaxDriver());
+            objXStream.alias("ArchiefDocument", CAKDocument.class);
+            objXStream.processAnnotations(CAKDocument.class);
+            Object objStreamOutput = objXStream.fromXML(sData);
+            if (objStreamOutput instanceof CAKDocument) {
+                objSourceDocument = (CAKDocument) objStreamOutput;
+            }
+        } catch (StreamException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
 
         if (objSourceDocument != null) {

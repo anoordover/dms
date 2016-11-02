@@ -9,17 +9,31 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by admjzimmermann on 26-10-2016.
  */
 public class Crypto {
+    private static final String ARG_KEYFILE = "-keyfile";
+    private static final String ARG_KEY = "-key";
+    private static final String ARG_DATA = "-data";
+
     private static final int IV_SIZEB = 16;
     private static final int KEY_SIZEB = 16;
 
@@ -107,22 +121,109 @@ public class Crypto {
         return cIV;
     }
 
-    public static void main(String[] cArgs) {
-        if (cArgs.length < 1) {
-            Logger.getLogger(Crypto.class.getName()).error("ERROR: Unsupported usage, expected: java -cp com.amplexor.ia.crypto.Crypto Crypto [password]");
-        } else {
-            if ("test".equals(cArgs[0])) {
-                Logger.getLogger(Crypto.class.getName()).info(new String(decrypt(Base64.getDecoder().decode(cArgs[1].getBytes()), "SomeSomeKeyKey12".getBytes())));
-                return;
+    private static byte[] generateKey(byte[] cKey) throws InvalidKeyException {
+        byte[] cReturn = new byte[0];
+        byte[] cKeyEnc = new byte[16];
+        if (cKey.length < 16) {
+            for (int i = 0; i < cKeyEnc.length; ++i) {
+                cKeyEnc[i] = cKey[Math.abs(i % cKey.length)];
             }
-
-            try {
-                String sPassword = cArgs[0];
-                Logger.getLogger(Crypto.class.getName()).info("Encrypting " + sPassword);
-                Logger.getLogger(Crypto.class.getName()).info(Base64.getEncoder().encodeToString(encrypt(sPassword.getBytes(), "SomeSomeKeyKey12".getBytes())));
-            } catch (InvalidKeyException ex) {
-                Logger.getLogger(Crypto.class.getName()).error(ex);
+        } else if (cKey.length > 16) {
+            for (int i = 0; i < cKeyEnc.length; ++i) {
+                cKeyEnc[i] = cKey[i];
             }
         }
+
+        byte[] cBase64EncData = Base64.getEncoder().encode(cKeyEnc);
+        if (cBase64EncData.length > 4) {
+            byte[] cBase64EncKey = new byte[16];
+            for (int i = 0; i < 16; ++i) {
+                cBase64EncKey[i] = cBase64EncData[Math.abs(i % 3)];
+            }
+            byte[] cBase64Encrypted = encrypt(cBase64EncData, cBase64EncKey);
+            byte[] cFinalKey = Base64.getEncoder().encode(cBase64Encrypted);
+            cReturn = Arrays.copyOf(cBase64EncKey, cBase64EncKey.length + cFinalKey.length);
+            for (int i = cBase64EncKey.length; i < cReturn.length; ++i) {
+                cReturn[i] = cFinalKey[i - cBase64EncKey.length];
+            }
+        }
+        return cReturn;
+    }
+
+    private static void generateKeyFile(byte[] cKey, Path objPath) throws IOException, InvalidKeyException {
+        try (OutputStream objOutput = Files.newOutputStream(objPath)) {
+            objOutput.write(generateKey(cKey));
+        }
+    }
+
+    private static byte[] retrieveKey(Path objPath) throws IOException, InvalidKeyException {
+        int iSize = (int) Files.size(objPath);
+        byte[] cData = new byte[iSize];
+        try (InputStream objInput = Files.newInputStream(objPath)) {
+            int iRead;
+            int iCursor = 0;
+            while ((iRead = objInput.read()) != -1) {
+                cData[iCursor++] = (byte) iRead;
+            }
+        }
+
+        return retrieveKey(cData);
+    }
+
+    private static byte[] retrieveKey(byte[] cData) {
+        byte[] cReturn = new byte[0];
+        byte[] cBase64Key = Arrays.copyOfRange(cData, 0, 16);
+        byte[] cBase64Data = Arrays.copyOfRange(cData, 16, cData.length);
+        byte[] cDataEnc = Base64.getDecoder().decode(cBase64Data);
+        byte[] cPlainData = decrypt(cDataEnc, cBase64Key);
+        cReturn = Base64.getDecoder().decode(cPlainData);
+
+        return cReturn;
+    }
+
+    private static Map<String, String> getArguments(String[] cArgs) {
+        Map<String, String> cReturn = new HashMap<>();
+        for (int i = 0; i < cArgs.length; i += 2) {
+            if (i % 2 == 0) {
+                if (cArgs.length >= i + 1) {
+                    cReturn.put(cArgs[i], cArgs[i + 1]);
+                }
+            }
+        }
+        return cReturn;
+    }
+
+    public static void main(String[] cArgs) throws Exception {
+        Map<String, String> cArgsMap = getArguments(cArgs);
+
+        if (cArgsMap.get(ARG_KEYFILE) == null || cArgsMap.get(ARG_DATA) == null) {
+            Logger.getLogger(Crypto.class).info(
+                    "Usage com.amplexor.ia.crypto.Crypto\n" +
+                            "(REQUIRED)\t" + ARG_DATA + " [data to encode]\n" +
+                            "(OPTIONAL)\t" + ARG_KEY + " [key to use]\n" +
+                            "(REQUIRED)\t" + ARG_KEYFILE + " [path to keyfile]\n" +
+                            "(NOTE: Using " + ARG_KEYFILE + " without " + ARG_KEY + " will cause the key to be read from " + ARG_KEYFILE);
+            return;
+        }
+        byte[] sKey = null;
+        String sKeyFile = cArgsMap.get(ARG_KEYFILE);
+        byte[] sData = cArgsMap.get(ARG_DATA).getBytes(Charset.forName("UTF-8"));
+        String sOutput = null;
+
+        if (cArgsMap.get(ARG_KEY) != null) {
+            sKey = cArgsMap.get(ARG_KEY).getBytes(Charset.forName("UTF-8"));
+        }
+        
+        if (!Files.exists(Paths.get(sKeyFile)) && sKey == null) {
+            throw new IllegalArgumentException("Neither -key or -keyfile were supplied, or the keyfile does not exist at the provided path");
+        }
+
+        if (sKey != null) {
+            generateKeyFile(sKey, Paths.get(sKeyFile));
+        }
+
+        sKey = retrieveKey(Paths.get(sKeyFile));
+        sOutput = Base64.getEncoder().encodeToString(encrypt(sData, sKey));
+        Logger.getLogger(Crypto.class).info("Result: [ " + sOutput + " ]");
     }
 }

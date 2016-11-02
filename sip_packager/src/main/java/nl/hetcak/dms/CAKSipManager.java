@@ -52,6 +52,7 @@ public class CAKSipManager extends AMPSipManager {
                     Path objTempPath = objMetrics.getFile().toPath();
                     Path objSipFile = Files.copy(objTempPath, Paths.get(objTempPath.toString() + ".zip"));
                     info(this, "SIP File created: " + objSipFile.toString() + " For Cache with ID " + objCache.getId());
+                    backupSipFile(objSipFile);
                     Files.delete(objTempPath);
                     debug(this, "Deleted temp file: " + objTempPath);
                     objCache.setSipFile(objSipFile.toString());

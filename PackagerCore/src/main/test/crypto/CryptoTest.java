@@ -1,5 +1,6 @@
-package com.amplexor.ia.crypto;
+package crypto;
 
+import com.amplexor.ia.crypto.Crypto;
 import org.junit.Test;
 
 import java.util.Base64;

@@ -55,7 +55,7 @@ public class AMPSipManager implements SipManager {
                     Files.delete(objTempPath);
                     debug(this, "Deleted temp file: " + objTempPath);
                     objCache.setSipFile(objSipFile.toString());
-                    backupSipFile(objSipFile, objTempPath);
+                    backupSipFile(objSipFile);
                     bReturn = true;
                 } else {
                     ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, objCache, new Exception("Error generating SIP file"));
@@ -76,9 +76,13 @@ public class AMPSipManager implements SipManager {
         return bReturn;
     }
 
-    protected void backupSipFile(Path objSipFile, Path objTempPath) throws IOException {
+    protected void backupSipFile(Path objSipFile) throws IOException {
         if (mobjConfiguration.getSipBackupDirectory() != null) {
-            Files.copy(objSipFile, Paths.get(mobjConfiguration.getSipBackupDirectory() + "/" + objTempPath.toString() + ".zip"));
+            if(!Files.exists(Paths.get(mobjConfiguration.getSipBackupDirectory()))) {
+                Files.createDirectories(Paths.get(mobjConfiguration.getSipBackupDirectory()));
+            }
+
+            Files.copy(objSipFile, Paths.get(mobjConfiguration.getSipBackupDirectory() + "/" + objSipFile.getFileName()));
         }
     }
 
