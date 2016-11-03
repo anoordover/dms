@@ -23,11 +23,11 @@ import javax.ws.rs.core.Response;
  */
 public class RestfullTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfullTest.class);
-    private final static String REQUEST_LIST = "<ArchiefPersoonsnummer>1971429972</ArchiefPersoonsnummer>";
-    private final static String REQUEST_DOCUMENT = "<ArchiefDocumentId>1663298436</ArchiefDocumentId><Volgnummer>001</Volgnummer>";
-    private final static String REQUEST_SEARCH1 = "<ArchiefDocumentsoort>Z06</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde>";
-    private final static String REQUEST_SEARCH2 = "<ArchiefPersoonsnummer>1971429972</ArchiefPersoonsnummer>";
-    private final static String REQUEST_SEARCH3 = "<ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde>";
+    private final static String REQUEST_LIST = "<Request><ArchiefPersoonsnummer>1971429972</ArchiefPersoonsnummer></Request>";
+    private final static String REQUEST_DOCUMENT = "<Request><ArchiefDocumentId>1663298436</ArchiefDocumentId><Volgnummer>001</Volgnummer></Request>";
+    private final static String REQUEST_SEARCH1 = "<Request><ArchiefDocumentsoort>Z06</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde></Request>";
+    private final static String REQUEST_SEARCH2 = "<Request><ArchiefPersoonsnummer>1971429972</ArchiefPersoonsnummer></Request>";
+    private final static String REQUEST_SEARCH3 = "<Request><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde></Request>";
         
     @Test
     public void testDefaultResponse() throws Exception {
@@ -68,9 +68,9 @@ public class RestfullTest {
         Assert.assertTrue(data.length() > 1);
 
         if(documentListResponse.getStatus() == 200) {
-            Assert.assertFalse(data.contains("<error>"));
+            Assert.assertFalse(data.contains("<Error>"));
         } else {
-            Assert.assertTrue(data.contains("<error>"));
+            Assert.assertTrue(data.contains("<Error>"));
         }
     }
     
@@ -90,9 +90,9 @@ public class RestfullTest {
         Assert.assertTrue(data.length() > 1);
 
         if(documentListResponse.getStatus() == 200) {
-            Assert.assertFalse(data.contains("<error>"));
+            Assert.assertFalse(data.contains("<Error>"));
         } else {
-            Assert.assertTrue(data.contains("<error>"));
+            Assert.assertTrue(data.contains("<Error>"));
             Assert.assertFalse(data.contains("<document>"));
         }
     }
@@ -111,7 +111,7 @@ public class RestfullTest {
         LOGGER.info(data);
         
         Assert.assertTrue(data.length() > 1);
-        Assert.assertFalse(data.startsWith("<error>"));
+        Assert.assertFalse(data.startsWith("<Error>"));
     }
     
     @Test
@@ -129,9 +129,9 @@ public class RestfullTest {
         Assert.assertTrue(data.length() > 1);
 
         if(documentListResponse.getStatus() == 200) {
-            Assert.assertFalse(data.contains("<error>"));
+            Assert.assertFalse(data.contains("<Error>"));
         } else {
-            Assert.assertTrue(data.contains("<error>"));
+            Assert.assertTrue(data.contains("<Error>"));
         }
     }
     
@@ -148,7 +148,7 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<error>"));
+        Assert.assertTrue(data.startsWith("<Error>"));
     }
     
     @Test
@@ -163,14 +163,14 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<error>"));
+        Assert.assertTrue(data.startsWith("<Error>"));
     }
     
     @Test
     public void testDocumentListErrorRequest() throws Exception {
         DocumentService documentService = new DocumentService();
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Response documentListResponse = documentService.listDocuments("<ArchiefPersoonsnummer>16afavfdsa</ArchiefPersoonsnummer>", request);
+        Response documentListResponse = documentService.listDocuments("<Request><ArchiefPersoonsnummer>16afavfdsa</ArchiefPersoonsnummer></Request>", request);
         
         Assert.assertNotNull(documentListResponse);
         Assert.assertTrue(documentListResponse.getStatus() == 500);
@@ -178,7 +178,7 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<error>"));
+        Assert.assertTrue(data.contains("<Error>"));
     }
     
     
@@ -194,7 +194,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<error>"));
+        Assert.assertTrue(data.startsWith("<Error>"));
     }
     
     @Test
@@ -209,7 +209,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<error>"));
+        Assert.assertTrue(data.startsWith("<Error>"));
     }
     
     @Test
@@ -224,7 +224,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<error>"));
+        Assert.assertTrue(data.startsWith("<Error>"));
     }
     
     
@@ -240,7 +240,7 @@ public class RestfullTest {
         
         String data = (String) searchDocumentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<error>"));
+        Assert.assertTrue(data.startsWith("<Error>"));
     }
     
     @Test
@@ -255,7 +255,7 @@ public class RestfullTest {
         
         String data = (String) searchDocumentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<error>"));
+        Assert.assertTrue(data.startsWith("<Error>"));
     }
     
     
@@ -271,7 +271,7 @@ public class RestfullTest {
         
         String data = (String) searchDocumentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<error>"));
+        Assert.assertTrue(data.startsWith("<Error>"));
     }
     
     @Test
@@ -281,11 +281,11 @@ public class RestfullTest {
         Response documentResponse = documentService.getDocument(REQUEST_DOCUMENT, request);
     
         Assert.assertNotNull(documentResponse);
-        Assert.assertTrue(documentResponse.getStatus() == 200);
         Assert.assertNotNull(documentResponse.getEntity());
-
         LOGGER.info(documentResponse.getEntity().toString());
+        Assert.assertTrue(documentResponse.getStatus() == 200);
         Assert.assertTrue(documentResponse.getEntity().toString().length() > 20);
-        Assert.assertFalse(documentResponse.getEntity().toString().startsWith("<error>"));
+        Assert.assertFalse(documentResponse.getEntity().toString().startsWith("<Error>"));
+
     }
 }

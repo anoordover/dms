@@ -17,7 +17,7 @@ import java.text.ParseException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-@XmlRootElement(name = "request")
+@XmlRootElement(name = "Request")
 public class SearchDocumentRequestConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchDocumentRequestConsumer.class);
     //ArchiefPersoonsnummer

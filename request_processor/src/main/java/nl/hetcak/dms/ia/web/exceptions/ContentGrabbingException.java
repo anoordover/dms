@@ -9,7 +9,7 @@ import java.security.PrivilegedActionException;
  */
 public class ContentGrabbingException extends RequestResponseException {
     public static final int ERROR_CODE = 0;
-    public static final String ERROR_MESSAGE = "There is a error within the request message, please contact an Administrator.";
+    public static final String ERROR_MESSAGE = "There is an error within the request message, please contact an Administrator.";
 
     /**
      * Constructs a new exception with {@code null} as its detail message.

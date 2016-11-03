@@ -93,8 +93,6 @@ public class ConfigurationManager {
     private File loadConfigFile() {
         File file = new File(DEFAULT_CONFIG_FILE_NAME);
         if (checkConfigurationExist(file)) {
-            LOGGER.info("Found unencrypted config file.");
-            LOGGER.warn("It is highly recommended that the config is encrypted.");
             return file;
         }
         LOGGER.error("No config file found.");
@@ -104,8 +102,6 @@ public class ConfigurationManager {
     public ConfigurationImpl loadConfiguration(boolean onlyLoadCustom) throws RequestResponseException {
         LOGGER.info("Loading Configuration.");
         File file = mobjCustomFile;
-        applyEncryption = false;
-        encrypted = false;
         if (file == null) {
             LOGGER.info("No custom config file specified.");
             if (!onlyLoadCustom) {
@@ -116,8 +112,7 @@ public class ConfigurationManager {
         }
 
         if (file == null) {
-            LOGGER.info("No unencrypted config file found.");
-            LOGGER.error("Can't find configuration");
+            LOGGER.error("Can't find configuration.");
             throw new MissingConfigurationException("Can't find configuration");
         }
 

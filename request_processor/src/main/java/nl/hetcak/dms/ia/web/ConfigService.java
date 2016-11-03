@@ -27,7 +27,7 @@ public class ConfigService {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public Response checkConfig(@Context HttpServletRequest httpRequest) {
+    public synchronized Response checkConfig(@Context HttpServletRequest httpRequest) {
         LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
         Calendar calendar = Calendar.getInstance();
         LOGGER.info("Got Request from "+httpRequest.getRemoteAddr());

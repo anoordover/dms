@@ -13,7 +13,7 @@ import java.io.StringReader;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-@XmlRootElement(name = "request")
+@XmlRootElement(name = "Request")
 public class ListDocumentRequestConsumer {
     protected String archivePersonNumber;
 

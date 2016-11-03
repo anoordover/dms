@@ -46,7 +46,8 @@ public class ProducerTest {
         documents.add(document1);
         documents.add(document2);
     
-        ListDocumentResponse response = new ListDocumentResponse(documents);
+        ListDocumentResponse response = new ListDocumentResponse();
+        response.getDocuments().addAll(documents);
         String xmlString = response.getAsXML();
         Assert.assertNotNull(xmlString);
         Assert.assertTrue(xmlString.contains("test"));

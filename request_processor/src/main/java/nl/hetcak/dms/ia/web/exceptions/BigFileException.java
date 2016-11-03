@@ -9,7 +9,7 @@ import java.security.PrivilegedActionException;
  */
 public class BigFileException extends RequestResponseException {
     public static final int ERROR_CODE = 2004;
-    public static final String ERROR_MESSAGE = "The file your are requesting is too big, please contact an Administrator.";
+    public static final String ERROR_MESSAGE = "The file you are requesting is too big, please contact an Administrator.";
 
     /**
      * Constructs a new exception with {@code null} as its detail message.

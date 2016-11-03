@@ -10,7 +10,9 @@ import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
 import nl.hetcak.dms.ia.web.restfull.consumers.DocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.restfull.consumers.SearchDocumentRequestConsumer;
+import nl.hetcak.dms.ia.web.restfull.produces.ErrorResponse;
 import nl.hetcak.dms.ia.web.restfull.produces.ListDocumentResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +58,9 @@ public class DocumentService {
 
     private ListDocumentResponse listDocumentResponse(RecordRequest recordRequest, ListDocumentRequestConsumer request) throws RequestResponseException {
         try {
-            return new ListDocumentResponse(recordRequest.requestListDocuments(request.getArchivePersonNumber()));
+            ListDocumentResponse response = new ListDocumentResponse();
+            response.getDocuments().addAll(recordRequest.requestListDocuments(request.getArchivePersonNumber()));
+            return response;
         } catch (RequestResponseException reqresExc) {
             LOGGER.error(reqresExc.getUserErrorMessage(), reqresExc);
             throw reqresExc;
@@ -76,12 +80,8 @@ public class DocumentService {
         LOGGER.info("Incoming request for /listDocuments. ("+calendar.getTime().toString()+")");
         LOGGER.debug(sBody);
         LOGGER.info("Got Request from "+httpRequest.getRemoteAddr());
-        StringBuilder input = new StringBuilder();
-        input.append(XML_REQUEST_START);
-        input.append(sBody);
-        input.append(XML_REQUEST_STOP);
         try {
-            ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest(input.toString());
+            ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest(sBody);
             if (request.hasContent()) {
                 LOGGER.info(LOGGER_VALID_INCOMING_REQUEST);
                 RecordRequest recordRequest = createRecordRequest();
@@ -93,16 +93,21 @@ public class DocumentService {
             }
         } catch (RequestResponseException rrExc) {
             LOGGER.error(rrExc.getMessage(), rrExc);
-            StringBuilder errorResponse = new StringBuilder(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, rrExc.getErrorCode(), rrExc.getUserErrorMessage()));
-            if(rrExc.getDocumentsToDisplay().size() > 0) {
-                ListDocumentResponse response = new ListDocumentResponse(rrExc.getDocumentsToDisplay());
-                errorResponse.append(response.getAsXML());
-            }
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(errorResponse.toString()).build();
+            ListDocumentResponse response = new ListDocumentResponse();
+            ErrorResponse error = new ErrorResponse();
+            error.setErrorCode(rrExc.getErrorCode());
+            error.setErrorDescription(rrExc.getUserErrorMessage());
+            response.getDocuments().addAll(rrExc.getDocumentsToDisplay());
+            response.setError(error);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(response.getAsXML()).build();
         } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error(ERROR_CONTENT_GRABBING, exc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
+
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setErrorCode(0);
+            errorResponse.setErrorDescription(ERROR_RESPONSE_GENERIC);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(errorResponse.getAsXML()).build();
         }
     }
 
@@ -151,13 +156,8 @@ public class DocumentService {
         LOGGER.info("Incoming request for /document. ("+calendar.getTime().toString()+")");
         LOGGER.debug(sBody);
         LOGGER.info("Got Request from "+httpRequest.getRemoteAddr());
-        StringBuilder input = new StringBuilder();
-        input.append(XML_REQUEST_START);
-        input.append(sBody);
-        input.append(XML_REQUEST_STOP);
-
         try {
-            DocumentRequestConsumer documentRequestConsumer = DocumentRequestConsumer.unmarshallerRequest(input.toString());
+            DocumentRequestConsumer documentRequestConsumer = DocumentRequestConsumer.unmarshallerRequest(sBody);
             if (documentRequestConsumer.hasContent()) {
                 LOGGER.info(LOGGER_VALID_INCOMING_REQUEST);
                 RecordRequest recordRequest = createRecordRequest();
@@ -177,11 +177,17 @@ public class DocumentService {
             }
         } catch (RequestResponseException rrExc) {
             LOGGER.error(rrExc.getMessage(), rrExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, rrExc.getErrorCode(), rrExc.getUserErrorMessage())).build();
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setErrorCode(rrExc.getErrorCode());
+            errorResponse.setErrorDescription(rrExc.getUserErrorMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(errorResponse.getAsXML()).build();
         } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error("The incoming xml could not pe parsed.", exc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setErrorCode(0);
+            errorResponse.setErrorDescription(ERROR_RESPONSE_GENERIC);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(errorResponse.getAsXML()).build();
         }
     }
 
@@ -195,19 +201,20 @@ public class DocumentService {
         LOGGER.info("Incoming request for /searchDocuments. ("+calendar.getTime().toString()+")");
         LOGGER.debug(sBody);
         LOGGER.info("Got Request from "+httpRequest.getRemoteAddr());
-        StringBuilder input = new StringBuilder();
-        input.append(XML_REQUEST_START);
-        input.append(sBody);
-        input.append(XML_REQUEST_STOP);
-
         try {
-            SearchDocumentRequestConsumer request = SearchDocumentRequestConsumer.unmarshalRequest(input.toString());
+
+            if(StringUtils.isBlank(sBody)) {
+                throw new ContentGrabbingException("No request body found.");
+            }
+
+            SearchDocumentRequestConsumer request = SearchDocumentRequestConsumer.unmarshalRequest(sBody);
             //disable content grabbing with empty strings.
             if (request.hasContent()) {
                 LOGGER.info(LOGGER_VALID_INCOMING_REQUEST);
                 ConnectionManager connectionManager = ConnectionManager.getInstance();
                 RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-                ListDocumentResponse response = new ListDocumentResponse(recordRequest.requestListDocuments(request.getDocumentTitle(), request.getPersonNumber(), request.getDocumentCharacteristics(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
+                ListDocumentResponse response = new ListDocumentResponse();
+                response.getDocuments().addAll(recordRequest.requestListDocuments(request.getDocumentTitle(), request.getPersonNumber(), request.getDocumentCharacteristics(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
                 LOGGER.info("Sending response.");
                 return Response.ok(response.getAsXML()).build();
 
@@ -215,16 +222,19 @@ public class DocumentService {
                 LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
                 throw new ContentGrabbingException(ERROR_CONTENT_GRABBING);
             }
-        } catch (ContentGrabbingException cgExc) {
-            LOGGER.error("Content grabbing attempt detected. Returning '406 - unaccepted' http error.", cgExc);
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
         } catch (RequestResponseException rrExc) {
             LOGGER.error(rrExc.getMessage(), rrExc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, rrExc.getErrorCode(), rrExc.getUserErrorMessage())).build();
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setErrorCode(rrExc.getErrorCode());
+            errorResponse.setErrorDescription(rrExc.getUserErrorMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(errorResponse.getAsXML()).build();
         } catch (Exception exc) {
             //catch all error and return error output.
-            LOGGER.error("The incoming xml could not pe parsed.", exc);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(String.format(ERROR_RESPONSE_MESSAGE_TEMPLATE, -1, ERROR_RESPONSE_GENERIC)).build();
+            LOGGER.error("The incoming xml could not be parsed.", exc);
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setErrorCode(0);
+            errorResponse.setErrorDescription(ERROR_RESPONSE_GENERIC);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(errorResponse.getAsXML()).build();
         }
     }
 

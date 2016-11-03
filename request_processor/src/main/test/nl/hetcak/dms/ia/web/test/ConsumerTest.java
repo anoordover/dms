@@ -18,14 +18,14 @@ import java.text.ParseException;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class ConsumerTest {
-    private static final String XML_EXAMPLE_1 = "<request><ArchiefPersoonsnummer>20001</ArchiefPersoonsnummer></request>";
+    private static final String XML_EXAMPLE_1 = "<Request><ArchiefPersoonsnummer>20001</ArchiefPersoonsnummer></Request>";
     private static final String RESULT_1 = "20001";
-    private static final String XML_EXAMPLE_2 = "<request><ArchiefPersoonsnummer>802341</ArchiefPersoonsnummer></request>";
+    private static final String XML_EXAMPLE_2 = "<Request><ArchiefPersoonsnummer>802341</ArchiefPersoonsnummer></Request>";
     private static final String RESULT_2 = "802341";
-    private static final String XML_EXAMPLE_3 = "<request><ArchiefDocumentId>7654324</ArchiefDocumentId><Volgnummer>001</Volgnummer></request>";
+    private static final String XML_EXAMPLE_3 = "<Request><ArchiefDocumentId>7654324</ArchiefDocumentId><Volgnummer>001</Volgnummer></Request>";
     private static final String RESULT_3_1 = "7654324";
     private static final String RESULT_3_2 = "001";
-    private static final String XML_EXAMPLE_4 = "<request><ArchiefDocumentTitle>Z01</ArchiefDocumentTitle><ArchiefDocumentkenmerk>97348</ArchiefDocumentkenmerk><ArchiefPersoonsnummer>802341</ArchiefPersoonsnummer><ArchiefVerzenddagBegin>2016-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-08-15T00:00:00</ArchiefVerzenddagEinde></request>";
+    private static final String XML_EXAMPLE_4 = "<Request><ArchiefDocumentTitle>Z01</ArchiefDocumentTitle><ArchiefDocumentkenmerk>97348</ArchiefDocumentkenmerk><ArchiefPersoonsnummer>802341</ArchiefPersoonsnummer><ArchiefVerzenddagBegin>2016-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-08-15T00:00:00</ArchiefVerzenddagEinde></Request>";
     private static final String RESULT_4_1_1 = "Z01";
     private static final String RESULT_4_1_2 = "802341";
     private static final String RESULT_4_1_3 = "97348";
@@ -71,7 +71,7 @@ public class ConsumerTest {
     //Bad cases
     @Test
     public void failListDocumentConsumerTest() throws JAXBException {
-        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest("<request><ArchiefDocumentTitle></ArchiefDocumentTitle></request>");
+        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest("<Request><ArchiefDocumentTitle></ArchiefDocumentTitle></Request>");
         Assert.assertFalse(request.hasContent());
     }
     
