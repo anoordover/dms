@@ -29,7 +29,7 @@ public class MissingConfigurationException extends RequestResponseException {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public MissingConfigurationException(String message) {
-        super(ERROR_MESSAGE, ERROR_CODE, message);
+        super(message, ERROR_CODE, ERROR_MESSAGE);
     }
 
     /**

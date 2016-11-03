@@ -2,21 +2,19 @@ package nl.hetcak.dms.ia.web.managers;
 
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.configuration.ConfigurationImpl;
-import nl.hetcak.dms.ia.web.exceptions.CryptoFailureException;
 import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.util.CryptoUtil;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.*;
 import java.io.*;
-import java.security.InvalidKeyException;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
@@ -136,7 +134,11 @@ public class ConfigurationManager {
             InputStream configStream = new ByteArrayInputStream(buffer);
             mobjLoadedConfiguration = unmarshalConfigFile(configStream);
             mobjLoadedConfiguration.setDecryptionKey(getKey());
-
+            if(StringUtils.isNotBlank(mobjLoadedConfiguration.getSecurityToken())) {
+                //decrypt token after loading.
+                LOGGER.warn("Using token only mode will result in connection problems if the token expires.");
+                mobjLoadedConfiguration.setSecurityToken(CryptoUtil.decryptValue(mobjLoadedConfiguration.getSecurityToken(),mobjLoadedConfiguration));
+            }
             configStream.close();
             fileInputStream.close();
             return mobjLoadedConfiguration;

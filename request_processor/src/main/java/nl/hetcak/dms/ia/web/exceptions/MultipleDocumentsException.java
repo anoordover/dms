@@ -29,7 +29,7 @@ public class MultipleDocumentsException extends RequestResponseException {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public MultipleDocumentsException(String message) {
-        super(ERROR_MESSAGE, ERROR_CODE, message);
+        super(message, ERROR_CODE, ERROR_MESSAGE);
     }
 
     /**

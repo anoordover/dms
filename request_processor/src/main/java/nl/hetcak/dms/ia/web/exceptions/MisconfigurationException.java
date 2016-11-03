@@ -29,7 +29,7 @@ public class MisconfigurationException extends RequestResponseException {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public MisconfigurationException(String message) {
-        super(ERROR_MESSAGE, ERROR_CODE, message);
+        super(message, ERROR_CODE, ERROR_MESSAGE);
     }
 
     /**

@@ -30,7 +30,7 @@ public class TooManyResultsException extends RequestResponseException {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public TooManyResultsException(int errorCode, String message) {
-        super(ERROR_MESSAGE, errorCode, message);
+        super(message, errorCode, ERROR_MESSAGE);
     }
 
     /**

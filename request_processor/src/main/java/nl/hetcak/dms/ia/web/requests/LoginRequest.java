@@ -70,7 +70,7 @@ public class LoginRequest {
         }
     }
 
-    public Credentials refreshCredentialsInfoArchive(Credentials loggedInCredentials) throws LoginFailureException, ServerConnectionFailureException {
+    public Credentials refreshCredentialsInfoArchive(Credentials loggedInCredentials) throws RequestResponseException {
         LOGGER.info("Refreshing InfoArchive login token.");
         String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);
         try {
@@ -90,10 +90,14 @@ public class LoginRequest {
         }
     }
 
-    private Credentials updateCredentials(Credentials credentials, String serverResponse) throws LoginFailureException {
+    private Credentials updateCredentials(Credentials credentials, String serverResponse) throws RequestResponseException {
         LOGGER.info("Updating InfoArchive Credentials.");
         JsonParser parser = new JsonParser();
         JsonObject response = parser.parse(serverResponse).getAsJsonObject();
+
+        if(response.has("error")){
+            throw readErrorResponse(response);
+        }
 
         if (response.has("expires_in") && response.has("access_token") && response.has(LOGIN_GRANT_REFRESH)) {
             int expireSeconds = response.get("expires_in").getAsInt();
@@ -111,6 +115,23 @@ public class LoginRequest {
         return credentials;
     }
 
+    private RequestResponseException readErrorResponse(JsonObject response) {
+        String errorTitle = response.get("error").getAsString();
+        String errorDescription = response.get("error_description").getAsString();
+        if(errorTitle.contentEquals("server_error")) {
+            StringBuilder message = new StringBuilder("Server responded with a error: ");
+            message.append(errorDescription);
+            ServerConnectionFailureException scfExc = new ServerConnectionFailureException(message.toString());
+            return scfExc;
+        } else {
+            StringBuilder message = new StringBuilder("Unexpected error: ");
+            message.append(errorTitle);
+            message.append(": ");
+            message.append(errorDescription);
+            RequestResponseException rrExc = new RequestResponseException(-1,message.toString());
+            return rrExc;
+        }
+    }
 
     private String prepareLoginBody(Credentials credentials) throws RequestResponseException {
         LOGGER.info("Prepare login body.");

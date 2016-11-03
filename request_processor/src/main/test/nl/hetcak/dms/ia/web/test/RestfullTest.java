@@ -66,7 +66,12 @@ public class RestfullTest {
         LOGGER.info(data);
         
         Assert.assertTrue(data.length() > 1);
-        Assert.assertFalse(data.startsWith("<error>"));
+
+        if(documentListResponse.getStatus() == 200) {
+            Assert.assertFalse(data.contains("<error>"));
+        } else {
+            Assert.assertTrue(data.contains("<error>"));
+        }
     }
     
     @Test
@@ -88,6 +93,7 @@ public class RestfullTest {
             Assert.assertFalse(data.contains("<error>"));
         } else {
             Assert.assertTrue(data.contains("<error>"));
+            Assert.assertFalse(data.contains("<document>"));
         }
     }
     

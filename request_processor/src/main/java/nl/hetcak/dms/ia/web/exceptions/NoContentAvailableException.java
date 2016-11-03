@@ -28,7 +28,7 @@ public class NoContentAvailableException extends RequestResponseException {
      *                later retrieval by the {@link #getMessage()} method.
      */
     public NoContentAvailableException(String message, int errorCode) {
-        super(ERROR_MESSAGE, errorCode, message);
+        super(message, errorCode, ERROR_MESSAGE);
     }
 
     /**

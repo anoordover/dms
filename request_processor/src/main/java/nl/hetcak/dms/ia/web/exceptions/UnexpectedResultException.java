@@ -6,7 +6,7 @@ import java.security.PrivilegedActionException;
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
- * @deprecated will be replaced with other errors.
+ * @deprecated will be replaced with {@link RequestResponseException}.
  */
 @Deprecated
 public class UnexpectedResultException extends Exception {
