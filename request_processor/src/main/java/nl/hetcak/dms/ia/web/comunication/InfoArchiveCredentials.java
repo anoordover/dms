@@ -46,7 +46,7 @@ public class InfoArchiveCredentials implements Credentials {
     }
 
     /**
-     * Gets the password
+     * Gets the decrypted password.
      *
      * @return the password
      */

@@ -33,7 +33,7 @@ public class ConnectionTest {
     /**
      * Try to create ConnectionManager with bad configuration file
      */
-    @Test(expected = MisconfigurationException.class,timeout = 1000)
+    @Test(expected = MisconfigurationException.class,timeout = 1750)
     public void createConnectionManagerWithBadConfig() throws RequestResponseException {
         File misconfig = new File(MISCONFIGURATION_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();
@@ -46,7 +46,7 @@ public class ConnectionTest {
     /**
      * Try to create ConnectionManager with working configuration file.
      */
-    @Test(timeout = 1000)
+    @Test(timeout = 1250)
     public void createConnectionManagerWithWorkingConfig() throws RequestResponseException{
         File config = new File(WORKING_CONFIG);
         ConnectionManager connectionManager = ConnectionManager.getInstance();

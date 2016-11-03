@@ -5,7 +5,9 @@ import com.google.gson.JsonParser;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.LoginFailureException;
+import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
+import nl.hetcak.dms.ia.web.util.CryptoUtil;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
@@ -49,7 +51,7 @@ public class LoginRequest {
      * @throws LoginFailureException            Failed to login.
      * @throws ServerConnectionFailureException Failed to connect.
      */
-    public Credentials loginInfoArchive() throws LoginFailureException, ServerConnectionFailureException {
+    public Credentials loginInfoArchive() throws RequestResponseException {
         LOGGER.info("Logging in to InfoArchive.");
         String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);
         try {
@@ -110,21 +112,25 @@ public class LoginRequest {
     }
 
 
-    private String prepareLoginBody(Credentials credentials) throws UnsupportedEncodingException {
+    private String prepareLoginBody(Credentials credentials) throws RequestResponseException {
         LOGGER.info("Prepare login body.");
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(URLEncoder.encode(LOGIN_USERNAME, ENCODING_UTF8));
-        stringBuilder.append('=');
-        stringBuilder.append(URLEncoder.encode(credentials.getUsername(), ENCODING_UTF8));
-        stringBuilder.append('&');
-        stringBuilder.append(URLEncoder.encode(LOGIN_PASSWORD, ENCODING_UTF8));
-        stringBuilder.append('=');
-        stringBuilder.append(URLEncoder.encode(credentials.getPassword(), ENCODING_UTF8));
-        stringBuilder.append('&');
-        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, ENCODING_UTF8));
-        stringBuilder.append('=');
-        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_PASSWORD, ENCODING_UTF8));
-
+        try {
+            stringBuilder.append(URLEncoder.encode(LOGIN_USERNAME, ENCODING_UTF8));
+            stringBuilder.append('=');
+            stringBuilder.append(URLEncoder.encode(credentials.getUsername(), ENCODING_UTF8));
+            stringBuilder.append('&');
+            stringBuilder.append(URLEncoder.encode(LOGIN_PASSWORD, ENCODING_UTF8));
+            stringBuilder.append('=');
+            String password = CryptoUtil.decryptValue(credentials.getPassword(), configuration);
+            stringBuilder.append(URLEncoder.encode(password, ENCODING_UTF8));
+            stringBuilder.append('&');
+            stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, ENCODING_UTF8));
+            stringBuilder.append('=');
+            stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_PASSWORD, ENCODING_UTF8));
+        } catch (UnsupportedEncodingException unsEncExc) {
+            throw new RequestResponseException(unsEncExc, -1, "UTF-8 is not supported.");
+        }
         LOGGER.info("Returning login body.");
         return stringBuilder.toString();
     }

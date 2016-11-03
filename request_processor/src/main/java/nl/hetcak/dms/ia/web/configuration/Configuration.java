@@ -67,14 +67,14 @@ public interface Configuration {
     /**
      * The Application UUID that should be used during a InfoArchive request.
      *
-     * @return the Application UUID
+     * @return the Application UUID.
      */
     String getApplicationUUID();
 
     /**
      * The Search Composition UUID that should be used during a InfoArchive request.
      *
-     * @return the Search Composition UUID
+     * @return the Search Composition UUID.
      */
     String getSearchCompositionUUID();
 
@@ -85,4 +85,9 @@ public interface Configuration {
      */
     boolean hasBasicInformation();
 
+    /**
+     * Gets the encryption key needed to decrypt passwords.
+     * @return the encryption key.
+     */
+    byte[] getDecryptionKey();
 }

@@ -9,14 +9,12 @@ import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.util.CryptoUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.*;
 import java.io.*;
 import java.security.InvalidKeyException;
 
@@ -28,10 +26,8 @@ import java.security.InvalidKeyException;
 public class ConfigurationManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationManager.class);
     private static final String DEFAULT_CONFIG_FILE_NAME = "../conf/request_processor.xml";
-    private static final String DEFAULT_CONFIG_FILE_ENCRYPTED_NAME = "../conf/request_processor_enc.xml";
     private static final String DEFAULT_CONFIG_KEY_FILE_NAME = "../conf/request_processor.key";
 
-    private static final String LOGGER_STRING_CANT_WRITE_ENCRYPTED_FILE = "Can't write encrypted files";
     private static ConfigurationManager mobjConfigurationManager;
     private Boolean encrypted = false;
     private Boolean applyEncryption = false;
@@ -60,36 +56,25 @@ public class ConfigurationManager {
         return false;
     }
 
-    private File loadUnencryptedConfigFile() {
-        File file = new File(DEFAULT_CONFIG_FILE_NAME);
-        if (checkConfigurationExist(file)) {
-            LOGGER.info("Found unencrypted config file.");
-            LOGGER.warn("It is highly recommended that the config is encrypted.");
-            return file;
-        }
-        LOGGER.error("No config file found.");
-        return null;
-    }
-
-    private File loadEncryptedConfigFile() {
-        File file = new File(DEFAULT_CONFIG_FILE_ENCRYPTED_NAME);
-        if (checkConfigurationExist(file)) {
-            LOGGER.info("Loading encrypted config file.");
-            encrypted = true;
-            return file;
-        }
-        LOGGER.error("No config file found.");
-        return null;
-    }
-
-    private File loadKeyFile() {
+    private byte[] getKey() throws RequestResponseException {
         File file = new File(DEFAULT_CONFIG_KEY_FILE_NAME);
         if (checkConfigurationExist(file)) {
             LOGGER.info("Loading key file.");
-            return file;
+            try{
+                FileInputStream inputStream = new FileInputStream(file);
+                byte[] buffer = IOUtils.toByteArray(inputStream);
+                inputStream.close();
+                return buffer;
+            } catch (FileNotFoundException fnfExc) {
+                LOGGER.error("Key file not found.");
+                throw new MissingConfigurationException("Unable to find Key file.");
+            } catch (IOException ioExc) {
+                LOGGER.error("Error reading key file.");
+                throw new MissingConfigurationException("Unable to read Key file.");
+            }
         }
         LOGGER.error("No key file found.");
-        return null;
+        throw new MissingConfigurationException("Unable to find Key file.");
     }
 
     /**
@@ -107,25 +92,15 @@ public class ConfigurationManager {
         return mobjLoadedConfiguration;
     }
 
-    /**
-     * Sets a custom loaded Config.
-     *
-     * @param customConfiguration the custom configuration
-     */
-    public void setLoadedConfiguration(ConfigurationImpl customConfiguration) {
-        this.mobjLoadedConfiguration = customConfiguration;
-        encrypted = false;
-    }
-
     private File loadConfigFile() {
-        File file = loadEncryptedConfigFile();
-
-        if (file == null) {
-            LOGGER.info("No encrypted config file found.");
-            applyEncryption = true;
-            file = loadUnencryptedConfigFile();
+        File file = new File(DEFAULT_CONFIG_FILE_NAME);
+        if (checkConfigurationExist(file)) {
+            LOGGER.info("Found unencrypted config file.");
+            LOGGER.warn("It is highly recommended that the config is encrypted.");
+            return file;
         }
-        return file;
+        LOGGER.error("No config file found.");
+        return null;
     }
 
     public ConfigurationImpl loadConfiguration(boolean onlyLoadCustom) throws RequestResponseException {
@@ -156,17 +131,12 @@ public class ConfigurationManager {
         if(!file.exists()) {
             throw new MissingConfigurationException("Config does not exist.");
         }
-        try (FileInputStream fileInputStream = new FileInputStream(file);){
+        try (AutoCloseInputStream fileInputStream = new AutoCloseInputStream(new FileInputStream(file))){
             byte[] buffer = IOUtils.toByteArray(fileInputStream);
-            if (encrypted)
-                buffer = decryptConfig(buffer);
             InputStream configStream = new ByteArrayInputStream(buffer);
-
             mobjLoadedConfiguration = unmarshalConfigFile(configStream);
-            if (!encrypted && applyEncryption) {
-                LOGGER.warn("Config file is not encrypted. Applying encryption.");
-                encryptCurrentConfiguration();
-            }
+            mobjLoadedConfiguration.setDecryptionKey(getKey());
+
             configStream.close();
             fileInputStream.close();
             return mobjLoadedConfiguration;
@@ -174,7 +144,6 @@ public class ConfigurationManager {
             throw new MissingConfigurationException("Can't load config.", ioExc);
         }
     }
-
 
     /**
      * Sets a custom file.
@@ -184,26 +153,6 @@ public class ConfigurationManager {
      */
     public void setCustomConfigFile(File customFile) {
         this.mobjCustomFile = customFile;
-    }
-
-    private byte[] decryptConfig(byte[] configBuffer) throws MissingConfigurationException, MisconfigurationException {
-        LOGGER.info("Start decrypting file");
-        try {
-            File key = loadKeyFile();
-            if (key != null) {
-                byte[] keyBuffer = IOUtils.toByteArray(new FileInputStream(key));
-                configBuffer = CryptoUtil.decrypt(configBuffer, keyBuffer);
-                return configBuffer;
-            }
-            throw new MissingConfigurationException("No key found.");
-
-        } catch (CryptoFailureException cryFailExc) {
-            throw new MisconfigurationException("Something went wrong during decrypting.", cryFailExc);
-        } catch (FileNotFoundException fnfExc) {
-            throw new MissingConfigurationException("Decryption Key is missing.", fnfExc);
-        } catch (IOException ioExc) {
-            throw new MissingConfigurationException("Unable to find Key file..", ioExc);
-        }
     }
 
     private ConfigurationImpl unmarshalConfigFile(InputStream inputStream) throws MisconfigurationException {
@@ -240,25 +189,6 @@ public class ConfigurationManager {
             }
         }
         return outputStream.toByteArray();
-    }
-
-
-    private void encryptCurrentConfiguration() throws RequestResponseException {
-        try {
-            byte[] configData = marshalConfiguration(mobjLoadedConfiguration);
-            byte[] keyData = CryptoUtil.createRandomKey();
-            byte[] encryptedConfigData = CryptoUtil.encrypt(configData, keyData);
-            File encryptedConfigFile = new File(DEFAULT_CONFIG_FILE_ENCRYPTED_NAME);
-            File keyFile = new File(DEFAULT_CONFIG_KEY_FILE_NAME);
-            FileUtils.writeByteArrayToFile(encryptedConfigFile, encryptedConfigData);
-            FileUtils.writeByteArrayToFile(keyFile, keyData);
-        } catch (IOException ioExc) {
-            LOGGER.error(LOGGER_STRING_CANT_WRITE_ENCRYPTED_FILE, ioExc);
-            throw new RequestResponseException(ioExc, -1, LOGGER_STRING_CANT_WRITE_ENCRYPTED_FILE);
-        } catch (InvalidKeyException invKeyExc) {
-            LOGGER.error(LOGGER_STRING_CANT_WRITE_ENCRYPTED_FILE, invKeyExc);
-            throw new CryptoFailureException(invKeyExc);
-        }
     }
 
     public void createConfiguration(ConfigurationImpl currentConfiguration) {

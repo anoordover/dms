@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
@@ -32,6 +33,7 @@ public class ConfigurationImpl implements Configuration {
 
     private String securityToken, serverAddress, username, password, logProps, applicationUUID, searchComponentUUID;
     private int serverPort, maxResults, maxFileSize;
+    private byte[] decryptionKey;
 
 
     @XmlElement(name = CONF_SECURITY_TOKEN)
@@ -215,6 +217,17 @@ public class ConfigurationImpl implements Configuration {
 
     public void setServerPort(int serverPort) {
         this.serverPort = serverPort;
+    }
+
+    //do not store this value!
+    @XmlTransient
+    @Override
+    public byte[] getDecryptionKey() {
+        return decryptionKey;
+    }
+
+    public void setDecryptionKey(byte[] decryptionKey) {
+        this.decryptionKey = decryptionKey;
     }
 
     public void emptyConfiguration() {
