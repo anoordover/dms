@@ -71,7 +71,7 @@ public class CAKDocument extends IADocument {
     @Override
     public void loadContent(String sKey) {
         if (KEY_ATTACHMENT.equals(sKey)) {
-            if (msPayload != null) {
+            if (msPayload != null && !"".equals(msPayload)) {
                 return;
             }
 
@@ -101,7 +101,7 @@ public class CAKDocument extends IADocument {
     @Override
     public byte[] getContent(String sKey) {
         if (KEY_ATTACHMENT.equals(sKey)) {
-            if (msPayload == null) {
+            if (msPayload == null || "".equals(msPayload)) {
                 loadContent(sKey);
             }
 

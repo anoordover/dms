@@ -3,7 +3,7 @@
     <log4j_properties_path>log4j.properties</log4j_properties_path>
   </archiver>
   <worker_manager>
-    <max_worker_threads>1</max_worker_threads>
+    <max_worker_threads>4</max_worker_threads>
     <worker_shutdown_threshold>2048</worker_shutdown_threshold>
     <worker_startup_threshold>1048576</worker_startup_threshold>
     <check_interval_milliseconds>5000</check_interval_milliseconds>
@@ -11,8 +11,8 @@
   <caching>
     <implementing_class>nl.hetcak.dms.CAKCacheManager</implementing_class>
     <base_path>Cache</base_path>
-    <message_threshold>10</message_threshold>
-    <time_threshold>30</time_threshold>
+    <message_threshold>10000</message_threshold>
+    <time_threshold>1800</time_threshold>
     <custom_parameters>
       <document_element_name>ArchiefDocument</document_element_name>
       <document_class>nl.hetcak.dms.CAKDocument</document_class>
@@ -20,13 +20,13 @@
   </caching>
   <rest_api>
     <protocol>http</protocol>
-    <host>infoarchive-sp.back.ont.dms.func.cak-bz.local</host>
+    <host>infoarchive-sp.back.acc.dms.func.cak-bz.local</host>
     <port>8775</port>
     <gateway_protocol>http</gateway_protocol>
-    <gateway_host>infoarchive-rp.front.ont.dms.func.cak-bz.local</gateway_host>
+    <gateway_host>infoarchive-rp.front.acc.dms.func.cak-bz.local</gateway_host>
     <gateway_port>8080</gateway_port>
-    <ingest_user>sa-infoarchive-ont</ingest_user>
-    <encrypted_ingest_password>Ml87DldfHW9PQyERchN3KLYf1O/VRlSnF2S7yK/+Oi4=</encrypted_ingest_password>
+    <ingest_user>sa-infoarchive-acc</ingest_user>
+    <encrypted_ingest_password>CzhxIggWXRNEJTYHZ38MSVKzJ8mwcA/33RBk0jOvZGc=</encrypted_ingest_password>
     <ingest_tenant>INFOARCHIVE</ingest_tenant>
   </rest_api>
   <sip>
@@ -38,7 +38,7 @@
     <document_element_name>ArchiefDocumenten</document_element_name>
     <schema_declaration>urn:hetcak:dms:uitingarchief:2016:08</schema_declaration>
     <sip_output_directory>SIP</sip_output_directory>
-    <sip_backup_directory>SIP_backup</sip_backup_directory>
+    <sip_backup_directory>SIP-backup</sip_backup_directory>
     <custom_parameters>
       <document_element_name>ArchiefDocument</document_element_name>
       <document_class>nl.hetcak.dms.CAKDocument</document_class>
@@ -49,9 +49,9 @@
   <document_source>
     <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
     <custom_parameters>
-      <broker>failover:(ssl://muleaq2.tst.esb.func.cak-bz.local:10744,ssl://muleaq1.tst.esb.func.cak-bz.local:10744)?randomize=false</broker>
-      <truststore>C:\Users\admjzimmermann\Desktop\ws\dms\resources\truststore\truststore_tst_mule1.jks</truststore>
-      <truststore_password>EQIPQj0PDiR1WAhrKBZzApV8EQApZRJQ3gjGJcDZkfS53HCEu++lJq13hSlyOztNVqp5fBnGbzxQHMtYOsqCSg==</truststore_password>
+      <broker>failover:(ssl://muleaq1.acc.esb.func.cak-bz.local:10544,ssl://muleaq2.acc.esb.func.cak-bz.local:10544)?randomize=false</broker>
+      <truststore>resources/truststore/truststore_acc_mule1.jks</truststore>
+      <truststore_password>MiQ4aTdoGzIxPjoAdSROeHIqteqaZePzx5nh7DFwKP0=</truststore_password>
       <result_format>
         <![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
       <results_element>
@@ -192,6 +192,11 @@
     <error>
       <error_code>3009</error_code>
       <error_text>Failed to store and export PDF</error_text>
+      <error_handling>log_error;notify_source</error_handling>
+    </error>
+    <error>
+      <error_code>3010</error_code>
+      <error_text>The provided metadata could not be validated</error_text>
       <error_handling>log_error;notify_source</error_handling>
     </error>
     <error>

@@ -54,9 +54,7 @@ public class MultipartUtility {
             int iRead;
             while ((iRead = objFileInput.read(objBuffer)) != -1) {
                 objConnection.getOutputStream().write(objBuffer, 0, iRead);
-                objConnection.getOutputStream().flush();
             }
-            objConnection.getOutputStream().flush();
         }
         objWriter.append(LINE_FEED);
         objWriter.flush();
