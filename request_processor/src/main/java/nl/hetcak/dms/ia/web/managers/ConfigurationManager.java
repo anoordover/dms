@@ -27,8 +27,6 @@ public class ConfigurationManager {
     private static final String DEFAULT_CONFIG_KEY_FILE_NAME = "../conf/request_processor.key";
 
     private static ConfigurationManager mobjConfigurationManager;
-    private Boolean encrypted = false;
-    private Boolean applyEncryption = false;
     private ConfigurationImpl mobjLoadedConfiguration;
     private File mobjCustomFile;
 

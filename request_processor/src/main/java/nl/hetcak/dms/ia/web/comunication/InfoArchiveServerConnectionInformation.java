@@ -6,9 +6,9 @@ package nl.hetcak.dms.ia.web.comunication;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class InfoArchiveServerConnectionInformation implements ServerConnectionInformation {
-    private String serverAddress;
-    private int serverPort;
-    private int maxItems;
+    private String msServerAddress;
+    private int miServerPort;
+    private int miMaxItems;
 
     /**
      * Gets the server address.
@@ -17,7 +17,7 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
      */
     @Override
     public String getServerAddress() {
-        return serverAddress;
+        return msServerAddress;
     }
 
     /**
@@ -27,7 +27,7 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
      */
     @Override
     public void setServerAddress(String serverAddress) {
-        this.serverAddress = serverAddress;
+        this.msServerAddress = serverAddress;
     }
 
     /**
@@ -37,7 +37,7 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
      */
     @Override
     public int getServerPort() {
-        return serverPort;
+        return miServerPort;
     }
 
     /**
@@ -47,7 +47,7 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
      */
     @Override
     public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
+        this.miServerPort = serverPort;
     }
 
     /**
@@ -57,7 +57,7 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
      */
     @Override
     public int getMaxItems() {
-        return maxItems;
+        return miMaxItems;
     }
 
     /**
@@ -67,7 +67,7 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
      */
     @Override
     public void setMaxItems(int maxItems) {
-        this.maxItems = maxItems;
+        this.miMaxItems = maxItems;
     }
 
 

@@ -31,38 +31,38 @@ public class ConfigurationImpl implements Configuration {
     private final static String CONF_APPLICATION_UUID = "ia_application_uuid";
     private final static String CONF_SEARCHCOMPOSITION_UUID = "ia_searchcomposition_uuid";
 
-    private String securityToken, serverAddress, username, password, logProps, applicationUUID, searchComponentUUID;
-    private int serverPort, maxResults, maxFileSize;
-    private byte[] decryptionKey;
+    private String msSecurityToken, msServerAddress, msUsername, msPassword, msLogProps, msApplicationUUID, msSearchComponentUUID;
+    private int miServerPort, miMaxResults, miMaxFileSize;
+    private byte[] mbaDecryptionKey;
 
 
     @XmlElement(name = CONF_SECURITY_TOKEN)
     public String getSecurityToken() {
-        return securityToken;
+        return msSecurityToken;
     }
 
     public void setSecurityToken(String securityToken) {
-        this.securityToken = securityToken;
+        this.msSecurityToken = securityToken;
     }
 
     @Override
     public String getInfoArchiveServerAddress() {
-        return serverAddress;
+        return msServerAddress;
     }
 
     @Override
     public int getInfoArchiveServerPort() {
-        return serverPort;
+        return miServerPort;
     }
 
     @Override
     public Credentials getInfoArchiveCredentials() {
         Credentials credentials = new InfoArchiveCredentials();
-        credentials.setUsername(username);
-        credentials.setPassword(password);
+        credentials.setUsername(msUsername);
+        credentials.setPassword(msPassword);
 
-        if (StringUtils.isNotBlank(securityToken)) {
-            credentials.setSecurityToken(securityToken);
+        if (StringUtils.isNotBlank(msSecurityToken)) {
+            credentials.setSecurityToken(msSecurityToken);
             credentials.setUseLoginToken(true);
         }
         return credentials;
@@ -71,16 +71,16 @@ public class ConfigurationImpl implements Configuration {
     @Override
     public ServerConnectionInformation getInfoArchiveServerInformation() {
         InfoArchiveServerConnectionInformation iaconnection = new InfoArchiveServerConnectionInformation();
-        iaconnection.setServerAddress(serverAddress);
-        iaconnection.setServerPort(serverPort);
-        iaconnection.setMaxItems(maxResults);
+        iaconnection.setServerAddress(msServerAddress);
+        iaconnection.setServerPort(miServerPort);
+        iaconnection.setMaxItems(miMaxResults);
         return iaconnection;
     }
 
     @XmlElement(name = CONF_MAX_RESULTS)
     @Override
     public int getMaxResults() {
-        return maxResults;
+        return miMaxResults;
     }
 
     /**
@@ -91,28 +91,28 @@ public class ConfigurationImpl implements Configuration {
     @XmlElement(name = CONF_MAX_FILESIZE)
     @Override
     public int getMaxFileSize() {
-        return maxFileSize ;
+        return miMaxFileSize;
     }
 
     public void setMaxResults(int maxResults) {
-        this.maxResults = maxResults;
+        this.miMaxResults = maxResults;
     }
 
-    public void setMaxFileSize(int maxFileSize) { this.maxFileSize = maxFileSize; }
+    public void setMaxFileSize(int maxFileSize) { this.miMaxFileSize = maxFileSize; }
 
     @XmlElement(name = CONF_APPLICATION_UUID)
     @Override
     public String getApplicationUUID() {
-        return applicationUUID;
+        return msApplicationUUID;
     }
 
     public void setApplicationUUID(String applicationUUID) {
-        this.applicationUUID = applicationUUID;
+        this.msApplicationUUID = applicationUUID;
     }
 
     @Override
     public String getSearchCompositionUUID() {
-        return searchComponentUUID;
+        return msSearchComponentUUID;
     }
 
     @Override
@@ -153,7 +153,7 @@ public class ConfigurationImpl implements Configuration {
                     LOGGER.warn("Server information have no value.");
                     result = false;
                 }
-                if (applicationUUID.length() == 0 || searchComponentUUID.length() == 0) {
+                if (msApplicationUUID.length() == 0 || msSearchComponentUUID.length() == 0) {
                     LOGGER.warn("Server uuid information have no value.");
                     result = false;
                 }
@@ -167,79 +167,79 @@ public class ConfigurationImpl implements Configuration {
 
     @XmlElement(name = CONF_LOG_PROPS)
     public String getLogProps() {
-        return logProps;
+        return msLogProps;
     }
 
     public void setLogProps(String logProps) {
-        this.logProps = logProps;
+        this.msLogProps = logProps;
     }
 
     @XmlElement(name = CONF_SERVER_ADDRESS)
     public String getServerAddress() {
-        return serverAddress;
+        return msServerAddress;
     }
 
     public void setServerAddress(String serverAddress) {
-        this.serverAddress = serverAddress;
+        this.msServerAddress = serverAddress;
     }
 
     @XmlElement(name = CONF_SERVICE_USER)
     public String getUsername() {
-        return username;
+        return msUsername;
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.msUsername = username;
     }
 
     @XmlElement(name = CONF_SERVICE_USER_PASSWORD)
     public String getPassword() {
-        return password;
+        return msPassword;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.msPassword = password;
     }
 
     @XmlElement(name = CONF_SEARCHCOMPOSITION_UUID)
     public String getSearchComponentUUID() {
-        return searchComponentUUID;
+        return msSearchComponentUUID;
     }
 
     public void setSearchComponentUUID(String searchComponentUUID) {
-        this.searchComponentUUID = searchComponentUUID;
+        this.msSearchComponentUUID = searchComponentUUID;
     }
 
     @XmlElement(name = CONF_SERVER_PORT)
     public int getServerPort() {
-        return serverPort;
+        return miServerPort;
     }
 
     public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
+        this.miServerPort = serverPort;
     }
 
     //do not store this value!
     @XmlTransient
     @Override
     public byte[] getDecryptionKey() {
-        return decryptionKey;
+        return mbaDecryptionKey;
     }
 
     public void setDecryptionKey(byte[] decryptionKey) {
-        this.decryptionKey = decryptionKey;
+        this.mbaDecryptionKey = decryptionKey;
     }
 
     public void emptyConfiguration() {
-        securityToken = "";
-        serverAddress = "localhost";
-        username = "";
-        password = "";
-        logProps = "";
-        serverPort = 8765;
-        maxResults = 100;
-        maxFileSize = 2500000;
-        applicationUUID = "000000-000000-000000";
-        searchComponentUUID = "000000-000000-000000";
+        msSecurityToken = "";
+        msServerAddress = "localhost";
+        msUsername = "";
+        msPassword = "";
+        msLogProps = "";
+        miServerPort = 8765;
+        miMaxResults = 100;
+        miMaxFileSize = 2500000;
+        msApplicationUUID = "000000-000000-000000";
+        msSearchComponentUUID = "000000-000000-000000";
     }
 }

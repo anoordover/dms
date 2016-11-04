@@ -8,12 +8,12 @@ import java.util.Calendar;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class InfoArchiveCredentials implements Credentials {
-    private String username;
-    private String password;
-    private String securityToken;
-    private String recoveryToken;
-    private Calendar invalidationTime;
-    private boolean useLoginToken = false;
+    private String msUsername;
+    private String msPassword;
+    private String msSecurityToken;
+    private String msRecoveryToken;
+    private Calendar mobjInvalidationTime;
+    private boolean mbUseLoginToken = false;
 
     /**
      * Sets the time when the security token is expired.
@@ -22,7 +22,7 @@ public class InfoArchiveCredentials implements Credentials {
      */
     @Override
     public void setSecurityTokenInvalidationTime(Calendar time) {
-        this.invalidationTime = time;
+        this.mobjInvalidationTime = time;
     }
 
     /**
@@ -32,7 +32,7 @@ public class InfoArchiveCredentials implements Credentials {
      */
     @Override
     public String getUsername() {
-        return username;
+        return msUsername;
     }
 
     /**
@@ -42,27 +42,27 @@ public class InfoArchiveCredentials implements Credentials {
      */
     @Override
     public void setUsername(String username) {
-        this.username = username;
+        this.msUsername = username;
     }
 
     /**
-     * Gets the decrypted password.
+     * Gets the decrypted msPassword.
      *
-     * @return the password
+     * @return the msPassword
      */
     @Override
     public String getPassword() {
-        return password;
+        return msPassword;
     }
 
     /**
-     * Sets the password.
+     * Sets the msPassword.
      *
      * @param password The Password.
      */
     @Override
     public void setPassword(String password) {
-        this.password = password;
+        this.msPassword = password;
     }
 
     /**
@@ -72,7 +72,7 @@ public class InfoArchiveCredentials implements Credentials {
      */
     @Override
     public String getSecurityToken() {
-        return securityToken;
+        return msSecurityToken;
     }
 
     /**
@@ -82,7 +82,7 @@ public class InfoArchiveCredentials implements Credentials {
      */
     @Override
     public void setSecurityToken(String securityToken) {
-        this.securityToken = securityToken;
+        this.msSecurityToken = securityToken;
     }
 
     /**
@@ -92,7 +92,7 @@ public class InfoArchiveCredentials implements Credentials {
      */
     @Override
     public String getRecoveryToken() {
-        return recoveryToken;
+        return msRecoveryToken;
     }
 
     /**
@@ -102,7 +102,7 @@ public class InfoArchiveCredentials implements Credentials {
      */
     @Override
     public void setRecoveryToken(String recoveryToken) {
-        this.recoveryToken = recoveryToken;
+        this.msRecoveryToken = recoveryToken;
     }
 
     /**
@@ -112,29 +112,29 @@ public class InfoArchiveCredentials implements Credentials {
      */
     @Override
     public boolean isSecurityTokenValid() {
-        if (invalidationTime == null) {
+        if (mobjInvalidationTime == null) {
             return false;
         }
-        return invalidationTime.after(Calendar.getInstance());
+        return mobjInvalidationTime.after(Calendar.getInstance());
     }
 
     /**
-     * Allows the User to set a token and ignore the username and password setting.
+     * Allows the User to set a token and ignore the username and msPassword setting.
      *
-     * @return true if the username and password value needs to be ignored.
+     * @return true if the username and msPassword value needs to be ignored.
      */
     @Override
     public boolean useTokenOnlyConfiguration() {
-        return useLoginToken;
+        return mbUseLoginToken;
     }
 
     /**
-     * Allows the User to set a token and ignore the username and password setting.
+     * Allows the User to set a token and ignore the username and msPassword setting.
      *
-     * @param useLoginToken true if the username and password value needs to be ignored.
+     * @param useLoginToken true if the username and msPassword value needs to be ignored.
      */
     @Override
     public void setUseLoginToken(Boolean useLoginToken) {
-        this.useLoginToken = useLoginToken;
+        this.mbUseLoginToken = useLoginToken;
     }
 }

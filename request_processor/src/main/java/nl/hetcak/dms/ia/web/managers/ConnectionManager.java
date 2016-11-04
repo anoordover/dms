@@ -16,13 +16,13 @@ import java.io.File;
  */
 public class ConnectionManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionManager.class);
-    private static ConnectionManager connectionManager;
-    private File configurationFile;
-    private Credentials credentials;
-    private Configuration configuration;
+    private static ConnectionManager sobjConnectionManager;
+    private File mobjConfigurationFile;
+    private Credentials mobjCredentials;
+    private Configuration mobjConfiguration;
 
     private ConnectionManager() {
-        LOGGER.debug("New connectionManager created.");
+        LOGGER.debug("New sobjConnectionManager created.");
     }
 
     /**
@@ -32,91 +32,91 @@ public class ConnectionManager {
      */
     public static ConnectionManager getInstance() {
         LOGGER.info("Requesting ConnectionManager instance.");
-        if (connectionManager == null) {
+        if (sobjConnectionManager == null) {
             LOGGER.info("Creating a new ConnectionManager instance.");
-            connectionManager = new ConnectionManager();
+            sobjConnectionManager = new ConnectionManager();
         }
         LOGGER.info("Returning ConnectionManager instance.");
-        return connectionManager;
+        return sobjConnectionManager;
     }
 
     /**
-     * Set a new configuration file.
+     * Set a new mobjConfiguration file.
      *
-     * @param configurationFile the new configuration file.
+     * @param configurationFile the new mobjConfiguration file.
      */
     public void setConfigurationFile(File configurationFile) {
         LOGGER.info("Setting new Configuration file.");
-        if (configuration != null) {
-            LOGGER.debug("Unload existing configuration and credentials.");
-            configuration = null;
-            credentials = null;
+        if (mobjConfiguration != null) {
+            LOGGER.debug("Unload existing mobjConfiguration and mobjCredentials.");
+            mobjConfiguration = null;
+            mobjCredentials = null;
         }
-        this.configurationFile = configurationFile;
+        this.mobjConfigurationFile = configurationFile;
     }
 
     /**
      * Gets the current active Credentials.
      *
-     * @return Active credentials that are ready to be used.
-     * @throws MissingConfigurationException    Can't find configuration.
-     * @throws MisconfigurationException        Missing basic configuration settings.
+     * @return Active mobjCredentials that are ready to be used.
+     * @throws MissingConfigurationException    Can't find mobjConfiguration.
+     * @throws MisconfigurationException        Missing basic mobjConfiguration settings.
      * @throws LoginFailureException            Wrong login information.
      * @throws ServerConnectionFailureException Can't connect to server.
      */
     public Credentials getActiveCredentials() throws RequestResponseException {
         LOGGER.info("Requesting Active Credentials.");
 
-        if (credentials == null) {
-            LOGGER.info("No Active Credentials found. Loading credentials from config.");
-            credentials = getConfiguration().getInfoArchiveCredentials();
+        if (mobjCredentials == null) {
+            LOGGER.info("No Active Credentials found. Loading mobjCredentials from config.");
+            mobjCredentials = getConfiguration().getInfoArchiveCredentials();
         }
 
-        if (!credentials.isSecurityTokenValid()) {
+        if (!mobjCredentials.isSecurityTokenValid()) {
             LOGGER.info("Security token is not valid. Starting LoginRequest.");
             LoginRequest loginRequest = new LoginRequest(getConfiguration());
 
-            if (credentials.getSecurityToken() == null) {
+            if (mobjCredentials.getSecurityToken() == null) {
                 LOGGER.info("Requesting new security token. executing Login Request.");
-                credentials = loginRequest.loginInfoArchive();
-            } else if (credentials.getRecoveryToken() != null) {
+                mobjCredentials = loginRequest.loginInfoArchive();
+            } else if (mobjCredentials.getRecoveryToken() != null) {
                 LOGGER.info("Refreshing security token. executing Login Request.");
                 try {
-                    credentials = loginRequest.refreshCredentialsInfoArchive(credentials);
+                    mobjCredentials = loginRequest.refreshCredentialsInfoArchive(mobjCredentials);
                 } catch (RequestResponseException rrExc) {
                     LOGGER.info("Refresh token expired.");
                     LOGGER.error("Refresh token error.", rrExc);
                     LOGGER.info("Retry Login Request.");
                     //retry-login
-                    credentials.setRecoveryToken("");
-                    credentials = loginRequest.loginInfoArchive();
+                    mobjCredentials.setRecoveryToken("");
+                    mobjCredentials = loginRequest.loginInfoArchive();
                 }
             }
         }
         LOGGER.info("Returning Active token.");
-        return credentials;
+        return mobjCredentials;
     }
 
     /**
-     * Gets the current configuration.
+     * Gets the current mobjConfiguration.
      *
      * @return the {@link Configuration} object.
-     * @throws MissingConfigurationException Can't find configuration
-     * @throws MisconfigurationException     Missing basic configuration settings.
+     * @throws MissingConfigurationException Can't find mobjConfiguration
+     * @throws MisconfigurationException     Missing basic mobjConfiguration settings.
      */
     public Configuration getConfiguration() throws RequestResponseException {
-        LOGGER.info("Getting current configuration.");
-        if (configuration == null) {
+        LOGGER.info("Getting current mobjConfiguration.");
+        if (mobjConfiguration == null) {
             LOGGER.info("Load config file.");
-            if (configurationFile != null) {
-                configuration = loadConfigurationFromFile(configurationFile);
+            if (mobjConfigurationFile != null) {
+                mobjConfiguration = loadConfigurationFromFile(mobjConfigurationFile);
             } else {
                 ConfigurationManager configurationManager = ConfigurationManager.getInstance();
-                configuration = configurationManager.loadConfiguration(false);
+                mobjConfiguration = configurationManager.loadConfiguration(false);
             }
         }
         LOGGER.info("Returning config file.");
-        return configuration;
+        return mobjConfiguration;
     }
 
     private Configuration loadConfigurationFromFile(File file) throws RequestResponseException {

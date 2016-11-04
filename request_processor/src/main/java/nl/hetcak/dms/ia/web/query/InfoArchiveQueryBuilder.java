@@ -31,15 +31,15 @@ public class InfoArchiveQueryBuilder {
     private static final String OPERATOR_LESS_OR_EQUAL = "LESS_OR_EQUAL";
     private static final String OPERATOR_LESS = "LESS";
 
-    private List<Criterion> criterions;
+    private List<Criterion> mobjaCriterions;
 
     public InfoArchiveQueryBuilder() {
-        this.criterions = new ArrayList<>();
+        this.mobjaCriterions = new ArrayList<>();
     }
 
     @XmlElement(name = "criterion")
     public List<Criterion> getCriterions() {
-        return criterions;
+        return mobjaCriterions;
     }
 
     /**
@@ -122,7 +122,7 @@ public class InfoArchiveQueryBuilder {
         criterion.getValues().add(value1);
         criterion.getValues().add(value2);
         LOGGER.debug(String.format("[%s] Added %s criteria", this.toString(), OPERATOR_BETWEEN));
-        this.criterions.add(criterion);
+        this.mobjaCriterions.add(criterion);
         return this;
     }
 
@@ -131,7 +131,7 @@ public class InfoArchiveQueryBuilder {
         criterion.setName(name);
         criterion.setOperator(operator);
         criterion.getValues().add(value);
-        this.criterions.add(criterion);
+        this.mobjaCriterions.add(criterion);
         LOGGER.debug(String.format("[%s] Added %s criteria", this.toString(), operator));
     }
 
