@@ -123,6 +123,12 @@ public class LoginRequest {
             message.append(errorDescription);
             ServerConnectionFailureException scfExc = new ServerConnectionFailureException(message.toString());
             return scfExc;
+        } else if(errorTitle.contentEquals("invalid_token")) {
+            StringBuilder message = new StringBuilder("Token error: ");
+            message.append(errorTitle);
+            message.append(": ");
+            message.append(errorDescription);
+            return new LoginFailureException(message.toString());
         } else {
             StringBuilder message = new StringBuilder("Unexpected error: ");
             message.append(errorTitle);

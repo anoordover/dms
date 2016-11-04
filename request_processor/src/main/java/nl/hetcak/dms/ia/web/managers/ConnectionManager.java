@@ -81,7 +81,14 @@ public class ConnectionManager {
                 credentials = loginRequest.loginInfoArchive();
             } else if (credentials.getRecoveryToken() != null) {
                 LOGGER.info("Refreshing security token. executing Login Request.");
-                credentials = loginRequest.refreshCredentialsInfoArchive(credentials);
+                try {
+                    credentials = loginRequest.refreshCredentialsInfoArchive(credentials);
+                } catch (RequestResponseException rrExc) {
+                    LOGGER.error("Refresh token error.", rrExc);
+                    //retry-login
+                    credentials.setRecoveryToken("");
+                    credentials = loginRequest.loginInfoArchive();
+                }
             }
         }
         LOGGER.info("Returning Active token.");
