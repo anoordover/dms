@@ -41,8 +41,4 @@ public class Criterion {
     public List<String> getValues() {
         return values;
     }
-    
-    public void setValues(List<String> values) {
-        this.values = values;
-    }
 }

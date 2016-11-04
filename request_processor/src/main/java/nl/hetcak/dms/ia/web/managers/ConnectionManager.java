@@ -84,7 +84,9 @@ public class ConnectionManager {
                 try {
                     credentials = loginRequest.refreshCredentialsInfoArchive(credentials);
                 } catch (RequestResponseException rrExc) {
+                    LOGGER.info("Refresh token expired.");
                     LOGGER.error("Refresh token error.", rrExc);
+                    LOGGER.info("Retry Login Request.");
                     //retry-login
                     credentials.setRecoveryToken("");
                     credentials = loginRequest.loginInfoArchive();

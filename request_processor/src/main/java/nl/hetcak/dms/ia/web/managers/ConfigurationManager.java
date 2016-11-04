@@ -122,9 +122,12 @@ public class ConfigurationManager {
 
     private ConfigurationImpl readConfig(File file) throws RequestResponseException {
         if(!file.exists()) {
-            throw new MissingConfigurationException("Config does not exist.");
+            MissingConfigurationException missingConfigurationException = new MissingConfigurationException("Config does not exist.");
+            LOGGER.error("File does not exist!", missingConfigurationException);
+            throw missingConfigurationException;
         }
         try (AutoCloseInputStream fileInputStream = new AutoCloseInputStream(new FileInputStream(file))){
+            LOGGER.info("Reading configuration");
             byte[] buffer = IOUtils.toByteArray(fileInputStream);
             InputStream configStream = new ByteArrayInputStream(buffer);
             mobjLoadedConfiguration = unmarshalConfigFile(configStream);
@@ -136,6 +139,7 @@ public class ConfigurationManager {
             }
             configStream.close();
             fileInputStream.close();
+            LOGGER.info("Configuration has been loaded.");
             return mobjLoadedConfiguration;
         } catch (IOException ioExc) {
             throw new MissingConfigurationException("Can't load config.", ioExc);
@@ -162,30 +166,6 @@ public class ConfigurationManager {
             LOGGER.error("Failed to load configuration.", jaxbExc);
             throw new MisconfigurationException("Failed to load configuration.", jaxbExc);
         }
-    }
-
-    private byte[] marshalConfiguration(ConfigurationImpl configuration) throws MissingConfigurationException {
-        if (configuration == null) {
-            configuration = mobjLoadedConfiguration;
-        }
-        if (configuration == null) {
-            throw new MissingConfigurationException("No configuration found.");
-        }
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try {
-            JAXBContext context = JAXBContext.newInstance(ConfigurationImpl.class);
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.marshal(mobjLoadedConfiguration, outputStream);
-        } catch (JAXBException jaxbExc) {
-            LOGGER.error("Failed to create configuration.", jaxbExc);
-        } finally {
-            try {
-                outputStream.close();
-            } catch (IOException ioExc) {
-                LOGGER.error("Failed to write to buffer.", ioExc);
-            }
-        }
-        return outputStream.toByteArray();
     }
 
     public void createConfiguration(ConfigurationImpl currentConfiguration) {

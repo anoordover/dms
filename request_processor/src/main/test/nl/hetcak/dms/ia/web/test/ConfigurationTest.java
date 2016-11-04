@@ -1,6 +1,7 @@
 package nl.hetcak.dms.ia.web.test;
 
 import nl.hetcak.dms.ia.web.comunication.ServerConnectionInformation;
+import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.configuration.ConfigurationImpl;
 import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.MissingConfigurationException;
@@ -20,6 +21,7 @@ import java.io.File;
 public class ConfigurationTest {
     private static final String WORKING_CONFIG = "test/config/working.xml";
     private static final String MISCONFIGURATION_CONFIG = "test/config/misconfig.xml";
+    private static final String NOTEXISTING_CONFIG = "test/config/MISSING.xml";
     
     /**
      * Create a load failure.
@@ -51,6 +53,18 @@ public class ConfigurationTest {
     }
     
     /**
+     * Load a non existing configuration.
+     */
+    @Test(expected = Exception.class, timeout = 1250)
+    public void missingConfiguration() throws Exception {
+        ConfigurationManager configurationManager  = ConfigurationManager.getInstance();
+        File misconfig = new File(NOTEXISTING_CONFIG);
+        Assert.assertNotNull(configurationManager);
+        configurationManager.setCustomConfigFile(misconfig);
+        configurationManager.loadConfiguration(true);
+    }
+    
+    /**
      * Load valid configuration
      */
     @Test(timeout = 1000)
@@ -60,6 +74,17 @@ public class ConfigurationTest {
         Assert.assertNotNull(configurationManager);
         configurationManager.setCustomConfigFile(working_config);
         configurationManager.loadConfiguration(true);
+    }
+    
+    /**
+     * Load configuration
+     */
+    @Test(timeout = 1000)
+    public void loadConfiguration() throws Exception {
+        ConfigurationManager configurationManager  = ConfigurationManager.getInstance();
+        Configuration configuration = configurationManager.getCurrentConfiguration();
+        Assert.assertNotNull(configuration);
+        
     }
     
     /**
