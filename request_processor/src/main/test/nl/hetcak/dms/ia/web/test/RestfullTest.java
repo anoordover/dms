@@ -2,8 +2,7 @@ package nl.hetcak.dms.ia.web.test;
 
 import nl.hetcak.dms.ia.web.ConfigService;
 import nl.hetcak.dms.ia.web.DocumentService;
-import org.apache.http.HttpRequest;
-import org.apache.http.message.BasicHttpRequest;
+import nl.hetcak.dms.ia.web.RequestProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -11,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -33,6 +31,12 @@ public class RestfullTest {
     private final static String BAD_REQUEST_DOCUMENT = "<ArchiefDocumentId>1909957399</ArchiefDocumentId><Volgnummer>001</Volgnummer>";
     private final static String BAD_REQUEST_SEARCH1 = "<ArchiefDocumentsoort>Z10</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde>";
     
+    
+    @Test
+    public void testJavaRsConfig() {
+        RequestProcessor rp = new RequestProcessor();
+        Assert.assertNotNull(rp);
+    }
     
     @Test
     public void testDefaultResponse() throws Exception {

@@ -12,33 +12,33 @@ import java.util.List;
  */
 @XmlRootElement(name = "criterion")
 public class Criterion {
-    private String name, operator;
-    private List<String> values;
+    private String msName, msOperator;
+    private List<String> mobjaValues;
     
     public Criterion() {
-        this.values = new ArrayList<>();
+        this.mobjaValues = new ArrayList<>();
     }
     
     @XmlElement(name="name")
     public String getName() {
-        return name;
+        return msName;
     }
     
     public void setName(String name) {
-        this.name = name;
+        this.msName = name;
     }
     
     @XmlElement(name="operator")
     public String getOperator() {
-        return operator;
+        return msOperator;
     }
     
     public void setOperator(String operator) {
-        this.operator = operator;
+        this.msOperator = operator;
     }
     
     @XmlElement(name="value")
     public List<String> getValues() {
-        return values;
+        return mobjaValues;
     }
 }

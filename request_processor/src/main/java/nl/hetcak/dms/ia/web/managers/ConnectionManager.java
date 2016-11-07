@@ -22,7 +22,7 @@ public class ConnectionManager {
     private Configuration mobjConfiguration;
 
     private ConnectionManager() {
-        LOGGER.debug("New sobjConnectionManager created.");
+        LOGGER.debug("New connectionManager created.");
     }
 
     /**
@@ -41,14 +41,14 @@ public class ConnectionManager {
     }
 
     /**
-     * Set a new mobjConfiguration file.
+     * Set a new configuration file.
      *
-     * @param configurationFile the new mobjConfiguration file.
+     * @param configurationFile the new configuration file.
      */
     public void setConfigurationFile(File configurationFile) {
         LOGGER.info("Setting new Configuration file.");
         if (mobjConfiguration != null) {
-            LOGGER.debug("Unload existing mobjConfiguration and mobjCredentials.");
+            LOGGER.debug("Unload existing configuration and credentials.");
             mobjConfiguration = null;
             mobjCredentials = null;
         }
@@ -58,7 +58,7 @@ public class ConnectionManager {
     /**
      * Gets the current active Credentials.
      *
-     * @return Active mobjCredentials that are ready to be used.
+     * @return Active credentials that are ready to be used.
      * @throws MissingConfigurationException    Can't find mobjConfiguration.
      * @throws MisconfigurationException        Missing basic mobjConfiguration settings.
      * @throws LoginFailureException            Wrong login information.
@@ -68,7 +68,7 @@ public class ConnectionManager {
         LOGGER.info("Requesting Active Credentials.");
 
         if (mobjCredentials == null) {
-            LOGGER.info("No Active Credentials found. Loading mobjCredentials from config.");
+            LOGGER.info("No Active Credentials found. Loading credentials from config.");
             mobjCredentials = getConfiguration().getInfoArchiveCredentials();
         }
 
@@ -98,14 +98,14 @@ public class ConnectionManager {
     }
 
     /**
-     * Gets the current mobjConfiguration.
+     * Gets the current {@link Configuration}.
      *
      * @return the {@link Configuration} object.
-     * @throws MissingConfigurationException Can't find mobjConfiguration
-     * @throws MisconfigurationException     Missing basic mobjConfiguration settings.
+     * @throws MissingConfigurationException Can't find configuration
+     * @throws MisconfigurationException     Missing basic configuration settings.
      */
     public Configuration getConfiguration() throws RequestResponseException {
-        LOGGER.info("Getting current mobjConfiguration.");
+        LOGGER.info("Getting current configuration.");
         if (mobjConfiguration == null) {
             LOGGER.info("Load config file.");
             if (mobjConfigurationFile != null) {

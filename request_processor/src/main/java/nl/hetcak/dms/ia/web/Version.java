@@ -14,6 +14,7 @@ public class Version {
     private static final int VERSION_REVISION = 0;
 
     private Version() {
+        //no constructor
     }
 
     public static String currentVersion() {

@@ -303,7 +303,7 @@ public class RecordRequest {
         return infoArchiveDocument;
     }
 
-    //(so it has come to this...) here are some methods to fix cyclomatic complexity...
+    //(so it has come to this...)
     private InfoArchiveDocument parseFirstTenFields(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column) throws ParseException {
         switch (columnName) {
             case PARSE_DOCUMENT_ID:

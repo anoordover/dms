@@ -8,7 +8,7 @@ import java.security.PrivilegedActionException;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class ContentGrabbingException extends RequestResponseException {
-    public static final int ERROR_CODE = 0;
+    public static final int ERROR_CODE = 2101;
     public static final String ERROR_MESSAGE = "There is an error within the request message, please contact an Administrator.";
 
     /**
