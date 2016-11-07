@@ -102,7 +102,7 @@ public class DocumentService {
     }
     
     private Response createRequestResponseExceptionResponse(RequestResponseException rrExc) {
-        LOGGER.error(rrExc.getMessage(), rrExc);
+        LOGGER.error(rrExc.getUserErrorMessage(), rrExc);
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(rrExc.getErrorCode());
         errorResponse.setErrorDescription(rrExc.getUserErrorMessage());

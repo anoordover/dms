@@ -68,4 +68,31 @@ public class QueryTest {
         Assert.assertTrue(query.contains("123"));
         Assert.assertTrue(query.contains("LESS_OR_EQUAL"));
     }
+    
+    @Test
+    public void testStartsWithQuery() throws JAXBException {
+        InfoArchiveQueryBuilder queryBuilder = new InfoArchiveQueryBuilder();
+        String query = queryBuilder.addStartsWithCriteria("Test", "123").build();
+        Assert.assertNotNull(query);
+        Assert.assertTrue(query.contains("123"));
+        Assert.assertTrue(query.contains("STARTS_WITH"));
+    }
+    
+    @Test
+    public void testEndsWithQuery() throws JAXBException {
+        InfoArchiveQueryBuilder queryBuilder = new InfoArchiveQueryBuilder();
+        String query = queryBuilder.addEndsWithCriteria("Test", "123").build();
+        Assert.assertNotNull(query);
+        Assert.assertTrue(query.contains("123"));
+        Assert.assertTrue(query.contains("ENDS_WITH"));
+    }
+    
+    @Test
+    public void testFullSearchQuery() throws JAXBException {
+        InfoArchiveQueryBuilder queryBuilder = new InfoArchiveQueryBuilder();
+        String query = queryBuilder.addFullTextCriteria("Test", "123").build();
+        Assert.assertNotNull(query);
+        Assert.assertTrue(query.contains("123"));
+        Assert.assertTrue(query.contains("FULLTEXT"));
+    }
 }

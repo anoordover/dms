@@ -135,7 +135,7 @@ public class RequestResponseException extends Exception {
      * @return the user error message.
      */
     public String getUserErrorMessage() {
-        return userErrorMessage;
+        return "(" + errorCode + ") " + userErrorMessage;
     }
 
     /**

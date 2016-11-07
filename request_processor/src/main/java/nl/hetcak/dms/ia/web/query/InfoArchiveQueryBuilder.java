@@ -30,6 +30,10 @@ public class InfoArchiveQueryBuilder {
     private static final String OPERATOR_GREATER = "GREATER";
     private static final String OPERATOR_LESS_OR_EQUAL = "LESS_OR_EQUAL";
     private static final String OPERATOR_LESS = "LESS";
+    
+    private static final String OPERATOR_STARTS_WITH = "STARTS_WITH";
+    private static final String OPERATOR_ENDS_WITH = "ENDS_WITH";
+    private static final String OPERATOR_FULLTEXT = "FULLTEXT";
 
     private List<Criterion> mobjaCriterions;
 
@@ -105,6 +109,40 @@ public class InfoArchiveQueryBuilder {
      */
     public InfoArchiveQueryBuilder addLessCriteria(String name, String value) {
         addCriterion(name, OPERATOR_LESS, value);
+        return this;
+    }
+    
+    /**
+     * Added a new Starts with {@link Criterion} to this query.
+     * @param name  Name of the column.
+     * @param value the value.
+     */
+    public InfoArchiveQueryBuilder addStartsWithCriteria(String name, String value) {
+        addCriterion(name, OPERATOR_STARTS_WITH, value);
+        return this;
+    }
+    
+    /**
+     * Added a new Ends with {@link Criterion} to this query.
+     * @param name  Name of the column.
+     * @param value the value.
+     */
+    public InfoArchiveQueryBuilder addEndsWithCriteria(String name, String value) {
+        addCriterion(name, OPERATOR_ENDS_WITH, value);
+        return this;
+    }
+    
+    /**
+     * Added a new FullText {@link Criterion} to this query.
+     * @param name  Name of the column without any *.
+     * @param value the value.
+     */
+    public InfoArchiveQueryBuilder addFullTextCriteria(String name, String value) {
+        //<criterion><name>ArchiefPersoonsnummer</name><operator>FULLTEXT</operator><value>.*1.*</value></criterion><criterion><name>ArchiefDocumentkenmerk</name><operator>FULLTEXT</operator><value/></criterion>
+        StringBuilder searchString = new StringBuilder(".*");
+        searchString.append(value);
+        searchString.append(".*");
+        addCriterion(name, OPERATOR_FULLTEXT, searchString.toString());
         return this;
     }
 
