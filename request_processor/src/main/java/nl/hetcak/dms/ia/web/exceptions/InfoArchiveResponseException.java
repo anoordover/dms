@@ -100,7 +100,7 @@ public class InfoArchiveResponseException extends RequestResponseException {
     }
 
     public static int defineErrorCode(String errorTitle, Boolean expectedList) {
-        if (ERROR_TITLE_TIME_OUT.contentEquals(errorTitle)) {
+        if (errorTitle.contains(ERROR_TITLE_TIME_OUT)) {
             if (expectedList) {
                 return ERROR_CODE_TIME_OUT_LIST_DOC;
             } else {
