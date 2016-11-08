@@ -9,8 +9,9 @@ import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
 import nl.hetcak.dms.ia.web.restfull.consumers.DocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.restfull.consumers.SearchDocumentRequestConsumer;
-import nl.hetcak.dms.ia.web.restfull.produces.ErrorResponse;
-import nl.hetcak.dms.ia.web.restfull.produces.ListDocumentResponse;
+import nl.hetcak.dms.ia.web.restfull.produces.RaadplegenDocumentResponse;
+import nl.hetcak.dms.ia.web.restfull.produces.RaadplegenLijstDocumentResponse;
+import nl.hetcak.dms.ia.web.restfull.produces.containers.ArchiefDocumenten;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +54,11 @@ public class DocumentService {
         }
     }
     
-    private ListDocumentResponse listDocumentResponse(RecordRequest recordRequest, ListDocumentRequestConsumer request) throws RequestResponseException {
+    private RaadplegenLijstDocumentResponse listDocumentResponse(RecordRequest recordRequest, ListDocumentRequestConsumer request) throws RequestResponseException {
         try {
-            ListDocumentResponse response = new ListDocumentResponse();
-            response.getDocuments().addAll(recordRequest.requestListDocuments(request.getArchivePersonNumber()));
+            RaadplegenLijstDocumentResponse response = new RaadplegenLijstDocumentResponse();
+            ArchiefDocumenten documents = new ArchiefDocumenten();
+            documents.getDocumentList().addAll(recordRequest.requestListDocuments(request));
             return response;
         } catch (RequestResponseException reqresExc) {
             LOGGER.error(reqresExc.getUserErrorMessage(), reqresExc);
@@ -101,14 +103,6 @@ public class DocumentService {
         }
     }
     
-    private Response createRequestResponseExceptionResponse(RequestResponseException rrExc) {
-        LOGGER.error(rrExc.getUserErrorMessage(), rrExc);
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setErrorCode(rrExc.getErrorCode());
-        errorResponse.setErrorDescription(rrExc.getUserErrorMessage());
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(errorResponse.getAsXML()).build();
-    }
-    
     /**
      * Basic response
      */
@@ -133,7 +127,7 @@ public class DocumentService {
             if (request.hasContent()) {
                 LOGGER.info(LOGGER_VALID_INCOMING_REQUEST);
                 RecordRequest recordRequest = createRecordRequest();
-                ListDocumentResponse response = listDocumentResponse(recordRequest, request);
+                RaadplegenLijstDocumentResponse response = listDocumentResponse(recordRequest, request);
                 return Response.ok(response.getAsXML()).build();
             } else {
                 LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
@@ -141,21 +135,17 @@ public class DocumentService {
             }
         } catch (RequestResponseException rrExc) {
             LOGGER.error(rrExc.getMessage(), rrExc);
-            ListDocumentResponse response = new ListDocumentResponse();
-            ErrorResponse error = new ErrorResponse();
-            error.setErrorCode(rrExc.getErrorCode());
-            error.setErrorDescription(rrExc.getUserErrorMessage());
-            response.getDocuments().addAll(rrExc.getDocumentsToDisplay());
-            response.setError(error);
+            RaadplegenLijstDocumentResponse response = new RaadplegenLijstDocumentResponse();
+            response.setResultCode(rrExc.getErrorCode());
+            response.setResultDescription(rrExc.getUserErrorMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(response.getAsXML()).build();
         } catch (Exception exc) {
             //catch all error and return error output.
             LOGGER.error(ERROR_CONTENT_GRABBING, exc);
-            
-            ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setErrorCode(0);
-            errorResponse.setErrorDescription(ERROR_RESPONSE_GENERIC);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(errorResponse.getAsXML()).build();
+            RaadplegenLijstDocumentResponse response = new RaadplegenLijstDocumentResponse();
+            response.setResultCode(9999);
+            response.setResultDescription(ERROR_RESPONSE_GENERIC);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(response.getAsXML()).build();
         }
     }
     
@@ -182,65 +172,29 @@ public class DocumentService {
                 LOGGER.info("Encoding PDF and storing document into the response object.");
                 LOGGER.info("Encoding "+byteArray.size()+" bytes.");
                 String encodedDocument = new String(Base64.getEncoder().encode(byteArray.toByteArray()));
-                document.setDocument(encodedDocument);
+                RaadplegenDocumentResponse documentResponse = new RaadplegenDocumentResponse();
+                documentResponse.setResultCode(0);
+                documentResponse.setArchiefDocumentId(document.getArchiefDocumentId());
+                documentResponse.setPayloadPdf(encodedDocument);
                 LOGGER.info("Sending response.");
-                return Response.ok(document.getXMLString()).build();
+                return Response.ok(documentResponse.getAsXML()).build();
             } else {
                 LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
                 throw new ContentGrabbingException(ERROR_CONTENT_GRABBING);
             }
         } catch (RequestResponseException rrExc) {
-            return createRequestResponseExceptionResponse(rrExc);
+            LOGGER.error(rrExc.getMessage(), rrExc);
+            RaadplegenLijstDocumentResponse response = new RaadplegenLijstDocumentResponse();
+            response.setResultCode(rrExc.getErrorCode());
+            response.setResultDescription(rrExc.getUserErrorMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(response.getAsXML()).build();
         } catch (Exception exc) {
             //catch all error and return error output.
-            LOGGER.error("The incoming xml could not pe parsed.", exc);
-            ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setErrorCode(0);
-            errorResponse.setErrorDescription(ERROR_RESPONSE_GENERIC);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(errorResponse.getAsXML()).build();
-        }
-    }
-    
-    @POST
-    @Path("/searchDocuments")
-    @Produces(MediaType.APPLICATION_XML)
-    @Consumes(MediaType.APPLICATION_XML)
-    public Response searchDocuments(String sBody, @Context HttpServletRequest httpRequest) {
-        Calendar calendar = Calendar.getInstance();
-        LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
-        LOGGER.info("Incoming request for /searchDocuments. (" + calendar.getTime().toString() + ")");
-        LOGGER.debug(sBody);
-        LOGGER.info("Got Request from " + httpRequest.getRemoteAddr());
-        try {
-            
-            if (StringUtils.isBlank(sBody)) {
-                throw new ContentGrabbingException("No request body found.");
-            }
-            
-            SearchDocumentRequestConsumer request = SearchDocumentRequestConsumer.unmarshalRequest(sBody);
-            //disable content grabbing with empty strings.
-            if (request.hasContent()) {
-                LOGGER.info(LOGGER_VALID_INCOMING_REQUEST);
-                ConnectionManager connectionManager = ConnectionManager.getInstance();
-                RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(), connectionManager.getActiveCredentials());
-                ListDocumentResponse response = new ListDocumentResponse();
-                response.getDocuments().addAll(recordRequest.requestListDocuments(request.getDocumentTitle(), request.getPersonNumber(), request.getDocumentCharacteristics(), request.getDocumentSendDate1AsInfoArchiveString(), request.getDocumentSendDate2AsInfoArchiveString()));
-                LOGGER.info("Sending response.");
-                return Response.ok(response.getAsXML()).build();
-                
-            } else {
-                LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
-                throw new ContentGrabbingException(ERROR_CONTENT_GRABBING);
-            }
-        } catch (RequestResponseException rrExc) {
-            return createRequestResponseExceptionResponse(rrExc);
-        } catch (Exception exc) {
-            //catch all error and return error output.
-            LOGGER.error("The incoming xml could not be parsed.", exc);
-            ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setErrorCode(0);
-            errorResponse.setErrorDescription(ERROR_RESPONSE_GENERIC);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(errorResponse.getAsXML()).build();
+            LOGGER.error(ERROR_CONTENT_GRABBING, exc);
+            RaadplegenLijstDocumentResponse response = new RaadplegenLijstDocumentResponse();
+            response.setResultCode(9999);
+            response.setResultDescription(ERROR_RESPONSE_GENERIC);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(response.getAsXML()).build();
         }
     }
     

@@ -19,23 +19,21 @@ import java.util.Date;
  * @author Joury.Zimmermann@AMPLEXOR.com
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-@XmlRootElement(name = "Document")
+@XmlRootElement(name = "ArchiefDocument")
 public class InfoArchiveDocument {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfoArchiveDocument.class);
 
-    private String msArchiefDocumentId;
-    private String msArchiefPersoonsnummer;
     private String msArchiefDocumenttitel;
-    private String msArchiefDocumentsoort;
-    private String msArchiefRegeling;
+    private String msArchiefDocumentId;
     private String msArchiefDocumentkenmerk;
-    private String mobjArchiefVerzenddag;
+    private String msArchiefDocumentsoort;
     private String msArchiefDocumenttype;
-    private String msArchiefDocumentstatus;
+    private String msArchiefRegeling;
     private String msArchiefRegelingsjaar;
+    private String msArchiefPersoonsnummer;
+    private String msArchiefDocumentstatus;
+    private String mobjArchiefVerzenddag;
     private String msArchiefFile;
-    private String msArchiefHandelingsnummer;
-    private String msDocument;
 
     @XmlElement(name = "ArchiefPersoonsnummer")
     public String getArchiefPersoonsnummer() {
@@ -134,24 +132,6 @@ public class InfoArchiveDocument {
 
     public void setArchiefFile(String sArchiefFile) {
         this.msArchiefFile = sArchiefFile;
-    }
-
-    @XmlElement(name = "ArchiefHandelingsnummer")
-    public String getArchiefHandelingsnummer() {
-        return msArchiefHandelingsnummer;
-    }
-    
-    public void setArchiefHandelingsnummer(String ArchiefHandelingsnummer) {
-        this.msArchiefHandelingsnummer = ArchiefHandelingsnummer;
-    }
-
-    @XmlElement(name = "Document")
-    public String getDocument() {
-        return msDocument;
-    }
-
-    public void setDocument(String document) {
-        this.msDocument = document;
     }
 
     /**

@@ -6,13 +6,11 @@ import nl.hetcak.dms.ia.web.managers.ConnectionManager;
 import nl.hetcak.dms.ia.web.requests.DocumentRequest;
 import nl.hetcak.dms.ia.web.requests.RecordRequest;
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
+import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
 import org.junit.Test;
 
-import javax.xml.bind.JAXBException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
@@ -38,7 +36,9 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(),credentials);
-        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("2570282739");
+        ListDocumentRequestConsumer requestConsumer = new ListDocumentRequestConsumer();
+        requestConsumer.setArchiefPersoonsnummer("2570282739");
+        List<InfoArchiveDocument> document = recordRequest.requestListDocuments(requestConsumer);
         assertNotNull(document);
         assertTrue(document.size() > 0);
     }
@@ -54,7 +54,9 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(),credentials);
-        List<InfoArchiveDocument> document = recordRequest.requestListDocuments("asdfdgre");
+        ListDocumentRequestConsumer requestConsumer = new ListDocumentRequestConsumer();
+        requestConsumer.setArchiefPersoonsnummer("asdfdgre");
+        List<InfoArchiveDocument> document = recordRequest.requestListDocuments(requestConsumer);
         assertNotNull(document);
         assertTrue(document.size() == 0);
     }

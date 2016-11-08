@@ -21,16 +21,11 @@ import javax.ws.rs.core.Response;
  */
 public class RestfullTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfullTest.class);
-    private final static String REQUEST_LIST = "<Request><ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer></Request>";
+    private final static String REQUEST_LIST = "<RaadplegenLijstDocumentResponse><ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer></RaadplegenLijstDocumentResponse>";
     private final static String REQUEST_DOCUMENT = "<Request><ArchiefDocumentId>5639229023</ArchiefDocumentId><Volgnummer>001</Volgnummer></Request>";
-    private final static String REQUEST_SEARCH1 = "<Request><ArchiefDocumentsoort>Z03</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde></Request>";
-    private final static String REQUEST_SEARCH2 = "<Request><ArchiefPersoonsnummer>2570282739</ArchiefPersoonsnummer></Request>";
-    private final static String REQUEST_SEARCH3 = "<Request><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde></Request>";
-    
+
     private final static String BAD_REQUEST_LIST = "<ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer>";
-    private final static String BAD_REQUEST_DOCUMENT = "<ArchiefDocumentId>1909957399</ArchiefDocumentId><Volgnummer>001</Volgnummer>";
-    private final static String BAD_REQUEST_SEARCH1 = "<ArchiefDocumentsoort>Z10</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde>";
-    
+    private final static String BAD_REQUEST_DOCUMENT = "<ArchiefDocumentId>1909957399</ArchiefDocumentId>";
     
     @Test
     public void testJavaRsConfig() {
@@ -77,70 +72,9 @@ public class RestfullTest {
         Assert.assertTrue(data.length() > 1);
 
         if(documentListResponse.getStatus() == 200) {
-            Assert.assertFalse(data.contains("<Error>"));
+            Assert.assertTrue(data.contains("<ResultCode>0</ResultCode>"));
         } else {
-            Assert.assertTrue(data.contains("<Error>"));
-        }
-    }
-    
-    @Test
-    public void testDocumentSearch1() throws Exception {
-        DocumentService documentService = new DocumentService();
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Response documentListResponse = documentService.searchDocuments(REQUEST_SEARCH1, request);
-        
-        Assert.assertNotNull(documentListResponse);
-        Assert.assertTrue(documentListResponse.getStatus() == 200 || documentListResponse.getStatus() == 500);
-
-        Assert.assertNotNull(documentListResponse.getEntity());
-        String data = (String) documentListResponse.getEntity();
-        LOGGER.info(data);
-
-        Assert.assertTrue(data.length() > 1);
-
-        if(documentListResponse.getStatus() == 200) {
-            Assert.assertFalse(data.contains("<Error>"));
-        } else {
-            Assert.assertTrue(data.contains("<Error>"));
-            Assert.assertFalse(data.contains("<document>"));
-        }
-    }
-    
-    @Test
-    public void testDocumentSearch2() throws Exception {
-        DocumentService documentService = new DocumentService();
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Response documentListResponse = documentService.searchDocuments(REQUEST_SEARCH2, request);
-        
-        Assert.assertNotNull(documentListResponse);
-        Assert.assertTrue(documentListResponse.getStatus() == 200);
-        Assert.assertNotNull(documentListResponse.getEntity());
-        
-        String data = (String) documentListResponse.getEntity();
-        LOGGER.info(data);
-        
-        Assert.assertTrue(data.length() > 1);
-        Assert.assertFalse(data.startsWith("<Error>"));
-    }
-    
-    @Test
-    public void testDocumentSearch3() throws Exception {
-        DocumentService documentService = new DocumentService();
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Response documentListResponse = documentService.searchDocuments(REQUEST_SEARCH3, request);
-        
-        Assert.assertNotNull(documentListResponse);
-        Assert.assertTrue(documentListResponse.getStatus() == 200 || documentListResponse.getStatus() == 500);
-        Assert.assertNotNull(documentListResponse.getEntity());
-        String data = (String) documentListResponse.getEntity();
-        LOGGER.info(data);
-
-        Assert.assertTrue(data.length() > 1);
-
-        if(documentListResponse.getStatus() == 200) {
-            Assert.assertFalse(data.contains("<Error>"));
-        } else {
-            Assert.assertTrue(data.contains("<Error>"));
+            Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
         }
     }
     
@@ -157,7 +91,7 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<Error>"));
+        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
     }
     
     @Test
@@ -172,14 +106,14 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<Error>"));
+        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
     }
     
     @Test
     public void testDocumentListErrorRequest() throws Exception {
         DocumentService documentService = new DocumentService();
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Response documentListResponse = documentService.listDocuments("<Request><ArchiefPersoonsnummer>16afavfdsa</ArchiefPersoonsnummer></Request>", request);
+        Response documentListResponse = documentService.listDocuments("<RaadplegenDocumentLijstRequest><ArchiefPersoonsnummer>16afavfdsa</ArchiefPersoonsnummer></RaadplegenDocumentLijstRequest>", request);
         
         Assert.assertNotNull(documentListResponse);
         Assert.assertTrue(documentListResponse.getStatus() == 500);
@@ -187,7 +121,7 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<Error>"));
+        Assert.assertTrue(data.contains("<ResultCode>2005</ResultCode>"));
     }
     
     
@@ -264,70 +198,6 @@ public class RestfullTest {
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
         Assert.assertTrue(data.contains("<Error>"));
-    }
-    
-    @Test
-    public void testDocumentSearchBadRequest() throws Exception {
-        DocumentService documentService = new DocumentService();
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Response documentListResponse = documentService.searchDocuments(BAD_REQUEST_SEARCH1, request);
-        
-        Assert.assertNotNull(documentListResponse);
-        Assert.assertTrue(documentListResponse.getStatus() == 500);
-        
-        Assert.assertNotNull(documentListResponse.getEntity());
-        String data = (String) documentListResponse.getEntity();
-        LOGGER.info(data);
-        
-        Assert.assertTrue(data.length() > 1);
-        Assert.assertTrue(data.contains("<Error>"));
-    }
-    
-    
-    @Test
-    public void testSearchDocumentsContentGrabbingCase1() throws Exception {
-        DocumentService documentService = new DocumentService();
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Response searchDocumentsResponse = documentService.searchDocuments(null, request);
-        
-        Assert.assertNotNull(searchDocumentsResponse);
-        Assert.assertTrue(searchDocumentsResponse.getStatus() == 406 || searchDocumentsResponse.getStatus() == 500);
-        Assert.assertNotNull(searchDocumentsResponse.getEntity());
-        
-        String data = (String) searchDocumentsResponse.getEntity();
-        LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<Error>"));
-    }
-    
-    @Test
-    public void testSearchDocumentsContentGrabbingCase2() throws Exception {
-        DocumentService documentService = new DocumentService();
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Response searchDocumentsResponse = documentService.searchDocuments("", request);
-        
-        Assert.assertNotNull(searchDocumentsResponse);
-        Assert.assertTrue(searchDocumentsResponse.getStatus() == 406 || searchDocumentsResponse.getStatus() == 500);
-        Assert.assertNotNull(searchDocumentsResponse.getEntity());
-        
-        String data = (String) searchDocumentsResponse.getEntity();
-        LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<Error>"));
-    }
-    
-    
-    @Test
-    public void testSearchDocumentsContentErrorRequest() throws Exception {
-        DocumentService documentService = new DocumentService();
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Response searchDocumentsResponse = documentService.searchDocuments("<ArchiefDocumentkenmerk>sfbsdf</ArchiefDocumentkenmerk>", request);
-        
-        Assert.assertNotNull(searchDocumentsResponse);
-        Assert.assertTrue(searchDocumentsResponse.getStatus() == 500);
-        Assert.assertNotNull(searchDocumentsResponse.getEntity());
-        
-        String data = (String) searchDocumentsResponse.getEntity();
-        LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<Error>"));
     }
     
     @Test

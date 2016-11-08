@@ -12,9 +12,9 @@ import java.io.StringReader;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-@XmlRootElement(name = "Request")
+@XmlRootElement(name = "RaadplegenDocumentRequest")
 public class DocumentRequestConsumer {
-    private String archiveDocumentNumber, continuationNumber;
+    private String archiveDocumentNumber;
 
     public static DocumentRequestConsumer unmarshallerRequest(String input) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(DocumentRequestConsumer.class);
@@ -33,14 +33,6 @@ public class DocumentRequestConsumer {
         this.archiveDocumentNumber = archiveDocumentNumber;
     }
 
-    @XmlElement(name = "Volgnummer", nillable = true)
-    public String getContinuationNumber() {
-        return continuationNumber;
-    }
-
-    public void setContinuationNumber(String continuationNumber) {
-        this.continuationNumber = continuationNumber;
-    }
 
     public boolean hasContent() {
         if (archiveDocumentNumber == null) {

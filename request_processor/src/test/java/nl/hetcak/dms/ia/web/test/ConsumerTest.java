@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
 import java.text.ParseException;
 
 /**
@@ -18,14 +19,14 @@ import java.text.ParseException;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class ConsumerTest {
-    private static final String XML_EXAMPLE_1 = "<Request><ArchiefPersoonsnummer>20001</ArchiefPersoonsnummer></Request>";
+    private static final String XML_EXAMPLE_1 = "<RaadplegenDocumentLijstRequest><ArchiefPersoonsnummer>20001</ArchiefPersoonsnummer></RaadplegenDocumentLijstRequest>";
     private static final String RESULT_1 = "20001";
-    private static final String XML_EXAMPLE_2 = "<Request><ArchiefPersoonsnummer>802341</ArchiefPersoonsnummer></Request>";
+    private static final String XML_EXAMPLE_2 = "<RaadplegenDocumentLijstRequest><ArchiefPersoonsnummer>802341</ArchiefPersoonsnummer></RaadplegenDocumentLijstRequest>";
     private static final String RESULT_2 = "802341";
-    private static final String XML_EXAMPLE_3 = "<Request><ArchiefDocumentId>7654324</ArchiefDocumentId><Volgnummer>001</Volgnummer></Request>";
+    private static final String XML_EXAMPLE_3 = "<RaadplegenDocumentRequest><ArchiefDocumentId>7654324</ArchiefDocumentId></RaadplegenDocumentRequest>";
     private static final String RESULT_3_1 = "7654324";
     private static final String RESULT_3_2 = "001";
-    private static final String XML_EXAMPLE_4 = "<Request><ArchiefDocumentTitle>Z01</ArchiefDocumentTitle><ArchiefDocumentkenmerk>97348</ArchiefDocumentkenmerk><ArchiefPersoonsnummer>802341</ArchiefPersoonsnummer><ArchiefVerzenddagBegin>2016-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-08-15T00:00:00</ArchiefVerzenddagEinde></Request>";
+    private static final String XML_EXAMPLE_4 = "<RaadplegenDocumentLijstRequest><ArchiefDocumenttitel>Z01</ArchiefDocumenttitel><ArchiefDocumentkenmerk>97348</ArchiefDocumentkenmerk><ArchiefPersoonsnummer>802341</ArchiefPersoonsnummer><VerzenddatumPeriodeVan>2016-08-01T00:00:00</VerzenddatumPeriodeVan><VerzenddatumPeriodeTm>2016-08-15T00:00:00</VerzenddatumPeriodeTm></RaadplegenDocumentLijstRequest>";
     private static final String RESULT_4_1_1 = "Z01";
     private static final String RESULT_4_1_2 = "802341";
     private static final String RESULT_4_1_3 = "97348";
@@ -39,11 +40,11 @@ public class ConsumerTest {
     @Test
     public void listDocumentConsumerTest() throws JAXBException {
         ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_1);
-        Assert.assertTrue(request.getArchivePersonNumber().contentEquals(RESULT_1));
+        Assert.assertTrue(request.getArchiefPersoonsnummer().contentEquals(RESULT_1));
         Assert.assertTrue(request.hasContent());
         
         ListDocumentRequestConsumer request2 = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_2);
-        Assert.assertTrue(request2.getArchivePersonNumber().contentEquals(RESULT_2));
+        Assert.assertTrue(request2.getArchiefPersoonsnummer().contentEquals(RESULT_2));
         Assert.assertTrue(request2.hasContent());
     }
     
@@ -51,39 +52,37 @@ public class ConsumerTest {
     public void documentRequestConsumerTest() throws JAXBException {
         DocumentRequestConsumer docRequest1 = DocumentRequestConsumer.unmarshallerRequest(XML_EXAMPLE_3);
         Assert.assertTrue(docRequest1.getArchiveDocumentNumber().contentEquals(RESULT_3_1));
-        Assert.assertTrue(docRequest1.getContinuationNumber().contentEquals(RESULT_3_2));
         Assert.assertTrue(docRequest1.hasContent());
     }
     
     @Test
-    public void searchDocumentRequestConsumerTest() throws JAXBException, ParseException {
-        SearchDocumentRequestConsumer searchRequest = SearchDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_4);
-        Assert.assertTrue(searchRequest.getDocumentTitle().contentEquals(RESULT_4_1_1));
-        Assert.assertTrue(searchRequest.getPersonNumber().contentEquals(RESULT_4_1_2));
-        Assert.assertTrue(searchRequest.getDocumentCharacteristics().contentEquals(RESULT_4_1_3));
-        Assert.assertTrue(searchRequest.getDocumentSendDate1().contentEquals(RESULT_4_2));
-        Assert.assertTrue(searchRequest.getDocumentSendDate2().contentEquals(RESULT_4_3));
-        Assert.assertTrue(searchRequest.getDocumentSendDate1AsInfoArchiveString().contentEquals(RESULT_4_4));
-        Assert.assertTrue(searchRequest.getDocumentSendDate2AsInfoArchiveString().contentEquals(RESULT_4_5));
+    public void listDocumentRequestConsumerTest2() throws JAXBException, ParseException {
+        ListDocumentRequestConsumer searchRequest = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_4);
+        Assert.assertTrue(searchRequest.getArchiefDocumenttitel().contentEquals(RESULT_4_1_1));
+        Assert.assertTrue(searchRequest.getArchiefPersoonsnummer().contentEquals(RESULT_4_1_2));
+        Assert.assertTrue(searchRequest.getArchiefDocumentkenmerk().contentEquals(RESULT_4_1_3));
+        Assert.assertTrue(searchRequest.getVerzenddatumPeriodeVan().contentEquals(RESULT_4_2));
+        Assert.assertTrue(searchRequest.getVerzenddatumPeriodeTm().contentEquals(RESULT_4_3));
+        Assert.assertTrue(searchRequest.getVerzenddatumPeriodeVanAsInfoArchiveString().contentEquals(RESULT_4_4));
+        Assert.assertTrue(searchRequest.getVerzenddatumPeriodeTmAsInfoArchiveString().contentEquals(RESULT_4_5));
         Assert.assertTrue(searchRequest.hasContent());
     }
-    
-    //Bad cases
+
     @Test
-    public void failListDocumentConsumerTest() throws JAXBException {
-        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest("<Request><ArchiefDocumentTitle></ArchiefDocumentTitle></Request>");
+    public void parseListDocumentConsumerTest() throws JAXBException {
+        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest("<RaadplegenDocumentLijstRequest><ArchiefDocumentTitle></ArchiefDocumentTitle></RaadplegenDocumentLijstRequest>");
         Assert.assertFalse(request.hasContent());
     }
     
-    @Test
-    public void failDocumentRequestConsumerTest() throws JAXBException {
+    @Test(expected = UnmarshalException.class)
+    public void faildocumentRequestConsumerTest() throws JAXBException {
         DocumentRequestConsumer docRequest1 = DocumentRequestConsumer.unmarshallerRequest(XML_EXAMPLE_1);
         Assert.assertFalse(docRequest1.hasContent());
     }
     
     @Test
-    public void failSearchDocumentRequestConsumerTest() throws JAXBException {
-        DocumentRequestConsumer docRequest1 = DocumentRequestConsumer.unmarshallerRequest(XML_EXAMPLE_2);
-        Assert.assertFalse(docRequest1.hasContent());
+    public void listDocumentRequestConsumerTest() throws JAXBException {
+        ListDocumentRequestConsumer docRequest1 = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_2);
+        Assert.assertTrue(docRequest1.hasContent());
     }
 }

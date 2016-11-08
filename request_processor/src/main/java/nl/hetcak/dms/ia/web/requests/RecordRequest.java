@@ -8,6 +8,7 @@ import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.*;
 import nl.hetcak.dms.ia.web.query.InfoArchiveQueryBuilder;
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
+import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.util.InfoArchiveDateUtil;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -76,14 +77,13 @@ public class RecordRequest {
         this.queryBuilder = new InfoArchiveQueryBuilder();
     }
 
-    public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, RequestResponseException, ParseException {
-        LOGGER.info("Starting List Documents request for person number:" + archivePersonNumber);
-        String response = requestUtil.responseReader(executeListDocumentsRequest(archivePersonNumber));
+    public List<InfoArchiveDocument> requestListDocuments(ListDocumentRequestConsumer listRequest) throws JAXBException, IOException, RequestResponseException, ParseException {
+        LOGGER.info("Starting List Documents request.");
+        String response = requestUtil.responseReader(executeListDocumentsRequest(listRequest));
         LOGGER.info(LOGGING_PARSING_RESULT);
         List<InfoArchiveDocument> result = parseDocumentList(response, true, false);
         if (result.size() == 0) {
-            StringBuilder errorMessage = new StringBuilder("Got 0 results for documents with person number:");
-            errorMessage.append(archivePersonNumber);
+            StringBuilder errorMessage = new StringBuilder("Got 0 results for documents. ");
             errorMessage.append(LOGGING_EXPECT_AT_LEAST_ONE_RESULT);
             LOGGER.error(errorMessage.toString());
             LOGGER.debug(response);
@@ -92,6 +92,8 @@ public class RecordRequest {
         LOGGER.info("Returning List with " + result.size() + " documents.");
         return result;
     }
+
+
 
     public List<InfoArchiveDocument> requestListDocuments(String documentTitle, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, RequestResponseException, ParseException {
         StringBuilder logString = new StringBuilder("Starting List Documents request for");
@@ -157,10 +159,10 @@ public class RecordRequest {
         return documents.get(0);
     }
 
-    private HttpResponse executeListDocumentsRequest(String archivePersonNumber) throws JAXBException, RequestResponseException {
+    private HttpResponse executeListDocumentsRequest(ListDocumentRequestConsumer listDocumentRequest) throws JAXBException, RequestResponseException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
-        String requestBody = queryBuilder.addEqualCriteria(VALUE_ARCHIVE_PERSON_NUMBER, archivePersonNumber).build();
+        String requestBody = listDocumentRequest.adaptToQuery().build();
         LOGGER.info("Executing HTTPPOST request for a List Documents based on person number.");
         LOGGER.debug(requestBody);
         //execute request.
@@ -353,11 +355,11 @@ public class RecordRequest {
             case PARSE_DOCUMENT_ATTACHMENT:
                 infoArchiveDocument.setArchiefFile(column.get(PARSE_RESPONSE_VALUE).getAsString());
                 break;
-            case PARSE_DOCUMENT_HANDLING_NUMBER:
-                infoArchiveDocument.setArchiefHandelingsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
-                break;
-            default:
-                break;
+            //case PARSE_DOCUMENT_HANDLING_NUMBER:
+            //    infoArchiveDocument.setArchiefHandelingsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
+            //    break;
+            //default:
+            //    break;
         }
         return infoArchiveDocument;
 
