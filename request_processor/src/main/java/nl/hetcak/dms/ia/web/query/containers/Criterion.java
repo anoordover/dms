@@ -12,7 +12,8 @@ import java.util.List;
  */
 @XmlRootElement(name = "criterion")
 public class Criterion {
-    private String msName, msOperator;
+    private String msName;
+    private String msOperator;
     private List<String> mobjaValues;
     
     public Criterion() {

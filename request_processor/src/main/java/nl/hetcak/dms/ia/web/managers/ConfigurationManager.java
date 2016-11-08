@@ -8,7 +8,6 @@ import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.util.CryptoUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.AutoCloseInputStream;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,10 +62,10 @@ public class ConfigurationManager {
                 return buffer;
             } catch (FileNotFoundException fnfExc) {
                 LOGGER.error("Key file not found.");
-                throw new MissingConfigurationException("Unable to find Key file.");
+                throw new MissingConfigurationException("Unable to find Key file.", fnfExc);
             } catch (IOException ioExc) {
                 LOGGER.error("Error reading key file.");
-                throw new MissingConfigurationException("Unable to read Key file.");
+                throw new MissingConfigurationException("Unable to read Key file.", ioExc);
             }
         }
         LOGGER.error("No key file found.");

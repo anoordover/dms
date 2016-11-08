@@ -31,8 +31,11 @@ import java.util.Base64;
 public class CryptoUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(CryptoUtil.class);
     private static final String CIPHER_INSTANCE = "AES/CBC/NoPadding";
-    private static final String KEY_SPEC = "AES";
     private static final int IV_SIZEB = 16;
+
+    private CryptoUtil() {
+        //No constructor.
+    }
 
     /**
      * Decrypts the data.
@@ -102,16 +105,5 @@ public class CryptoUtil {
         byte[] cDataEnc = Base64.getDecoder().decode(cBase64Data);
         byte[] cPlainData = decrypt(cDataEnc, cBase64Key);
         return Base64.getDecoder().decode(cPlainData);
-    }
-
-    private static byte[] generateIV() {
-        byte[] cIV = new byte[IV_SIZEB];
-        String sPhrase = "c0nv0l8t3ed";
-        for (int i = 0; i < cIV.length; ++i) {
-            SecureRandom objRandom = new SecureRandom();
-            cIV[i] = (byte) ((byte) (objRandom.nextDouble() * Byte.MAX_VALUE) ^ sPhrase.getBytes()[objRandom.nextInt(sPhrase.length() - 1)]);
-        }
-
-        return cIV;
     }
 }

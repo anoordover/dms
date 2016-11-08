@@ -2,6 +2,7 @@ package nl.hetcak.dms.ia.web.util;
 
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.comunication.ServerConnectionInformation;
+import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,14 +92,18 @@ public class InfoArchiveRequestUtil {
      * @return the server response.
      * @throws IOException Server interaction failure.
      */
-    public HttpResponse executePostRequest(String url, String contentType, Map<String, String> requestParameters, String requestBody) throws IOException, ServerConnectionFailureException {
+    public HttpResponse executePostRequest(String url, String contentType, Map<String, String> requestParameters, String requestBody) throws RequestResponseException {
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost postRequest = new HttpPost(url);
 
-        //Add Body
-        if (requestBody != null) {
-            StringEntity stringEntity = new StringEntity(requestBody);
-            postRequest.setEntity(stringEntity);
+        try {
+            //Add Body
+            if (requestBody != null) {
+                StringEntity stringEntity = new StringEntity(requestBody);
+                postRequest.setEntity(stringEntity);
+            }
+        }catch (UnsupportedEncodingException unSubEncExc) {
+            throw new RequestResponseException(unSubEncExc, 1202,"Failed to load encoding.");
         }
 
         //Add Headers

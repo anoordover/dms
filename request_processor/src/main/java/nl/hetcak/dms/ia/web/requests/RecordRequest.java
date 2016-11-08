@@ -76,7 +76,7 @@ public class RecordRequest {
         this.queryBuilder = new InfoArchiveQueryBuilder();
     }
 
-    public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
+    public List<InfoArchiveDocument> requestListDocuments(String archivePersonNumber) throws JAXBException, IOException, RequestResponseException, ParseException {
         LOGGER.info("Starting List Documents request for person number:" + archivePersonNumber);
         String response = requestUtil.responseReader(executeListDocumentsRequest(archivePersonNumber));
         LOGGER.info(LOGGING_PARSING_RESULT);
@@ -93,7 +93,7 @@ public class RecordRequest {
         return result;
     }
 
-    public List<InfoArchiveDocument> requestListDocuments(String documentTitle, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
+    public List<InfoArchiveDocument> requestListDocuments(String documentTitle, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, RequestResponseException, ParseException {
         StringBuilder logString = new StringBuilder("Starting List Documents request for");
         if (StringUtils.isNotBlank(documentTitle)) {
             logString.append(" document title \"");
@@ -134,11 +134,14 @@ public class RecordRequest {
         return result;
     }
 
-    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException, ParseException, MultipleDocumentsException, TooManyResultsException, InfoArchiveResponseException, NoContentAvailableException {
+    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ParseException, RequestResponseException {
         LOGGER.info("Requesting document with number:" + archiveDocumentNumber);
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
+        //parse response
         LOGGER.info(LOGGING_PARSING_RESULT);
         List<InfoArchiveDocument> documents = parseDocumentList(response, false, false);
+
+        //check size of array
         if (documents.size() > 1) {
             String errorMessage = "Got " + documents.size() + " results for document number:" + archiveDocumentNumber + LOGGING_EXPECT_AT_LEAST_ONE_RESULT;
             LOGGER.error(errorMessage);
@@ -154,18 +157,21 @@ public class RecordRequest {
         return documents.get(0);
     }
 
-    private HttpResponse executeListDocumentsRequest(String archivePersonNumber) throws JAXBException, IOException, ServerConnectionFailureException {
+    private HttpResponse executeListDocumentsRequest(String archivePersonNumber) throws JAXBException, RequestResponseException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
         String requestBody = queryBuilder.addEqualCriteria(VALUE_ARCHIVE_PERSON_NUMBER, archivePersonNumber).build();
         LOGGER.info("Executing HTTPPOST request for a List Documents based on person number.");
         LOGGER.debug(requestBody);
+        //execute request.
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
 
-    private HttpResponse executeListDocumentsRequest(String documentTitle, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, ServerConnectionFailureException {
+    private HttpResponse executeListDocumentsRequest(String documentTitle, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, RequestResponseException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
+
+        //create query
         InfoArchiveQueryBuilder currentQuery = new InfoArchiveQueryBuilder();
         if (documentTitle != null) {
             currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_TITLE, documentTitle);
@@ -182,10 +188,11 @@ public class RecordRequest {
         String requestBody = currentQuery.build();
         LOGGER.info("Executing HTTPPOST request for a List Documents based on Document type and a between senddate constraint.");
         LOGGER.debug(requestBody);
+        //execute request.
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
 
-    private HttpResponse executeDocumentsRequest(String archiveDocumentNumber) throws JAXBException, IOException, ServerConnectionFailureException {
+    private HttpResponse executeDocumentsRequest(String archiveDocumentNumber) throws JAXBException, RequestResponseException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
         String requestBody = queryBuilder.addEqualCriteria(VALUE_ARCHIVE_DOCUMENT_NUMBER, archiveDocumentNumber).build();
@@ -206,11 +213,10 @@ public class RecordRequest {
             LOGGER.info("Got error in response.");
             StringBuilder exceptionMessage = new StringBuilder();
             JsonArray errors = jsonResponse.getAsJsonArray(PARSE_RESPONSE_ERROR);
-            String errorTitle = "";
             for (int i_error = 0; i_error < errors.size(); i_error++) {
                 JsonObject error = errors.get(i_error).getAsJsonObject();
 
-                errorTitle = error.get(PARSE_RESPONSE_ERROR_TITLE).getAsString();
+                String errorTitle = error.get(PARSE_RESPONSE_ERROR_TITLE).getAsString();
                 String errorMessage = error.get(PARSE_RESPONSE_ERROR_MESSAGE).getAsString();
 
                 exceptionMessage.append(errorTitle);

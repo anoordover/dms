@@ -23,7 +23,6 @@ import java.util.Map;
  */
 public class DocumentRequest {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentRequest.class);
-    private static final String DOCUMENT_REQUEST = "restapi/systemdata/search-compositions/";
     private Configuration configuration;
     private Credentials credentials;
     private InfoArchiveRequestUtil requestUtil;

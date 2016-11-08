@@ -179,7 +179,8 @@ public class DocumentService {
                 
                 LOGGER.info("Preparing document for response message.");
                 ByteArrayOutputStream byteArray = documentTransfer(documentRequest, document);
-                LOGGER.info("Encoding PDF and storing it into the response object.");
+                LOGGER.info("Encoding PDF and storing document into the response object.");
+                LOGGER.info("Encoding "+byteArray.size()+" bytes.");
                 String encodedDocument = new String(Base64.getEncoder().encode(byteArray.toByteArray()));
                 document.setDocument(encodedDocument);
                 LOGGER.info("Sending response.");
