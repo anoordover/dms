@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.StringWriter;
 
 /**
@@ -13,6 +14,7 @@ import java.io.StringWriter;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
+@XmlRootElement(name = "RaadplegenDocumentRequest")
 public class RaadplegenDocumentResponse {
     private static final Logger LOGGER = LoggerFactory.getLogger(RaadplegenDocumentResponse.class);
     private String msArchiefDocumentId;

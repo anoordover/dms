@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 public class RestfullTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfullTest.class);
     private final static String REQUEST_LIST = "<RaadplegenLijstDocumentResponse><ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer></RaadplegenLijstDocumentResponse>";
-    private final static String REQUEST_DOCUMENT = "<Request><ArchiefDocumentId>5639229023</ArchiefDocumentId><Volgnummer>001</Volgnummer></Request>";
+    private final static String REQUEST_DOCUMENT = "<RaadplegenDocumentRequest><ArchiefDocumentId>5639229023</ArchiefDocumentId></RaadplegenDocumentRequest>";
 
     private final static String BAD_REQUEST_LIST = "<ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer>";
     private final static String BAD_REQUEST_DOCUMENT = "<ArchiefDocumentId>1909957399</ArchiefDocumentId>";
@@ -137,7 +137,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<Error>"));
+        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
     }
     
     @Test
@@ -152,7 +152,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<Error>"));
+        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
     }
     
     @Test
@@ -167,7 +167,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<Error>"));
+        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
     }
     
     @Test
@@ -182,7 +182,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.startsWith("<Error>"));
+        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
     }
     
     @Test
@@ -197,7 +197,7 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<Error>"));
+        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
     }
     
     @Test
@@ -211,7 +211,7 @@ public class RestfullTest {
         LOGGER.info(documentResponse.getEntity().toString());
         Assert.assertTrue(documentResponse.getStatus() == 200);
         Assert.assertTrue(documentResponse.getEntity().toString().length() > 20);
-        Assert.assertFalse(documentResponse.getEntity().toString().startsWith("<Error>"));
+        Assert.assertFalse(documentResponse.getEntity().toString().contains("<ResultCode>0</ResultCode>"));
 
     }
 }
