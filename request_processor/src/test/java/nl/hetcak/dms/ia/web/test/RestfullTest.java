@@ -22,9 +22,9 @@ import javax.ws.rs.core.Response;
 public class RestfullTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfullTest.class);
     private final static String REQUEST_LIST = "<Request><ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer></Request>";
-    private final static String REQUEST_DOCUMENT = "<Request><ArchiefDocumentId>1909957399</ArchiefDocumentId><Volgnummer>001</Volgnummer></Request>";
-    private final static String REQUEST_SEARCH1 = "<Request><ArchiefDocumentsoort>Z10</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde></Request>";
-    private final static String REQUEST_SEARCH2 = "<Request><ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer></Request>";
+    private final static String REQUEST_DOCUMENT = "<Request><ArchiefDocumentId>5639229023</ArchiefDocumentId><Volgnummer>001</Volgnummer></Request>";
+    private final static String REQUEST_SEARCH1 = "<Request><ArchiefDocumentsoort>Z03</ArchiefDocumentsoort><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde></Request>";
+    private final static String REQUEST_SEARCH2 = "<Request><ArchiefPersoonsnummer>2570282739</ArchiefPersoonsnummer></Request>";
     private final static String REQUEST_SEARCH3 = "<Request><ArchiefVerzenddagBegin>2013-08-01T00:00:00</ArchiefVerzenddagBegin><ArchiefVerzenddagEinde>2016-11-15T00:00:00</ArchiefVerzenddagEinde></Request>";
     
     private final static String BAD_REQUEST_LIST = "<ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer>";
