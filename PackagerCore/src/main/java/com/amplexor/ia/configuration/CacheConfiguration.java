@@ -20,11 +20,24 @@ public class CacheConfiguration extends PluggableObjectConfiguration {
         return msCacheBasePath;
     }
 
+    public void setCacheBasePath(String sCacheBasePath) {
+        msCacheBasePath = sCacheBasePath;
+    }
+
     public int getCacheMessageThreshold() {
         return miCacheMessageThreshold;
+    }
+
+    public void setCacheMessageThreshold(int iCacheMessageThreshold) {
+        miCacheMessageThreshold = iCacheMessageThreshold;
     }
 
     public int getCacheTimeThreshold() {
         return miCacheTimeThreshold;
     }
+
+    public void setCacheTimeThreshold(int iCacheTimeThreshold) {
+        miCacheTimeThreshold = iCacheTimeThreshold;
+    }
 }
+

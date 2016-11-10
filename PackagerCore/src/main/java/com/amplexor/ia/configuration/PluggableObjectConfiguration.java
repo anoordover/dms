@@ -4,6 +4,7 @@ import com.amplexor.ia.configuration.converters.ParameterConverter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,6 +19,10 @@ public class PluggableObjectConfiguration {
     @XStreamConverter(ParameterConverter.class)
     private Map<String, Object> mcCustomParameters;
 
+    public PluggableObjectConfiguration() {
+        mcCustomParameters = new HashMap<>();
+    }
+
     public String getImplementingClass() {
         return msImplementingClass;
     }
@@ -26,7 +31,7 @@ public class PluggableObjectConfiguration {
         return (String) mcCustomParameters.get(sKey);
     }
 
-    public Map<String, Object> getSubset(String sKey) {
-        return (Map<String, Object>) mcCustomParameters.get(sKey);
+    public void setParameter(String sKey, String sValue) {
+        mcCustomParameters.put(sKey, sValue);
     }
 }
