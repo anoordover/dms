@@ -12,6 +12,7 @@ public class InfoArchiveResponseException extends RequestResponseException {
     private static final String ERROR_TITLE_TIME_OUT = "SEARCH_TIMEOUT";
     private static final int ERROR_CODE_TIME_OUT_SINGLE_DOC = 2001;
     private static final int ERROR_CODE_TIME_OUT_LIST_DOC = 2002;
+    private static final int ERROR_CODE_UNKNOWN_ERROR = 9999;
 
     /**
      * Constructs a new exception with {@code null} as its detail message.
@@ -107,6 +108,6 @@ public class InfoArchiveResponseException extends RequestResponseException {
                 return ERROR_CODE_TIME_OUT_SINGLE_DOC;
             }
         }
-        return 0;
+        return ERROR_CODE_UNKNOWN_ERROR;
     }
 }

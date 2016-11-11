@@ -1,4 +1,4 @@
-package nl.hetcak.dms.ia.web.test;
+package nl.hetcak.dms.ia.web.requests;
 
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.exceptions.*;
@@ -37,12 +37,30 @@ public class RequestRecordsTest {
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(),credentials);
         ListDocumentRequestConsumer requestConsumer = new ListDocumentRequestConsumer();
-        requestConsumer.setArchiefPersoonsnummer("2570282739");
+        requestConsumer.setArchiefPersoonsnummer("1892011538");
         List<InfoArchiveDocument> document = recordRequest.requestListDocuments(requestConsumer);
         assertNotNull(document);
         assertTrue(document.size() > 0);
     }
     
+    //external connection
+    @Test(timeout = 3000)
+    public void getListDocumentsFromInfoArchive2() throws Exception  {
+        File config = new File(WORKING_CONFIG);
+        ConnectionManager connectionManager = ConnectionManager.getInstance();
+        connectionManager.setConfigurationFile(config);
+        Credentials credentials = connectionManager.getActiveCredentials();
+        assertNotNull(credentials);
+        assertTrue(credentials.isSecurityTokenValid());
+        RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(),credentials);
+        ListDocumentRequestConsumer requestConsumer = new ListDocumentRequestConsumer();
+        requestConsumer.setArchiefPersoonsnummer("1892011538");
+        requestConsumer.setArchiefDocumentId("1921071631");
+        requestConsumer.setArchiefDocumenttitel("B10");
+        List<InfoArchiveDocument> document = recordRequest.requestListDocuments(requestConsumer);
+        assertNotNull(document);
+        assertTrue(document.size() > 0);
+    }
     
     //external connection
     @Test(expected = NoContentAvailableException.class ,timeout = 3000)
@@ -70,7 +88,7 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest request = new RecordRequest(connectionManager.getConfiguration(), credentials);
-        InfoArchiveDocument document = request.requestDocument("5639229023");
+        InfoArchiveDocument document = request.requestDocument("1921071631");
         assertNotNull(document);
         DocumentRequest documentRequest = new DocumentRequest(connectionManager.getConfiguration(), credentials);
         ByteArrayOutputStream documentStream = documentRequest.getContentWithContentId(document.getArchiefFile());

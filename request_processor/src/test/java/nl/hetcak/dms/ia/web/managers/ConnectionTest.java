@@ -1,4 +1,4 @@
-package nl.hetcak.dms.ia.web.test;
+package nl.hetcak.dms.ia.web.managers;
 
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;

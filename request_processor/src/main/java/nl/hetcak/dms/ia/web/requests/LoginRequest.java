@@ -115,7 +115,7 @@ public class LoginRequest {
         return credentials;
     }
 
-    private RequestResponseException readErrorResponse(JsonObject response) {
+    protected RequestResponseException readErrorResponse(JsonObject response) {
         String errorTitle = response.get("error").getAsString();
         String errorDescription = response.get("error_description").getAsString();
         if(errorTitle.contentEquals("server_error")) {
@@ -123,6 +123,12 @@ public class LoginRequest {
             message.append(errorDescription);
             ServerConnectionFailureException scfExc = new ServerConnectionFailureException(message.toString());
             return scfExc;
+        } else if(errorTitle.contentEquals("invalid_grant")) {
+            StringBuilder message = new StringBuilder("Invalid Credentials: ");
+            message.append(errorTitle);
+            message.append(": ");
+            message.append(errorDescription);
+            return new LoginFailureException(message.toString());
         } else if(errorTitle.contentEquals("invalid_token")) {
             StringBuilder message = new StringBuilder("Token error: ");
             message.append(errorTitle);
@@ -134,7 +140,7 @@ public class LoginRequest {
             message.append(errorTitle);
             message.append(": ");
             message.append(errorDescription);
-            RequestResponseException rrExc = new RequestResponseException(-1,message.toString());
+            RequestResponseException rrExc = new RequestResponseException(9999,message.toString());
             return rrExc;
         }
     }

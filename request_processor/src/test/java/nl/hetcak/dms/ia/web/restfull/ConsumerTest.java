@@ -1,8 +1,7 @@
-package nl.hetcak.dms.ia.web.test;
+package nl.hetcak.dms.ia.web.restfull;
 
 import nl.hetcak.dms.ia.web.restfull.consumers.DocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
-import nl.hetcak.dms.ia.web.restfull.consumers.SearchDocumentRequestConsumer;
 import org.junit.Assert;
 import org.junit.Test;
 

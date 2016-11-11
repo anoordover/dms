@@ -1,4 +1,4 @@
-package nl.hetcak.dms.ia.web.test;
+package nl.hetcak.dms.ia.web.query;
 
 import nl.hetcak.dms.ia.web.query.InfoArchiveQueryBuilder;
 import org.junit.Assert;

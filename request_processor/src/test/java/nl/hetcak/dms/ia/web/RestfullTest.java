@@ -1,8 +1,5 @@
-package nl.hetcak.dms.ia.web.test;
+package nl.hetcak.dms.ia.web;
 
-import nl.hetcak.dms.ia.web.ConfigService;
-import nl.hetcak.dms.ia.web.DocumentService;
-import nl.hetcak.dms.ia.web.RequestProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -21,11 +18,11 @@ import javax.ws.rs.core.Response;
  */
 public class RestfullTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfullTest.class);
-    private final static String REQUEST_LIST = "<RaadplegenLijstDocumentResponse><ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer></RaadplegenLijstDocumentResponse>";
-    private final static String REQUEST_DOCUMENT = "<RaadplegenDocumentRequest><ArchiefDocumentId>5639229023</ArchiefDocumentId></RaadplegenDocumentRequest>";
+    private final static String REQUEST_LIST = "<RaadplegenLijstDocumentResponse><ArchiefPersoonsnummer>1892011538</ArchiefPersoonsnummer></RaadplegenLijstDocumentResponse>";
+    private final static String REQUEST_DOCUMENT = "<RaadplegenDocumentRequest><ArchiefDocumentId>1921071631</ArchiefDocumentId></RaadplegenDocumentRequest>";
 
-    private final static String BAD_REQUEST_LIST = "<ArchiefPersoonsnummer>1231189636</ArchiefPersoonsnummer>";
-    private final static String BAD_REQUEST_DOCUMENT = "<ArchiefDocumentId>1909957399</ArchiefDocumentId>";
+    private final static String BAD_REQUEST_LIST = "<ArchiefPersoonsnummer>1892011538</ArchiefPersoonsnummer>";
+    private final static String BAD_REQUEST_DOCUMENT = "<ArchiefDocumentId>1921071631</ArchiefDocumentId>";
     
     @Test
     public void testJavaRsConfig() {
@@ -211,7 +208,7 @@ public class RestfullTest {
         LOGGER.info(documentResponse.getEntity().toString());
         Assert.assertTrue(documentResponse.getStatus() == 200);
         Assert.assertTrue(documentResponse.getEntity().toString().length() > 20);
-        Assert.assertFalse(documentResponse.getEntity().toString().contains("<ResultCode>0</ResultCode>"));
+        Assert.assertTrue(documentResponse.getEntity().toString().contains("<ResultCode>0</ResultCode>"));
 
     }
 }

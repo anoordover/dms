@@ -1,4 +1,4 @@
-package nl.hetcak.dms.ia.web.test;
+package nl.hetcak.dms.ia.web.restfull;
 
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
 import nl.hetcak.dms.ia.web.restfull.produces.RaadplegenLijstDocumentResponse;

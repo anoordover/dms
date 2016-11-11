@@ -1,4 +1,4 @@
-package nl.hetcak.dms.ia.web.test;
+package nl.hetcak.dms.ia.web.exceptions;
 
 import nl.hetcak.dms.ia.web.exceptions.*;
 import org.junit.Test;

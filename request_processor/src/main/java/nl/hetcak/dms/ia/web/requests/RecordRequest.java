@@ -93,49 +93,6 @@ public class RecordRequest {
         return result;
     }
 
-
-
-    public List<InfoArchiveDocument> requestListDocuments(String documentTitle, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, IOException, RequestResponseException, ParseException {
-        StringBuilder logString = new StringBuilder("Starting List Documents request for");
-        if (StringUtils.isNotBlank(documentTitle)) {
-            logString.append(" document title \"");
-            logString.append(documentTitle);
-            logString.append("\"");
-        }
-        if (StringUtils.isNotBlank(personNumber)) {
-            logString.append(" person number \"");
-            logString.append(personNumber);
-            logString.append("\"");
-        }
-        if (StringUtils.isNotBlank(documentCharacteristics)) {
-            logString.append(" document characteristics \"");
-            logString.append(documentCharacteristics);
-            logString.append("\"");
-        }
-        if (StringUtils.isNotBlank(sendDate1) && StringUtils.isNotBlank(sendDate2)) {
-            logString.append(" senddate between \"");
-            logString.append(sendDate1);
-            logString.append("\" ");
-            logString.append("till \"");
-            logString.append(sendDate2);
-            logString.append("\"");
-        }
-
-        LOGGER.info(logString.toString());
-
-        String response = requestUtil.responseReader(executeListDocumentsRequest(documentTitle, personNumber, documentCharacteristics, sendDate1, sendDate2));
-        LOGGER.info(LOGGING_PARSING_RESULT);
-        List<InfoArchiveDocument> result = parseDocumentList(response, true, true);
-        if (result.size() == 0) {
-            String errorMessage = "Got 0 results, invalid search.";
-            LOGGER.error(errorMessage);
-            LOGGER.debug(response);
-            throw new NoContentAvailableException(errorMessage, NoContentAvailableException.ERROR_CODE_NO_DOCUMENT_LIST);
-        }
-        LOGGER.info("Returning List with " + result.size() + " documents.");
-        return result;
-    }
-
     public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ParseException, RequestResponseException {
         LOGGER.info("Requesting document with number:" + archiveDocumentNumber);
         String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));
@@ -163,32 +120,7 @@ public class RecordRequest {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
         String requestBody = listDocumentRequest.adaptToQuery().build();
-        LOGGER.info("Executing HTTPPOST request for a List Documents based on person number.");
-        LOGGER.debug(requestBody);
-        //execute request.
-        return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
-    }
-
-    private HttpResponse executeListDocumentsRequest(String documentTitle, String personNumber, String documentCharacteristics, String sendDate1, String sendDate2) throws JAXBException, RequestResponseException {
-        Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
-        String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
-
-        //create query
-        InfoArchiveQueryBuilder currentQuery = new InfoArchiveQueryBuilder();
-        if (documentTitle != null) {
-            currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_TITLE, documentTitle);
-        }
-        if (personNumber != null) {
-            currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_PERSON_NUMBER, personNumber);
-        }
-        if (documentCharacteristics != null) {
-            currentQuery = currentQuery.addEqualCriteria(PARSE_DOCUMENT_CHARACTERISTIC, documentCharacteristics);
-        }
-        if (sendDate1 != null && sendDate2 != null) {
-            currentQuery = currentQuery.addBetweenCriteria(PARSE_DOCUMENT_SEND_DATE, sendDate1, sendDate2);
-        }
-        String requestBody = currentQuery.build();
-        LOGGER.info("Executing HTTPPOST request for a List Documents based on Document type and a between senddate constraint.");
+        LOGGER.info("Executing HTTPPOST request for a List Documents.");
         LOGGER.debug(requestBody);
         //execute request.
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
@@ -203,7 +135,7 @@ public class RecordRequest {
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
     }
 
-    private List<InfoArchiveDocument> parseDocumentList(String response, boolean expectList, boolean isSearchResults) throws ParseException, TooManyResultsException, InfoArchiveResponseException {
+    protected List<InfoArchiveDocument> parseDocumentList(String response, boolean expectList, boolean isSearchResults) throws ParseException, TooManyResultsException, InfoArchiveResponseException {
         List<InfoArchiveDocument> documents = new ArrayList<>();
         TooManyResultsException tooManyResultsException = null;
 

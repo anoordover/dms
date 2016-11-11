@@ -1,4 +1,4 @@
-package nl.hetcak.dms.ia.web.test;
+package nl.hetcak.dms.ia.web.configuration;
 
 import nl.hetcak.dms.ia.web.comunication.ServerConnectionInformation;
 import nl.hetcak.dms.ia.web.configuration.Configuration;

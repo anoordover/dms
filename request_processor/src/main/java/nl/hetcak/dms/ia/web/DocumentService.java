@@ -8,7 +8,6 @@ import nl.hetcak.dms.ia.web.requests.RecordRequest;
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
 import nl.hetcak.dms.ia.web.restfull.consumers.DocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
-import nl.hetcak.dms.ia.web.restfull.consumers.SearchDocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.restfull.produces.RaadplegenDocumentResponse;
 import nl.hetcak.dms.ia.web.restfull.produces.RaadplegenLijstDocumentResponse;
 import nl.hetcak.dms.ia.web.restfull.produces.containers.ArchiefDocumenten;
@@ -35,8 +34,6 @@ import java.util.Calendar;
 public class DocumentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
     
-    private static final String XML_REQUEST_START = "<request>";
-    private static final String XML_REQUEST_STOP = "</request>";
     private static final String ERROR_RESPONSE_GENERIC = "Something went wrong, please notify an administrator.";
     private static final String ERROR_RESPONSE_MESSAGE_TEMPLATE = "<error><code>%d</code><description>%s</description></error>";
     private static final String LOGGER_IO_OR_PARSE_EXC = "IO or Parsing error.";

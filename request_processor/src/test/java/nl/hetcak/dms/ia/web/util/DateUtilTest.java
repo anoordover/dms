@@ -1,4 +1,4 @@
-package nl.hetcak.dms.ia.web.test;
+package nl.hetcak.dms.ia.web.util;
 
 import nl.hetcak.dms.ia.web.util.InfoArchiveDateUtil;
 import org.junit.Assert;

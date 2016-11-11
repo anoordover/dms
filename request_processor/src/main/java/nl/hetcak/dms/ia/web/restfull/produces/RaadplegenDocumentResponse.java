@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.StringWriter;
 
@@ -22,6 +23,7 @@ public class RaadplegenDocumentResponse {
     private String msResultDescription;
     private String msPayloadPdf;
 
+    @XmlElement(name = "ArchiefDocumentId")
     public String getArchiefDocumentId() {
         return msArchiefDocumentId;
     }
@@ -30,6 +32,7 @@ public class RaadplegenDocumentResponse {
         this.msArchiefDocumentId = archiefDocumentId;
     }
 
+    @XmlElement(name = "ResultCode")
     public int getResultCode() {
         return miResultCode;
     }
@@ -38,6 +41,7 @@ public class RaadplegenDocumentResponse {
         this.miResultCode = resultCode;
     }
 
+    @XmlElement(name = "ResultDescription")
     public String getResultDescription() {
         return msResultDescription;
     }
@@ -46,6 +50,7 @@ public class RaadplegenDocumentResponse {
         this.msResultDescription = resultDescription;
     }
 
+    @XmlElement(name = "PayloadPdf")
     public String getPayloadPdf() {
         return msPayloadPdf;
     }
