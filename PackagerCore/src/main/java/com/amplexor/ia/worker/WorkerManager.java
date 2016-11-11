@@ -59,12 +59,17 @@ public class WorkerManager {
     }
 
     private void updatePausedWorkerCaches(WorkerConfiguration objConfiguration) {
+        int iStartupCount = 0;
         for (int i = miCurrentWorker + 1; i < objConfiguration.getMaxWorkerThreads() - 1; ++i) {
             mcWorkers.get(i).update();
             if (mcWorkers.get(i).getClosedCacheCount() > 0) {
                 mcWorkers.get(i).setIngestFlag();
-                startWorker();
+                iStartupCount = i - miCurrentWorker;
             }
+        }
+
+        while (iStartupCount-- > 0) {
+            startWorker();
         }
     }
 

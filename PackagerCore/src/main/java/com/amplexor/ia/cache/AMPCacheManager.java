@@ -221,7 +221,10 @@ public class AMPCacheManager implements CacheManager {
                 bReturn = false;
             }
 
-            try { //Delete Cache descriptor XML
+            try { //Delete Cache descriptor XML and SIP file
+                if(objCache.getSipFile() != null) {
+                    Files.deleteIfExists(objCache.getSipFile());
+                }
                 Files.deleteIfExists(Paths.get(String.format("%s/IACache-%d.xml", mobjSavePath.toString(), objCache.getId()).replace('/', File.separatorChar)));
             } catch (IOException ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_CACHE_DELETION_FAILURE, ex);

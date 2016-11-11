@@ -47,20 +47,13 @@ public class CAKRetentionManagerTest {
         assertNotNull(crm.retrieveRetentionClass(objDocument));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void retrieveRetentionClassFailure() throws Exception {
         IADocument iad = mock(IADocument.class);
         when(iad.getMetadata("ArchiefDocumenttitel")).thenReturn("Z121");
-
         CAKRetentionManager crm = new CAKRetentionManager(objConfiguration);
-        IARetentionClass retentionClass = null;
-        try {
-            retentionClass = crm.retrieveRetentionClass(iad);
-        } catch (Exception e) {
-
-        }
+        IARetentionClass retentionClass = crm.retrieveRetentionClass(iad);
         assertNull(retentionClass);
-
     }
 
 }
