@@ -18,8 +18,8 @@ import javax.ws.rs.core.Response;
  */
 public class RestfullTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfullTest.class);
-    private final static String REQUEST_LIST = "<RaadplegenLijstDocumentResponse><ArchiefPersoonsnummer>1892011538</ArchiefPersoonsnummer></RaadplegenLijstDocumentResponse>";
-    private final static String REQUEST_DOCUMENT = "<RaadplegenDocumentRequest><ArchiefDocumentId>1921071631</ArchiefDocumentId></RaadplegenDocumentRequest>";
+    private final static String REQUEST_LIST = "<RaadplegenLijstDocumentResponse><ArchiefPersoonsnummer>3092196671</ArchiefPersoonsnummer></RaadplegenLijstDocumentResponse>";
+    private final static String REQUEST_DOCUMENT = "<RaadplegenDocumentRequest><ArchiefDocumentId>1342408802</ArchiefDocumentId></RaadplegenDocumentRequest>";
 
     private final static String BAD_REQUEST_LIST = "<ArchiefPersoonsnummer>1892011538</ArchiefPersoonsnummer>";
     private final static String BAD_REQUEST_DOCUMENT = "<ArchiefDocumentId>1921071631</ArchiefDocumentId>";

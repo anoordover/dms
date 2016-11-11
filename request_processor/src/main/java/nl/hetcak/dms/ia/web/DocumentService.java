@@ -62,7 +62,7 @@ public class DocumentService {
             throw reqresExc;
         } catch (Exception exc) {
             LOGGER.error("Io or parsing error", exc);
-            throw new RequestResponseException(-1, LOGGER_IO_OR_PARSE_EXC);
+            throw new RequestResponseException(9999, LOGGER_IO_OR_PARSE_EXC);
         }
     }
     
@@ -84,7 +84,7 @@ public class DocumentService {
             throw reqresExc;
         } catch (Exception exc) {
             LOGGER.error(LOGGER_IO_OR_PARSE_EXC, exc);
-            throw new RequestResponseException(-1, LOGGER_IO_OR_PARSE_EXC);
+            throw new RequestResponseException(9999, LOGGER_IO_OR_PARSE_EXC);
         }
     }
     
@@ -96,7 +96,7 @@ public class DocumentService {
             throw reqResExc;
         } catch (Exception exc) {
             LOGGER.error(LOGGER_IO_OR_PARSE_EXC, exc);
-            throw new RequestResponseException(-1, LOGGER_IO_OR_PARSE_EXC);
+            throw new RequestResponseException(9999, LOGGER_IO_OR_PARSE_EXC);
         }
     }
     

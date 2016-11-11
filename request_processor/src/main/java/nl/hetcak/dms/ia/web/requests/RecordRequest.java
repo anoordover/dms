@@ -228,14 +228,23 @@ public class RecordRequest {
         LOGGER.info("Parsing Document.");
         InfoArchiveDocument infoArchiveDocument = new InfoArchiveDocument();
         JsonArray columns = document.getAsJsonArray(PARSE_RESPONSE_COLUMNS);
+        
         for (int i_column = 0; i_column < columns.size(); i_column++) {
             JsonObject column = columns.get(i_column).getAsJsonObject();
 
             if (column.has(PARSE_RESPONSE_NAME)) {
                 String columnName = column.get(PARSE_RESPONSE_NAME).getAsString();
+                String value = null;
+                try {
+                    value = (column.get(PARSE_RESPONSE_VALUE).getAsString());
+                } catch (NullPointerException nullExc) {
+                    LOGGER.error("Got null value on column "+columnName);
+                    value = "";
+                }
+                
                 LOGGER.debug("Parsing column: " + columnName);
-                infoArchiveDocument = parseFirstTenFields(infoArchiveDocument, columnName, column);
-                infoArchiveDocument = parseSecondTenField(infoArchiveDocument, columnName, column);
+                infoArchiveDocument = parseFirstTenFields(infoArchiveDocument, columnName, column, value);
+                infoArchiveDocument = parseSecondTenField(infoArchiveDocument, columnName, column, value);
             }
         }
         LOGGER.info("Done parsing document.");
@@ -244,34 +253,34 @@ public class RecordRequest {
     }
 
     //(so it has come to this...)
-    private InfoArchiveDocument parseFirstTenFields(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column) throws ParseException {
+    private InfoArchiveDocument parseFirstTenFields(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column, String value) throws ParseException {
         switch (columnName) {
             case PARSE_DOCUMENT_ID:
-                infoArchiveDocument.setArchiefDocumentId(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                infoArchiveDocument.setArchiefDocumentId(value);
                 break;
             case PARSE_DOCUMENT_PERSON_NUMBER:
-                infoArchiveDocument.setArchiefPersoonsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                infoArchiveDocument.setArchiefPersoonsnummer(value);
                 break;
             case PARSE_DOCUMENT_TITLE:
-                infoArchiveDocument.setArchiefDocumenttitel(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                infoArchiveDocument.setArchiefDocumenttitel(value);
                 break;
             case PARSE_DOCUMENT_KIND:
-                infoArchiveDocument.setArchiefDocumentsoort(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                infoArchiveDocument.setArchiefDocumentsoort(value);
                 break;
             case PARSE_DOCUMENT_PROTOCOL:
-                infoArchiveDocument.setArchiefRegeling(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                infoArchiveDocument.setArchiefRegeling(value);
                 break;
             case PARSE_DOCUMENT_CHARACTERISTIC:
-                infoArchiveDocument.setArchiefDocumentkenmerk(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                infoArchiveDocument.setArchiefDocumentkenmerk(value);
                 break;
             case PARSE_DOCUMENT_SEND_DATE:
-                infoArchiveDocument.setArchiefVerzenddag(InfoArchiveDateUtil.convertToRequestDate(column.get(PARSE_RESPONSE_VALUE).getAsString()));
+                infoArchiveDocument.setArchiefVerzenddag(InfoArchiveDateUtil.convertToRequestDate(value));
                 break;
             case PARSE_DOCUMENT_TYPE:
-                infoArchiveDocument.setArchiefDocumenttype(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                infoArchiveDocument.setArchiefDocumenttype(value);
                 break;
             case PARSE_DOCUMENT_STATUS:
-                infoArchiveDocument.setArchiefDocumentstatus(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                infoArchiveDocument.setArchiefDocumentstatus(value);
                 break;
             default:
                 break;
@@ -279,13 +288,13 @@ public class RecordRequest {
         return infoArchiveDocument;
     }
 
-    private InfoArchiveDocument parseSecondTenField(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column) {
+    private InfoArchiveDocument parseSecondTenField(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column, String value) {
         switch (columnName) {
             case PARSE_DOCUMENT_YEAR:
-                infoArchiveDocument.setArchiefRegelingsjaar(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                infoArchiveDocument.setArchiefRegelingsjaar(value);
                 break;
             case PARSE_DOCUMENT_ATTACHMENT:
-                infoArchiveDocument.setArchiefFile(column.get(PARSE_RESPONSE_VALUE).getAsString());
+                infoArchiveDocument.setArchiefFile(value);
                 break;
             //case PARSE_DOCUMENT_HANDLING_NUMBER:
             //    infoArchiveDocument.setArchiefHandelingsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());

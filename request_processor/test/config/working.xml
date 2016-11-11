@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config-request-processor>
-    <ia_application_uuid>ed1932ac-abe3-422f-b099-3a63361c6ebc</ia_application_uuid>
-    <ia_searchcomposition_uuid>da267633-c67d-45ee-b757-abd3273119ac</ia_searchcomposition_uuid>
+    <ia_application_uuid>1d0485de-c41d-4a87-ad3e-4ee42fca58c6</ia_application_uuid>
+    <ia_searchcomposition_uuid>28717ecc-91f0-444a-b963-f39f84e114bc</ia_searchcomposition_uuid>
     <log4j_properties></log4j_properties>
     <max_allowed_results>250</max_allowed_results>
     <max_allowed_filesize>2500000</max_allowed_filesize>

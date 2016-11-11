@@ -37,7 +37,7 @@ public class RequestRecordsTest {
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(),credentials);
         ListDocumentRequestConsumer requestConsumer = new ListDocumentRequestConsumer();
-        requestConsumer.setArchiefPersoonsnummer("1892011538");
+        requestConsumer.setArchiefPersoonsnummer("8823502042");
         List<InfoArchiveDocument> document = recordRequest.requestListDocuments(requestConsumer);
         assertNotNull(document);
         assertTrue(document.size() > 0);
@@ -54,9 +54,9 @@ public class RequestRecordsTest {
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest recordRequest = new RecordRequest(connectionManager.getConfiguration(),credentials);
         ListDocumentRequestConsumer requestConsumer = new ListDocumentRequestConsumer();
-        requestConsumer.setArchiefPersoonsnummer("1892011538");
-        requestConsumer.setArchiefDocumentId("1921071631");
-        requestConsumer.setArchiefDocumenttitel("B10");
+        requestConsumer.setArchiefPersoonsnummer("5482187590");
+        requestConsumer.setArchiefDocumentId("1160811254");
+        requestConsumer.setArchiefDocumenttitel("Z01");
         List<InfoArchiveDocument> document = recordRequest.requestListDocuments(requestConsumer);
         assertNotNull(document);
         assertTrue(document.size() > 0);
@@ -88,7 +88,7 @@ public class RequestRecordsTest {
         assertNotNull(credentials);
         assertTrue(credentials.isSecurityTokenValid());
         RecordRequest request = new RecordRequest(connectionManager.getConfiguration(), credentials);
-        InfoArchiveDocument document = request.requestDocument("1921071631");
+        InfoArchiveDocument document = request.requestDocument("1321501466");
         assertNotNull(document);
         DocumentRequest documentRequest = new DocumentRequest(connectionManager.getConfiguration(), credentials);
         ByteArrayOutputStream documentStream = documentRequest.getContentWithContentId(document.getArchiefFile());
