@@ -44,6 +44,11 @@ public interface CacheManager {
     List<IACache> getClosedCaches();
 
     /**
+     * Get the number of caches that are currently closed
+     */
+    int getClosedCacheCount();
+
+    /**
      * Deletes {@link IACache} objCache from the list of caches, as well as from the filesystem
      *
      * @param objCache The cache that is to be removed

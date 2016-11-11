@@ -380,4 +380,9 @@ public class AMPCacheManager implements CacheManager {
         }
         return bReturn;
     }
+
+    public int getClosedCacheCount() {
+        List<IACache> objClosed = mcCaches.stream().filter(IACache::isClosed).collect(Collectors.toList());
+        return objClosed.size();
+    }
 }

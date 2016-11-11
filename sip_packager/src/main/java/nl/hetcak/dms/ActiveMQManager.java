@@ -39,7 +39,7 @@ public class ActiveMQManager implements DocumentSource {
         mobjConfiguration = objConfiguration;
         mobjConnectionFactory = new ActiveMQSslConnectionFactory();
         mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter(PARAMETER_BROKER));
-        if (mobjConfiguration.getParameter(PARAMETER_TRUSTSTORE) != null) {
+        if (mobjConfiguration.getParameter(PARAMETER_TRUSTSTORE) != null && !"".equals(mobjConfiguration.getParameter(PARAMETER_TRUSTSTORE))) {
             try {
                 mobjConnectionFactory.setTrustStore(objConfiguration.getParameter(PARAMETER_TRUSTSTORE));
                 mobjConnectionFactory.setTrustStoreType(TRUSTSTORE_TYPE);

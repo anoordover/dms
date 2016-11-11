@@ -4,6 +4,7 @@ import com.amplexor.ia.retention.IARetentionClass;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class CAKRetentionClass extends IARetentionClass {
     private String msPolicy;
 
     @XStreamImplicit(itemFieldName = "associated_title")
-    private List<String> msAssociatedTitles;
+    private List<String> mcAssociatedTitles;
 
     public CAKRetentionClass(String sName) {
         this(sName, "");
@@ -32,6 +33,7 @@ public class CAKRetentionClass extends IARetentionClass {
         super(sName);
         msHandelingNr = sHandelingNr;
         msPolicy = sPolicy;
+        mcAssociatedTitles = new ArrayList<>();
     }
 
     public String getHandelingNr() {
@@ -44,6 +46,10 @@ public class CAKRetentionClass extends IARetentionClass {
     }
 
     public List<String> getAssociatedTitles() {
-        return Collections.unmodifiableList(msAssociatedTitles);
+        return Collections.unmodifiableList(mcAssociatedTitles);
+    }
+
+    public void addAssociatedTitle(String sTitle) {
+        mcAssociatedTitles.add(sTitle);
     }
 }

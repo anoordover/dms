@@ -20,13 +20,13 @@
   </caching>
   <rest_api>
     <protocol>http</protocol>
-    <host>infoarchive-sp.back.acc.dms.func.cak-bz.local</host>
-    <port>8775</port>
+    <host>infoarchive40</host>
+    <port>8765</port>
     <gateway_protocol>http</gateway_protocol>
-    <gateway_host>infoarchive-rp.front.acc.dms.func.cak-bz.local</gateway_host>
+    <gateway_host>infoarchive40</gateway_host>
     <gateway_port>8080</gateway_port>
-    <ingest_user>sa-infoarchive-acc</ingest_user>
-    <encrypted_ingest_password>CzhxIggWXRNEJTYHZ38MSVKzJ8mwcA/33RBk0jOvZGc=</encrypted_ingest_password>
+    <ingest_user>sue@iacustomer.com</ingest_user>
+    <encrypted_ingest_password>C3lmPCEob1QgQCQrFlwrCpzS55j79vVesM+1AILA0L0=</encrypted_ingest_password>
     <ingest_tenant>INFOARCHIVE</ingest_tenant>
   </rest_api>
   <sip>

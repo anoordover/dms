@@ -1,8 +1,10 @@
 package ia.ingest;
 
 import com.amplexor.ia.configuration.ConfigManager;
+import com.amplexor.ia.crypto.Crypto;
 import com.amplexor.ia.ingest.IACredentials;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.net.URLEncoder;
@@ -14,13 +16,15 @@ import static org.junit.Assert.*;
  * Created by minkenbergs on 4-10-2016.
  */
 public class IACredentialsTest {
-    ConfigManager mobjConfigManager;
+    static String sPasswordEncrypted;
 
-    @Before
-    public void setup() {
-        System.out.println(System.getProperty("user.dir"));
-        mobjConfigManager = new ConfigManager("IAArchiver.xml");
-        mobjConfigManager.loadConfiguration();
+    @BeforeClass
+    public static void setup() throws Exception {
+        //Generate Keyfile
+        String[] cArgs = new String[] {"-key", "testkey", "-keyfile", "data-file", "-data", "testPassword"};
+        Crypto.main(cArgs);
+
+        sPasswordEncrypted = Base64.getEncoder().encodeToString(Crypto.encrypt("testPassword".getBytes(), "testkeytestkeyte".getBytes()));
     }
 
     @Test
@@ -78,7 +82,7 @@ public class IACredentialsTest {
     public void getLoginQuery() throws Exception {
         IACredentials iactest = new IACredentials();
         iactest.setUsername("testUser");
-        iactest.setPassword("testPassword");
+        iactest.setPassword(sPasswordEncrypted);
         StringBuilder objBuilder = new StringBuilder();
         objBuilder.append(URLEncoder.encode("username", "UTF-8"));
         objBuilder.append("=");
@@ -86,8 +90,7 @@ public class IACredentialsTest {
         objBuilder.append("&");
         objBuilder.append(URLEncoder.encode("password", "UTF-8"));
         objBuilder.append("=");
-        String sDecodedPassword = new String(Base64.getDecoder().decode("testPassword".getBytes()));
-        objBuilder.append(URLEncoder.encode(sDecodedPassword, "UTF-8"));
+        objBuilder.append(URLEncoder.encode("testPassword", "UTF-8"));
         objBuilder.append("&");
         objBuilder.append(URLEncoder.encode("grant_type", "UTF-8"));
         objBuilder.append("=");

@@ -11,37 +11,43 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by minkenbergs on 7-10-2016.
  */
 public class ActiveMQManagerTest {
-    ConfigManager mobjConfigManager;
-
+    PluggableObjectConfiguration objConfiguration;
     @Before
     public void setup() {
-        System.out.println(System.getProperty("user.dir"));
-        mobjConfigManager = new ConfigManager("IAArchiver.xml");
-        mobjConfigManager.loadConfiguration();
+        objConfiguration = mock(PluggableObjectConfiguration.class);
+        when(objConfiguration.getParameter("broker")).thenReturn("tcp://infoarchive40:61616");
+        when(objConfiguration.getParameter("result_format")).thenReturn("<urn:Item ResultCode=\"%s\" DocumentId=\"%s\", ResultDescription=\"%s\"/>");
+        when(objConfiguration.getParameter("results_element")).thenReturn("<urn:Items xmlns:urn=\"urn:hetcak:dms:uitingarchief:2016:08\">%s</urn:Items>");
+        when(objConfiguration.getParameter("result_values")).thenReturn("{ERROR};{ID};{MESSAGE}");
+        when(objConfiguration.getParameter("input_queue_name")).thenReturn("AanleverenArchiefUitingen");
+        when(objConfiguration.getParameter("result_queue_name")).thenReturn("VerwerkArchiefUitingenStatus");
+        when(objConfiguration.getParameter("queue_receive_timeout")).thenReturn("500");
     }
 
     @Test
     public void retrieveDocumentData() throws Exception {
-        ActiveMQManager amm = new ActiveMQManager(mobjConfigManager.getConfiguration().getDocumentSource());
+        ActiveMQManager amm = new ActiveMQManager(objConfiguration);
         amm.initialize();
         assertNotNull(amm.retrieveDocumentData());
+        amm.shutdown();
     }
 
     @Test
     public void initialize() throws Exception {
-        ActiveMQManager amm = new ActiveMQManager(mobjConfigManager.getConfiguration().getDocumentSource());
+        ActiveMQManager amm = new ActiveMQManager(objConfiguration);
         assertTrue(amm.initialize());
         amm.shutdown();
     }
 
     @Test
     public void postResult() throws Exception {
-        ActiveMQManager amm = new ActiveMQManager(mobjConfigManager.getConfiguration().getDocumentSource());
+        ActiveMQManager amm = new ActiveMQManager(objConfiguration);
         List<IADocumentReference> docrefs = new ArrayList<>();
         IADocumentReference idf = new IADocumentReference("1002224232", "sips");
         idf.setErrorCode(100);

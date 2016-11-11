@@ -180,7 +180,7 @@ class IAArchiverWorkerThread implements Runnable {
 
     public synchronized int getClosedCacheCount() {
         if (mobjCacheManager != null) {
-            return mobjCacheManager.getClosedCaches().size();
+            return mobjCacheManager.getClosedCacheCount();
         }
 
         return -1;

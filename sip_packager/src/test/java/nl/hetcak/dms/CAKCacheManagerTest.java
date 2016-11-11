@@ -7,6 +7,7 @@ import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -29,10 +30,10 @@ public class CAKCacheManagerTest {
 
     @Before
     public void setup() {
-        objConfig = new CacheConfiguration();
-        objConfig.setCacheBasePath("target/Cache");
-        objConfig.setCacheMessageThreshold(1);
-        objConfig.setCacheTimeThreshold(60);
+        objConfig = mock(CacheConfiguration.class);
+        when(objConfig.getCacheBasePath()).thenReturn("target/Cache");
+        when(objConfig.getParameter("document_class")).thenReturn("nl.hetcak.dms.CAKDocument");
+        when(objConfig.getParameter("document_element_name")).thenReturn("ArchiefDocument");
 
         objDocument = new CAKDocument();
         objDocument.setDocumentId("1000010000");
@@ -51,7 +52,7 @@ public class CAKCacheManagerTest {
 
     @After
     public void tearDown() throws Exception {
-        Files.delete(Paths.get(objConfig.getCacheBasePath()));
+        FileUtils.deleteDirectory(Paths.get(objConfig.getCacheBasePath()).toFile());
     }
 
 }

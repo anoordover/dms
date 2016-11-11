@@ -18,14 +18,6 @@ import static org.junit.Assert.assertEquals;
  * Created by minkenbergs on 5-10-2016.
  */
 public class IAObjectTest {
-    ConfigManager mobjConfigManager;
-
-    @Before
-    public void setup() {
-        System.out.println(System.getProperty("user.dir"));
-        mobjConfigManager = new ConfigManager("IAArchiver.xml");
-        mobjConfigManager.loadConfiguration();
-    }
 
     @Test
     public void setgetName() throws Exception {
