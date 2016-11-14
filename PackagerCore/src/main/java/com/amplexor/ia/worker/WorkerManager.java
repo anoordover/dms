@@ -19,7 +19,7 @@ public class WorkerManager {
 
     private boolean mbStopFlag;
     private int miExitCode;
-    private long lMillisecondsSinceLastCheck;
+    private long mlMillisecondsSinceLastCheck;
 
     private WorkerManager() {
         mcWorkers = new ArrayList<>();
@@ -43,7 +43,7 @@ public class WorkerManager {
     }
 
     public boolean checkWorkers(WorkerConfiguration objConfiguration) {
-        long mlDiffMillisecondsSinceLastCheck = Math.abs(lMillisecondsSinceLastCheck - System.currentTimeMillis());
+        long mlDiffMillisecondsSinceLastCheck = Math.abs(mlMillisecondsSinceLastCheck - System.currentTimeMillis());
         if (mlDiffMillisecondsSinceLastCheck > objConfiguration.getCheckInterval()) {
             int iTotalProcessed = getProcessedBytes();
             if (shouldStopWorker(iTotalProcessed, objConfiguration)) {
@@ -51,7 +51,7 @@ public class WorkerManager {
             } else if (shouldStartWorker(iTotalProcessed, objConfiguration)) {
                 startWorker();
             }
-            lMillisecondsSinceLastCheck = System.currentTimeMillis();
+            mlMillisecondsSinceLastCheck = System.currentTimeMillis();
         }
         updatePausedWorkerCaches(objConfiguration);
 

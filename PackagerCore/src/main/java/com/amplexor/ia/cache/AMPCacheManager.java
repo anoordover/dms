@@ -165,11 +165,11 @@ public class AMPCacheManager implements CacheManager {
     @Override
     public void update() {
         debug(this, "Updating Caches");
-        mcCaches.stream().filter(objCache -> objCache != null && !objCache.isClosed()).forEach(objCache -> {
-            if (objCache.getSize() >= mobjConfiguration.getCacheMessageThreshold()) {
+        for (IACache objCache : mcCaches) {
+            if (objCache != null && !objCache.isClosed() && objCache.getSize() > -mobjConfiguration.getCacheMessageThreshold()) {
                 info(this, String.format("Closing cache %s-%d, Reason: Message Threshold Reached(%d)%n", objCache.getRetentionClass().getName(), objCache.getId(), mobjConfiguration.getCacheMessageThreshold()));
                 objCache.close();
-            } else if (objCache.getCreated() <= (System.currentTimeMillis() - (mobjConfiguration.getCacheTimeThreshold() * 1000))) {
+            } else if (objCache != null && !objCache.isClosed() && objCache.getCreated() <= (System.currentTimeMillis() - mobjConfiguration.getCacheTimeThreshold() * 1000)) {
                 info(this, String.format("Closing cache %s-%d, Reason: Time Threshold Reached(%d)%n", objCache.getRetentionClass().getName(), objCache.getId(), mobjConfiguration.getCacheTimeThreshold()));
                 objCache.close();
             }
@@ -181,7 +181,7 @@ public class AMPCacheManager implements CacheManager {
                     ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
                 }
             }
-        });
+        }
         debug(this, "Caches Updated");
     }
 
@@ -193,10 +193,15 @@ public class AMPCacheManager implements CacheManager {
     @Override
     public List<IACache> getClosedCaches() {
         debug(this, "Fetching Closed Caches");
-        List<IACache> objClosed = mcCaches.stream().filter(IACache::isClosed).collect(Collectors.toList());
-        mcCaches.removeAll(objClosed);
-        debug(this, "Found " + objClosed.size() + " Closed Caches");
-        return Collections.unmodifiableList(objClosed);
+        List<IACache> cClosed = new ArrayList<>();
+        for(IACache objCache : mcCaches) {
+            if(objCache.isClosed()) {
+                cClosed.add(objCache);
+            }
+        }
+        mcCaches.removeAll(cClosed);
+        debug(this, "Found " + cClosed.size() + " Closed Caches");
+        return Collections.unmodifiableList(cClosed);
     }
 
     /**
@@ -222,7 +227,7 @@ public class AMPCacheManager implements CacheManager {
             }
 
             try { //Delete Cache descriptor XML and SIP file
-                if(objCache.getSipFile() != null) {
+                if (objCache.getSipFile() != null) {
                     Files.deleteIfExists(objCache.getSipFile());
                 }
                 Files.deleteIfExists(Paths.get(String.format("%s/IACache-%d.xml", mobjSavePath.toString(), objCache.getId()).replace('/', File.separatorChar)));
@@ -279,8 +284,8 @@ public class AMPCacheManager implements CacheManager {
             }
         });
 
-        for(IACache objCache : mcCaches) {
-            if(objCache.getId() >= miNextId) {
+        for (IACache objCache : mcCaches) {
+            if (objCache.getId() >= miNextId) {
                 miNextId = objCache.getId() + 1;
             }
         }

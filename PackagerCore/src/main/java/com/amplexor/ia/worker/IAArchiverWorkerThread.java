@@ -165,8 +165,9 @@ class IAArchiverWorkerThread implements Runnable {
                 error(this, "Error in cache " + objCache.getId() + " , Saving to error cache");
                 mobjCacheManager.createErrorCache(objCache);
             }
-            mobjDocumentSource.postResult(objCache.getContents());
-            mobjCacheManager.cleanupCache(objCache);
+            if(mobjDocumentSource.postResult(objCache.getContents())) {
+                mobjCacheManager.cleanupCache(objCache);
+            }
         }
         mbIngesting = false;
         debug(this, "Done Ingesting closed caches");
