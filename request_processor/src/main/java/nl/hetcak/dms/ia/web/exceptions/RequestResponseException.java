@@ -12,7 +12,7 @@ import java.util.List;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class RequestResponseException extends Exception {
-    private int errorCode = -1;
+    private int errorCode = 9999;
     private String userErrorMessage;
     private List<InfoArchiveDocument> documentsToDisplay = new ArrayList<>();
 

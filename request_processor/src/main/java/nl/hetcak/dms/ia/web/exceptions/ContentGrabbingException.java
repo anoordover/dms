@@ -6,7 +6,9 @@ import java.security.PrivilegedActionException;
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
+ * @deprecated XSD parsing now takes care of this.
  */
+@Deprecated
 public class ContentGrabbingException extends RequestResponseException {
     public static final int ERROR_CODE = 2101;
     public static final String ERROR_MESSAGE = "There is an error within the request message, please contact an Administrator.";
@@ -15,7 +17,9 @@ public class ContentGrabbingException extends RequestResponseException {
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
+     * @deprecated XSD parsing now takes care of this.
      */
+    @Deprecated
     public ContentGrabbingException() {
         super(ERROR_CODE, ERROR_MESSAGE);
     }
@@ -27,7 +31,9 @@ public class ContentGrabbingException extends RequestResponseException {
      *
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
+     * @deprecated XSD parsing now takes care of this.
      */
+    @Deprecated
     public ContentGrabbingException(String message) {
         super(message, ERROR_CODE, ERROR_MESSAGE);
     }
@@ -45,7 +51,9 @@ public class ContentGrabbingException extends RequestResponseException {
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
      * @since 1.4
+     * @deprecated XSD parsing now takes care of this.
      */
+    @Deprecated
     public ContentGrabbingException(String message, Throwable cause) {
         super(message, cause, ERROR_CODE, ERROR_MESSAGE);
     }
@@ -63,7 +71,9 @@ public class ContentGrabbingException extends RequestResponseException {
      *              permitted, and indicates that the cause is nonexistent or
      *              unknown.)
      * @since 1.4
+     * @deprecated XSD parsing now takes care of this.
      */
+    @Deprecated
     public ContentGrabbingException(Throwable cause) {
         super(cause, ERROR_CODE, ERROR_MESSAGE);
     }
@@ -81,7 +91,9 @@ public class ContentGrabbingException extends RequestResponseException {
      * @param writableStackTrace whether or not the stack trace should
      *                           be writable
      * @since 1.7
+     * @deprecated XSD parsing now takes care of this.
      */
+    @Deprecated
     public ContentGrabbingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE, ERROR_MESSAGE);
     }
