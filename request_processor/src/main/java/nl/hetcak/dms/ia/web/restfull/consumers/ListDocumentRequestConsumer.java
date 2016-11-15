@@ -1,7 +1,10 @@
 package nl.hetcak.dms.ia.web.restfull.consumers;
 
+import nl.hetcak.dms.ia.web.exceptions.RequestParsingException;
+import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.query.InfoArchiveQueryBuilder;
 import nl.hetcak.dms.ia.web.util.InfoArchiveDateUtil;
+import nl.hetcak.dms.ia.web.util.SchemaUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +24,7 @@ import java.text.ParseException;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-@XmlRootElement(name = "RaadplegenDocumentLijstRequest")
+@XmlRootElement(name = "RaadplegenDocumentLijstRequest", namespace = "urn:hetcak:dms:raadplegenuitingarchief:2016:11")
 public class ListDocumentRequestConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ListDocumentRequestConsumer.class);
     private final static String ARCHIEF_DOCUMENT_TITLE = "ArchiefDocumenttitel";
@@ -271,15 +274,17 @@ public class ListDocumentRequestConsumer {
      * @return a converted xml {#link String} to {@link ListDocumentRequestConsumer}.
      * @throws JAXBException Errors during the unmarshalling.
      */
-    public static ListDocumentRequestConsumer unmarshalRequest(String input) throws JAXBException {
+    public static ListDocumentRequestConsumer unmarshalRequest(String input) throws RequestResponseException {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(ListDocumentRequestConsumer.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            unmarshaller.setSchema(SchemaUtil.getSchema());
 
             StringReader reader = new StringReader(input);
             return (ListDocumentRequestConsumer) unmarshaller.unmarshal(reader);
-        } catch (UnmarshalException unmExc) {
-            throw new JAXBException("Error in xml.", unmExc);
+        } catch (JAXBException jaxbExc) {
+            LOGGER.error(input);
+            throw new RequestParsingException(jaxbExc);
         }
     }
 }

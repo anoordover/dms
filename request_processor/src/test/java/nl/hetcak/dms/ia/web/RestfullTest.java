@@ -18,11 +18,11 @@ import javax.ws.rs.core.Response;
  */
 public class RestfullTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfullTest.class);
-    private final static String REQUEST_LIST = "<RaadplegenLijstDocumentResponse><ArchiefPersoonsnummer>3092196671</ArchiefPersoonsnummer></RaadplegenLijstDocumentResponse>";
-    private final static String REQUEST_DOCUMENT = "<RaadplegenDocumentRequest><ArchiefDocumentId>1342408802</ArchiefDocumentId></RaadplegenDocumentRequest>";
+    private final static String REQUEST_LIST = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummer>3092196671</urn:ArchiefPersoonsnummer></urn:RaadplegenDocumentLijstRequest>";
+    private final static String REQUEST_DOCUMENT = "<urn:RaadplegenDocumentRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumentId>1342408802</urn:ArchiefDocumentId></urn:RaadplegenDocumentRequest>";
 
-    private final static String BAD_REQUEST_LIST = "<ArchiefPersoonsnummer>1892011538</ArchiefPersoonsnummer>";
-    private final static String BAD_REQUEST_DOCUMENT = "<ArchiefDocumentId>1921071631</ArchiefDocumentId>";
+    private final static String BAD_REQUEST_LIST = "<urn:ArchiefPersoonsnummer  xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\">1892011538</urn:ArchiefPersoonsnummer>";
+    private final static String BAD_REQUEST_DOCUMENT = "<urn:ArchiefDocumentId  xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\">1921071631</urn:ArchiefDocumentId>";
     
     @Test
     public void testJavaRsConfig() {
@@ -103,14 +103,14 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
+        Assert.assertTrue(data.contains("<ResultCode>2007</ResultCode>"));
     }
     
     @Test
     public void testDocumentListErrorRequest() throws Exception {
         DocumentService documentService = new DocumentService();
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Response documentListResponse = documentService.listDocuments("<RaadplegenDocumentLijstRequest><ArchiefPersoonsnummer>16afavfdsa</ArchiefPersoonsnummer></RaadplegenDocumentLijstRequest>", request);
+        Response documentListResponse = documentService.listDocuments("<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummer>16afavfdsa</urn:ArchiefPersoonsnummer></urn:RaadplegenDocumentLijstRequest>", request);
         
         Assert.assertNotNull(documentListResponse);
         Assert.assertTrue(documentListResponse.getStatus() == 500);
@@ -149,14 +149,14 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
+        Assert.assertTrue(data.contains("<ResultCode>2007</ResultCode>"));
     }
     
     @Test
     public void testDocumentErrorRequest() throws Exception {
         DocumentService documentService = new DocumentService();
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Response documentsResponse = documentService.getDocument("<ArchiefDocumentId>gsdfhgdsf</ArchiefDocumentId>", request);
+        Response documentsResponse = documentService.getDocument("<urn:ArchiefDocumentId  xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\">gsdfhgdsf</urn:ArchiefDocumentId>", request);
         
         Assert.assertNotNull(documentsResponse);
         Assert.assertTrue(documentsResponse.getStatus() == 500);
@@ -164,7 +164,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
+        Assert.assertTrue(data.contains("<ResultCode>2007</ResultCode>"));
     }
     
     @Test
@@ -179,7 +179,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
+        Assert.assertTrue(data.contains("<ResultCode>2007</ResultCode>"));
     }
     
     @Test
@@ -194,7 +194,7 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
+        Assert.assertTrue(data.contains("<ResultCode>2007</ResultCode>"));
     }
     
     @Test

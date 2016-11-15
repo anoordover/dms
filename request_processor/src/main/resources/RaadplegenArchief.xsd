@@ -1,0 +1,141 @@
+<!--
+    Het CAK
+    Integratie Team
+    Bart Truijens
+    November 2016
+-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:hetcak:dms:raadplegenuitingarchief:2016:11"
+           xmlns:urn="urn:hetcak:dms:raadplegenuitingarchief:2016:11"
+           elementFormDefault="qualified">
+
+    <xs:element name="RaadplegenDocumentLijstRequest" type="urn:RaadplegenDocumentLijstRequestType"/>
+
+    <xs:element name="RaadplegenLijstDocumentResponse" type="urn:LijstDocumentType"/>
+
+    <xs:element name="RaadplegenDocumentRequest" type="urn:RaadplegenDocumentRequestType"/>
+
+    <xs:element name="RaadplegenDocumentResponse" type="urn:RaadplegenDocumentResponseType"/>
+
+    <xs:complexType name="RaadplegenDocumentLijstRequestType">
+        <xs:all>
+            <xs:element name="ArchiefDocumenttitel" type="urn:Logistiek_ReceptuurkenmerkType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ArchiefDocumentId" type="urn:DocumentType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ArchiefDocumentkenmerk" type="urn:Logistiek_String256Type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ArchiefDocumentsoort" type="urn:Logistiek_String50Type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ArchiefDocumenttype" type="urn:Logistiek_String30Type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ArchiefRegeling" type="urn:Logistiek_RegelingType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ArchiefRegelingsjaar" type="urn:JaarType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ArchiefPersoonsnummer" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ArchiefDocumentstatus" type="urn:Logistiek_String30Type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="VerzenddatumPeriodeVan" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="VerzenddatumPeriodeTm" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+
+    <xs:complexType name="LijstDocumentType">
+        <xs:all>
+            <xs:element name="ArchiefDocumenten" type="urn:DocumentenType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ResultCode" type="urn:StatusType" minOccurs="1"/>
+            <xs:element name="ResultDescription" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="DocumentenType">
+        <xs:sequence>
+            <xs:element name="ArchiefDocument" type="urn:DocumentResponse" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DocumentResponse">
+        <xs:all>
+            <xs:element name="ArchiefDocumenttitel" type="urn:Logistiek_ReceptuurkenmerkType" minOccurs="1"/>
+            <xs:element name="ArchiefDocumentId" type="urn:DocumentType" minOccurs="1"/>
+            <xs:element name="ArchiefDocumentkenmerk" type="urn:Logistiek_String256Type" minOccurs="1"/>
+            <xs:element name="ArchiefDocumentsoort" type="urn:Logistiek_String50Type" minOccurs="1"/>
+            <xs:element name="ArchiefDocumenttype" type="urn:Logistiek_String30Type" minOccurs="1"/>
+            <xs:element name="ArchiefRegeling" type="urn:Logistiek_RegelingType"/>
+            <xs:element name="ArchiefRegelingsjaar" type="urn:JaarType" minOccurs="1"/>
+            <xs:element name="ArchiefPersoonsnummer" type="xs:string" minOccurs="1"/>
+            <xs:element name="ArchiefDocumentstatus" type="urn:Logistiek_String30Type" minOccurs="1"/>
+            <xs:element name="ArchiefVerzenddag" type="xs:string" minOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="RaadplegenDocumentRequestType">
+        <xs:all>
+            <xs:element name="ArchiefDocumentId" type="urn:DocumentType" minOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="RaadplegenDocumentResponseType">
+        <xs:all>
+            <xs:element name="ArchiefDocumentId" type="urn:DocumentType" minOccurs="1"/>
+            <xs:element name="ResultCode" type="urn:StatusType" minOccurs="1"/>
+            <xs:element name="ResultDescription" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="PayloadPdf" type="xs:base64Binary" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:simpleType name="StatusType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9]{4}"/>
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="JaarType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="2[0-9]{3}"/>
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DocumentType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9]{10}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Logistiek_String30Type">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="5"/>
+            <xs:maxLength value="30"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Logistiek_String50Type">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="5"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Logistiek_ReceptuurkenmerkType">
+        <xs:restriction base="xs:string">
+            <xs:length value="3"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Logistiek_RegelingType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="3"/>
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Logistiek_String256Type">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="4"/>
+            <xs:maxLength value="256"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Logistiek_ServiceType">
+        <xs:restriction base="xs:string">
+            <xs:length value="5"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

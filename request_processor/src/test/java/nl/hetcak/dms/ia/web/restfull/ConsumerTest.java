@@ -1,5 +1,7 @@
 package nl.hetcak.dms.ia.web.restfull;
 
+import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
+import nl.hetcak.dms.ia.web.exceptions.SchemaLoadingException;
 import nl.hetcak.dms.ia.web.restfull.consumers.DocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
 import org.junit.Assert;
@@ -18,14 +20,13 @@ import java.text.ParseException;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class ConsumerTest {
-    private static final String XML_EXAMPLE_1 = "<RaadplegenDocumentLijstRequest><ArchiefPersoonsnummer>20001</ArchiefPersoonsnummer></RaadplegenDocumentLijstRequest>";
+    private static final String XML_EXAMPLE_1 = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummer>20001</urn:ArchiefPersoonsnummer></urn:RaadplegenDocumentLijstRequest>";
     private static final String RESULT_1 = "20001";
-    private static final String XML_EXAMPLE_2 = "<RaadplegenDocumentLijstRequest><ArchiefPersoonsnummer>802341</ArchiefPersoonsnummer></RaadplegenDocumentLijstRequest>";
+    private static final String XML_EXAMPLE_2 = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummer>802341</urn:ArchiefPersoonsnummer></urn:RaadplegenDocumentLijstRequest>";
     private static final String RESULT_2 = "802341";
-    private static final String XML_EXAMPLE_3 = "<RaadplegenDocumentRequest><ArchiefDocumentId>7654324</ArchiefDocumentId></RaadplegenDocumentRequest>";
-    private static final String RESULT_3_1 = "7654324";
-    private static final String RESULT_3_2 = "001";
-    private static final String XML_EXAMPLE_4 = "<RaadplegenDocumentLijstRequest><ArchiefDocumenttitel>Z01</ArchiefDocumenttitel><ArchiefDocumentkenmerk>97348</ArchiefDocumentkenmerk><ArchiefPersoonsnummer>802341</ArchiefPersoonsnummer><VerzenddatumPeriodeVan>2016-08-01T00:00:00</VerzenddatumPeriodeVan><VerzenddatumPeriodeTm>2016-08-15T00:00:00</VerzenddatumPeriodeTm></RaadplegenDocumentLijstRequest>";
+    private static final String XML_EXAMPLE_3 = "<urn:RaadplegenDocumentRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumentId>7654324456</urn:ArchiefDocumentId></urn:RaadplegenDocumentRequest>";
+    private static final String RESULT_3_1 = "7654324456";
+    private static final String XML_EXAMPLE_4 = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumenttitel>Z01</urn:ArchiefDocumenttitel><urn:ArchiefDocumentkenmerk>97348</urn:ArchiefDocumentkenmerk><urn:ArchiefPersoonsnummer>802341</urn:ArchiefPersoonsnummer><urn:VerzenddatumPeriodeVan>2016-08-01T00:00:00</urn:VerzenddatumPeriodeVan><urn:VerzenddatumPeriodeTm>2016-08-15T00:00:00</urn:VerzenddatumPeriodeTm></urn:RaadplegenDocumentLijstRequest>";
     private static final String RESULT_4_1_1 = "Z01";
     private static final String RESULT_4_1_2 = "802341";
     private static final String RESULT_4_1_3 = "97348";
@@ -37,7 +38,7 @@ public class ConsumerTest {
     
     //start with the good cases.
     @Test
-    public void listDocumentConsumerTest() throws JAXBException {
+    public void listDocumentConsumerTest() throws RequestResponseException {
         ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_1);
         Assert.assertTrue(request.getArchiefPersoonsnummer().contentEquals(RESULT_1));
         Assert.assertTrue(request.hasContent());
@@ -48,14 +49,14 @@ public class ConsumerTest {
     }
     
     @Test
-    public void documentRequestConsumerTest() throws JAXBException {
+    public void documentRequestConsumerTest() throws RequestResponseException {
         DocumentRequestConsumer docRequest1 = DocumentRequestConsumer.unmarshallerRequest(XML_EXAMPLE_3);
         Assert.assertTrue(docRequest1.getArchiveDocumentNumber().contentEquals(RESULT_3_1));
         Assert.assertTrue(docRequest1.hasContent());
     }
     
     @Test
-    public void listDocumentRequestConsumerTest2() throws JAXBException, ParseException {
+    public void listDocumentRequestConsumerTest2() throws RequestResponseException {
         ListDocumentRequestConsumer searchRequest = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_4);
         Assert.assertTrue(searchRequest.getArchiefDocumenttitel().contentEquals(RESULT_4_1_1));
         Assert.assertTrue(searchRequest.getArchiefPersoonsnummer().contentEquals(RESULT_4_1_2));
@@ -67,20 +68,26 @@ public class ConsumerTest {
         Assert.assertTrue(searchRequest.hasContent());
     }
 
-    @Test
-    public void parseListDocumentConsumerTest() throws JAXBException {
-        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest("<RaadplegenDocumentLijstRequest><ArchiefDocumentTitle></ArchiefDocumentTitle></RaadplegenDocumentLijstRequest>");
-        Assert.assertFalse(request.hasContent());
+    @Test(expected = RequestResponseException.class)
+    public void parseFailureListDocumentConsumerTest() throws RequestResponseException {
+        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest("<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumenttitel></urn:ArchiefDocumenttitel></urn:RaadplegenDocumentLijstRequest>");
+
     }
     
-    @Test(expected = UnmarshalException.class)
-    public void faildocumentRequestConsumerTest() throws JAXBException {
+    @Test
+    public void parseListDocumentConsumerTest() throws RequestResponseException {
+        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest("<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumenttitel>B02</urn:ArchiefDocumenttitel></urn:RaadplegenDocumentLijstRequest>");
+        Assert.assertTrue(request.hasContent());
+    }
+    
+    @Test(expected = RequestResponseException.class)
+    public void faildocumentRequestConsumerTest() throws RequestResponseException {
         DocumentRequestConsumer docRequest1 = DocumentRequestConsumer.unmarshallerRequest(XML_EXAMPLE_1);
         Assert.assertFalse(docRequest1.hasContent());
     }
     
     @Test
-    public void listDocumentRequestConsumerTest() throws JAXBException {
+    public void listDocumentRequestConsumerTest() throws RequestResponseException {
         ListDocumentRequestConsumer docRequest1 = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_2);
         Assert.assertTrue(docRequest1.hasContent());
     }

@@ -364,4 +364,63 @@ public class ExceptionsTest {
         Exception error = new Exception();
         throw new BigFileException("Test", error, true, true);
     }
+    
+    
+    //SchemaLoadingException
+    @Test(expected = SchemaLoadingException.class)
+    public void throwSchemaLoadingException() throws SchemaLoadingException {
+        throw new SchemaLoadingException();
+    }
+    
+    @Test(expected = SchemaLoadingException.class)
+    public void throwSchemaLoadingException1() throws SchemaLoadingException {
+        throw new SchemaLoadingException("Test");
+    }
+    
+    @Test(expected = SchemaLoadingException.class)
+    public void throwSchemaLoadingException2() throws SchemaLoadingException {
+        Exception error = new Exception();
+        throw new SchemaLoadingException("Test", error);
+    }
+    
+    @Test(expected = SchemaLoadingException.class)
+    public void throwSchemaLoadingException3() throws SchemaLoadingException {
+        Exception error = new Exception();
+        throw new SchemaLoadingException(error);
+    }
+    
+    @Test(expected = SchemaLoadingException.class)
+    public void throwSchemaLoadingException4() throws SchemaLoadingException {
+        Exception error = new Exception();
+        throw new SchemaLoadingException("Test", error, true, true);
+    }
+    
+    //RequestParsingException
+    @Test(expected = RequestParsingException.class)
+    public void throwRequestParsingException() throws RequestParsingException {
+        throw new RequestParsingException();
+    }
+    
+    @Test(expected = RequestParsingException.class)
+    public void throwRequestParsingException1() throws RequestParsingException {
+        throw new RequestParsingException("Test");
+    }
+    
+    @Test(expected = RequestParsingException.class)
+    public void throwRequestParsingException2() throws RequestParsingException {
+        Exception error = new Exception();
+        throw new RequestParsingException("Test", error);
+    }
+    
+    @Test(expected = RequestParsingException.class)
+    public void throwRequestParsingException3() throws RequestParsingException {
+        Exception error = new Exception();
+        throw new RequestParsingException(error);
+    }
+    
+    @Test(expected = RequestParsingException.class)
+    public void throwRequestParsingException4() throws RequestParsingException {
+        Exception error = new Exception();
+        throw new RequestParsingException("Test", error, true, true);
+    }
 }
