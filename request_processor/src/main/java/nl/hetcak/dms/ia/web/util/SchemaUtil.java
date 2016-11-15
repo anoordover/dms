@@ -54,5 +54,4 @@ public class SchemaUtil {
         throw new SchemaLoadingException("Schema not found.");
     }
     
-    
 }

@@ -24,16 +24,16 @@ public class InfoArchiveDocumentTest {
     private static final String DOC_REGELINGS_JAAR = "2015";
     private static final String DOC_VERZENDDAG = "2015-08-21";
     
-    private static final String RESULT_DOC_TITLE = "<ArchiefDocumenttitel>Z01</ArchiefDocumenttitel>";
-    private static final String RESULT_DOC_REGELING = "<ArchiefRegeling>Wlz</ArchiefRegeling>";
-    private static final String RESULT_DOC_ID = "<ArchiefDocumentId>1124296490</ArchiefDocumentId>";
-    private static final String RESULT_DOC_STATUS = "<ArchiefDocumentstatus>TEST</ArchiefDocumentstatus>";
-    private static final String RESULT_PERSOON_NUMBER = "<ArchiefPersoonsnummer>6793306496</ArchiefPersoonsnummer>";
-    private static final String RESULT_DOC_SOORT = "<ArchiefDocumentsoort>Factuur</ArchiefDocumentsoort>";
-    private static final String RESULT_DOC_KENMERK = "<ArchiefDocumentkenmerk>889617</ArchiefDocumentkenmerk>";
-    private static final String RESULT_DOC_TYPE = "<ArchiefDocumenttype>Inkomend</ArchiefDocumenttype>";
-    private static final String RESULT_DOC_REGELINGS_JAAR = "<ArchiefRegelingsjaar>2015</ArchiefRegelingsjaar>";
-    private static final String RESULT_DOC_VERZENDDAG = "<ArchiefVerzenddag>2015-08-21</ArchiefVerzenddag>";
+    private static final String RESULT_DOC_TITLE = "<urn:ArchiefDocumenttitel>Z01</urn:ArchiefDocumenttitel>";
+    private static final String RESULT_DOC_REGELING = "<urn:ArchiefRegeling>Wlz</urn:ArchiefRegeling>";
+    private static final String RESULT_DOC_ID = "<urn:ArchiefDocumentId>1124296490</urn:ArchiefDocumentId>";
+    private static final String RESULT_DOC_STATUS = "<urn:ArchiefDocumentstatus>TEST</urn:ArchiefDocumentstatus>";
+    private static final String RESULT_PERSOON_NUMBER = "<urn:ArchiefPersoonsnummer>6793306496</urn:ArchiefPersoonsnummer>";
+    private static final String RESULT_DOC_SOORT = "<urn:ArchiefDocumentsoort>Factuur</urn:ArchiefDocumentsoort>";
+    private static final String RESULT_DOC_KENMERK = "<urn:ArchiefDocumentkenmerk>889617</urn:ArchiefDocumentkenmerk>";
+    private static final String RESULT_DOC_TYPE = "<urn:ArchiefDocumenttype>Inkomend</urn:ArchiefDocumenttype>";
+    private static final String RESULT_DOC_REGELINGS_JAAR = "<urn:ArchiefRegelingsjaar>2015</urn:ArchiefRegelingsjaar>";
+    private static final String RESULT_DOC_VERZENDDAG = "<urn:ArchiefVerzenddag>2015-08-21</urn:ArchiefVerzenddag>";
     
     
     @Test

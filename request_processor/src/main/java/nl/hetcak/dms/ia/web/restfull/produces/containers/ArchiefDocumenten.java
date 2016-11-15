@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-@XmlRootElement(name = "ArchiefDocumenten")
+@XmlRootElement(name = "ArchiefDocumenten", namespace = "urn:hetcak:dms:raadplegenuitingarchief:2016:11")
 public class ArchiefDocumenten {
     private List<InfoArchiveDocument> documentList = new ArrayList<>();
 

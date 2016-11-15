@@ -19,7 +19,7 @@ import java.util.Date;
  * @author Joury.Zimmermann@AMPLEXOR.com
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-@XmlRootElement(name = "ArchiefDocument")
+@XmlRootElement(name = "ArchiefDocument", namespace = "urn:hetcak:dms:raadplegenuitingarchief:2016:11")
 public class InfoArchiveDocument {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfoArchiveDocument.class);
 

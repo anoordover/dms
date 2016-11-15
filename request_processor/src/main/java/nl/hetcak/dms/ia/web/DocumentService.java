@@ -11,7 +11,6 @@ import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.restfull.produces.RaadplegenDocumentResponse;
 import nl.hetcak.dms.ia.web.restfull.produces.RaadplegenLijstDocumentResponse;
 import nl.hetcak.dms.ia.web.restfull.produces.containers.ArchiefDocumenten;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +55,7 @@ public class DocumentService {
             RaadplegenLijstDocumentResponse response = new RaadplegenLijstDocumentResponse();
             ArchiefDocumenten documents = new ArchiefDocumenten();
             documents.getDocumentList().addAll(recordRequest.requestListDocuments(request));
+            response.setArchiefDocumenten(documents);
             return response;
         } catch (RequestResponseException reqresExc) {
             LOGGER.error(reqresExc.getUserErrorMessage(), reqresExc);
@@ -125,6 +125,8 @@ public class DocumentService {
                 LOGGER.info(LOGGER_VALID_INCOMING_REQUEST);
                 RecordRequest recordRequest = createRecordRequest();
                 RaadplegenLijstDocumentResponse response = listDocumentResponse(recordRequest, request);
+                response.setResultCode(0);
+                response.setResultDescription("OK");
                 return Response.ok(response.getAsXML()).build();
             } else {
                 LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
@@ -168,9 +170,10 @@ public class DocumentService {
                 ByteArrayOutputStream byteArray = documentTransfer(documentRequest, document);
                 LOGGER.info("Encoding PDF and storing document into the response object.");
                 LOGGER.info("Encoding "+byteArray.size()+" bytes.");
-                String encodedDocument = new String(Base64.getEncoder().encode(byteArray.toByteArray()));
+                byte[] encodedDocument = Base64.getEncoder().encode(byteArray.toByteArray());
                 RaadplegenDocumentResponse documentResponse = new RaadplegenDocumentResponse();
                 documentResponse.setResultCode(0);
+                documentResponse.setResultDescription("OK");
                 documentResponse.setArchiefDocumentId(document.getArchiefDocumentId());
                 documentResponse.setPayloadPdf(encodedDocument);
                 LOGGER.info("Sending response.");

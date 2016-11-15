@@ -18,8 +18,8 @@ import javax.ws.rs.core.Response;
  */
 public class RestfullTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfullTest.class);
-    private final static String REQUEST_LIST = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummer>3092196671</urn:ArchiefPersoonsnummer></urn:RaadplegenDocumentLijstRequest>";
-    private final static String REQUEST_DOCUMENT = "<urn:RaadplegenDocumentRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumentId>1342408802</urn:ArchiefDocumentId></urn:RaadplegenDocumentRequest>";
+    private final static String REQUEST_LIST = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummer>8823502042</urn:ArchiefPersoonsnummer></urn:RaadplegenDocumentLijstRequest>";
+    private final static String REQUEST_DOCUMENT = "<urn:RaadplegenDocumentRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumentId>1305362675</urn:ArchiefDocumentId></urn:RaadplegenDocumentRequest>";
 
     private final static String BAD_REQUEST_LIST = "<urn:ArchiefPersoonsnummer  xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\">1892011538</urn:ArchiefPersoonsnummer>";
     private final static String BAD_REQUEST_DOCUMENT = "<urn:ArchiefDocumentId  xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\">1921071631</urn:ArchiefDocumentId>";
@@ -69,9 +69,13 @@ public class RestfullTest {
         Assert.assertTrue(data.length() > 1);
 
         if(documentListResponse.getStatus() == 200) {
-            Assert.assertTrue(data.contains("<ResultCode>0</ResultCode>"));
+            Assert.assertTrue(data.contains("<urn:ResultCode>0000</urn:ResultCode>"));
+            Assert.assertTrue(data.contains("<urn:ArchiefDocumentId>"));
+            Assert.assertTrue(data.contains("<urn:ArchiefDocumentsoort>"));
+            Assert.assertTrue(data.contains("<urn:ArchiefPersoonsnummer>"));
+            Assert.assertTrue(data.contains("<urn:ArchiefDocumenttitel>"));
         } else {
-            Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
+            Assert.assertTrue(data.contains("<urn:ResultCode>9999</urn:ResultCode>"));
         }
     }
     
@@ -88,7 +92,7 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
+        Assert.assertTrue(data.contains("<urn:ResultCode>9999</urn:ResultCode>"));
     }
     
     @Test
@@ -103,7 +107,7 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>2007</ResultCode>"));
+        Assert.assertTrue(data.contains("<urn:ResultCode>2007</urn:ResultCode>"));
     }
     
     @Test
@@ -118,7 +122,7 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>2005</ResultCode>"));
+        Assert.assertTrue(data.contains("<urn:ResultCode>2005</urn:ResultCode>"));
     }
     
     
@@ -134,7 +138,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>9999</ResultCode>"));
+        Assert.assertTrue(data.contains("<urn:ResultCode>9999</urn:ResultCode>"));
     }
     
     @Test
@@ -149,7 +153,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>2007</ResultCode>"));
+        Assert.assertTrue(data.contains("<urn:ResultCode>2007</urn:ResultCode>"));
     }
     
     @Test
@@ -164,7 +168,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>2007</ResultCode>"));
+        Assert.assertTrue(data.contains("<urn:ResultCode>2007</urn:ResultCode>"));
     }
     
     @Test
@@ -179,7 +183,7 @@ public class RestfullTest {
         
         String data = (String) documentsResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>2007</ResultCode>"));
+        Assert.assertTrue(data.contains("<urn:ResultCode>2007</urn:ResultCode>"));
     }
     
     @Test
@@ -194,7 +198,7 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
-        Assert.assertTrue(data.contains("<ResultCode>2007</ResultCode>"));
+        Assert.assertTrue(data.contains("<urn:ResultCode>2007</urn:ResultCode>"));
     }
     
     @Test
@@ -208,7 +212,7 @@ public class RestfullTest {
         LOGGER.info(documentResponse.getEntity().toString());
         Assert.assertTrue(documentResponse.getStatus() == 200);
         Assert.assertTrue(documentResponse.getEntity().toString().length() > 20);
-        Assert.assertTrue(documentResponse.getEntity().toString().contains("<ResultCode>0</ResultCode>"));
+        Assert.assertTrue(documentResponse.getEntity().toString().contains("<urn:ResultCode>0000</urn:ResultCode>"));
 
     }
 }
