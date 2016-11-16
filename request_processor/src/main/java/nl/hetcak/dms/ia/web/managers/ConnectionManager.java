@@ -20,11 +20,11 @@ public class ConnectionManager {
     private File mobjConfigurationFile;
     private Credentials mobjCredentials;
     private Configuration mobjConfiguration;
-
+    
     private ConnectionManager() {
         LOGGER.debug("New connectionManager created.");
     }
-
+    
     /**
      * Gets the current instance of {@link ConnectionManager}.
      *
@@ -39,7 +39,7 @@ public class ConnectionManager {
         LOGGER.info("Returning ConnectionManager instance.");
         return sobjConnectionManager;
     }
-
+    
     /**
      * Set a new configuration file.
      *
@@ -54,7 +54,7 @@ public class ConnectionManager {
         }
         this.mobjConfigurationFile = configurationFile;
     }
-
+    
     /**
      * Gets the current active Credentials.
      *
@@ -66,16 +66,25 @@ public class ConnectionManager {
      */
     public Credentials getActiveCredentials() throws RequestResponseException {
         LOGGER.info("Requesting Active Credentials.");
-
+        
         if (mobjCredentials == null) {
             LOGGER.info("No Active Credentials found. Loading credentials from config.");
             mobjCredentials = getConfiguration().getInfoArchiveCredentials();
         }
-
+        
+        if (mobjCredentials.isSecurityTokenValid()) {
+            LOGGER.info("Returning Active token.");
+            return mobjCredentials;
+        }
+    
+        return relogin();
+    }
+    
+    private synchronized Credentials relogin() throws RequestResponseException {
         if (!mobjCredentials.isSecurityTokenValid()) {
             LOGGER.info("Security token is not valid. Starting LoginRequest.");
             LoginRequest loginRequest = new LoginRequest(getConfiguration());
-
+        
             if (mobjCredentials.getSecurityToken() == null) {
                 LOGGER.info("Requesting new security token. executing Login Request.");
                 mobjCredentials = loginRequest.loginInfoArchive();
@@ -93,10 +102,11 @@ public class ConnectionManager {
                 }
             }
         }
+    
         LOGGER.info("Returning Active token.");
         return mobjCredentials;
     }
-
+    
     /**
      * Gets the current {@link Configuration}.
      *
@@ -118,7 +128,7 @@ public class ConnectionManager {
         LOGGER.info("Returning config file.");
         return mobjConfiguration;
     }
-
+    
     private Configuration loadConfigurationFromFile(File file) throws RequestResponseException {
         ConfigurationManager configurationManager = ConfigurationManager.getInstance();
         configurationManager.setCustomConfigFile(file);
