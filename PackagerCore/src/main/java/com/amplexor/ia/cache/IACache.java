@@ -24,6 +24,9 @@ public class IACache {
     @XStreamAlias("closed")
     private boolean mbClosed;
 
+    @XStreamAlias("ingested")
+    private boolean mbIngested;
+
     @XStreamAlias("created")
     private long mlCreated;
 
@@ -114,4 +117,12 @@ public class IACache {
     }
 
     public String getTargetApplication() {return msTargetApplication;}
+
+    public boolean isIngested() {
+        return mbIngested;
+    }
+
+    public void setIngested() {
+        mbIngested = true;
+    }
 }

@@ -159,13 +159,22 @@ class IAArchiverWorkerThread implements Runnable {
                 break;
             }
 
-            if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache)) {
+            if (objCache.isIngested()) {
+                mobjDocumentSource.postResult(objCache.getContents());
+            } else if (mobjSipManager.getSIPFile(objCache) && mobjArchiveManager.ingestSip(objCache)) {
                 info(this, "Successfully Ingested SIP " + objCache.getSipFile().toString());
+                try {
+                    objCache.setIngested();
+                    mobjCacheManager.saveCache(objCache);
+                } catch (IOException ex) {
+                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+                }
             } else {
                 error(this, "Error in cache " + objCache.getId() + " , Saving to error cache");
                 mobjCacheManager.createErrorCache(objCache);
             }
-            if(mobjDocumentSource.postResult(objCache.getContents())) {
+
+            if (mobjDocumentSource.postResult(objCache.getContents())) {
                 mobjCacheManager.cleanupCache(objCache);
             }
         }

@@ -156,6 +156,10 @@ public class Crypto {
     }
 
     public static byte[] retrieveKey(Path objPath) throws IOException, InvalidKeyException {
+        if(!Files.exists(objPath)) {
+            return new byte[0];
+        }
+
         int iSize = (int) Files.size(objPath);
         byte[] cData = new byte[iSize];
         try (InputStream objInput = Files.newInputStream(objPath)) {

@@ -64,4 +64,9 @@ public interface CacheManager {
      * Saves the cache as an "Error" cache
      */
     boolean createErrorCache(IACache objCache);
+
+    /**
+     * Saves the cache to the filesystem
+     */
+    boolean saveCache(IACache objCache) throws IOException;
 }
