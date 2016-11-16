@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.*;
 import java.io.*;
+import java.util.Properties;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
@@ -22,6 +23,9 @@ import java.io.*;
  */
 public class ConfigurationManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationManager.class);
+    private static final String CATALINA_BASE_PROP = "catalina.base";
+    private static final String DEFAULT_CONFIG_NAME = "request_processor.xml";
+    private static final String DEFAULT_CONFIG_KEY_NAME = "request_processor.key";
     private static final String DEFAULT_CONFIG_FILE_NAME = "../conf/request_processor.xml";
     private static final String DEFAULT_CONFIG_KEY_FILE_NAME = "../conf/request_processor.key";
 
@@ -52,20 +56,28 @@ public class ConfigurationManager {
     }
 
     private byte[] getKey() throws RequestResponseException {
-        File file = new File(DEFAULT_CONFIG_KEY_FILE_NAME);
-        if (checkConfigurationExist(file)) {
-            LOGGER.info("Loading key file.");
-            try{
-                FileInputStream inputStream = new FileInputStream(file);
-                byte[] buffer = IOUtils.toByteArray(inputStream);
-                inputStream.close();
-                return buffer;
-            } catch (FileNotFoundException fnfExc) {
-                LOGGER.error("Key file not found.");
-                throw new MissingConfigurationException("Unable to find Key file.", fnfExc);
-            } catch (IOException ioExc) {
-                LOGGER.error("Error reading key file.");
-                throw new MissingConfigurationException("Unable to read Key file.", ioExc);
+        File file = null;
+        if(System.getProperties().containsKey(CATALINA_BASE_PROP)) {
+            File configDir = new File(System.getProperty(CATALINA_BASE_PROP), "conf");
+            file = new File(configDir, DEFAULT_CONFIG_KEY_NAME);
+        } else {
+            file = new File(DEFAULT_CONFIG_KEY_FILE_NAME);
+        }
+        if(file != null) {
+            if (checkConfigurationExist(file)) {
+                LOGGER.info("Loading key file.");
+                try {
+                    FileInputStream inputStream = new FileInputStream(file);
+                    byte[] buffer = IOUtils.toByteArray(inputStream);
+                    inputStream.close();
+                    return buffer;
+                } catch (FileNotFoundException fnfExc) {
+                    LOGGER.error("Key file not found.");
+                    throw new MissingConfigurationException("Unable to find Key file.", fnfExc);
+                } catch (IOException ioExc) {
+                    LOGGER.error("Error reading key file.");
+                    throw new MissingConfigurationException("Unable to read Key file.", ioExc);
+                }
             }
         }
         LOGGER.error("No key file found.");
@@ -88,9 +100,18 @@ public class ConfigurationManager {
     }
 
     private File loadConfigFile() {
-        File file = new File(DEFAULT_CONFIG_FILE_NAME);
-        if (checkConfigurationExist(file)) {
-            return file;
+        File file = null;
+        if(System.getProperties().containsKey(CATALINA_BASE_PROP)) {
+            File configDir = new File(System.getProperty(CATALINA_BASE_PROP), "conf");
+            file = new File(configDir, DEFAULT_CONFIG_NAME);
+        } else {
+            file = new File(DEFAULT_CONFIG_FILE_NAME);
+        }
+        
+        if(file!= null) {
+            if (checkConfigurationExist(file)) {
+                return file;
+            }
         }
         LOGGER.error("No config file found.");
         return null;
