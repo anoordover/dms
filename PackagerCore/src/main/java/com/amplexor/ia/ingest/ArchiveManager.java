@@ -50,7 +50,10 @@ public class ArchiveManager {
     public boolean ingestSip(IACache objCache) {
         info(this, "Ingesting SIP " + objCache.getSipFile().toString());
         boolean bReturn = false;
-        authenticate();
+        if(!authenticate()) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INGEST_INVALID_IA_CREDENTIALS, new Exception("Unable to authenticate at InfoArchive Gateway"));
+            return bReturn;
+        }
 
 
         info(this, "Sending SIP file" + objCache.getSipFile().toString() + " to IA");
@@ -113,9 +116,10 @@ public class ArchiveManager {
     }
 
     /**
-     * Attempts to authenticate with the InfoArchive Gateway, failing authentication will lead to the application exiting as there will be nowhere to send out SIP packages.
+     * Attempts to authenticate with the InfoArchive Gateway, failing authentication will lead to the application exiting as there will be nowhere to send our SIP packages.
      */
     public boolean authenticate() {
+        boolean bReturn = false;
         try {
             String sUrl = String.format("%s://%s:%d/login?%s",
                     mobjConfiguration.getGatewayProtocol(),
@@ -148,6 +152,10 @@ public class ArchiveManager {
         try (BufferedReader oReader = new BufferedReader(new InputStreamReader(objInputStream))) {
             JSONObject oRespObject = (JSONObject) new JSONParser().parse(oReader);
             if (oRespObject != null) {
+                if(oRespObject.containsKey("error")) {
+                    return false;
+                }
+
                 if (oRespObject.containsKey("access_token")) {
                     mobjCredentials.setToken((String) oRespObject.get("access_token"));
                 }

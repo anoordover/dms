@@ -15,10 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.amplexor.ia.Logger.debug;
@@ -165,8 +162,9 @@ public class AMPCacheManager implements CacheManager {
     @Override
     public void update() {
         debug(this, "Updating Caches");
-        for (IACache objCache : mcCaches) {
-            if (objCache != null && !objCache.isClosed() && objCache.getSize() > -mobjConfiguration.getCacheMessageThreshold()) {
+        for (Iterator<IACache> objIter = mcCaches.iterator(); objIter.hasNext(); ) {
+            IACache objCache = objIter.next();
+            if (objCache != null && !objCache.isClosed() && objCache.getSize() >= mobjConfiguration.getCacheMessageThreshold()) {
                 info(this, String.format("Closing cache %s-%d, Reason: Message Threshold Reached(%d)%n", objCache.getRetentionClass().getName(), objCache.getId(), mobjConfiguration.getCacheMessageThreshold()));
                 objCache.close();
             } else if (objCache != null && !objCache.isClosed() && objCache.getCreated() <= (System.currentTimeMillis() - mobjConfiguration.getCacheTimeThreshold() * 1000)) {
@@ -194,8 +192,8 @@ public class AMPCacheManager implements CacheManager {
     public List<IACache> getClosedCaches() {
         debug(this, "Fetching Closed Caches");
         List<IACache> cClosed = new ArrayList<>();
-        for(IACache objCache : mcCaches) {
-            if(objCache.isClosed()) {
+        for (IACache objCache : mcCaches) {
+            if (objCache.isClosed()) {
                 cClosed.add(objCache);
             }
         }

@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -94,8 +95,8 @@ public class AMPSipManager implements SipManager {
         } catch (ClassNotFoundException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
-        for (IADocumentReference objReference : objCache.getContents()) {
-            cDocuments.add(objReference.getDocumentData(objClass, mobjConfiguration.getParameter("document_element_name")));
+        for (Iterator<IADocumentReference> objIter = objCache.getContents().iterator(); objIter.hasNext();) {
+            cDocuments.add(objIter.next().getDocumentData(objClass, mobjConfiguration.getParameter("document_element_name")));
         }
         return cDocuments;
     }

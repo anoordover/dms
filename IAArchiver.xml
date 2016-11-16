@@ -3,30 +3,30 @@
     <log4j_properties_path>log4j.properties</log4j_properties_path>
   </archiver>
   <worker_manager>
-    <max_worker_threads>4</max_worker_threads>
+    <max_worker_threads>2</max_worker_threads>
     <worker_shutdown_threshold>2048</worker_shutdown_threshold>
     <worker_startup_threshold>1048576</worker_startup_threshold>
     <check_interval_milliseconds>5000</check_interval_milliseconds>
   </worker_manager>
   <caching>
     <implementing_class>nl.hetcak.dms.CAKCacheManager</implementing_class>
-    <base_path>D:\Data\Cache</base_path>
-    <message_threshold>100000</message_threshold>
-    <time_threshold>600</time_threshold>
+    <base_path>Cache</base_path>
+    <message_threshold>50</message_threshold>
+    <time_threshold>300</time_threshold>
     <custom_parameters>
       <document_element_name>ArchiefDocument</document_element_name>
       <document_class>nl.hetcak.dms.CAKDocument</document_class>
     </custom_parameters>
   </caching>
   <rest_api>
-    <protocol>http</protocol>
-    <host>infoarchive40</host>
-    <port>8765</port>
-    <gateway_protocol>http</gateway_protocol>
-    <gateway_host>infoarchive40</gateway_host>
-    <gateway_port>8080</gateway_port>
-    <ingest_user>sue@iacustomer.com</ingest_user>
-    <encrypted_ingest_password>C3lmPCEob1QgQCQrFlwrCpzS55j79vVesM+1AILA0L0=</encrypted_ingest_password>
+    <protocol>https</protocol>
+    <host>infoarchive-sp.back.ont.dms.func.cak-bz.local</host>
+    <port>8775</port>
+    <gateway_protocol>https</gateway_protocol>
+    <gateway_host>infoarchive-rp.front.ont.dms.func.cak-bz.local</gateway_host>
+    <gateway_port>10843</gateway_port>
+    <ingest_user>sa-infoarchive-ont</ingest_user>
+    <encrypted_ingest_password>TjQXflBGImA7CCNLYGBgG/ku+AuY0Z1Py871jQKstIM=</encrypted_ingest_password>
     <ingest_tenant>INFOARCHIVE</ingest_tenant>
   </rest_api>
   <sip>
@@ -37,8 +37,8 @@
     <entity_name>ArchiefDocument</entity_name>
     <document_element_name>ArchiefDocumenten</document_element_name>
     <schema_declaration>urn:hetcak:dms:uitingarchief:2016:08</schema_declaration>
-    <sip_output_directory>D:\Data\SIP</sip_output_directory>
-    <sip_backup_directory>D:\Data\SIP-backup</sip_backup_directory>
+    <sip_output_directory>SIP</sip_output_directory>
+    <sip_backup_directory>SIP_BACKUP</sip_backup_directory>
     <custom_parameters>
       <document_element_name>ArchiefDocument</document_element_name>
       <document_class>nl.hetcak.dms.CAKDocument</document_class>
@@ -49,9 +49,9 @@
   <document_source>
     <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
     <custom_parameters>
-      <broker>tcp://infoarchive40:61616</broker>
-      <!--<truststore>resources/truststore/truststore_acc_mule1.jks</truststore>
-      <truststore_password>MiQ4aTdoGzIxPjoAdSROeHIqteqaZePzx5nh7DFwKP0=</truststore_password>-->
+      <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
+      <truststore>resources/truststore/truststore_ont1_mule.jks</truststore>
+      <truststore_password>KC54MQVuD2xSZ3oUMRsgUF0Bb8BRt7bylPJGF/FeOA3DdR0zrx3BoWUOKY2ig5PH3zyt2hQAGdiRI4VyH1ET9g==</truststore_password>
       <result_format>
         <![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
       <results_element>

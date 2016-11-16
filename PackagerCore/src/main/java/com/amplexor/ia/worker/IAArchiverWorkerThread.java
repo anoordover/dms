@@ -53,11 +53,12 @@ class IAArchiverWorkerThread implements Runnable {
 
     @Override
     public void run() {
-        info(this, "Initializing Worker " + miId);
-        info(this, "Setting up ExceptionHelper");
-        ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfiguration.getExceptionConfiguration());
+        Thread.currentThread().setName("IAWorker-" + miId);
         synchronized (this) {
             if (mbFirstTimeSetup) {
+                info(this, "Initializing Worker " + miId);
+                info(this, "Setting up ExceptionHelper");
+                ExceptionHelper.getExceptionHelper().setExceptionConfiguration(mobjConfiguration.getExceptionConfiguration());
                 mbRunning = initialize();
                 mbFirstTimeSetup = false;
             }
@@ -264,6 +265,7 @@ class IAArchiverWorkerThread implements Runnable {
             return mobjDocumentSource != null && mobjMessageParser != null && mobjRetentionManager != null;
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | NullPointerException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            ex.printStackTrace();
             WorkerManager.getWorkerManager().signalStop(ExceptionHelper.ERROR_OTHER);
         }
         return false;

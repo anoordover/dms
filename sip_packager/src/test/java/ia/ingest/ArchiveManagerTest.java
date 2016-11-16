@@ -31,11 +31,11 @@ public class ArchiveManagerTest {
 
         objConfiguration = mock(IAServerConfiguration.class);
 
-        when(objConfiguration.getGatewayProtocol()).thenReturn("http");
+        when(objConfiguration.getGatewayProtocol()).thenReturn("https");
         when(objConfiguration.getGatewayHost()).thenReturn("infoarchive-rp.front.ont.dms.func.cak-bz.local");
         when(objConfiguration.getGatewayPort()).thenReturn((short)8080);
 
-        when(objConfiguration.getProtocol()).thenReturn("http");
+        when(objConfiguration.getProtocol()).thenReturn("https");
         when(objConfiguration.getHost()).thenReturn("infoarchive-sp.back.ont.dms.func.cak-bz.local");
         when(objConfiguration.getPort()).thenReturn((short)8775);
 
@@ -52,8 +52,9 @@ public class ArchiveManagerTest {
     @Test
     public void ingestSip() throws Exception {
         ArchiveManager objArchiveManager = new ArchiveManager(objConfiguration);
-        objArchiveManager.authenticate();
-        objArchiveManager.ingestSip(objCache);
+        if (objArchiveManager.authenticate()) {
+            objArchiveManager.ingestSip(objCache);
+        }
     }
 
     @Test
