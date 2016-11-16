@@ -51,7 +51,7 @@ public class LoginRequest {
      * @throws LoginFailureException            Failed to login.
      * @throws ServerConnectionFailureException Failed to connect.
      */
-    public Credentials loginInfoArchive() throws RequestResponseException {
+    public synchronized Credentials loginInfoArchive() throws RequestResponseException {
         LOGGER.info("Logging in to InfoArchive.");
         String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);
         try {
@@ -70,7 +70,7 @@ public class LoginRequest {
         }
     }
 
-    public Credentials refreshCredentialsInfoArchive(Credentials loggedInCredentials) throws RequestResponseException {
+    public synchronized Credentials refreshCredentialsInfoArchive(Credentials loggedInCredentials) throws RequestResponseException {
         LOGGER.info("Refreshing InfoArchive login token.");
         String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);
         try {
