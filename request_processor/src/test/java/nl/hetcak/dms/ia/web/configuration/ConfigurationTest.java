@@ -9,6 +9,7 @@ import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.validation.constraints.AssertTrue;
 import java.io.File;
 
 /**
@@ -62,6 +63,7 @@ public class ConfigurationTest {
         Assert.assertNotNull(configurationManager);
         configurationManager.setCustomConfigFile(misconfig);
         configurationManager.loadConfiguration(true);
+        
     }
     
     /**
@@ -114,6 +116,7 @@ public class ConfigurationTest {
         Assert.assertNotNull(configuration.getServerPort());
         Assert.assertNotNull(configuration.getPassword());
         Assert.assertNotNull(configuration.getUsername());
+        Assert.assertFalse(configuration.getUsingHttps());
         Assert.assertNotNull(configuration.getLogProps());
         Assert.assertNotNull(configuration.getSearchComponentUUID());
         Assert.assertNotNull(configuration.getApplicationUUID());

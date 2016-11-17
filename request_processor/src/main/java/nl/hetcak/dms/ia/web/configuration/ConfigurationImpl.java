@@ -23,6 +23,7 @@ public class ConfigurationImpl implements Configuration {
     private final static String CONF_SECURITY_TOKEN = "ia_token";
     private final static String CONF_SERVER_ADDRESS = "ia_server";
     private final static String CONF_SERVER_PORT = "ia_port";
+    private final static String CONF_SERVER_HTTPS = "ia_server_https";
     private final static String CONF_SERVICE_USER = "ia_service_usr";
     private final static String CONF_SERVICE_USER_PASSWORD = "ia_service_usr_password";
     private final static String CONF_LOG_PROPS = "log4j_properties";
@@ -34,6 +35,7 @@ public class ConfigurationImpl implements Configuration {
     private String msSecurityToken, msServerAddress, msUsername, msPassword, msLogProps, msApplicationUUID, msSearchComponentUUID;
     private int miServerPort, miMaxResults, miMaxFileSize;
     private byte[] mbaDecryptionKey;
+    private boolean mbUseHttps = false;
 
 
     @XmlElement(name = CONF_SECURITY_TOKEN)
@@ -74,6 +76,7 @@ public class ConfigurationImpl implements Configuration {
         iaconnection.setServerAddress(msServerAddress);
         iaconnection.setServerPort(miServerPort);
         iaconnection.setMaxItems(miMaxResults);
+        iaconnection.setHttps(mbUseHttps);
         return iaconnection;
     }
 
@@ -225,7 +228,16 @@ public class ConfigurationImpl implements Configuration {
     public byte[] getDecryptionKey() {
         return mbaDecryptionKey;
     }
-
+    
+    @XmlElement(name = CONF_SERVER_HTTPS)
+    public boolean getUsingHttps() {
+        return mbUseHttps;
+    }
+    
+    public void setUsingHttps(boolean useHttps) {
+        this.mbUseHttps = useHttps;
+    }
+    
     public void setDecryptionKey(byte[] decryptionKey) {
         this.mbaDecryptionKey = decryptionKey;
     }
@@ -233,6 +245,7 @@ public class ConfigurationImpl implements Configuration {
     public void emptyConfiguration() {
         msSecurityToken = "";
         msServerAddress = "localhost";
+        mbUseHttps = false;
         msUsername = "";
         msPassword = "";
         msLogProps = "";

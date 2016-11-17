@@ -47,5 +47,17 @@ public interface ServerConnectionInformation {
      * @param maxItems total items
      */
     void setMaxItems(int maxItems);
+    
+    /**
+     * True if the request should use https.
+     * @return True if the request should use https.
+     */
+    boolean isUsingHttps();
+    
+    /**
+     * Sets if the request should start with https.
+     * @param https true if the request should use https.
+     */
+    void setHttps(boolean https);
 
 }

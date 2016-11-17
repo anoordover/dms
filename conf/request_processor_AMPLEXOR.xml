@@ -6,6 +6,7 @@
     <max_allowed_results>250</max_allowed_results>
     <max_allowed_filesize>2500000</max_allowed_filesize>
     <ia_token></ia_token>
+    <ia_server_https>false</ia_server_https>
     <ia_server>infoarchive40</ia_server>
     <ia_port>8080</ia_port>
     <ia_service_usr>sue@iacustomer.com</ia_service_usr>

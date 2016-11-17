@@ -36,7 +36,10 @@ public class InfoArchiveRequestUtil {
     private final static String CONTENT_TYPE_REQUEST = "Content-Type";
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String LOGGER_STRING_INTERACTION_WITH_SERVER_FAILED = "Failed to interact with server.";
-
+    
+    private final static String REQUEST_HTTP = "http://";
+    private final static String REQUEST_HTTPS = "https://";
+    
     private ServerConnectionInformation serverConnectionInformation;
 
     public InfoArchiveRequestUtil(ServerConnectionInformation serverConnectionInformation) {
@@ -136,7 +139,11 @@ public class InfoArchiveRequestUtil {
      */
     public String getServerUrl(String selector) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("http://");
+        if(serverConnectionInformation.isUsingHttps()) {
+            stringBuilder.append(REQUEST_HTTPS);
+        } else {
+            stringBuilder.append(REQUEST_HTTP);
+        }
         stringBuilder.append(serverConnectionInformation.getServerAddress());
         stringBuilder.append(":");
         stringBuilder.append(serverConnectionInformation.getServerPort());

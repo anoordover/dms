@@ -9,6 +9,7 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
     private String msServerAddress;
     private int miServerPort;
     private int miMaxItems;
+    private boolean useHttps;
 
     /**
      * Gets the server address.
@@ -69,6 +70,26 @@ public class InfoArchiveServerConnectionInformation implements ServerConnectionI
     public void setMaxItems(int maxItems) {
         this.miMaxItems = maxItems;
     }
-
-
+    
+    /**
+     * True if the request should use https.
+     *
+     * @return True if the request should use https.
+     */
+    @Override
+    public boolean isUsingHttps() {
+        return useHttps;
+    }
+    
+    /**
+     * Sets if the request should start with https.
+     *
+     * @param https true if the request should use https.
+     */
+    @Override
+    public void setHttps(boolean https) {
+        this.useHttps = https;
+    }
+    
+    
 }
