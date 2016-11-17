@@ -26,7 +26,6 @@ public class IAArchiver {
     }
 
     public static void main(String[] cArgs) {
-        info(IAArchiver.class, "Starting SIP Packager " + V_MAJOR + "." + V_MINOR + "." + REVISION);
         parseArguments(cArgs);
         final WorkerManager objWorkerManager = WorkerManager.getWorkerManager();
 
@@ -34,6 +33,7 @@ public class IAArchiver {
         if (objConfigManager != null) {
             configureLogging(objConfigManager);
             configureWorkerManager(objConfigManager);
+            info(IAArchiver.class, "Starting SIP Packager " + V_MAJOR + "." + V_MINOR + "." + REVISION);
             if (objWorkerManager != null) {
                 Runtime.getRuntime().addShutdownHook(new IAArchiverShutdownHook());
                 runLoop(objConfigManager);
