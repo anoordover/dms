@@ -3,8 +3,6 @@ package nl.hetcak.dms.ia.web.requests;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.exceptions.*;
 import nl.hetcak.dms.ia.web.managers.ConnectionManager;
-import nl.hetcak.dms.ia.web.requests.DocumentRequest;
-import nl.hetcak.dms.ia.web.requests.RecordRequest;
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
 import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
 import org.junit.Test;

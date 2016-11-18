@@ -1,6 +1,5 @@
 package nl.hetcak.dms.ia.web.requests.containers;
 
-import nl.hetcak.dms.ia.web.query.InfoArchiveQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +10,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.StringWriter;
-import java.util.Date;
 
 /**
  * Created by admjzimmermann on 13-10-2016.

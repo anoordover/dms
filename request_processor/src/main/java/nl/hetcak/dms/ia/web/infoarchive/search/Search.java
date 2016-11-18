@@ -1,5 +1,7 @@
 package nl.hetcak.dms.ia.web.infoarchive.search;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
@@ -9,12 +11,6 @@ public class Search {
     private String id;
     private String name;
     private int version;
-    
-    public Search(String id, String name, int version) {
-        this.id = id;
-        this.name = name;
-        this.version = version;
-    }
     
     public String getId() {
         return id;
@@ -38,5 +34,12 @@ public class Search {
     
     public void setVersion(int version) {
         this.version = version;
+    }
+    
+    public boolean isNotBlank() {
+        if(StringUtils.isNotBlank(id) && StringUtils.isNotBlank(name)) {
+            return true;
+        }
+        return false;
     }
 }

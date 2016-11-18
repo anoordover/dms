@@ -31,8 +31,10 @@ public class ConfigurationImpl implements Configuration {
     private final static String CONF_MAX_RESULTS = "max_allowed_results";
     private final static String CONF_APPLICATION_UUID = "ia_application_uuid";
     private final static String CONF_SEARCHCOMPOSITION_UUID = "ia_searchcomposition_uuid";
+    private final static String CONF_APPLICATION_NAME = "ia_application_name";
+    private final static String CONF_SEARCHCOMPOSITION_NAME = "ia_searchcomposition_name";
 
-    private String msSecurityToken, msServerAddress, msUsername, msPassword, msLogProps, msApplicationUUID, msSearchComponentUUID;
+    private String msSecurityToken, msServerAddress, msUsername, msPassword, msLogProps, msApplicationUUID, msSearchComponentUUID, msApplicationName, msSearchCompositionName;
     private int miServerPort, miMaxResults, miMaxFileSize;
     private byte[] mbaDecryptionKey;
     private boolean mbUseHttps = false;
@@ -241,7 +243,25 @@ public class ConfigurationImpl implements Configuration {
     public void setDecryptionKey(byte[] decryptionKey) {
         this.mbaDecryptionKey = decryptionKey;
     }
-
+    
+    @XmlElement(name=CONF_APPLICATION_NAME)
+    public String getApplicationName() {
+        return msApplicationName;
+    }
+    
+    public void setApplicationName(String applicationName) {
+        this.msApplicationName = applicationName;
+    }
+    
+    @XmlElement(name=CONF_SEARCHCOMPOSITION_NAME)
+    public String getSearchCompositionName() {
+        return msSearchCompositionName;
+    }
+    
+    public void setSearchCompositionName(String searchCompositionName) {
+        this.msSearchCompositionName = searchCompositionName;
+    }
+    
     public void emptyConfiguration() {
         msSecurityToken = "";
         msServerAddress = "localhost";

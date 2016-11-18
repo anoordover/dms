@@ -6,6 +6,8 @@ import com.google.gson.JsonParser;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
+import nl.hetcak.dms.ia.web.infoarchive.application.Application;
+import nl.hetcak.dms.ia.web.infoarchive.search.Search;
 import nl.hetcak.dms.ia.web.infoarchive.tenant.Tenant;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
 import org.apache.http.HttpResponse;
@@ -22,29 +24,32 @@ import java.util.Map;
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class TenantRequest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TenantRequest.class);
-    
+public class SearchRequest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearchRequest.class);
     private Configuration configuration;
     private Credentials credentials;
     
-    public TenantRequest(Configuration configuration, Credentials credentials) {
+    public SearchRequest(Configuration configuration, Credentials credentials) {
         this.configuration = configuration;
         this.credentials = credentials;
     }
     
-    public List<Tenant> requestTenant() throws RequestResponseException {
-        LOGGER.debug("Requesting Tenants.");
-        String ia_response = executeRequest();
-        LOGGER.debug("Returning list Tenants.");
+    public List<Search> requestSearch(Application application) throws RequestResponseException {
+        LOGGER.debug("Requesting Search Interfaces.");
+        String ia_response = executeRequest(application);
+        LOGGER.debug("Returning list Search Interfaces.");
         return parseResult(ia_response);
     }
     
-    private String executeRequest() throws RequestResponseException {
+    private String executeRequest(Application application) throws RequestResponseException {
         InfoArchiveRequestUtil requestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
-        String url = requestUtil.getServerUrl("restapi/systemdata/tenants");
-        LOGGER.debug("Executing Tenants Request.");
+        StringBuilder urlBuilder = new StringBuilder("restapi/systemdata/applications/");
+        urlBuilder.append(application.getId());
+        urlBuilder.append("/searches");
+        
+        String url = requestUtil.getServerUrl(urlBuilder.toString());
+        LOGGER.debug("Executing Application Request.");
         HttpResponse response = requestUtil.executeGetRequest(url, null, requestHeader);
         try {
             return requestUtil.responseReader(response);
@@ -53,42 +58,42 @@ public class TenantRequest {
         }
     }
     
-    private List<Tenant> parseResult(String response) {
-        List<Tenant> tenantsList = new ArrayList<Tenant>();
+    private List<Search> parseResult(String response) {
+        List<Search> searchList = new ArrayList<Search>();
         JsonParser parser = new JsonParser();
         JsonObject jsonResponse = parser.parse(response).getAsJsonObject();
         if(jsonResponse.has("_embedded")) {
             JsonObject embedded = jsonResponse.getAsJsonObject("_embedded");
-            JsonArray tenants = embedded.getAsJsonArray("tenants");
-            for (int i = 0; i < tenants.size(); i++) {
-                JsonObject tenantObject = tenants.get(i).getAsJsonObject();
-                Tenant tenant = parseTenant(tenantObject);
-                if(tenant != null) {
-                    tenantsList.add(tenant);
+            JsonArray applications = embedded.getAsJsonArray("searches");
+            for (int i = 0; i < applications.size(); i++) {
+                JsonObject searchObject = applications.get(i).getAsJsonObject();
+                Search search = parseSearch(searchObject);
+                if(search != null) {
+                    searchList.add(search);
                 }
             }
         }
-        return tenantsList;
+        return searchList;
     }
     
-    private Tenant parseTenant(JsonObject tenantObject) {
-        Tenant tenant = new Tenant();
+    private Search parseSearch(JsonObject tenantObject) {
+        Search search = new Search();
         if(tenantObject.has("name")) {
-            tenant.setName(tenantObject.get("name").getAsString());
+            search.setName(tenantObject.get("name").getAsString());
         }
         if(tenantObject.has("version")) {
-            tenant.setVersion(tenantObject.get("version").getAsInt());
+            search.setVersion(tenantObject.get("version").getAsInt());
         }
         if(tenantObject.has("_links")) {
             JsonObject links = tenantObject.getAsJsonObject("_links");
             if(links.has("self")) {
                 JsonObject self = links.getAsJsonObject("self");
                 String selfUrl = self.get("href").getAsString();
-                tenant.setId(selfUrl.substring(selfUrl.lastIndexOf("/") + 1));
+                search.setId(selfUrl.substring(selfUrl.lastIndexOf("/") + 1));
             }
         }
-        if(tenant.isNotBlank()){
-            return tenant;
+        if(search.isNotBlank()){
+            return search;
         }
         return null;
     }

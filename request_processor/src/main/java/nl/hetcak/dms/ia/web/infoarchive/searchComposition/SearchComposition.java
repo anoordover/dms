@@ -1,22 +1,17 @@
 package nl.hetcak.dms.ia.web.infoarchive.searchComposition;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
-public class SearchCompositions {
+public class SearchComposition {
     private String id;
     private String name;
     private String searchName;
     private int version;
-    
-    public SearchCompositions(String id, String name, String searchName, int version) {
-        this.id = id;
-        this.name = name;
-        this.searchName = searchName;
-        this.version = version;
-    }
     
     public String getId() {
         return id;
@@ -49,4 +44,12 @@ public class SearchCompositions {
     public void setVersion(int version) {
         this.version = version;
     }
+    
+    public boolean isNotBlank() {
+        if(StringUtils.isNotBlank(id) && StringUtils.isNotBlank(name) && StringUtils.isNotBlank(searchName)) {
+            return true;
+        }
+        return false;
+    }
+    
 }

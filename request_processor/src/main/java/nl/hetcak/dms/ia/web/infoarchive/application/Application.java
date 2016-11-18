@@ -1,5 +1,7 @@
 package nl.hetcak.dms.ia.web.infoarchive.application;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
  *
@@ -8,16 +10,9 @@ package nl.hetcak.dms.ia.web.infoarchive.application;
 public class Application {
     private String id;
     private String name;
-    private String description;
     private int version;
-    private String type;
     
-    public Application(String id, String name, String description, int version, String type) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.version = version;
-        this.type = type;
+    public Application() {
     }
     
     public String getId() {
@@ -36,14 +31,6 @@ public class Application {
         this.name = name;
     }
     
-    public String getDescription() {
-        return description;
-    }
-    
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    
     public int getVersion() {
         return version;
     }
@@ -52,11 +39,10 @@ public class Application {
         this.version = version;
     }
     
-    public String getType() {
-        return type;
-    }
-    
-    public void setType(String type) {
-        this.type = type;
+    public boolean isNotBlank() {
+        if(StringUtils.isNotBlank(id) && StringUtils.isNotBlank(name)) {
+            return true;
+        }
+        return false;
     }
 }

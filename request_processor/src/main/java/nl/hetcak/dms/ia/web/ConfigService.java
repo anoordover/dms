@@ -3,9 +3,15 @@ package nl.hetcak.dms.ia.web;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
+import nl.hetcak.dms.ia.web.infoarchive.application.Application;
+import nl.hetcak.dms.ia.web.infoarchive.search.Search;
+import nl.hetcak.dms.ia.web.infoarchive.searchComposition.SearchComposition;
 import nl.hetcak.dms.ia.web.infoarchive.tenant.Tenant;
 import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
 import nl.hetcak.dms.ia.web.managers.ConnectionManager;
+import nl.hetcak.dms.ia.web.requests.ApplicationRequest;
+import nl.hetcak.dms.ia.web.requests.SearchCompositionRequest;
+import nl.hetcak.dms.ia.web.requests.SearchRequest;
 import nl.hetcak.dms.ia.web.requests.TenantRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,18 +67,46 @@ public class ConfigService {
         LOGGER.info("Got Request from "+httpRequest.getRemoteAddr());
         LOGGER.info("Running log checker. ("+calendar.getTime().toString()+")");
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Starting Tenant request");
+        stringBuilder.append("Starting Tenant request\n");
         try {
             ConfigurationManager configurationManager = ConfigurationManager.getInstance();
             Configuration configuration = configurationManager.getCurrentConfiguration();
             ConnectionManager connectionManager = ConnectionManager.getInstance();
             TenantRequest tenantRequest = new TenantRequest(configuration, connectionManager.getActiveCredentials());
+            ApplicationRequest applicationRequest = new ApplicationRequest(configuration, connectionManager.getActiveCredentials());
+            SearchRequest searchRequest = new SearchRequest(configuration, connectionManager.getActiveCredentials());
+            SearchCompositionRequest searchCompositionRequest = new SearchCompositionRequest(configuration, connectionManager.getActiveCredentials());
+            
             
             for(Tenant t : tenantRequest.requestTenant()) {
                 stringBuilder.append(t.getName());
                 stringBuilder.append(" [");
                 stringBuilder.append(t.getId());
                 stringBuilder.append("]\n");
+                for(Application a : applicationRequest.requestApplications(t)){
+    
+                    stringBuilder.append("\t");
+                    stringBuilder.append(a.getName());
+                    stringBuilder.append(" [");
+                    stringBuilder.append(a.getId());
+                    stringBuilder.append("]\n");
+                    for(Search s : searchRequest.requestSearch(a)){
+        
+                        stringBuilder.append("\t\t");
+                        stringBuilder.append(s.getName());
+                        stringBuilder.append(" [");
+                        stringBuilder.append(s.getId());
+                        stringBuilder.append("]\n");
+                        for(SearchComposition sc : searchCompositionRequest.requestSearch(s)){
+        
+                            stringBuilder.append("\t\t\t");
+                            stringBuilder.append(sc.getName());
+                            stringBuilder.append(" [");
+                            stringBuilder.append(sc.getId());
+                            stringBuilder.append("]\n");
+                        }
+                    }
+                }
             }
         }
         catch (RequestResponseException rrExc) {
