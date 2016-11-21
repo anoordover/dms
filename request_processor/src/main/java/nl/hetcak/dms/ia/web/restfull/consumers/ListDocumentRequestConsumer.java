@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.StringReader;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
@@ -230,15 +232,24 @@ public class ListDocumentRequestConsumer {
     }
 
     private InfoArchiveQueryBuilder convertOtherContent(InfoArchiveQueryBuilder queryBuilder) {
-        if(StringUtils.isNotBlank(msArchiefPersoonsnummer))
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_PERSOONS_NUMMER, msArchiefPersoonsnummer);
+        if(StringUtils.isNotBlank(msArchiefPersoonsnummer)) {
+            List<String> values = new ArrayList<>();
+            values.add(msArchiefPersoonsnummer);
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_PERSOONS_NUMMER, values);
+        }
 
-        if(StringUtils.isNotBlank(msArchiefRegeling))
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_REGELING, msArchiefRegeling);
+        if(StringUtils.isNotBlank(msArchiefRegeling)) {
+            List<String> values = new ArrayList<>();
+            values.add(msArchiefRegeling);
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_REGELING, values);
+        }
 
-        if(StringUtils.isNotBlank(msArchiefRegelingsjaar))
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_REGELING_JAAR, msArchiefRegelingsjaar);
-
+        if(StringUtils.isNotBlank(msArchiefRegelingsjaar)) {
+            List<String> values = new ArrayList<>();
+            values.add(msArchiefRegelingsjaar);
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_REGELING_JAAR, values);
+        }
+        
         if(StringUtils.isNotBlank(msVerzenddatumPeriodeVan) && StringUtils.isNotBlank(msVerzenddatumPeriodeTm))
             queryBuilder = queryBuilder.addBetweenCriteria(ARCHIEF_VERZENDDAG, msVerzenddatumPeriodeVan, msVerzenddatumPeriodeTm);
 
@@ -246,23 +257,41 @@ public class ListDocumentRequestConsumer {
     }
 
     private InfoArchiveQueryBuilder convertArchiefDocumentContent(InfoArchiveQueryBuilder queryBuilder) {
-        if(StringUtils.isNotBlank(msArchiefDocumentId))
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_ID, msArchiefDocumentId);
-
-        if(StringUtils.isNotBlank(msArchiefDocumentsoort))
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_SOORT, msArchiefDocumentsoort);
-
-        if(StringUtils.isNotBlank(msArchiefDocumentkenmerk))
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_KENMERK, msArchiefDocumentkenmerk);
-
-        if(StringUtils.isNotBlank(msArchiefDocumentstatus))
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_STATUS, msArchiefDocumentstatus);
-
-        if(StringUtils.isNotBlank(msArchiefDocumenttitel))
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_TITLE, msArchiefDocumenttitel);
-
-        if(StringUtils.isNotBlank(msArchiefDocumenttype))
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_TYPE, msArchiefDocumenttype);
+        if(StringUtils.isNotBlank(msArchiefDocumentId)) {
+            List<String> values = new ArrayList<>();
+            values.add(msArchiefDocumentId);
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_ID,values );
+        }
+        
+        if(StringUtils.isNotBlank(msArchiefDocumentsoort)) {
+            List<String> values = new ArrayList<>();
+            values.add(msArchiefDocumentsoort);
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_SOORT, values);
+        }
+        
+        if(StringUtils.isNotBlank(msArchiefDocumentkenmerk)) {
+            List<String> values = new ArrayList<>();
+            values.add(msArchiefDocumentkenmerk);
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_KENMERK, values);
+        }
+        
+        if(StringUtils.isNotBlank(msArchiefDocumentstatus)) {
+            List<String> values = new ArrayList<>();
+            values.add(msArchiefDocumentstatus);
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_STATUS, values);
+        }
+        
+        if(StringUtils.isNotBlank(msArchiefDocumenttitel)) {
+            List<String> values = new ArrayList<>();
+            values.add(msArchiefDocumenttitel);
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_TITLE, values);
+        }
+        
+        if(StringUtils.isNotBlank(msArchiefDocumenttype)) {
+            List<String> values = new ArrayList<>();
+            values.add(msArchiefDocumenttype);
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_TYPE, values);
+        }
 
         return queryBuilder;
     }
