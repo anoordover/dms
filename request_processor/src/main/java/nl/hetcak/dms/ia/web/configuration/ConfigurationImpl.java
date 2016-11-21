@@ -20,21 +20,23 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement(name = "config-request-processor")
 public class ConfigurationImpl implements Configuration {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationImpl.class);
-    private final static String CONF_SECURITY_TOKEN = "ia_token";
-    private final static String CONF_SERVER_ADDRESS = "ia_server";
-    private final static String CONF_SERVER_PORT = "ia_port";
-    private final static String CONF_SERVER_HTTPS = "ia_server_https";
-    private final static String CONF_SERVICE_USER = "ia_service_usr";
-    private final static String CONF_SERVICE_USER_PASSWORD = "ia_service_usr_password";
-    private final static String CONF_LOG_PROPS = "log4j_properties";
-    private final static String CONF_MAX_FILESIZE = "max_allowed_filesize";
-    private final static String CONF_MAX_RESULTS = "max_allowed_results";
-    private final static String CONF_APPLICATION_UUID = "ia_application_uuid";
-    private final static String CONF_SEARCHCOMPOSITION_UUID = "ia_searchcomposition_uuid";
-    private final static String CONF_APPLICATION_NAME = "ia_application_name";
-    private final static String CONF_SEARCHCOMPOSITION_NAME = "ia_searchcomposition_name";
+    protected final static String CONF_SECURITY_TOKEN = "ia_token";
+    protected final static String CONF_SERVER_ADDRESS = "ia_server";
+    protected final static String CONF_SERVER_PORT = "ia_port";
+    protected final static String CONF_SERVER_HTTPS = "ia_server_https";
+    protected final static String CONF_SERVICE_USER = "ia_service_usr";
+    protected final static String CONF_SERVICE_USER_PASSWORD = "ia_service_usr_password";
+    protected final static String CONF_LOG_PROPS = "log4j_properties";
+    protected final static String CONF_MAX_FILESIZE = "max_allowed_filesize";
+    protected final static String CONF_MAX_RESULTS = "max_allowed_results";
+    protected final static String CONF_APPLICATION_UUID = "ia_application_uuid";
+    protected final static String CONF_SEARCHCOMPOSITION_UUID = "ia_searchcomposition_uuid";
+    protected final static String CONF_APPLICATION_NAME = "ia_application_name";
+    protected final static String CONF_SEARCHCOMPOSITION_NAME = "ia_searchcomposition_name";
+    protected final static String CONF_SEARCH_NAME = "ia_search_name";
 
-    private String msSecurityToken, msServerAddress, msUsername, msPassword, msLogProps, msApplicationUUID, msSearchComponentUUID, msApplicationName, msSearchCompositionName;
+    private String msSecurityToken, msServerAddress, msUsername, msPassword, msLogProps, msApplicationUUID, msSearchComponentUUID, msApplicationName, msSearchCompositionName, msSearchName;
+    
     private int miServerPort, miMaxResults, miMaxFileSize;
     private byte[] mbaDecryptionKey;
     private boolean mbUseHttps = false;
@@ -158,8 +160,7 @@ public class ConfigurationImpl implements Configuration {
                     LOGGER.warn("Server information have no value.");
                     result = false;
                 }
-                if (msApplicationUUID.length() == 0 || msSearchComponentUUID.length() == 0) {
-                    LOGGER.warn("Server uuid information have no value.");
+                if (!checkIDOrName()) {
                     result = false;
                 }
             } catch (NullPointerException nullExc) {
@@ -168,6 +169,28 @@ public class ConfigurationImpl implements Configuration {
             }
         }
         return result;
+    }
+    
+    private boolean checkIDOrName() {
+        boolean resultID = true;
+        boolean resultName = true;
+        
+        if(StringUtils.isBlank(msApplicationUUID) || StringUtils.isBlank(msSearchComponentUUID)) {
+            LOGGER.warn("Server uuid not set in config.");
+            resultID = false;
+        }
+    
+        if(StringUtils.isBlank(msApplicationName) || StringUtils.isBlank(msSearchName) || StringUtils.isBlank(msSearchComponentUUID)){
+            LOGGER.warn("Server application names not set in config..");
+            resultName = false;
+        }
+        
+        if(resultID || resultName) {
+            return true;
+        } else {
+            LOGGER.error("There is no way too query an application in InfoArchive.");
+            return false;
+        }
     }
 
     @XmlElement(name = CONF_LOG_PROPS)
@@ -260,6 +283,15 @@ public class ConfigurationImpl implements Configuration {
     
     public void setSearchCompositionName(String searchCompositionName) {
         this.msSearchCompositionName = searchCompositionName;
+    }
+    
+    @XmlElement(name=CONF_SEARCH_NAME)
+    public String getSearchName() {
+        return msSearchName;
+    }
+    
+    public void setSearchName(String searchName) {
+        this.msSearchName = searchName;
     }
     
     public void emptyConfiguration() {

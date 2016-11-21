@@ -9,11 +9,14 @@ import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.infoarchive.search.Search;
 import nl.hetcak.dms.ia.web.infoarchive.searchComposition.SearchComposition;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,20 +38,36 @@ public class SearchCompositionRequest {
     
     public List<SearchComposition> requestSearch(Search search) throws RequestResponseException {
         LOGGER.debug("Requesting search-compositions.");
-        String ia_response = executeRequest(search);
+        String ia_response = executeRequest(search, null);
         LOGGER.debug("Returning list search-compositions.");
         return parseResult(ia_response);
     }
     
-    private String executeRequest(Search search) throws RequestResponseException {
+    public List<SearchComposition> requestSearchWithName(Search search, String name) throws RequestResponseException {
+        LOGGER.debug("Requesting search-compositions.");
+        String ia_response = executeRequest(search, name);
+        LOGGER.debug("Returning list search-compositions.");
+        return parseResult(ia_response);
+    }
+    
+    private String executeRequest(Search search, String name) throws RequestResponseException {
         InfoArchiveRequestUtil requestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         StringBuilder urlBuilder = new StringBuilder("restapi/systemdata/searches/");
         urlBuilder.append(search.getId());
         urlBuilder.append("/search-compositions");
+        try {
+            if(StringUtils.isNotBlank(name)) {
+                urlBuilder.append("?spel=?[name=='");
+                urlBuilder.append(URLEncoder.encode(name, "UTF-8"));
+                urlBuilder.append("']");
+            }
+        } catch (UnsupportedEncodingException unsEncExc){
+            throw new RequestResponseException(unsEncExc, 9999, "Encoding failed.");
+        }
         
         String url = requestUtil.getServerUrl(urlBuilder.toString());
-        LOGGER.debug("Executing search-compositions Request.");
+        LOGGER.debug("Executing search-compositions Request. "+ url);
         HttpResponse response = requestUtil.executeGetRequest(url, null, requestHeader);
         try {
             return requestUtil.responseReader(response);

@@ -9,11 +9,14 @@ import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.infoarchive.application.Application;
 import nl.hetcak.dms.ia.web.infoarchive.tenant.Tenant;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,20 +38,37 @@ public class ApplicationRequest {
     
     public List<Application> requestApplications(Tenant tenant) throws RequestResponseException {
         LOGGER.debug("Requesting Application.");
-        String ia_response = executeRequest(tenant);
+        String ia_response = executeRequest(tenant, null);
         LOGGER.debug("Returning list Application.");
         return parseResult(ia_response);
     }
     
-    private String executeRequest(Tenant tenant) throws RequestResponseException {
+    public List<Application> requestApplicationsWithName(Tenant tenant, String name) throws RequestResponseException {
+        LOGGER.debug("Requesting Application.");
+        String ia_response = executeRequest(tenant, name);
+        LOGGER.debug("Returning list Application.");
+        return parseResult(ia_response);
+    }
+    
+    
+    private String executeRequest(Tenant tenant, String name) throws RequestResponseException {
         InfoArchiveRequestUtil requestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         StringBuilder urlBuilder = new StringBuilder("restapi/systemdata/tenants/");
         urlBuilder.append(tenant.getId());
         urlBuilder.append("/applications");
+        try {
+            if(StringUtils.isNotBlank(name)) {
+                urlBuilder.append("?spel=?[name=='");
+                urlBuilder.append(URLEncoder.encode(name, "UTF-8"));
+                urlBuilder.append("']");
+            }
+        } catch (UnsupportedEncodingException unsEncExc){
+            throw new RequestResponseException(unsEncExc, 9999, "Encoding failed.");
+        }
     
         String url = requestUtil.getServerUrl(urlBuilder.toString());
-        LOGGER.debug("Executing Application Request.");
+        LOGGER.debug("Executing Application Request."+ url);
         HttpResponse response = requestUtil.executeGetRequest(url, null, requestHeader);
         try {
             return requestUtil.responseReader(response);

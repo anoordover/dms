@@ -6,6 +6,7 @@ import nl.hetcak.dms.ia.web.exceptions.BigFileException;
 import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
 import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
+import nl.hetcak.dms.ia.web.managers.IdResolverManager;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -45,7 +46,8 @@ public class DocumentRequest {
     public ByteArrayOutputStream getContentWithContentId(String contentID) throws RequestResponseException, IOException {
         LOGGER.info("Executing content request.");
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
-        String url = requestUtil.getServerContentUrl(configuration.getApplicationUUID(), contentID);
+        IdResolverManager idResolverManager = IdResolverManager.getInstance();
+        String url = requestUtil.getServerContentUrl(idResolverManager.getApplicationID(), contentID);
         HttpResponse response = requestUtil.executeGetRequest(url, InfoArchiveRequestUtil.CONTENT_TYPE_JSON, requestHeader);
         LOGGER.info("Returning content byte stream.");
         return responseToStream(response);

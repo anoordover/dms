@@ -70,6 +70,12 @@ public interface Configuration {
      * @return the Application UUID.
      */
     String getApplicationUUID();
+    
+    /**
+     * The name of the application that can be used to get a ID from InfoArchive.
+     * @return The name of the InfoArchive application space.
+     */
+    String getApplicationName();
 
     /**
      * The Search Composition UUID that should be used during a InfoArchive request.
@@ -77,7 +83,19 @@ public interface Configuration {
      * @return the Search Composition UUID.
      */
     String getSearchCompositionUUID();
-
+    
+    /**
+     * The name of the SearchComposition that can be used to get a ID from InfoArchive.
+     * @return The name of the InfoArchive SearchComposition.
+     */
+    String getSearchCompositionName();
+    
+    /**
+     * The name of the Search that can be used to get a ID from InfoArchive.
+     * @return The name of the InfoArchive Search.
+     */
+    String getSearchName();
+    
     /**
      * Checks if this class has the basic settings set.
      *
