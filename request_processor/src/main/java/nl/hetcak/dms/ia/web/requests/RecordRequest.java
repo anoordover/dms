@@ -6,12 +6,12 @@ import com.google.gson.JsonParser;
 import nl.hetcak.dms.ia.web.comunication.Credentials;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.*;
+import nl.hetcak.dms.ia.web.managers.IdResolverManager;
 import nl.hetcak.dms.ia.web.query.InfoArchiveQueryBuilder;
 import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
 import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.util.InfoArchiveDateUtil;
 import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,12 +64,12 @@ public class RecordRequest {
 
     private static final String LOGGING_PARSING_RESULT = "Parsing results";
     private static final String LOGGING_EXPECT_AT_LEAST_ONE_RESULT = ", the request handler expected at least one result.";
-
+    
     private Configuration configuration;
     private Credentials credentials;
     private InfoArchiveRequestUtil requestUtil;
     private InfoArchiveQueryBuilder queryBuilder;
-
+    
     public RecordRequest(Configuration configuration, Credentials credentials) {
         this.configuration = configuration;
         this.credentials = credentials;
@@ -118,7 +118,8 @@ public class RecordRequest {
 
     private HttpResponse executeListDocumentsRequest(ListDocumentRequestConsumer listDocumentRequest) throws JAXBException, RequestResponseException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
-        String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
+        IdResolverManager idResolverManager = IdResolverManager.getInstance();
+        String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, idResolverManager.getSearchCompositionID());
         String requestBody = listDocumentRequest.adaptToQuery().build();
         LOGGER.info("Executing HTTPPOST request for a List Documents.");
         LOGGER.debug(requestBody);
@@ -128,7 +129,8 @@ public class RecordRequest {
 
     private HttpResponse executeDocumentsRequest(String archiveDocumentNumber) throws JAXBException, RequestResponseException {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
-        String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, configuration.getSearchCompositionUUID());
+        IdResolverManager idResolverManager = IdResolverManager.getInstance();
+        String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, idResolverManager.getSearchCompositionID());
         String requestBody = queryBuilder.addEqualCriteria(VALUE_ARCHIVE_DOCUMENT_NUMBER, archiveDocumentNumber).build();
         LOGGER.info("Executing HTTPPOST request for a Documents based on Document Number.");
         LOGGER.debug(requestBody);

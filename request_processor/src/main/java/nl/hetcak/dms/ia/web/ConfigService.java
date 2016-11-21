@@ -3,7 +3,16 @@ package nl.hetcak.dms.ia.web;
 import nl.hetcak.dms.ia.web.configuration.Configuration;
 import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
 import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
+import nl.hetcak.dms.ia.web.infoarchive.application.Application;
+import nl.hetcak.dms.ia.web.infoarchive.search.Search;
+import nl.hetcak.dms.ia.web.infoarchive.searchComposition.SearchComposition;
+import nl.hetcak.dms.ia.web.infoarchive.tenant.Tenant;
 import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
+import nl.hetcak.dms.ia.web.managers.ConnectionManager;
+import nl.hetcak.dms.ia.web.requests.ApplicationRequest;
+import nl.hetcak.dms.ia.web.requests.SearchCompositionRequest;
+import nl.hetcak.dms.ia.web.requests.SearchRequest;
+import nl.hetcak.dms.ia.web.requests.TenantRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
