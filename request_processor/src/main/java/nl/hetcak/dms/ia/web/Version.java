@@ -10,7 +10,7 @@ package nl.hetcak.dms.ia.web;
 public class Version {
     public static final String PROGRAM_NAME = "Request-Processor";
     private static final int VERSION_MAJOR = 1;
-    private static final int VERSION_MINOR = 0;
+    private static final int VERSION_MINOR = 1;
     private static final int VERSION_REVISION = 0;
 
     private Version() {

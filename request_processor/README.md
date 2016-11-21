@@ -1,4 +1,4 @@
-# Amplexor InfoArchive - Request Processor
+# AMPLEXOR InfoArchive - Request Processor
 This project will handle all requests to query InfoArchive.
 
 
