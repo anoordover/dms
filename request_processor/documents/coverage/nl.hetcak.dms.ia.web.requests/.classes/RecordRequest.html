@@ -1,0 +1,395 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: RecordRequest</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">nl.hetcak.dms.ia.web.requests</a> ]
+</div>
+
+<h1>Coverage Summary for Class: RecordRequest (nl.hetcak.dms.ia.web.requests)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RecordRequest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.4%
+  </span>
+  <span class="absValue">
+    (129/ 146)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package nl.hetcak.dms.ia.web.requests;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.google.gson.JsonArray;
+<i>4</i>&nbsp;import com.google.gson.JsonObject;
+<i>5</i>&nbsp;import com.google.gson.JsonParser;
+<i>6</i>&nbsp;import nl.hetcak.dms.ia.web.comunication.Credentials;
+<i>7</i>&nbsp;import nl.hetcak.dms.ia.web.configuration.Configuration;
+<i>8</i>&nbsp;import nl.hetcak.dms.ia.web.exceptions.*;
+<i>9</i>&nbsp;import nl.hetcak.dms.ia.web.managers.IdResolverManager;
+<i>10</i>&nbsp;import nl.hetcak.dms.ia.web.query.InfoArchiveQueryBuilder;
+<i>11</i>&nbsp;import nl.hetcak.dms.ia.web.requests.containers.InfoArchiveDocument;
+<i>12</i>&nbsp;import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
+<i>13</i>&nbsp;import nl.hetcak.dms.ia.web.util.InfoArchiveDateUtil;
+<i>14</i>&nbsp;import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
+<i>15</i>&nbsp;import org.apache.http.HttpResponse;
+<i>16</i>&nbsp;import org.slf4j.Logger;
+<i>17</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import javax.xml.bind.JAXBException;
+<i>20</i>&nbsp;import java.io.IOException;
+<i>21</i>&nbsp;import java.text.ParseException;
+<i>22</i>&nbsp;import java.util.ArrayList;
+<i>23</i>&nbsp;import java.util.List;
+<i>24</i>&nbsp;import java.util.Map;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;/**
+<i>27</i>&nbsp; * (c) 2016 AMPLEXOR International S.A., All rights reserved.
+<i>28</i>&nbsp; *
+<i>29</i>&nbsp; * @author Jeroen.Pelt@AMPLEXOR.com
+<i>30</i>&nbsp; */
+<i>31</i>&nbsp;public class RecordRequest {
+<b class="fc"><i>32</i>&nbsp;    private static final Logger LOGGER = LoggerFactory.getLogger(RecordRequest.class);</b>
+<i>33</i>&nbsp;    private static final String SEARCH_POST_REQUEST = &quot;restapi/systemdata/search-compositions&quot;;
+<i>34</i>&nbsp;    private static final String CONTENT_TYPE_APP_XML = &quot;application/xml&quot;;
+<i>35</i>&nbsp;    private static final String VALUE_ARCHIVE_PERSON_NUMBER = &quot;ArchiefPersoonsnummer&quot;;
+<i>36</i>&nbsp;    private static final String VALUE_ARCHIVE_DOCUMENT_NUMBER = &quot;ArchiefDocumentId&quot;;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    private static final String PARSE_RESPONSE_EMBEDDED = &quot;_embedded&quot;;
+<i>39</i>&nbsp;    private static final String PARSE_RESPONSE_RESULTS = &quot;results&quot;;
+<i>40</i>&nbsp;    private static final String PARSE_RESPONSE_ROWS = &quot;rows&quot;;
+<i>41</i>&nbsp;    private static final String PARSE_RESPONSE_COLUMNS = &quot;columns&quot;;
+<i>42</i>&nbsp;    private static final String PARSE_RESPONSE_NAME = &quot;name&quot;;
+<i>43</i>&nbsp;    private static final String PARSE_RESPONSE_VALUE = &quot;value&quot;;
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    private static final String PARSE_RESPONSE_PAGE = &quot;page&quot;;
+<i>46</i>&nbsp;    private static final String PARSE_RESPONSE_TOTAL_ELEMENTS = &quot;totalElements&quot;;
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    private static final String PARSE_RESPONSE_ERROR = &quot;_errors&quot;;
+<i>49</i>&nbsp;    private static final String PARSE_RESPONSE_ERROR_TITLE = &quot;error&quot;;
+<i>50</i>&nbsp;    private static final String PARSE_RESPONSE_ERROR_MESSAGE = &quot;message&quot;;
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    private static final String PARSE_DOCUMENT_ID = &quot;ArchiefDocumentId&quot;;
+<i>53</i>&nbsp;    private static final String PARSE_DOCUMENT_PERSON_NUMBER = &quot;ArchiefPersoonsnummer&quot;;
+<i>54</i>&nbsp;    private static final String PARSE_DOCUMENT_TITLE = &quot;ArchiefDocumenttitel&quot;;
+<i>55</i>&nbsp;    private static final String PARSE_DOCUMENT_KIND = &quot;ArchiefDocumentsoort&quot;;
+<i>56</i>&nbsp;    private static final String PARSE_DOCUMENT_PROTOCOL = &quot;ArchiefRegeling&quot;;
+<i>57</i>&nbsp;    private static final String PARSE_DOCUMENT_CHARACTERISTIC = &quot;ArchiefDocumentkenmerk&quot;;
+<i>58</i>&nbsp;    private static final String PARSE_DOCUMENT_SEND_DATE = &quot;ArchiefVerzenddag&quot;;
+<i>59</i>&nbsp;    private static final String PARSE_DOCUMENT_TYPE = &quot;ArchiefDocumenttype&quot;;
+<i>60</i>&nbsp;    private static final String PARSE_DOCUMENT_STATUS = &quot;ArchiefDocumentstatus&quot;;
+<i>61</i>&nbsp;    private static final String PARSE_DOCUMENT_YEAR = &quot;ArchiefRegelingsjaar&quot;;
+<i>62</i>&nbsp;    private static final String PARSE_DOCUMENT_HANDLING_NUMBER = &quot;ArchiefHandelingsnummer&quot;;
+<i>63</i>&nbsp;    private static final String PARSE_DOCUMENT_ATTACHMENT = &quot;Attachment&quot;;
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    private static final String LOGGING_PARSING_RESULT = &quot;Parsing results&quot;;
+<i>66</i>&nbsp;    private static final String LOGGING_EXPECT_AT_LEAST_ONE_RESULT = &quot;, the request handler expected at least one result.&quot;;
+<i>67</i>&nbsp;    
+<i>68</i>&nbsp;    private Configuration configuration;
+<i>69</i>&nbsp;    private Credentials credentials;
+<i>70</i>&nbsp;    private InfoArchiveRequestUtil requestUtil;
+<i>71</i>&nbsp;    private InfoArchiveQueryBuilder queryBuilder;
+<i>72</i>&nbsp;    
+<b class="fc"><i>73</i>&nbsp;    public RecordRequest(Configuration configuration, Credentials credentials) {</b>
+<b class="fc"><i>74</i>&nbsp;        this.configuration = configuration;</b>
+<b class="fc"><i>75</i>&nbsp;        this.credentials = credentials;</b>
+<b class="fc"><i>76</i>&nbsp;        this.requestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());</b>
+<b class="fc"><i>77</i>&nbsp;        this.queryBuilder = new InfoArchiveQueryBuilder();</b>
+<i>78</i>&nbsp;    }
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    public List&lt;InfoArchiveDocument&gt; requestListDocuments(ListDocumentRequestConsumer listRequest) throws JAXBException, IOException, RequestResponseException, ParseException {
+<b class="fc"><i>81</i>&nbsp;        LOGGER.info(&quot;Starting List Documents request.&quot;);</b>
+<b class="fc"><i>82</i>&nbsp;        String response = requestUtil.responseReader(executeListDocumentsRequest(listRequest));</b>
+<b class="fc"><i>83</i>&nbsp;        LOGGER.info(LOGGING_PARSING_RESULT);</b>
+<b class="fc"><i>84</i>&nbsp;        List&lt;InfoArchiveDocument&gt; result = parseDocumentList(response, true, false);</b>
+<b class="fc"><i>85</i>&nbsp;        if (result.size() == 0) {</b>
+<b class="fc"><i>86</i>&nbsp;            StringBuilder errorMessage = new StringBuilder(&quot;Got 0 results for documents. &quot;);</b>
+<b class="fc"><i>87</i>&nbsp;            errorMessage.append(LOGGING_EXPECT_AT_LEAST_ONE_RESULT);</b>
+<b class="fc"><i>88</i>&nbsp;            LOGGER.error(errorMessage.toString());</b>
+<b class="fc"><i>89</i>&nbsp;            LOGGER.debug(response);</b>
+<b class="fc"><i>90</i>&nbsp;            throw new NoContentAvailableException(errorMessage.toString(),NoContentAvailableException.ERROR_CODE_NO_DOCUMENT_LIST);</b>
+<i>91</i>&nbsp;        }
+<b class="fc"><i>92</i>&nbsp;        LOGGER.info(&quot;Returning List with &quot; + result.size() + &quot; documents.&quot;);</b>
+<b class="fc"><i>93</i>&nbsp;        return result;</b>
+<i>94</i>&nbsp;    }
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;    public InfoArchiveDocument requestDocument(String archiveDocumentNumber) throws JAXBException, IOException, ParseException, RequestResponseException {
+<b class="fc"><i>97</i>&nbsp;        LOGGER.info(&quot;Requesting document with number:&quot; + archiveDocumentNumber);</b>
+<b class="fc"><i>98</i>&nbsp;        String response = requestUtil.responseReader(executeDocumentsRequest(archiveDocumentNumber));</b>
+<i>99</i>&nbsp;        //parse response
+<b class="fc"><i>100</i>&nbsp;        LOGGER.info(LOGGING_PARSING_RESULT);</b>
+<b class="fc"><i>101</i>&nbsp;        List&lt;InfoArchiveDocument&gt; documents = parseDocumentList(response, false, false);</b>
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;        //check size of array
+<b class="pc"><i>104</i>&nbsp;        if (documents.size() &gt; 1) {</b>
+<b class="nc"><i>105</i>&nbsp;            String errorMessage = &quot;Got &quot; + documents.size() + &quot; results for document number:&quot; + archiveDocumentNumber + LOGGING_EXPECT_AT_LEAST_ONE_RESULT;</b>
+<b class="nc"><i>106</i>&nbsp;            LOGGER.error(errorMessage);</b>
+<b class="nc"><i>107</i>&nbsp;            LOGGER.debug(response);</b>
+<b class="nc"><i>108</i>&nbsp;            throw new MultipleDocumentsException(errorMessage);</b>
+<b class="pc"><i>109</i>&nbsp;        } else if (documents.size() == 0) {</b>
+<b class="nc"><i>110</i>&nbsp;            String errorMessage = &quot;Got &quot; + documents.size() + &quot; results for document number:&quot; + archiveDocumentNumber + LOGGING_EXPECT_AT_LEAST_ONE_RESULT;</b>
+<b class="nc"><i>111</i>&nbsp;            LOGGER.error(errorMessage);</b>
+<b class="nc"><i>112</i>&nbsp;            LOGGER.debug(response);</b>
+<b class="nc"><i>113</i>&nbsp;            throw new NoContentAvailableException(errorMessage, NoContentAvailableException.ERROR_CODE_NO_CONTENT);</b>
+<i>114</i>&nbsp;        }
+<b class="fc"><i>115</i>&nbsp;        LOGGER.info(&quot;Returning document.&quot;);</b>
+<b class="fc"><i>116</i>&nbsp;        return documents.get(0);</b>
+<i>117</i>&nbsp;    }
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;    private HttpResponse executeListDocumentsRequest(ListDocumentRequestConsumer listDocumentRequest) throws JAXBException, RequestResponseException {
+<b class="fc"><i>120</i>&nbsp;        Map&lt;String, String&gt; requestHeader = requestUtil.createCredentialsMap(credentials);</b>
+<b class="fc"><i>121</i>&nbsp;        IdResolverManager idResolverManager = IdResolverManager.getInstance();</b>
+<b class="fc"><i>122</i>&nbsp;        String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, idResolverManager.getSearchCompositionID());</b>
+<b class="fc"><i>123</i>&nbsp;        String requestBody = listDocumentRequest.adaptToQuery().build();</b>
+<b class="fc"><i>124</i>&nbsp;        LOGGER.info(&quot;Executing HTTPPOST request for a List Documents.&quot;);</b>
+<b class="fc"><i>125</i>&nbsp;        LOGGER.debug(requestBody);</b>
+<i>126</i>&nbsp;        //execute request.
+<b class="fc"><i>127</i>&nbsp;        return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);</b>
+<i>128</i>&nbsp;    }
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;    private HttpResponse executeDocumentsRequest(String archiveDocumentNumber) throws JAXBException, RequestResponseException {
+<b class="fc"><i>131</i>&nbsp;        Map&lt;String, String&gt; requestHeader = requestUtil.createCredentialsMap(credentials);</b>
+<b class="fc"><i>132</i>&nbsp;        IdResolverManager idResolverManager = IdResolverManager.getInstance();</b>
+<b class="fc"><i>133</i>&nbsp;        String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, idResolverManager.getSearchCompositionID());</b>
+<b class="fc"><i>134</i>&nbsp;        List&lt;String&gt; values = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>135</i>&nbsp;        values.add(archiveDocumentNumber);</b>
+<b class="fc"><i>136</i>&nbsp;        String requestBody = queryBuilder.addEqualCriteria(VALUE_ARCHIVE_DOCUMENT_NUMBER, values).build();</b>
+<b class="fc"><i>137</i>&nbsp;        LOGGER.info(&quot;Executing HTTPPOST request for a Documents based on Document Number.&quot;);</b>
+<b class="fc"><i>138</i>&nbsp;        LOGGER.debug(requestBody);</b>
+<b class="fc"><i>139</i>&nbsp;        return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);</b>
+<i>140</i>&nbsp;    }
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    protected List&lt;InfoArchiveDocument&gt; parseDocumentList(String response, boolean expectList, boolean isSearchResults) throws ParseException, TooManyResultsException, InfoArchiveResponseException {
+<b class="fc"><i>143</i>&nbsp;        List&lt;InfoArchiveDocument&gt; documents = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>144</i>&nbsp;        TooManyResultsException tooManyResultsException = null;</b>
+<i>145</i>&nbsp;
+<b class="fc"><i>146</i>&nbsp;        JsonParser parser = new JsonParser();</b>
+<b class="fc"><i>147</i>&nbsp;        JsonObject jsonResponse = parser.parse(response).getAsJsonObject();</b>
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;        //responseErrorCheck
+<b class="fc"><i>150</i>&nbsp;        if (jsonResponse.has(PARSE_RESPONSE_ERROR)) {</b>
+<b class="fc"><i>151</i>&nbsp;            LOGGER.info(&quot;Got error in response.&quot;);</b>
+<b class="fc"><i>152</i>&nbsp;            StringBuilder exceptionMessage = new StringBuilder();</b>
+<b class="fc"><i>153</i>&nbsp;            JsonArray errors = jsonResponse.getAsJsonArray(PARSE_RESPONSE_ERROR);</b>
+<b class="fc"><i>154</i>&nbsp;            for (int i_error = 0; i_error &lt; errors.size(); i_error++) {</b>
+<b class="fc"><i>155</i>&nbsp;                JsonObject error = errors.get(i_error).getAsJsonObject();</b>
+<i>156</i>&nbsp;
+<b class="fc"><i>157</i>&nbsp;                String errorTitle = error.get(PARSE_RESPONSE_ERROR_TITLE).getAsString();</b>
+<b class="fc"><i>158</i>&nbsp;                String errorMessage = error.get(PARSE_RESPONSE_ERROR_MESSAGE).getAsString();</b>
+<i>159</i>&nbsp;
+<b class="fc"><i>160</i>&nbsp;                exceptionMessage.append(errorTitle);</b>
+<b class="fc"><i>161</i>&nbsp;                exceptionMessage.append(&quot; &quot;);</b>
+<b class="fc"><i>162</i>&nbsp;                exceptionMessage.append(errorMessage);</b>
+<b class="fc"><i>163</i>&nbsp;                exceptionMessage.append(&quot;\n&quot;);</b>
+<i>164</i>&nbsp;            }
+<i>165</i>&nbsp;
+<b class="fc"><i>166</i>&nbsp;            LOGGER.debug(response);</b>
+<b class="fc"><i>167</i>&nbsp;            LOGGER.error(exceptionMessage.toString());</b>
+<i>168</i>&nbsp;
+<b class="fc"><i>169</i>&nbsp;            int errorCode = InfoArchiveResponseException.defineErrorCode(exceptionMessage.toString(), expectList);</b>
+<b class="fc"><i>170</i>&nbsp;            InfoArchiveResponseException infoArchiveResponseException = new InfoArchiveResponseException(errorCode, InfoArchiveResponseException.ERROR_MESSAGE);</b>
+<b class="fc"><i>171</i>&nbsp;            throw infoArchiveResponseException;</b>
+<i>172</i>&nbsp;        }
+<i>173</i>&nbsp;
+<i>174</i>&nbsp;        //check response size
+<b class="fc"><i>175</i>&nbsp;        int totalElements = totalElementsFromResponse(jsonResponse);</b>
+<b class="pc"><i>176</i>&nbsp;        if (configuration.getMaxResults() &lt; totalElements) {</b>
+<b class="nc"><i>177</i>&nbsp;            String errorMessage = &quot;InfoArchive responded with &quot; + totalElements + &quot; items, this exceeds the maximum allowed items of &quot; + configuration.getMaxResults() + &quot; set in the configuration.&quot;;</b>
+<b class="nc"><i>178</i>&nbsp;            LOGGER.error(errorMessage);</b>
+<b class="nc"><i>179</i>&nbsp;            LOGGER.debug(response);</b>
+<b class="nc"><i>180</i>&nbsp;            tooManyResultsException = new TooManyResultsException(TooManyResultsException.defineErrorCode(isSearchResults) ,errorMessage);</b>
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;        }
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;        //read response
+<b class="pc"><i>185</i>&nbsp;        if (jsonResponse.has(PARSE_RESPONSE_EMBEDDED)) {</b>
+<b class="fc"><i>186</i>&nbsp;            JsonObject embedded = jsonResponse.getAsJsonObject(PARSE_RESPONSE_EMBEDDED);</b>
+<b class="pc"><i>187</i>&nbsp;            if (embedded.has(PARSE_RESPONSE_RESULTS)) {</b>
+<b class="fc"><i>188</i>&nbsp;                JsonArray results = embedded.getAsJsonArray(PARSE_RESPONSE_RESULTS);</b>
+<i>189</i>&nbsp;
+<b class="fc"><i>190</i>&nbsp;                for (int i_Results = 0; i_Results &lt; results.size(); i_Results++) {</b>
+<b class="fc"><i>191</i>&nbsp;                    JsonObject result = results.get(i_Results).getAsJsonObject();</b>
+<b class="fc"><i>192</i>&nbsp;                    documents.addAll(parseResponseListDocumentsRow(result));</b>
+<i>193</i>&nbsp;                }
+<i>194</i>&nbsp;            }
+<i>195</i>&nbsp;        }
+<i>196</i>&nbsp;
+<b class="pc"><i>197</i>&nbsp;        if(tooManyResultsException != null) {</b>
+<b class="nc"><i>198</i>&nbsp;            tooManyResultsException.getDocumentsToDisplay().addAll(documents);</b>
+<b class="nc"><i>199</i>&nbsp;            throw tooManyResultsException;</b>
+<i>200</i>&nbsp;        }
+<b class="fc"><i>201</i>&nbsp;        return documents;</b>
+<i>202</i>&nbsp;    }
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;    private List&lt;InfoArchiveDocument&gt; parseResponseListDocumentsRow(JsonObject result) {
+<b class="fc"><i>205</i>&nbsp;        List&lt;InfoArchiveDocument&gt; documents = new ArrayList&lt;&gt;();</b>
+<i>206</i>&nbsp;
+<b class="pc"><i>207</i>&nbsp;        if (result.has(PARSE_RESPONSE_ROWS)) {</b>
+<b class="fc"><i>208</i>&nbsp;            JsonArray rows = result.get(PARSE_RESPONSE_ROWS).getAsJsonArray();</b>
+<b class="fc"><i>209</i>&nbsp;            for (int i_Rows = 0; i_Rows &lt; rows.size(); i_Rows++) {</b>
+<b class="fc"><i>210</i>&nbsp;                JsonObject row = rows.get(i_Rows).getAsJsonObject();</b>
+<i>211</i>&nbsp;                try {
+<b class="fc"><i>212</i>&nbsp;                    documents.add(parseDocument(row));</b>
+<b class="nc"><i>213</i>&nbsp;                } catch (ParseException parseExc) {</b>
+<b class="nc"><i>214</i>&nbsp;                    LOGGER.error(&quot;Failed to parse document&quot;, parseExc);</b>
+<b class="fc"><i>215</i>&nbsp;                }</b>
+<i>216</i>&nbsp;            }
+<i>217</i>&nbsp;        }
+<b class="fc"><i>218</i>&nbsp;        return documents;</b>
+<i>219</i>&nbsp;    }
+<i>220</i>&nbsp;
+<i>221</i>&nbsp;    private int totalElementsFromResponse(JsonObject jsonResponse) {
+<b class="pc"><i>222</i>&nbsp;        if (jsonResponse.has(PARSE_RESPONSE_PAGE)) {</b>
+<b class="fc"><i>223</i>&nbsp;            JsonObject page = jsonResponse.getAsJsonObject(PARSE_RESPONSE_PAGE);</b>
+<b class="pc"><i>224</i>&nbsp;            if (page.has(PARSE_RESPONSE_TOTAL_ELEMENTS)) {</b>
+<b class="fc"><i>225</i>&nbsp;                return page.get(PARSE_RESPONSE_TOTAL_ELEMENTS).getAsInt();</b>
+<i>226</i>&nbsp;            }
+<i>227</i>&nbsp;        }
+<b class="nc"><i>228</i>&nbsp;        return 0;</b>
+<i>229</i>&nbsp;    }
+<i>230</i>&nbsp;
+<i>231</i>&nbsp;    private InfoArchiveDocument parseDocument(JsonObject document) throws ParseException {
+<b class="fc"><i>232</i>&nbsp;        LOGGER.info(&quot;Parsing Document.&quot;);</b>
+<b class="fc"><i>233</i>&nbsp;        InfoArchiveDocument infoArchiveDocument = new InfoArchiveDocument();</b>
+<b class="fc"><i>234</i>&nbsp;        JsonArray columns = document.getAsJsonArray(PARSE_RESPONSE_COLUMNS);</b>
+<i>235</i>&nbsp;        
+<b class="fc"><i>236</i>&nbsp;        for (int i_column = 0; i_column &lt; columns.size(); i_column++) {</b>
+<b class="fc"><i>237</i>&nbsp;            JsonObject column = columns.get(i_column).getAsJsonObject();</b>
+<i>238</i>&nbsp;
+<b class="pc"><i>239</i>&nbsp;            if (column.has(PARSE_RESPONSE_NAME)) {</b>
+<b class="fc"><i>240</i>&nbsp;                String columnName = column.get(PARSE_RESPONSE_NAME).getAsString();</b>
+<b class="fc"><i>241</i>&nbsp;                String value = null;</b>
+<i>242</i>&nbsp;                try {
+<b class="fc"><i>243</i>&nbsp;                    value = (column.get(PARSE_RESPONSE_VALUE).getAsString());</b>
+<b class="fc"><i>244</i>&nbsp;                } catch (NullPointerException nullExc) {</b>
+<b class="fc"><i>245</i>&nbsp;                    LOGGER.error(&quot;Got null value on column &quot;+columnName);</b>
+<b class="fc"><i>246</i>&nbsp;                    value = &quot;     &quot;;</b>
+<b class="fc"><i>247</i>&nbsp;                }</b>
+<i>248</i>&nbsp;                
+<b class="fc"><i>249</i>&nbsp;                LOGGER.debug(&quot;Parsing column: &quot; + columnName);</b>
+<b class="fc"><i>250</i>&nbsp;                infoArchiveDocument = parseFirstTenFields(infoArchiveDocument, columnName, column, value);</b>
+<b class="fc"><i>251</i>&nbsp;                infoArchiveDocument = parseSecondTenField(infoArchiveDocument, columnName, column, value);</b>
+<i>252</i>&nbsp;            }
+<i>253</i>&nbsp;        }
+<b class="fc"><i>254</i>&nbsp;        LOGGER.info(&quot;Done parsing document.&quot;);</b>
+<i>255</i>&nbsp;
+<b class="fc"><i>256</i>&nbsp;        return infoArchiveDocument;</b>
+<i>257</i>&nbsp;    }
+<i>258</i>&nbsp;
+<i>259</i>&nbsp;    //(so it has come to this...)
+<i>260</i>&nbsp;    private InfoArchiveDocument parseFirstTenFields(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column, String value) throws ParseException {
+<b class="pc"><i>261</i>&nbsp;        switch (columnName) {</b>
+<i>262</i>&nbsp;            case PARSE_DOCUMENT_ID:
+<b class="fc"><i>263</i>&nbsp;                infoArchiveDocument.setArchiefDocumentId(value);</b>
+<b class="fc"><i>264</i>&nbsp;                break;</b>
+<i>265</i>&nbsp;            case PARSE_DOCUMENT_PERSON_NUMBER:
+<b class="fc"><i>266</i>&nbsp;                infoArchiveDocument.setArchiefPersoonsnummer(value);</b>
+<b class="fc"><i>267</i>&nbsp;                break;</b>
+<i>268</i>&nbsp;            case PARSE_DOCUMENT_TITLE:
+<b class="fc"><i>269</i>&nbsp;                infoArchiveDocument.setArchiefDocumenttitel(value);</b>
+<b class="fc"><i>270</i>&nbsp;                break;</b>
+<i>271</i>&nbsp;            case PARSE_DOCUMENT_KIND:
+<b class="fc"><i>272</i>&nbsp;                infoArchiveDocument.setArchiefDocumentsoort(value);</b>
+<b class="fc"><i>273</i>&nbsp;                break;</b>
+<i>274</i>&nbsp;            case PARSE_DOCUMENT_PROTOCOL:
+<b class="fc"><i>275</i>&nbsp;                infoArchiveDocument.setArchiefRegeling(value);</b>
+<b class="fc"><i>276</i>&nbsp;                break;</b>
+<i>277</i>&nbsp;            case PARSE_DOCUMENT_CHARACTERISTIC:
+<b class="fc"><i>278</i>&nbsp;                infoArchiveDocument.setArchiefDocumentkenmerk(value);</b>
+<b class="fc"><i>279</i>&nbsp;                break;</b>
+<i>280</i>&nbsp;            case PARSE_DOCUMENT_SEND_DATE:
+<b class="fc"><i>281</i>&nbsp;                infoArchiveDocument.setArchiefVerzenddag(InfoArchiveDateUtil.convertToRequestDate(value));</b>
+<b class="fc"><i>282</i>&nbsp;                break;</b>
+<i>283</i>&nbsp;            case PARSE_DOCUMENT_TYPE:
+<b class="fc"><i>284</i>&nbsp;                infoArchiveDocument.setArchiefDocumenttype(value);</b>
+<b class="fc"><i>285</i>&nbsp;                break;</b>
+<i>286</i>&nbsp;            case PARSE_DOCUMENT_STATUS:
+<b class="fc"><i>287</i>&nbsp;                infoArchiveDocument.setArchiefDocumentstatus(value);</b>
+<b class="fc"><i>288</i>&nbsp;                break;</b>
+<i>289</i>&nbsp;            default:
+<i>290</i>&nbsp;                break;
+<i>291</i>&nbsp;        }
+<b class="fc"><i>292</i>&nbsp;        return infoArchiveDocument;</b>
+<i>293</i>&nbsp;    }
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;    private InfoArchiveDocument parseSecondTenField(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column, String value) {
+<b class="pc"><i>296</i>&nbsp;        switch (columnName) {</b>
+<i>297</i>&nbsp;            case PARSE_DOCUMENT_YEAR:
+<b class="fc"><i>298</i>&nbsp;                infoArchiveDocument.setArchiefRegelingsjaar(value);</b>
+<b class="fc"><i>299</i>&nbsp;                break;</b>
+<i>300</i>&nbsp;            case PARSE_DOCUMENT_ATTACHMENT:
+<b class="fc"><i>301</i>&nbsp;                infoArchiveDocument.setArchiefFile(value);</b>
+<i>302</i>&nbsp;                break;
+<i>303</i>&nbsp;            //case PARSE_DOCUMENT_HANDLING_NUMBER:
+<i>304</i>&nbsp;            //    infoArchiveDocument.setArchiefHandelingsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
+<i>305</i>&nbsp;            //    break;
+<i>306</i>&nbsp;            //default:
+<i>307</i>&nbsp;            //    break;
+<i>308</i>&nbsp;        }
+<b class="fc"><i>309</i>&nbsp;        return infoArchiveDocument;</b>
+<i>310</i>&nbsp;
+<i>311</i>&nbsp;    }
+<i>312</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2016-11-21 16:40</div>
+</div>
+</body>
+</html>

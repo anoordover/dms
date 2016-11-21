@@ -1,0 +1,268 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: LoginRequest</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">nl.hetcak.dms.ia.web.requests</a> ]
+</div>
+
+<h1>Coverage Summary for Class: LoginRequest (nl.hetcak.dms.ia.web.requests)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LoginRequest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84.9%
+  </span>
+  <span class="absValue">
+    (90/ 106)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package nl.hetcak.dms.ia.web.requests;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.google.gson.JsonObject;
+<i>4</i>&nbsp;import com.google.gson.JsonParser;
+<i>5</i>&nbsp;import nl.hetcak.dms.ia.web.comunication.Credentials;
+<i>6</i>&nbsp;import nl.hetcak.dms.ia.web.configuration.Configuration;
+<i>7</i>&nbsp;import nl.hetcak.dms.ia.web.exceptions.LoginFailureException;
+<i>8</i>&nbsp;import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
+<i>9</i>&nbsp;import nl.hetcak.dms.ia.web.exceptions.ServerConnectionFailureException;
+<i>10</i>&nbsp;import nl.hetcak.dms.ia.web.util.CryptoUtil;
+<i>11</i>&nbsp;import nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil;
+<i>12</i>&nbsp;import org.apache.http.HttpResponse;
+<i>13</i>&nbsp;import org.slf4j.Logger;
+<i>14</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import java.io.IOException;
+<i>17</i>&nbsp;import java.io.UnsupportedEncodingException;
+<i>18</i>&nbsp;import java.net.URLEncoder;
+<i>19</i>&nbsp;import java.util.Calendar;
+<i>20</i>&nbsp;import java.util.GregorianCalendar;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;import static nl.hetcak.dms.ia.web.util.InfoArchiveRequestUtil.DEFAULT_CONTENT_TYPE_REQUEST;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;/**
+<i>25</i>&nbsp; * (c) 2016 AMPLEXOR International S.A., All rights reserved.
+<i>26</i>&nbsp; *
+<i>27</i>&nbsp; * @author Jeroen.Pelt@AMPLEXOR.com
+<i>28</i>&nbsp; */
+<i>29</i>&nbsp;public class LoginRequest {
+<b class="fc"><i>30</i>&nbsp;    private static final Logger LOGGER = LoggerFactory.getLogger(LoginRequest.class);</b>
+<i>31</i>&nbsp;    private static final String LOGIN_USERNAME = &quot;username&quot;;
+<i>32</i>&nbsp;    private static final String LOGIN_PASSWORD = &quot;password&quot;;
+<i>33</i>&nbsp;    private static final String LOGIN_GRANT = &quot;grant_type&quot;;
+<i>34</i>&nbsp;    private static final String LOGIN_GRANT_PASSWORD = &quot;password&quot;;
+<i>35</i>&nbsp;    private static final String LOGIN_GRANT_REFRESH = &quot;refresh_token&quot;;
+<i>36</i>&nbsp;    private static final String SELECTOR_LOGIN = &quot;login&quot;;
+<i>37</i>&nbsp;    private static final String ENCODING_UTF8 = &quot;UTF-8&quot;;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    private Configuration configuration;
+<i>40</i>&nbsp;    private InfoArchiveRequestUtil infoArchiveRequestUtil;
+<i>41</i>&nbsp;
+<b class="fc"><i>42</i>&nbsp;    public LoginRequest(Configuration configuration) {</b>
+<b class="fc"><i>43</i>&nbsp;        this.configuration = configuration;</b>
+<b class="fc"><i>44</i>&nbsp;        this.infoArchiveRequestUtil = new InfoArchiveRequestUtil(configuration.getInfoArchiveServerInformation());</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    /**
+<i>48</i>&nbsp;     * Try to login the InfoArchive server.
+<i>49</i>&nbsp;     *
+<i>50</i>&nbsp;     * @return active credentials.
+<i>51</i>&nbsp;     * @throws LoginFailureException            Failed to login.
+<i>52</i>&nbsp;     * @throws ServerConnectionFailureException Failed to connect.
+<i>53</i>&nbsp;     */
+<i>54</i>&nbsp;    public synchronized Credentials loginInfoArchive() throws RequestResponseException {
+<b class="fc"><i>55</i>&nbsp;        LOGGER.info(&quot;Logging in to InfoArchive.&quot;);</b>
+<b class="fc"><i>56</i>&nbsp;        String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);</b>
+<i>57</i>&nbsp;        try {
+<b class="fc"><i>58</i>&nbsp;            String bodyContent = prepareLoginBody(configuration.getInfoArchiveCredentials());</b>
+<b class="fc"><i>59</i>&nbsp;            LOGGER.debug(&quot;Logging in with credentials...&quot;);</b>
+<b class="fc"><i>60</i>&nbsp;            HttpResponse httpResponse = infoArchiveRequestUtil.executePostRequest(serverUrl, DEFAULT_CONTENT_TYPE_REQUEST, null, bodyContent);</b>
+<b class="fc"><i>61</i>&nbsp;            String response = infoArchiveRequestUtil.responseReader(httpResponse);</b>
+<b class="fc"><i>62</i>&nbsp;            LOGGER.debug(response);</b>
+<b class="fc"><i>63</i>&nbsp;            return updateCredentials(configuration.getInfoArchiveCredentials(), response);</b>
+<b class="nc"><i>64</i>&nbsp;        } catch (UnsupportedEncodingException unsupEncoExc) {</b>
+<b class="nc"><i>65</i>&nbsp;            LOGGER.error(&quot;Could not load UTF-8 encoding.&quot;, unsupEncoExc);</b>
+<b class="nc"><i>66</i>&nbsp;            throw new LoginFailureException(&quot;Encoding UTF-8 is unsupported.&quot;, unsupEncoExc);</b>
+<b class="nc"><i>67</i>&nbsp;        } catch (IOException ioExc) {</b>
+<b class="nc"><i>68</i>&nbsp;            LOGGER.error(&quot;Parse error.&quot;, ioExc);</b>
+<b class="nc"><i>69</i>&nbsp;            throw new LoginFailureException(ioExc);</b>
+<i>70</i>&nbsp;        }
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    public synchronized Credentials refreshCredentialsInfoArchive(Credentials loggedInCredentials) throws RequestResponseException {
+<b class="fc"><i>74</i>&nbsp;        LOGGER.info(&quot;Refreshing InfoArchive login token.&quot;);</b>
+<b class="fc"><i>75</i>&nbsp;        String serverUrl = infoArchiveRequestUtil.getServerUrl(SELECTOR_LOGIN);</b>
+<i>76</i>&nbsp;        try {
+<b class="fc"><i>77</i>&nbsp;            String bodyContent = prepareRefreshLoginBody(loggedInCredentials);</b>
+<b class="fc"><i>78</i>&nbsp;            LOGGER.debug(bodyContent);</b>
+<b class="fc"><i>79</i>&nbsp;            HttpResponse httpResponse = infoArchiveRequestUtil.executePostRequest(serverUrl, DEFAULT_CONTENT_TYPE_REQUEST, null, bodyContent);</b>
+<b class="fc"><i>80</i>&nbsp;            String response = infoArchiveRequestUtil.responseReader(httpResponse);</b>
+<b class="fc"><i>81</i>&nbsp;            LOGGER.debug(response);</b>
+<b class="fc"><i>82</i>&nbsp;            LOGGER.info(&quot;Returning credentials.&quot;);</b>
+<b class="fc"><i>83</i>&nbsp;            return updateCredentials(configuration.getInfoArchiveCredentials(), response);</b>
+<b class="nc"><i>84</i>&nbsp;        } catch (UnsupportedEncodingException unsupEncoExc) {</b>
+<b class="nc"><i>85</i>&nbsp;            LOGGER.error(&quot;Could not load UTF-8 encoding.&quot;, unsupEncoExc);</b>
+<b class="nc"><i>86</i>&nbsp;            throw new LoginFailureException(&quot;Encoding UTF-8 is unsupported.&quot;, unsupEncoExc);</b>
+<b class="nc"><i>87</i>&nbsp;        } catch (IOException ioExc) {</b>
+<b class="nc"><i>88</i>&nbsp;            LOGGER.error(&quot;Parse error.&quot;, ioExc);</b>
+<b class="nc"><i>89</i>&nbsp;            throw new LoginFailureException(ioExc);</b>
+<i>90</i>&nbsp;        }
+<i>91</i>&nbsp;    }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    private Credentials updateCredentials(Credentials credentials, String serverResponse) throws RequestResponseException {
+<b class="fc"><i>94</i>&nbsp;        LOGGER.info(&quot;Updating InfoArchive Credentials.&quot;);</b>
+<b class="fc"><i>95</i>&nbsp;        JsonParser parser = new JsonParser();</b>
+<b class="fc"><i>96</i>&nbsp;        JsonObject response = parser.parse(serverResponse).getAsJsonObject();</b>
+<i>97</i>&nbsp;
+<b class="pc"><i>98</i>&nbsp;        if(response.has(&quot;error&quot;)){</b>
+<b class="nc"><i>99</i>&nbsp;            throw readErrorResponse(response);</b>
+<i>100</i>&nbsp;        }
+<i>101</i>&nbsp;
+<b class="pc"><i>102</i>&nbsp;        if (response.has(&quot;expires_in&quot;) &amp;&amp; response.has(&quot;access_token&quot;) &amp;&amp; response.has(LOGIN_GRANT_REFRESH)) {</b>
+<b class="fc"><i>103</i>&nbsp;            int expireSeconds = response.get(&quot;expires_in&quot;).getAsInt();</b>
+<b class="fc"><i>104</i>&nbsp;            GregorianCalendar expire = (GregorianCalendar) GregorianCalendar.getInstance();</b>
+<b class="fc"><i>105</i>&nbsp;            expire.add(Calendar.SECOND, expireSeconds);</b>
+<b class="fc"><i>106</i>&nbsp;            LOGGER.info(&quot;InfoArchive Credentials will expire:&quot; + expire.getTime().toString());</b>
+<b class="fc"><i>107</i>&nbsp;            credentials.setSecurityTokenInvalidationTime(expire);</b>
+<b class="fc"><i>108</i>&nbsp;            LOGGER.info(&quot;Updating Tokens&quot;);</b>
+<b class="fc"><i>109</i>&nbsp;            credentials.setSecurityToken(response.get(&quot;access_token&quot;).getAsString());</b>
+<b class="fc"><i>110</i>&nbsp;            credentials.setRecoveryToken(response.get(LOGIN_GRANT_REFRESH).getAsString());</b>
+<b class="fc"><i>111</i>&nbsp;        } else {</b>
+<b class="nc"><i>112</i>&nbsp;            throw new LoginFailureException(&quot;Failed to find expires time or tokens in response.&quot;);</b>
+<i>113</i>&nbsp;        }
+<b class="fc"><i>114</i>&nbsp;        LOGGER.info(&quot;Returning updated credentials.&quot;);</b>
+<b class="fc"><i>115</i>&nbsp;        return credentials;</b>
+<i>116</i>&nbsp;    }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    protected RequestResponseException readErrorResponse(JsonObject response) {
+<b class="fc"><i>119</i>&nbsp;        String errorTitle = response.get(&quot;error&quot;).getAsString();</b>
+<b class="fc"><i>120</i>&nbsp;        String errorDescription = response.get(&quot;error_description&quot;).getAsString();</b>
+<b class="fc"><i>121</i>&nbsp;        if(errorTitle.contentEquals(&quot;server_error&quot;)) {</b>
+<b class="fc"><i>122</i>&nbsp;            StringBuilder message = new StringBuilder(&quot;Server responded with a error: &quot;);</b>
+<b class="fc"><i>123</i>&nbsp;            message.append(errorDescription);</b>
+<b class="fc"><i>124</i>&nbsp;            ServerConnectionFailureException scfExc = new ServerConnectionFailureException(message.toString());</b>
+<b class="fc"><i>125</i>&nbsp;            return scfExc;</b>
+<b class="fc"><i>126</i>&nbsp;        } else if(errorTitle.contentEquals(&quot;invalid_grant&quot;)) {</b>
+<b class="fc"><i>127</i>&nbsp;            StringBuilder message = new StringBuilder(&quot;Invalid Credentials: &quot;);</b>
+<b class="fc"><i>128</i>&nbsp;            message.append(errorTitle);</b>
+<b class="fc"><i>129</i>&nbsp;            message.append(&quot;: &quot;);</b>
+<b class="fc"><i>130</i>&nbsp;            message.append(errorDescription);</b>
+<b class="fc"><i>131</i>&nbsp;            return new LoginFailureException(message.toString());</b>
+<b class="fc"><i>132</i>&nbsp;        } else if(errorTitle.contentEquals(&quot;invalid_token&quot;)) {</b>
+<b class="fc"><i>133</i>&nbsp;            StringBuilder message = new StringBuilder(&quot;Token error: &quot;);</b>
+<b class="fc"><i>134</i>&nbsp;            message.append(errorTitle);</b>
+<b class="fc"><i>135</i>&nbsp;            message.append(&quot;: &quot;);</b>
+<b class="fc"><i>136</i>&nbsp;            message.append(errorDescription);</b>
+<b class="fc"><i>137</i>&nbsp;            return new LoginFailureException(message.toString());</b>
+<i>138</i>&nbsp;        } else {
+<b class="fc"><i>139</i>&nbsp;            StringBuilder message = new StringBuilder(&quot;Unexpected error: &quot;);</b>
+<b class="fc"><i>140</i>&nbsp;            message.append(errorTitle);</b>
+<b class="fc"><i>141</i>&nbsp;            message.append(&quot;: &quot;);</b>
+<b class="fc"><i>142</i>&nbsp;            message.append(errorDescription);</b>
+<b class="fc"><i>143</i>&nbsp;            RequestResponseException rrExc = new RequestResponseException(9999,message.toString());</b>
+<b class="fc"><i>144</i>&nbsp;            return rrExc;</b>
+<i>145</i>&nbsp;        }
+<i>146</i>&nbsp;    }
+<i>147</i>&nbsp;
+<i>148</i>&nbsp;    private String prepareLoginBody(Credentials credentials) throws RequestResponseException {
+<b class="fc"><i>149</i>&nbsp;        LOGGER.info(&quot;Prepare login body.&quot;);</b>
+<b class="fc"><i>150</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<i>151</i>&nbsp;        try {
+<b class="fc"><i>152</i>&nbsp;            stringBuilder.append(URLEncoder.encode(LOGIN_USERNAME, ENCODING_UTF8));</b>
+<b class="fc"><i>153</i>&nbsp;            stringBuilder.append(&#39;=&#39;);</b>
+<b class="fc"><i>154</i>&nbsp;            stringBuilder.append(URLEncoder.encode(credentials.getUsername(), ENCODING_UTF8));</b>
+<b class="fc"><i>155</i>&nbsp;            stringBuilder.append(&#39;&amp;&#39;);</b>
+<b class="fc"><i>156</i>&nbsp;            stringBuilder.append(URLEncoder.encode(LOGIN_PASSWORD, ENCODING_UTF8));</b>
+<b class="fc"><i>157</i>&nbsp;            stringBuilder.append(&#39;=&#39;);</b>
+<b class="fc"><i>158</i>&nbsp;            String password = CryptoUtil.decryptValue(credentials.getPassword(), configuration);</b>
+<b class="fc"><i>159</i>&nbsp;            stringBuilder.append(URLEncoder.encode(password, ENCODING_UTF8));</b>
+<b class="fc"><i>160</i>&nbsp;            stringBuilder.append(&#39;&amp;&#39;);</b>
+<b class="fc"><i>161</i>&nbsp;            stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, ENCODING_UTF8));</b>
+<b class="fc"><i>162</i>&nbsp;            stringBuilder.append(&#39;=&#39;);</b>
+<b class="fc"><i>163</i>&nbsp;            stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_PASSWORD, ENCODING_UTF8));</b>
+<b class="nc"><i>164</i>&nbsp;        } catch (UnsupportedEncodingException unsEncExc) {</b>
+<b class="nc"><i>165</i>&nbsp;            throw new RequestResponseException(unsEncExc, -1, &quot;UTF-8 is not supported.&quot;);</b>
+<b class="fc"><i>166</i>&nbsp;        }</b>
+<b class="fc"><i>167</i>&nbsp;        LOGGER.info(&quot;Returning login body.&quot;);</b>
+<b class="fc"><i>168</i>&nbsp;        return stringBuilder.toString();</b>
+<i>169</i>&nbsp;    }
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;    private String prepareRefreshLoginBody(Credentials credentials) throws UnsupportedEncodingException {
+<b class="fc"><i>172</i>&nbsp;        LOGGER.info(&quot;Prepare login refresh body.&quot;);</b>
+<b class="fc"><i>173</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<b class="fc"><i>174</i>&nbsp;        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_REFRESH, ENCODING_UTF8));</b>
+<b class="fc"><i>175</i>&nbsp;        stringBuilder.append(&#39;=&#39;);</b>
+<b class="fc"><i>176</i>&nbsp;        stringBuilder.append(URLEncoder.encode(credentials.getRecoveryToken(), ENCODING_UTF8));</b>
+<b class="fc"><i>177</i>&nbsp;        stringBuilder.append(&#39;&amp;&#39;);</b>
+<b class="fc"><i>178</i>&nbsp;        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT, ENCODING_UTF8));</b>
+<b class="fc"><i>179</i>&nbsp;        stringBuilder.append(&#39;=&#39;);</b>
+<b class="fc"><i>180</i>&nbsp;        stringBuilder.append(URLEncoder.encode(LOGIN_GRANT_REFRESH, ENCODING_UTF8));</b>
+<i>181</i>&nbsp;
+<b class="fc"><i>182</i>&nbsp;        LOGGER.info(&quot;Returning login refresh body.&quot;);</b>
+<b class="fc"><i>183</i>&nbsp;        return stringBuilder.toString();</b>
+<i>184</i>&nbsp;    }
+<i>185</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2016-11-21 16:40</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CryptoFailureException</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">nl.hetcak.dms.ia.web.exceptions</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CryptoFailureException (nl.hetcak.dms.ia.web.exceptions)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CryptoFailureException</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/ 5)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package nl.hetcak.dms.ia.web.exceptions;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.security.PrivilegedActionException;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * (c) 2016 AMPLEXOR International S.A., All rights reserved.
+<i>7</i>&nbsp; *
+<i>8</i>&nbsp; * @author Jeroen.Pelt@AMPLEXOR.com
+<i>9</i>&nbsp; */
+<i>10</i>&nbsp;public class CryptoFailureException extends RequestResponseException {
+<i>11</i>&nbsp;    public static final int ERROR_CODE = 1001;
+<i>12</i>&nbsp;    public static final String ERROR_MESSAGE = &quot;The CryptoUtil is unable to encrypt or decrypt the Object, please contact an Administrator.&quot;;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    /**
+<i>15</i>&nbsp;     * Constructs a new exception with {@code null} as its detail message.
+<i>16</i>&nbsp;     * The cause is not initialized, and may subsequently be initialized by a
+<i>17</i>&nbsp;     * call to {@link #initCause}.
+<i>18</i>&nbsp;     */
+<i>19</i>&nbsp;    public CryptoFailureException() {
+<b class="fc"><i>20</i>&nbsp;        super(ERROR_CODE, ERROR_MESSAGE);</b>
+<i>21</i>&nbsp;    }
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /**
+<i>24</i>&nbsp;     * Constructs a new exception with the specified detail message.  The
+<i>25</i>&nbsp;     * cause is not initialized, and may subsequently be initialized by
+<i>26</i>&nbsp;     * a call to {@link #initCause}.
+<i>27</i>&nbsp;     *
+<i>28</i>&nbsp;     * @param message the detail message. The detail message is saved for
+<i>29</i>&nbsp;     *                later retrieval by the {@link #getMessage()} method.
+<i>30</i>&nbsp;     */
+<i>31</i>&nbsp;    public CryptoFailureException(String message) {
+<b class="fc"><i>32</i>&nbsp;        super(message, ERROR_CODE, ERROR_MESSAGE);</b>
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    /**
+<i>36</i>&nbsp;     * Constructs a new exception with the specified detail message and
+<i>37</i>&nbsp;     * cause.  &lt;p&gt;Note that the detail message associated with
+<i>38</i>&nbsp;     * {@code cause} is &lt;i&gt;not&lt;/i&gt; automatically incorporated in
+<i>39</i>&nbsp;     * this exception&#39;s detail message.
+<i>40</i>&nbsp;     *
+<i>41</i>&nbsp;     * @param message the detail message (which is saved for later retrieval
+<i>42</i>&nbsp;     *                by the {@link #getMessage()} method).
+<i>43</i>&nbsp;     * @param cause   the cause (which is saved for later retrieval by the
+<i>44</i>&nbsp;     *                {@link #getCause()} method).  (A &lt;tt&gt;null&lt;/tt&gt; value is
+<i>45</i>&nbsp;     *                permitted, and indicates that the cause is nonexistent or
+<i>46</i>&nbsp;     *                unknown.)
+<i>47</i>&nbsp;     * @since 1.4
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    public CryptoFailureException(String message, Throwable cause) {
+<b class="fc"><i>50</i>&nbsp;        super(message, cause, ERROR_CODE, ERROR_MESSAGE);</b>
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    /**
+<i>54</i>&nbsp;     * Constructs a new exception with the specified cause and a detail
+<i>55</i>&nbsp;     * message of &lt;tt&gt;(cause==null ? null : cause.toString())&lt;/tt&gt; (which
+<i>56</i>&nbsp;     * typically contains the class and detail message of &lt;tt&gt;cause&lt;/tt&gt;).
+<i>57</i>&nbsp;     * This constructor is useful for exceptions that are little more than
+<i>58</i>&nbsp;     * wrappers for other throwables (for example, {@link
+<i>59</i>&nbsp;     * PrivilegedActionException}).
+<i>60</i>&nbsp;     *
+<i>61</i>&nbsp;     * @param cause the cause (which is saved for later retrieval by the
+<i>62</i>&nbsp;     *              {@link #getCause()} method).  (A &lt;tt&gt;null&lt;/tt&gt; value is
+<i>63</i>&nbsp;     *              permitted, and indicates that the cause is nonexistent or
+<i>64</i>&nbsp;     *              unknown.)
+<i>65</i>&nbsp;     * @since 1.4
+<i>66</i>&nbsp;     */
+<i>67</i>&nbsp;    public CryptoFailureException(Throwable cause) {
+<b class="fc"><i>68</i>&nbsp;        super(cause, ERROR_CODE, ERROR_MESSAGE);</b>
+<i>69</i>&nbsp;    }
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    /**
+<i>72</i>&nbsp;     * Constructs a new exception with the specified detail message,
+<i>73</i>&nbsp;     * cause, suppression enabled or disabled, and writable stack
+<i>74</i>&nbsp;     * trace enabled or disabled.
+<i>75</i>&nbsp;     *
+<i>76</i>&nbsp;     * @param message            the detail message.
+<i>77</i>&nbsp;     * @param cause              the cause.  (A {@code null} value is permitted,
+<i>78</i>&nbsp;     *                           and indicates that the cause is nonexistent or unknown.)
+<i>79</i>&nbsp;     * @param enableSuppression  whether or not suppression is enabled
+<i>80</i>&nbsp;     *                           or disabled
+<i>81</i>&nbsp;     * @param writableStackTrace whether or not the stack trace should
+<i>82</i>&nbsp;     *                           be writable
+<i>83</i>&nbsp;     * @since 1.7
+<i>84</i>&nbsp;     */
+<i>85</i>&nbsp;    public CryptoFailureException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+<b class="fc"><i>86</i>&nbsp;        super(message, cause, enableSuppression, writableStackTrace, ERROR_CODE, ERROR_MESSAGE);</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2016-11-21 16:40</div>
+</div>
+</body>
+</html>
