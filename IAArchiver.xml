@@ -1,270 +1,255 @@
 <IAArchiver>
-    <archiver>
-        <log4j_properties_path>log4j.properties</log4j_properties_path>
-    </archiver>
-    <worker_manager>
-        <max_worker_threads>4</max_worker_threads>
-        <worker_shutdown_threshold>524288</worker_shutdown_threshold>
-        <worker_startup_threshold>1048576</worker_startup_threshold>
-        <check_interval_milliseconds>5000</check_interval_milliseconds>
-    </worker_manager>
-    <caching>
-        <implementing_class>nl.hetcak.dms.CAKCacheManager</implementing_class>
-        <base_path>Cache</base_path>
-        <message_threshold>1</message_threshold>
-        <time_threshold>1800</time_threshold>
-        <custom_parameters>
-            <document_element_name>ArchiefDocument</document_element_name>
-            <document_class>nl.hetcak.dms.CAKDocument</document_class>
-        </custom_parameters>
-    </caching>
-    <rest_api>
-        <protocol>http</protocol>
-        <host>cwno0427</host>
-        <port>8775</port>
-        <gateway_protocol>http</gateway_protocol>
-        <gateway_host>cwno0427</gateway_host>
-        <gateway_port>8080</gateway_port>
-        <ingest_user>sa-infoarchive-ont</ingest_user>
-        <encrypted_ingest_password>OFRFeGNsZXJneXdX</encrypted_ingest_password>
-        <ingest_tenant>INFOARCHIVE</ingest_tenant>
-    </rest_api>
-    <sip>
-        <implementing_class>nl.hetcak.dms.CAKSipManager</implementing_class>
-        <holding_name>CAK_Klantarchief</holding_name>
-        <application_name>CAK_Klantarchief</application_name>
-        <producer_name>SIP Packager</producer_name>
-        <entity_name>ArchiefDocument</entity_name>
-        <document_element_name>ArchiefDocumenten</document_element_name>
-        <schema_declaration>urn:hetcak:dms:uitingarchief:2016:08</schema_declaration>
-        <sip_output_directory>target/Sips</sip_output_directory>
-        <custom_parameters>
-            <document_element_name>ArchiefDocument</document_element_name>
-            <document_class>nl.hetcak.dms.CAKDocument</document_class>
-            <fallback_application_name>CAK_Tijdelijk_Klantarchief</fallback_application_name>
-            <fallback_holding_name>CAK_Tijdelijk_Klantarchief</fallback_holding_name>
-        </custom_parameters>
-    </sip>
-    <document_source>
-        <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
-        <custom_parameters>
-            <source_path>C:\Users\zimmermannj\Desktop\CAK\data</source_path>
-
-            <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
-            <truststore>resources\truststore\truststore_ont1_mule.jks</truststore>
-            <truststore_password>My0jKD3WWChHaVFrLwDNLxmaTl72f9PL</truststore_password>
-
-            <!--
-            <broker>ssl://muleaq1.tst.esb.func.cak-bz.local:10744</broker>
-            <truststore>resources/truststore/truststore_tst_mule1.jks</truststore>
-            <truststore_password>URBq1N1uyZWQGWm5FuJ7iRVkLA0T3IUh</truststore_password> -->
-
-            <result_format><![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
-            <results_element><![CDATA[<urn:Items xmlns:urn="urn:hetcak:dms:uitingarchief:2016:08">%s</urn:Items>]]></results_element>
-            <result_values>{ERROR};{ID};{MESSAGE}</result_values>
-            <result_success>Geslaagd</result_success>
-            <result_error>Mislukt</result_error>
-            <input_queue_name>AanleverenArchiefUitingen</input_queue_name>
-            <result_queue_name>VerwerkArchiefUitingenStatus</result_queue_name>
-            <queue_receive_timeout>500</queue_receive_timeout>
-        </custom_parameters>
-    </document_source>
-    <retention_manager>
-        <implementing_class>nl.hetcak.dms.CAKRetentionManager</implementing_class>
-        <retention_classes>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Startbrief</name>
-                <associated_document_title>Z03</associated_document_title>
-                <associated_document_title>B02</associated_document_title>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Beschikking</name>
-                <associated_document_title>Z04</associated_document_title>
-                <associated_document_title>B03</associated_document_title>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Betaalregeling</name>
-                <associated_document_title>Z02</associated_document_title>
-                <associated_document_title>B04</associated_document_title>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Bevestiging_Betaalregeling</name>
-                <associated_document_title>Z12</associated_document_title>
-                <associated_document_title>B12</associated_document_title>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Herinnering</name>
-                <associated_document_title>Z05</associated_document_title>
-                <associated_document_title>B05</associated_document_title>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Overlijdensprofiel</name>
-                <associated_document_title>Z08</associated_document_title>
-                <handeling_nr>102.</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Storno_Al_Aanmaning</name>
-                <associated_document_title>Z10</associated_document_title>
-                <associated_document_title>B10</associated_document_title>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Storno_Al_Herinnering</name>
-                <associated_document_title>Z09</associated_document_title>
-                <associated_document_title>B09</associated_document_title>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Aanmaning</name>
-                <associated_document_title>Z06</associated_document_title>
-                <associated_document_title>B06</associated_document_title>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Factuur</name>
-                <associated_document_title>Z01</associated_document_title>
-                <associated_document_title>B01</associated_document_title>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-            <nl.hetcak.dms.CAKRetentionClass>
-                <name>Factuurspecificatie</name>
-                <associated_document_title>B21</associated_document_title>
-                <handeling_nr>10.2</handeling_nr>
-            </nl.hetcak.dms.CAKRetentionClass>
-        </retention_classes>
-        <custom_parameters>
-            <retention_element_name>ArchiefDocumenttitel</retention_element_name>
-        </custom_parameters>
-    </retention_manager>
-    <message_parser>
-        <implementing_class>nl.hetcak.dms.CAKMessageParserFallback</implementing_class>
-    </message_parser>
-    <exceptions>
-        <error>
-            <error_code>1002</error_code>
-            <error_text>Invalid Log4J Properties</error_text>
-            <error_handling>log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>1003</error_code>
-            <error_text>Insufficient Privileges</error_text>
-            <error_handling>log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>2001</error_code>
-            <error_text>Invalid Cache basepath</error_text>
-            <error_handling>log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>2002</error_code>
-            <error_text>Insuffient Privileges(Cache folder creation)</error_text>
-            <error_handling>log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>2003</error_code>
-            <error_text>Failed to delete cache folder</error_text>
-            <error_handling>log_error</error_handling>
-        </error>
-        <error>
-            <error_code>3001</error_code>
-            <error_text>Unable to connect to ActiveMQ Broker</error_text>
-            <error_handling>log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>3002</error_code>
-            <error_text>Unable to authenticate with ActiveMQ Broker</error_text>
-            <error_handling>log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>3003</error_code>
-            <error_text>Invalid truststore file</error_text>
-            <error_handling>log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>3004</error_code>
-            <error_text>Invalid truststore password</error_text>
-            <error_handling>log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>3005</error_code>
-            <error_text>Malformed/Invalid XML Data</error_text>
-            <error_handling>log_error</error_handling>
-        </error>
-        <error>
-            <error_code>3006</error_code>
-            <error_text>Payload is not PDF</error_text>
-            <error_handling>log_error;notify_source</error_handling>
-        </error>
-        <error>
-            <error_code>3007</error_code>
-            <error_text>Payload is not Base64 encoded</error_text>
-            <error_handling>log_error;notify_source</error_handling>
-        </error>
-        <error>
-            <error_code>3008</error_code>
-            <error_text>Invalid retention policy</error_text>
-            <error_handling>log_error;notify_source</error_handling>
-        </error>
-        <error>
-            <error_code>3009</error_code>
-            <error_text>Failed to store and export PDF</error_text>
-            <error_handling>log_error;notify_source</error_handling>
-        </error>
-        <error>
-            <error_code>3001</error_code>
-            <error_text>Insufficient Disk space</error_text>
-            <error_handling>notify_source;log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>5001</error_code>
-            <error_text>Insufficient Disk space</error_text>
-            <error_handling>notify_source;log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>5002</error_code>
-            <error_text>Invalid Metadata (PDI Schema Definition)</error_text>
-            <error_handling>notify_source;log_error</error_handling>
-        </error>
-        <error>
-            <error_code>5003</error_code>
-            <error_text>Unable to transform metadata</error_text>
-            <error_handling>notify_source;log_error</error_handling>
-        </error>
-        <error>
-            <error_code>6001</error_code>
-            <error_text>Invalid Credentials (InfoArchive Login)</error_text>
-            <error_handling>notify_source;log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>6002</error_code>
-            <error_text>Insufficient Permissions</error_text>
-            <error_handling>notify_source;log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>6003</error_code>
-            <error_text>Error uploading SIP file</error_text>
-            <error_handling>notify_source;log_error</error_handling>
-        </error>
-        <error>
-            <error_code>6004</error_code>
-            <error_text>Error ingesting SIP file</error_text>
-            <error_handling>notify_source;log_error</error_handling>
-        </error>
-        <error>
-            <error_code>7001</error_code>
-            <error_text>Unable to connect to ActiveMQ Broker</error_text>
-            <error_handling>log_fatal</error_handling>
-        </error>
-        <error>
-            <error_code>7002</error_code>
-            <error_text>Unable to authenticate(Invalid ActiveMQ Credentials)</error_text>
-            <error_handling>log_fatal</error_handling>
-        </error>
-    </exceptions>
+  <archiver>
+    <log4j_properties_path>log4j.properties</log4j_properties_path>
+  </archiver>
+  <worker_manager>
+    <max_worker_threads>2</max_worker_threads>
+    <worker_shutdown_threshold>2048</worker_shutdown_threshold>
+    <worker_startup_threshold>1048576</worker_startup_threshold>
+    <check_interval_milliseconds>5000</check_interval_milliseconds>
+  </worker_manager>
+  <caching>
+    <implementing_class>nl.hetcak.dms.CAKCacheManager</implementing_class>
+    <base_path>Cache</base_path>
+    <message_threshold>50</message_threshold>
+    <time_threshold>300</time_threshold>
+    <custom_parameters>
+      <document_element_name>ArchiefDocument</document_element_name>
+      <document_class>nl.hetcak.dms.CAKDocument</document_class>
+    </custom_parameters>
+  </caching>
+  <rest_api>
+    <protocol>https</protocol>
+    <host>infoarchive-sp.back.ont.dms.func.cak-bz.local</host>
+    <port>8775</port>
+    <gateway_protocol>https</gateway_protocol>
+    <gateway_host>infoarchive-rp.front.ont.dms.func.cak-bz.local</gateway_host>
+    <gateway_port>10843</gateway_port>
+    <ingest_user>sa-infoarchive-ont</ingest_user>
+    <encrypted_ingest_password>TjQXflBGImA7CCNLYGBgG/ku+AuY0Z1Py871jQKstIM=</encrypted_ingest_password>
+    <ingest_tenant>INFOARCHIVE</ingest_tenant>
+  </rest_api>
+  <sip>
+    <implementing_class>nl.hetcak.dms.CAKSipManagerFallback</implementing_class>
+    <holding_name>CAK_Klantarchief</holding_name>
+    <application_name>CAK_Klantarchief</application_name>
+    <producer_name>SIP Packager</producer_name>
+    <entity_name>ArchiefDocument</entity_name>
+    <document_element_name>ArchiefDocumenten</document_element_name>
+    <schema_declaration>urn:hetcak:dms:uitingarchief:2016:08</schema_declaration>
+    <sip_output_directory>SIP</sip_output_directory>
+    <sip_backup_directory>SIP_BACKUP</sip_backup_directory>
+    <custom_parameters>
+      <document_element_name>ArchiefDocument</document_element_name>
+      <document_class>nl.hetcak.dms.CAKDocument</document_class>
+      <fallback_application_name>CAK_Tijdelijk_Klantarchief</fallback_application_name>
+      <fallback_holding_name>CAK_Tijdelijk_Klantarchief</fallback_holding_name>
+    </custom_parameters>
+  </sip>
+  <document_source>
+    <implementing_class>nl.hetcak.dms.ActiveMQManager</implementing_class>
+    <custom_parameters>
+      <broker>ssl://muleaq.ont.esb.func.cak-bz.local:10844</broker>
+      <truststore>resources/truststore/truststore_ont1_mule.jks</truststore>
+      <truststore_password>KC54MQVuD2xSZ3oUMRsgUF0Bb8BRt7bylPJGF/FeOA3DdR0zrx3BoWUOKY2ig5PH3zyt2hQAGdiRI4VyH1ET9g==</truststore_password>
+      <result_format>
+        <![CDATA[<urn:Item ResultCode="%s" DocumentId="%s" ResultDescription="%s"/>]]></result_format>
+      <results_element>
+        <![CDATA[<urn:Items xmlns:urn="urn:hetcak:dms:uitingarchief:2016:08">%s</urn:Items>]]></results_element>
+      <result_values>{ERROR};{ID};{MESSAGE}</result_values>
+      <input_queue_name>AanleverenArchiefUitingen</input_queue_name>
+      <result_queue_name>VerwerkArchiefUitingenStatus</result_queue_name>
+      <queue_receive_timeout>500</queue_receive_timeout>
+    </custom_parameters>
+  </document_source>
+  <retention_manager>
+    <implementing_class>nl.hetcak.dms.CAKRetentionManagerFallback</implementing_class>
+    <retention_classes>
+      <nl.hetcak.dms.CAKRetentionClassFallback>
+        <name>R1</name>
+        <handeling_nr>10.2</handeling_nr>
+        <policy>R1</policy>
+        <fallback_policy>R2</fallback_policy>
+        <associated_title>Z03</associated_title>
+        <associated_title>B02</associated_title>
+        <associated_title>Z04</associated_title>
+        <associated_title>B03</associated_title>
+        <associated_title>Z02</associated_title>
+        <associated_title>B04</associated_title>
+        <associated_title>Z12</associated_title>
+        <associated_title>B12</associated_title>
+        <associated_title>Z05</associated_title>
+        <associated_title>B05</associated_title>
+        <associated_title>Z08</associated_title>
+        <associated_title>Z10</associated_title>
+        <associated_title>B10</associated_title>
+        <associated_title>Z09</associated_title>
+        <associated_title>B09</associated_title>
+        <associated_title>Z06</associated_title>
+        <associated_title>B06</associated_title>
+        <associated_title>Z01</associated_title>
+        <associated_title>B01</associated_title>
+        <associated_title>B21</associated_title>
+      </nl.hetcak.dms.CAKRetentionClassFallback>
+    </retention_classes>
+    <custom_parameters>
+      <retention_element_name>ArchiefDocumenttitel</retention_element_name>
+      <retention_element_pdi_name>ArchiefHandelingsnummer</retention_element_pdi_name>
+    </custom_parameters>
+  </retention_manager>
+  <message_parser>
+    <implementing_class>nl.hetcak.dms.CAKMessageParserFallback</implementing_class>
+    <AIU_element_name>ArchiefDocument</AIU_element_name>
+    <AIU_namespace>urn:hetcak:dms:uitingarchief:2016:08</AIU_namespace>
+    <document_id_element_name>ArchiefDocumentId</document_id_element_name>
+    <AIU_mapping>
+      <ArchiefDocumentId>{ArchiefDocumentId}</ArchiefDocumentId>
+      <ArchiefPersoonsnummer>{ArchiefPersoonsnummer}</ArchiefPersoonsnummer>
+      <PersoonBurgerservicenummer>{PersoonBurgerservicenummer}</PersoonBurgerservicenummer>
+      <ArchiefDocumenttitel>{ArchiefDocumenttitel}</ArchiefDocumenttitel>
+      <ArchiefDocumentsoort>{ArchiefDocumentsoort}</ArchiefDocumentsoort>
+      <ArchiefRegeling>{ArchiefRegeling}</ArchiefRegeling>
+      <ArchiefDocumentkenmerk>{ArchiefDocumentkenmerk}</ArchiefDocumentkenmerk>
+      <ArchiefVerzenddag>{ArchiefVerzenddag}</ArchiefVerzenddag>
+      <ArchiefDocumenttype>{ArchiefDocumenttype}</ArchiefDocumenttype>
+      <ArchiefDocumentstatus>{ArchiefDocumentstatus}</ArchiefDocumentstatus>
+      <ArchiefHandelingsnummer>xxxxx</ArchiefHandelingsnummer>
+      <ArchiefRegelingsjaar>{ArchiefRegelingsjaar}</ArchiefRegelingsjaar>
+      <Attachment>Attachment_{ArchiefDocumentId}.pdf</Attachment>
+    </AIU_mapping>
+    <custom_parameters>
+      <schema_location>schemas</schema_location>
+      <schema_name>standard.xsd</schema_name>
+      <fallback_schema_name>fallback.xsd</fallback_schema_name>
+    </custom_parameters>
+  </message_parser>
+  <exceptions>
+    <error>
+      <error_code>1002</error_code>
+      <error_text>Invalid Log4J Properties</error_text>
+      <error_handling>log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>1003</error_code>
+      <error_text>Insufficient Privileges</error_text>
+      <error_handling>log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>2001</error_code>
+      <error_text>Invalid Cache basepath</error_text>
+      <error_handling>log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>2002</error_code>
+      <error_text>Insuffient Privileges(Cache folder creation)</error_text>
+      <error_handling>log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>2003</error_code>
+      <error_text>Failed to delete cache folder</error_text>
+      <error_handling>log_error</error_handling>
+    </error>
+    <error>
+      <error_code>3001</error_code>
+      <error_text>Unable to connect to ActiveMQ Broker</error_text>
+      <error_handling>log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>3002</error_code>
+      <error_text>Unable to authenticate with ActiveMQ Broker</error_text>
+      <error_handling>log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>3003</error_code>
+      <error_text>Invalid truststore file</error_text>
+      <error_handling>log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>3004</error_code>
+      <error_text>Invalid truststore password</error_text>
+      <error_handling>log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>3005</error_code>
+      <error_text>Malformed/Invalid XML Data</error_text>
+      <error_handling>log_error</error_handling>
+    </error>
+    <error>
+      <error_code>3006</error_code>
+      <error_text>Payload is not PDF</error_text>
+      <error_handling>log_error;notify_source</error_handling>
+    </error>
+    <error>
+      <error_code>3007</error_code>
+      <error_text>Payload is not Base64 encoded</error_text>
+      <error_handling>log_error;notify_source</error_handling>
+    </error>
+    <error>
+      <error_code>3008</error_code>
+      <error_text>Invalid retention policy</error_text>
+      <error_handling>log_error;notify_source</error_handling>
+    </error>
+    <error>
+      <error_code>3009</error_code>
+      <error_text>Failed to store and export PDF</error_text>
+      <error_handling>log_error;notify_source</error_handling>
+    </error>
+    <error>
+      <error_code>3010</error_code>
+      <error_text>The provided metadata could not be validated</error_text>
+      <error_handling>log_error;notify_source</error_handling>
+    </error>
+    <error>
+      <error_code>4001</error_code>
+      <error_text>Insufficient Disk space</error_text>
+      <error_handling>notify_source;log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>5001</error_code>
+      <error_text>Insufficient Disk space</error_text>
+      <error_handling>notify_source;log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>5002</error_code>
+      <error_text>Invalid Metadata (PDI Schema Definition)</error_text>
+      <error_handling>notify_source;log_error</error_handling>
+    </error>
+    <error>
+      <error_code>5003</error_code>
+      <error_text>Unable to transform metadata</error_text>
+      <error_handling>notify_source;log_error</error_handling>
+    </error>
+    <error>
+      <error_code>6001</error_code>
+      <error_text>Invalid Credentials (InfoArchive Login)</error_text>
+      <error_handling>notify_source;log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>6002</error_code>
+      <error_text>Insufficient Permissions</error_text>
+      <error_handling>notify_source;log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>6003</error_code>
+      <error_text>Error uploading SIP file</error_text>
+      <error_handling>notify_source;log_error</error_handling>
+    </error>
+    <error>
+      <error_code>6004</error_code>
+      <error_text>Error ingesting SIP file</error_text>
+      <error_handling>notify_source;log_error</error_handling>
+    </error>
+    <error>
+      <error_code>7001</error_code>
+      <error_text>Unable to connect to ActiveMQ Broker</error_text>
+      <error_handling>log_fatal</error_handling>
+    </error>
+    <error>
+      <error_code>7002</error_code>
+      <error_text>Unable to authenticate(Invalid ActiveMQ Credentials)</error_text>
+      <error_handling>log_fatal</error_handling>
+    </error>
+  </exceptions>
 </IAArchiver>
 
 

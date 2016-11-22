@@ -15,16 +15,45 @@ import static com.amplexor.ia.Logger.info;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class IAArchiver {
+    private static final int V_MAJOR = 0;
+    private static final int V_MINOR = 3;
+    private static final int REVISION = 6;
+
     private static String configLocation = (System.getProperty("user.dir") + "/config/IAArchiver.xml").replace('/', File.separatorChar);
 
-    private IAArchiver() {
+    private IAArchiver() { //Hide implicit public constructor
 
     }
 
     public static void main(String[] cArgs) {
         parseArguments(cArgs);
+        final WorkerManager objWorkerManager = WorkerManager.getWorkerManager();
+
+        ConfigManager objConfigManager = loadConfiguration();
+        if (objConfigManager != null) {
+            configureLogging(objConfigManager);
+            configureWorkerManager(objConfigManager);
+            info(IAArchiver.class, "Starting SIP Packager " + V_MAJOR + "." + V_MINOR + "." + REVISION);
+            if (objWorkerManager != null) {
+                Runtime.getRuntime().addShutdownHook(new IAArchiverShutdownHook());
+                runLoop(objConfigManager);
+            }
+        }
+    }
+
+    private static void runLoop(ConfigManager objConfigManager) {
+        while (WorkerManager.getWorkerManager().checkWorkers(objConfigManager.getConfiguration().getWorkerConfiguration())) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private static ConfigManager loadConfiguration() {
         ConfigManager objConfigManager = null;
-        WorkerManager objWorkerManager = null;
         try {
             objConfigManager = new ConfigManager(configLocation);
             objConfigManager.loadConfiguration();
@@ -33,41 +62,25 @@ public class IAArchiver {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INIT_INVALID_CONFIGURATION, ex);
         }
 
-        if (objConfigManager != null) {
-            info(IAArchiver.class, "Configuring Logging with " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
-            Properties objLog4JProperties = new Properties();
-            try (FileInputStream objPropertiesStream = new FileInputStream(objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath())) {
-                objLog4JProperties.load(objPropertiesStream);
-                PropertyConfigurator.configure(objLog4JProperties);
-            } catch (Exception ex) {
-                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INIT_INVALID_LOG4J_PROPERTIES, ex);
-            }
-            info(IAArchiver.class, "Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+        return objConfigManager;
+    }
 
-            info(IAArchiver.class, "Initializing Worker Manager");
-            objWorkerManager = WorkerManager.getWorkerManager();
-            objWorkerManager.initialize(objConfigManager.getConfiguration());
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    WorkerManager.getWorkerManager().shutdown();
-                }
-            });
-        }
-
-        if (objWorkerManager != null) {
-            while (objWorkerManager.checkWorkers(objConfigManager.getConfiguration().getWorkerConfiguration())) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                    ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
-                    Thread.currentThread().interrupt();
-                }
-            }
-            System.exit(objWorkerManager.getExitCode());
+    private static void configureLogging(ConfigManager objConfigManager) {
+        info(IAArchiver.class, "Configuring Logging with " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+        Properties objLog4JProperties = new Properties();
+        try (FileInputStream objPropertiesStream = new FileInputStream(objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath())) {
+            objLog4JProperties.load(objPropertiesStream);
+            PropertyConfigurator.configure(objLog4JProperties);
+        } catch (Exception ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_INIT_INVALID_LOG4J_PROPERTIES, ex);
         }
     }
 
+    private static void configureWorkerManager(ConfigManager objConfigManager) {
+        info(IAArchiver.class, "Logging configured using " + objConfigManager.getConfiguration().getArchiverConfiguration().getLog4JPropertiesPath());
+        info(IAArchiver.class, "Initializing Worker Manager");
+        WorkerManager.getWorkerManager().initialize(objConfigManager.getConfiguration());
+    }
 
     public static void parseArguments(String[] cArgs) {
         for (int i = 0; i < cArgs.length; ++i) {

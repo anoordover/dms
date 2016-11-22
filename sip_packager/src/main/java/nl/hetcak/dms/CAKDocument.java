@@ -1,11 +1,14 @@
 package nl.hetcak.dms;
 
 import com.amplexor.ia.configuration.converters.ParameterConverter;
+import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -21,8 +24,8 @@ public class CAKDocument extends IADocument {
     @XStreamAlias("PayloadPdf")
     private String msPayload;
 
-    @XStreamOmitField
-    private String msError;
+    @XStreamAlias("PayloadFile")
+    private String msPayloadFile;
 
     public CAKDocument() {
         mcMetadata = new HashMap<>();
@@ -66,37 +69,58 @@ public class CAKDocument extends IADocument {
     }
 
     @Override
-    public byte[] loadContent(String sKey) {
+    public void loadContent(String sKey) {
         if (KEY_ATTACHMENT.equals(sKey)) {
-            return Base64.getDecoder().decode(msPayload);
+            if (msPayload != null && !"".equals(msPayload)) {
+                return;
+            }
+
+            File objPayloadFile = new File(msPayloadFile);
+            try (FileInputStream objPayloadStream = new FileInputStream(objPayloadFile)) {
+                byte[] pData = new byte[(int) objPayloadFile.length()];
+                objPayloadStream.read(pData, 0, (int) objPayloadFile.length());
+                msPayload = new String(Base64.getEncoder().encode(pData));
+            } catch (IllegalArgumentException | IOException ex) {
+                ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
+            }
+        }
+    }
+
+    @Override
+    public void setContent(String sKey, byte[] cContent) {
+        if (KEY_ATTACHMENT.equals(sKey)) {
+            if (cContent == null) {
+                msPayload = null;
+                return;
+            }
+
+            msPayload = Base64.getEncoder().encodeToString(cContent);
+        }
+    }
+
+    @Override
+    public byte[] getContent(String sKey) {
+        if (KEY_ATTACHMENT.equals(sKey)) {
+            if (msPayload == null || "".equals(msPayload)) {
+                loadContent(sKey);
+            }
+
+            return Base64.getDecoder().decode(msPayload.getBytes());
         }
 
         return new byte[0];
     }
 
     @Override
-    public void setContent(String sKey, byte[] cContent) {
+    public void setContentFile(String sKey, String sContentFile) {
         if (KEY_ATTACHMENT.equals(sKey)) {
-            msPayload = Base64.getEncoder().encodeToString(cContent);
+            msPayloadFile = sContentFile;
         }
-    }
-
-    @Override
-    public void setError(String sError) {
-        msError = sError;
-    }
-
-    @Override
-    public String getError() {
-        return msError;
-    }
-
-    public void setPayload(byte[] cPayload) {
-        msPayload = Base64.getEncoder().encodeToString(cPayload);
     }
 
     @Override
     public String getDocumentId() {
         return mcMetadata.get("ArchiefDocumentId");
     }
+
 }

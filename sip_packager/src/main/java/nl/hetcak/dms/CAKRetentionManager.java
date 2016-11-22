@@ -11,7 +11,7 @@ import static com.amplexor.ia.Logger.info;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class CAKRetentionManager implements RetentionManager {
-    RetentionManagerConfiguration mobjConfiguration;
+    protected RetentionManagerConfiguration mobjConfiguration;
 
     public CAKRetentionManager(RetentionManagerConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
@@ -22,11 +22,12 @@ public class CAKRetentionManager implements RetentionManager {
         info(this, "Retrieving Retention Class for IADocument: " + objSource.getDocumentId());
 
         IARetentionClass objReturn = null;
-        String sDocumentTitle = objSource.getMetadata(mobjConfiguration.getRetentionElementName());
-        if (sDocumentTitle != null) {
+        String sMetadata = objSource.getMetadata(mobjConfiguration.getRetentionElementName());
+        if (sMetadata != null) {
             for (IARetentionClass objRetentionClass : mobjConfiguration.getRetentionClasses()) {
-                if (objRetentionClass instanceof CAKRetentionClass && ((CAKRetentionClass) objRetentionClass).getAssociatedDocumentTitle().contains(sDocumentTitle)) {
+                if (objRetentionClass instanceof CAKRetentionClass && ((CAKRetentionClass) objRetentionClass).getAssociatedTitles().contains(sMetadata)) {
                     objReturn = objRetentionClass;
+                    objSource.setMetadata(mobjConfiguration.getParameter("retention_element_pdi_name"), ((CAKRetentionClass) objRetentionClass).getHandelingNr());
                     info(this, "Found Retention Class: " + objReturn.getName());
                     break;
                 }
@@ -34,7 +35,7 @@ public class CAKRetentionManager implements RetentionManager {
         }
 
         if (objReturn == null) {
-            throw new IllegalArgumentException("Document Title: " + sDocumentTitle + " Is not tied to a Retention Policy");
+            throw new IllegalArgumentException("Metadata Object value: " + sMetadata + " could not be resolved to a retention class");
         }
 
         return objReturn;

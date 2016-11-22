@@ -7,10 +7,8 @@ import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
 import com.amplexor.ia.sip.AMPSipManager;
-import com.emc.ia.sdk.sip.assembly.FileGenerationMetrics;
-import com.emc.ia.sdk.sip.assembly.FileGenerator;
-import com.emc.ia.sdk.sip.assembly.PackagingInformation;
-import com.emc.ia.sdk.sip.assembly.SipAssembler;
+import com.emc.ia.sdk.sip.assembly.*;
+import com.emc.ia.sdk.support.io.RuntimeIoException;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +39,7 @@ public class CAKSipManager extends AMPSipManager {
         }
 
         boolean bReturn = false;
-        debug(this, "Retrieving documents from disk");
+        debug(this, "Retrieving document data");
         List<IADocument> cDocuments = retrieveDocuments(objCache);
         try {
             if (!cDocuments.isEmpty()) {
@@ -54,6 +52,7 @@ public class CAKSipManager extends AMPSipManager {
                     Path objTempPath = objMetrics.getFile().toPath();
                     Path objSipFile = Files.copy(objTempPath, Paths.get(objTempPath.toString() + ".zip"));
                     info(this, "SIP File created: " + objSipFile.toString() + " For Cache with ID " + objCache.getId());
+                    backupSipFile(objSipFile);
                     Files.delete(objTempPath);
                     debug(this, "Deleted temp file: " + objTempPath);
                     objCache.setSipFile(objSipFile.toString());
@@ -73,6 +72,8 @@ public class CAKSipManager extends AMPSipManager {
             if (new File(mobjConfiguration.getSipOutputDirectory()).getFreeSpace() < lTotalSize) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SIP_INSUFFICIENT_DISK_SPACE, objCache, ex);
             }
+        } catch (RuntimeIoException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
         return bReturn;
     }
@@ -83,7 +84,7 @@ public class CAKSipManager extends AMPSipManager {
 
         IACache objTempCache = new IACache(-1, objRetentionClass);
         objTempCache.add(objDocumentReference);
-        if(getSIPFile(objTempCache)) {
+        if (getSIPFile(objTempCache)) {
             return objTempCache;
         }
 
@@ -93,7 +94,7 @@ public class CAKSipManager extends AMPSipManager {
     public PackagingInformation getCAKPackageInformation(IARetentionClass objRetentionClass, boolean bIsFallback) {
         GregorianCalendar objCalendar = new GregorianCalendar();
         objCalendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR) + 1);
-        objCalendar.set(Calendar.MONTH, 1);
+        objCalendar.set(Calendar.MONTH, 0);
         objCalendar.set(Calendar.DAY_OF_MONTH, 1);
         objCalendar.set(Calendar.SECOND, 0);
         objCalendar.set(Calendar.MINUTE, 0);
@@ -101,17 +102,21 @@ public class CAKSipManager extends AMPSipManager {
         objCalendar.set(Calendar.MILLISECOND, 0);
         objCalendar.setTimeZone(TimeZone.getDefault());
 
-        String sApplicationName = bIsFallback ?  mobjConfiguration.getParameter("fallback_application_name") : mobjConfiguration.getApplicationName();
+
+        String sApplicationName = bIsFallback ? mobjConfiguration.getParameter("fallback_application_name") : mobjConfiguration.getApplicationName();
         String sHoldingName = bIsFallback ? mobjConfiguration.getParameter("fallback_holding_name") : mobjConfiguration.getHoldingName();
-        return PackagingInformation.builder().dss()
-                .holding(sHoldingName)
+        PackagingInformation.PackagingInformationBuilder objBuilder = PackagingInformation.builder();
+        DataSubmissionSession.DataSubmissionSessionBuilder objDssBuilder = objBuilder.dss();
+        objDssBuilder.holding(sHoldingName)
                 .application(sApplicationName)
                 .producer(mobjConfiguration.getProducerName())
                 .entity(mobjConfiguration.getEntityName())
                 .schema(mobjConfiguration.getSchemaDeclaration())
-                .retentionClass(objRetentionClass.getName().replace(' ', '_'))
-                .baseRetentionDate(objCalendar.getTime())
-                .end().build();
+                .retentionClass(objRetentionClass.getName().replace(' ', '_'));
+        if (mobjConfiguration.getParameter("set_base_retention_date") != null && "true".equalsIgnoreCase(mobjConfiguration.getParameter("set_base_retention_date"))) {
+            objDssBuilder.baseRetentionDate(objCalendar.getTime());
+        }
+        return objDssBuilder.end().build();
     }
 }
 
