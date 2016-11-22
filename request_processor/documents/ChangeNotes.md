@@ -8,6 +8,7 @@
 |__Change__| `CAKAMP-198` | Now uses names to find application and search interface.
 |__Change__| `CAKAMP-196` | Now the query engine can create queries with multiple values.
 |__Bug Fix__| `CAKAMP-199` | Prevent the config from loaded multiple times.
+|__Bug Fix__| `CAKAMP-200` | Fixes the error output of DocumentResponse.
 
 ### Coverage
 
