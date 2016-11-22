@@ -2,10 +2,14 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
+      <module fileurl="file://$PROJECT_DIR$/PackagerAPI/PackagerAPI.iml" filepath="$PROJECT_DIR$/PackagerAPI/PackagerAPI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PackagerAPI/PackagerAPI.iml" filepath="$PROJECT_DIR$/PackagerAPI/PackagerAPI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/data_generator/data_generator.iml" filepath="$PROJECT_DIR$/data_generator/data_generator.iml" />
       <module fileurl="file://$PROJECT_DIR$/PackagerCore/PackagerCore.iml" filepath="$PROJECT_DIR$/PackagerCore/PackagerCore.iml" />
       <module fileurl="file://$PROJECT_DIR$/data_generator/data_generator.iml" filepath="$PROJECT_DIR$/data_generator/data_generator.iml" />
       <module fileurl="file://$PROJECT_DIR$/request_processor/request_processor.iml" filepath="$PROJECT_DIR$/request_processor/request_processor.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/sip-packager.iml" filepath="$PROJECT_DIR$/.idea/sip-packager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/request_processor/request_processor.iml" filepath="$PROJECT_DIR$/request_processor/request_processor.iml" />
       <module fileurl="file://$PROJECT_DIR$/sip_packager/sip_packager.iml" filepath="$PROJECT_DIR$/sip_packager/sip_packager.iml" />
     </modules>
   </component>

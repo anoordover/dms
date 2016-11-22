@@ -27,6 +27,17 @@
       <artifactId>infoarchive-sip-sdk-core</artifactId>
       <version>4.0.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.thoughtworks.xstream</groupId>
+      <artifactId>xstream</artifactId>
+      <version>1.4.9</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-all</artifactId>
+      <version>5.14.0</version>
+    </dependency>
+
   </dependencies>
   <build>
     <plugins>

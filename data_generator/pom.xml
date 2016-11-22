@@ -36,6 +36,18 @@
       <artifactId>mockito-all</artifactId>
       <version>1.10.19</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
+    <dependency>
+      <groupId>com.thoughtworks.xstream</groupId>
+      <artifactId>xstream</artifactId>
+      <version>1.4.9</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-all -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-all</artifactId>
+      <version>5.14.0</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
