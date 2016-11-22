@@ -114,10 +114,19 @@ public class ConnectionManager {
      * @throws MissingConfigurationException Can't find configuration
      * @throws MisconfigurationException     Missing basic configuration settings.
      */
-    public Configuration getConfiguration() throws RequestResponseException {
+    public synchronized Configuration getConfiguration() throws RequestResponseException {
         LOGGER.info("Getting current configuration.");
         if (mobjConfiguration == null) {
             LOGGER.info("Load config file.");
+            loadConfiguration();
+        }
+        LOGGER.info("Returning config file.");
+        return mobjConfiguration;
+    }
+    
+    private synchronized void loadConfiguration() throws RequestResponseException {
+        //check this again. Another thread may have updated this.
+        if (mobjConfiguration == null) {
             if (mobjConfigurationFile != null) {
                 mobjConfiguration = loadConfigurationFromFile(mobjConfigurationFile);
             } else {
@@ -125,8 +134,6 @@ public class ConnectionManager {
                 mobjConfiguration = configurationManager.loadConfiguration(false);
             }
         }
-        LOGGER.info("Returning config file.");
-        return mobjConfiguration;
     }
     
     private Configuration loadConfigurationFromFile(File file) throws RequestResponseException {
