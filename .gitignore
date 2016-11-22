@@ -52,3 +52,8 @@ fabric.properties
 .idea/encodings.xml
 .idea/sonarlint/
 sip_packager/src/resources/
+data_generator/target/
+PackagerAPI/target/
+*.iml
+request_processor/target/
+sip_packager/target/
