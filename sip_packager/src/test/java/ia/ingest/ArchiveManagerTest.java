@@ -25,34 +25,28 @@ public class ArchiveManagerTest {
 
     @Before
     public void setup() throws Exception {
+
         //Generate Keyfile
         String[] cArgs = new String[] {"-key", "testkey", "-keyfile", "data-file", "-data", "8TExclergywW"};
         String[] cAMPArgs = new String[] {"-key", "testkey", "-keyfile", "data-file", "-data", "password"};
         Crypto.main(cArgs);
 
         objConfiguration = mock(IAServerConfiguration.class);
-
-        //when(objConfiguration.getGatewayProtocol()).thenReturn("https");
-        //when(objConfiguration.getGatewayHost()).thenReturn("infoarchive-rp.front.ont.dms.func.cak-bz.local");
         when(objConfiguration.getGatewayProtocol()).thenReturn("http");
         when(objConfiguration.getGatewayHost()).thenReturn("infoarchive40");
         when(objConfiguration.getGatewayPort()).thenReturn((short)8080);
 
-        //when(objConfiguration.getProtocol()).thenReturn("https");
-        //when(objConfiguration.getHost()).thenReturn("infoarchive-sp.back.ont.dms.func.cak-bz.local");
         when(objConfiguration.getProtocol()).thenReturn("http");
         when(objConfiguration.getHost()).thenReturn("infoarchive40");
         when(objConfiguration.getPort()).thenReturn((short)8775);
 
         when(objConfiguration.getIngestTenant()).thenReturn("INFOARCHIVE");
         when(objConfiguration.getIngestUser()).thenReturn("sa-infoarchive-ont");
-        //when(objConfiguration.getEncryptedIngestPassword()).thenReturn(Base64.getEncoder().encodeToString(Crypto.encrypt("8TExclergywW".getBytes(), "testkeytestkeyte".getBytes())));
         when(objConfiguration.getEncryptedIngestPassword()).thenReturn(Base64.getEncoder().encodeToString(Crypto.encrypt("password".getBytes(), "testkeytestkeyte".getBytes())));
 
         objCache = new IACache(1, new CAKRetentionClass("R1", "10.2", "R1"));
         objCache.setTargetApplication("CAK_Tijdelijk_Klantarchief");
         objCache.setSipFile("target/sip/testsip.zip");
-
     }
 
     @Test

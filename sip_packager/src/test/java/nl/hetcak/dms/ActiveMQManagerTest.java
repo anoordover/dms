@@ -5,7 +5,6 @@ import com.amplexor.ia.configuration.ConfigManager;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
 import com.amplexor.ia.crypto.Crypto;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import static org.mockito.Mockito.when;
 /**
  * Created by minkenbergs on 7-10-2016.
  */
-@Ignore
 public class ActiveMQManagerTest {
     PluggableObjectConfiguration objConfiguration;
     @Before
@@ -29,8 +27,7 @@ public class ActiveMQManagerTest {
         Crypto.main(cArgs);
 
         objConfiguration = mock(PluggableObjectConfiguration.class);
-        when(objConfiguration.getParameter("broker")).thenReturn("tcp://infoarchive40:61616");
-        //when(objConfiguration.getParameter("broker")).thenReturn("ssl://muleaq.ont.esb.func.cak-bz.local:10844");
+        when(objConfiguration.getParameter("broker")).thenReturn("tcp://infoarchive40:61616"); //DEV: "ssl://muleaq.ont.esb.func.cak-bz.local:10844"
         //when(objConfiguration.getParameter("truststore")).thenReturn("../resources/truststore/truststore_ont1_mule.jks");
         //when(objConfiguration.getParameter("truststore_password")).thenReturn(Base64.getEncoder().encodeToString(Crypto.encrypt("My0jKD3WWChHaVFrLwDNLxmaTl72f9PL".getBytes(), "testkeytestkeyte".getBytes())));
         when(objConfiguration.getParameter("result_format")).thenReturn("<urn:Item ResultCode=\"%s\" DocumentId=\"%s\", ResultDescription=\"%s\"/>");
