@@ -107,7 +107,7 @@ public class DocumentService {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response defaultResponse(@Context HttpServletRequest httpRequest) {
-        return Response.ok("<html><head><title>DMS</title></head><body><h1>DMS Request Processor</h1><p>System running.</p></body></html>").build();
+        return Response.ok("<html><head><title>DMS</title></head><body><h1>DMS - "+Version.PROGRAM_NAME+" "+Version.currentVersion()+"</h1><p>System running.</p></body></html>").build();
     }
     
     @POST
@@ -115,9 +115,9 @@ public class DocumentService {
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response listDocuments(String sBody, @Context HttpServletRequest httpRequest) {
-        Calendar calendar_start = Calendar.getInstance();
+        Calendar calendarStart = Calendar.getInstance();
         LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
-        LOGGER.info("Incoming request for /listDocuments. (" + calendar_start.getTime().toString() + ")");
+        LOGGER.info("Incoming request for /listDocuments. (" + calendarStart.getTime().toString() + ")");
         LOGGER.debug(sBody);
         LOGGER.info("Got Request from " + httpRequest.getRemoteAddr());
         try {
@@ -128,8 +128,8 @@ public class DocumentService {
                 RaadplegenLijstDocumentResponse response = listDocumentResponse(recordRequest, request);
                 response.setResultCode(0);
                 response.setResultDescription("OK");
-                Calendar calendar_stop = Calendar.getInstance();
-                LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendar_stop.getTimeInMillis() - calendar_start.getTimeInMillis()) + " ms)");
+                Calendar calendarStop = Calendar.getInstance();
+                LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendarStop.getTimeInMillis() - calendarStart.getTimeInMillis()) + " ms)");
                 return Response.ok(response.getAsXML()).build();
             } else {
                 LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
@@ -141,7 +141,7 @@ public class DocumentService {
             response.setResultCode(rrExc.getErrorCode());
             response.setResultDescription(rrExc.getUserErrorMessage());
             Calendar calendar_stop = Calendar.getInstance();
-            LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendar_stop.getTimeInMillis() - calendar_start.getTimeInMillis()) + " ms)");
+            LOGGER.info("Creating error response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendar_stop.getTimeInMillis() - calendarStart.getTimeInMillis()) + " ms)");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(response.getAsXML()).build();
         } catch (Exception exc) {
             //catch all error and return error output.
@@ -150,7 +150,7 @@ public class DocumentService {
             response.setResultCode(9999);
             response.setResultDescription(ERROR_RESPONSE_GENERIC);
             Calendar calendar_stop = Calendar.getInstance();
-            LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendar_stop.getTimeInMillis() - calendar_start.getTimeInMillis()) + " ms)");
+            LOGGER.info("Creating error response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendar_stop.getTimeInMillis() - calendarStart.getTimeInMillis()) + " ms)");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(response.getAsXML()).build();
         }
     }
@@ -160,9 +160,9 @@ public class DocumentService {
     @Produces(MediaType.APPLICATION_XML)
     @Consumes(MediaType.APPLICATION_XML)
     public Response getDocument(String sBody, @Context HttpServletRequest httpRequest) {
-        Calendar calendar_start = Calendar.getInstance();
+        Calendar calendarStart = Calendar.getInstance();
         LOGGER.info(Version.PROGRAM_NAME + " " + Version.currentVersion());
-        LOGGER.info("Incoming request for /document. (" + calendar_start.getTime().toString() + ")");
+        LOGGER.info("Incoming request for /document. (" + calendarStart.getTime().toString() + ")");
         LOGGER.debug(sBody);
         LOGGER.info("Got Request from " + httpRequest.getRemoteAddr());
         String documentID = "0000000000";
@@ -185,8 +185,8 @@ public class DocumentService {
                 documentResponse.setResultDescription("OK");
                 documentResponse.setArchiefDocumentId(document.getArchiefDocumentId());
                 documentResponse.setPayloadPdf(encodedDocument);
-                Calendar calendar_stop = Calendar.getInstance();
-                LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendar_stop.getTimeInMillis() - calendar_start.getTimeInMillis()) + " ms)");
+                Calendar calendarStop = Calendar.getInstance();
+                LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendarStop.getTimeInMillis() - calendarStart.getTimeInMillis()) + " ms)");
                 LOGGER.info("Sending response.");
                 return Response.ok(documentResponse.getAsXML()).build();
             } else {
@@ -199,8 +199,8 @@ public class DocumentService {
             documentResponse.setArchiefDocumentId(documentID);
             documentResponse.setResultCode(rrExc.getErrorCode());
             documentResponse.setResultDescription(rrExc.getUserErrorMessage());
-            Calendar calendar_stop = Calendar.getInstance();
-            LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendar_stop.getTimeInMillis() - calendar_start.getTimeInMillis()) + " ms)");
+            Calendar calendarStop = Calendar.getInstance();
+            LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendarStop.getTimeInMillis() - calendarStart.getTimeInMillis()) + " ms)");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(documentResponse.getAsXML()).build();
         } catch (Exception exc) {
             //catch all error and return error output.
@@ -209,8 +209,8 @@ public class DocumentService {
             documentResponse.setArchiefDocumentId(documentID);
             documentResponse.setResultCode(9999);
             documentResponse.setResultDescription(ERROR_RESPONSE_GENERIC);
-            Calendar calendar_stop = Calendar.getInstance();
-            LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendar_stop.getTimeInMillis() - calendar_start.getTimeInMillis()) + " ms)");
+            Calendar calendarStop = Calendar.getInstance();
+            LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendarStop.getTimeInMillis() - calendarStart.getTimeInMillis()) + " ms)");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_XML).entity(documentResponse.getAsXML()).build();
         }
     }

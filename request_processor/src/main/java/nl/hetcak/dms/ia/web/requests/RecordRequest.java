@@ -243,7 +243,7 @@ public class RecordRequest {
                     value = (column.get(PARSE_RESPONSE_VALUE).getAsString());
                 } catch (NullPointerException nullExc) {
                     LOGGER.error("Got null value on column "+columnName);
-                    value = "";
+                    value = "     ";
                 }
                 
                 LOGGER.debug("Parsing column: " + columnName);
