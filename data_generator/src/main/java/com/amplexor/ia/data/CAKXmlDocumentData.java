@@ -1,7 +1,6 @@
 package com.amplexor.ia.data;
 
 import com.amplexor.ia.configuration.converters.LocalDateConverter;
-import com.amplexor.ia.enums.*;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
@@ -12,92 +11,92 @@ import java.time.LocalDate;
  */
 public class CAKXmlDocumentData {
     @XStreamAlias("ArchiefDocumentId")
-    private long mlArchiefDocumentId;
+    private String mlArchiefDocumentId;
 
     @XStreamAlias("ArchiefPersoonsnummer")
-    private long mlArchiefPersoonsnummer;
+    private String mlArchiefPersoonsnummer;
 
     @XStreamAlias("PersoonBurgerservicenummer")
-    private long mlPersoonBurgerservicenummer;
+    private String mlPersoonBurgerservicenummer;
 
     @XStreamAlias("ArchiefDocumenttitel")
-    private ArchiefDocumenttitel mobjArchiefDocumenttitel;
+    private String mobjArchiefDocumenttitel;
 
     @XStreamAlias("ArchiefDocumentsoort")
-    private ArchiefDocumentsoort mobjArchiefDocumentsoort;
+    private String mobjArchiefDocumentsoort;
 
     @XStreamAlias("ArchiefRegeling")
-    private ArchiefRegeling mobjArchiefRegeling;
+    private String mobjArchiefRegeling;
 
     @XStreamAlias("ArchiefDocumentkenmerk")
-    private long mlArchiefDocumentkenmerk;
+    private String mlArchiefDocumentkenmerk;
 
     @XStreamAlias("ArchiefVerzenddag")
     @XStreamConverter(LocalDateConverter.class)
     private LocalDate mobjVerzenddag;
 
     @XStreamAlias("ArchiefDocumenttype")
-    private ArchiefDocumenttype mobjArchiefDocumenttype;
+    private String mobjArchiefDocumenttype;
 
     @XStreamAlias("ArchiefDocumentstatus")
-    private ArchiefDocumentstatus mobjArchiefDocumentstatus;
+    private String mobjArchiefDocumentstatus;
 
     @XStreamAlias("ArchiefRegelingsjaar")
-    private int miRegelingjaar;
+    private String miRegelingjaar;
 
-    public long getArchiefDocumentId() {
+    public String getArchiefDocumentId() {
         return mlArchiefDocumentId;
     }
 
-    public void setArchiefDocumentId(long mlArchiefDocumentId) {
+    public void setArchiefDocumentId(String mlArchiefDocumentId) {
         this.mlArchiefDocumentId = mlArchiefDocumentId;
     }
 
-    public long getArchiefPersoonsnummer() {
+    public String getArchiefPersoonsnummer() {
         return mlArchiefPersoonsnummer;
     }
 
-    public void setArchiefPersoonsnummer(long mlArchiefPersoonsnummer) {
+    public void setArchiefPersoonsnummer(String mlArchiefPersoonsnummer) {
         this.mlArchiefPersoonsnummer = mlArchiefPersoonsnummer;
     }
 
-    public long getPersoonBurgerservicenummer() {
+    public String getPersoonBurgerservicenummer() {
         return mlPersoonBurgerservicenummer;
     }
 
-    public void setPersoonBurgerservicenummer(long mlPersoonBurgerservicenummer) {
+    public void setPersoonBurgerservicenummer(String mlPersoonBurgerservicenummer) {
         this.mlPersoonBurgerservicenummer = mlPersoonBurgerservicenummer;
     }
 
-    public ArchiefDocumenttitel getArchiefDocumenttitel() {
+    public String getArchiefDocumenttitel() {
         return mobjArchiefDocumenttitel;
     }
 
-    public void setArchiefDocumenttitel(ArchiefDocumenttitel mobjArchiefDocumenttitel) {
+    public void setArchiefDocumenttitel(String mobjArchiefDocumenttitel) {
         this.mobjArchiefDocumenttitel = mobjArchiefDocumenttitel;
     }
 
-    public ArchiefDocumentsoort getArchiefDocumentsoort() {
+    public String getArchiefDocumentsoort() {
         return mobjArchiefDocumentsoort;
     }
 
-    public void setArchiefDocumentsoort(ArchiefDocumentsoort mobjArchiefDocumentsoort) {
+    public void setArchiefDocumentsoort(String mobjArchiefDocumentsoort) {
         this.mobjArchiefDocumentsoort = mobjArchiefDocumentsoort;
     }
 
-    public ArchiefRegeling getArchiefRegeling() {
+    public String getArchiefRegeling() {
         return mobjArchiefRegeling;
     }
 
-    public void setArchiefRegeling(ArchiefRegeling mobjArchiefRegeling) {
+    public void setArchiefRegeling(String mobjArchiefRegeling) {
         this.mobjArchiefRegeling = mobjArchiefRegeling;
     }
 
-    public long getArchiefDocumentkenmerk() {
+    public String getArchiefDocumentkenmerk() {
         return mlArchiefDocumentkenmerk;
     }
 
-    public void setArchiefDocumentkenmerk(long mlArchiefDocumentkenmerk) {
+    public void setArchiefDocumentkenmerk(String mlArchiefDocumentkenmerk) {
         this.mlArchiefDocumentkenmerk = mlArchiefDocumentkenmerk;
     }
 
@@ -109,27 +108,27 @@ public class CAKXmlDocumentData {
         this.mobjVerzenddag = mobjVerzenddag;
     }
 
-    public ArchiefDocumenttype getArchiefDocumenttype() {
+    public String getArchiefDocumenttype() {
         return mobjArchiefDocumenttype;
     }
 
-    public void setArchiefDocumenttype(ArchiefDocumenttype mobjArchiefDocumenttype) {
+    public void setArchiefDocumenttype(String mobjArchiefDocumenttype) {
         this.mobjArchiefDocumenttype = mobjArchiefDocumenttype;
     }
 
-    public ArchiefDocumentstatus getArchiefDocumentstatus() {
+    public String getArchiefDocumentstatus() {
         return mobjArchiefDocumentstatus;
     }
 
-    public void setArchiefDocumentstatus(ArchiefDocumentstatus mobjArchiefDocumentstatus) {
+    public void setArchiefDocumentstatus(String mobjArchiefDocumentstatus) {
         this.mobjArchiefDocumentstatus = mobjArchiefDocumentstatus;
     }
 
-    public int getRegelingjaar() {
+    public String getRegelingjaar() {
         return miRegelingjaar;
     }
 
-    public void setRegelingjaar(int miRegelingjaar) {
+    public void setRegelingjaar(String miRegelingjaar) {
         this.miRegelingjaar = miRegelingjaar;
     }
 }

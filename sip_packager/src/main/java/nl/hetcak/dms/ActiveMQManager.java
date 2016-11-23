@@ -1,13 +1,15 @@
 package nl.hetcak.dms;
 
 import com.amplexor.ia.cache.IADocumentReference;
-import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.configuration.PluggableObjectConfiguration;
+import com.amplexor.ia.crypto.Crypto;
+import com.amplexor.ia.document_source.DocumentSource;
 import com.amplexor.ia.exception.ExceptionHelper;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
 
 import javax.jms.*;
-
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 
 import static com.amplexor.ia.Logger.debug;
@@ -16,20 +18,33 @@ import static com.amplexor.ia.Logger.debug;
  * Created by admjzimmermann on 6-9-2016.
  */
 public class ActiveMQManager implements DocumentSource {
+    private static final String PARAMETER_BROKER = "broker";
+    private static final String PARAMETER_TRUSTSTORE = "truststore";
+    private static final String PARAMETER_TRUSTSTORE_PASSWORD = "truststore_password";
+    private static final String PARAMETER_INPUT_QUEUE_NAME = "input_queue_name";
+    private static final String PARAMETER_RESULT_QUEUE_NAME = "result_queue_name";
+    private static final String PARAMETER_QUEUE_RECEIVE_TIMEOUT = "queue_receive_timeout";
+    private static final String TRUSTSTORE_TYPE = "JKS";
+    private static final String PARAMETER_RESULT_VALUES = "result_values";
+    private static final String PARAMETER_RESULT_FORMAT = "result_format";
+    private static final String PARAMETER_RESULTS_ELEMENT = "results_element";
+
 
     ActiveMQSslConnectionFactory mobjConnectionFactory;
     Connection mobjConnection;
     PluggableObjectConfiguration mobjConfiguration;
+    boolean bConnected;
 
     public ActiveMQManager(PluggableObjectConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
         mobjConnectionFactory = new ActiveMQSslConnectionFactory();
-        mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter("broker"));
-        if (mobjConfiguration.getParameter("truststore") != null) {
+        mobjConnectionFactory.setBrokerURL(objConfiguration.getParameter(PARAMETER_BROKER));
+        if (mobjConfiguration.getParameter(PARAMETER_TRUSTSTORE) != null && !"".equals(mobjConfiguration.getParameter(PARAMETER_TRUSTSTORE))) {
             try {
-                mobjConnectionFactory.setTrustStore(objConfiguration.getParameter("truststore"));
-                mobjConnectionFactory.setTrustStoreType("JKS");
-                mobjConnectionFactory.setTrustStorePassword(objConfiguration.getParameter("truststore_password"));
+                mobjConnectionFactory.setTrustStore(objConfiguration.getParameter(PARAMETER_TRUSTSTORE));
+                mobjConnectionFactory.setTrustStoreType(TRUSTSTORE_TYPE);
+                byte[] cPasswordEncrypted = Base64.getDecoder().decode(objConfiguration.getParameter(PARAMETER_TRUSTSTORE_PASSWORD).getBytes());
+                mobjConnectionFactory.setTrustStorePassword(new String(Crypto.decrypt(cPasswordEncrypted, Crypto.retrieveKey(Paths.get("data-file")))));
             } catch (Exception ex) {
                 ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_INVALID_TRUSTSTORE, ex);
             }
@@ -45,15 +60,19 @@ public class ActiveMQManager implements DocumentSource {
         try {
             if (mobjConnection != null) {
                 objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-                Destination objDestination = objSession.createQueue(mobjConfiguration.getParameter("input_queue_name") + "?consumer.prefetchSize=1");
+                Destination objDestination = objSession.createQueue(mobjConfiguration.getParameter(PARAMETER_INPUT_QUEUE_NAME) + "?consumer.prefetchSize=1");
                 objConsumer = objSession.createConsumer(objDestination);
-                Message objMessage = objConsumer.receive(Integer.parseInt(mobjConfiguration.getParameter("queue_receive_timeout")));
-                if (objMessage != null && objMessage instanceof TextMessage) {
+                Message objMessage = objConsumer.receive(Integer.parseInt(mobjConfiguration.getParameter(PARAMETER_QUEUE_RECEIVE_TIMEOUT)));
+                if (objMessage == null) {
+                    objConsumer.close();
+                    return "";
+                }
+                if (objMessage instanceof TextMessage) {
                     TextMessage objTextMessage = (TextMessage) objMessage;
-                    debug(this, "Received Data: " + objTextMessage.getText());
                     sReturn = objTextMessage.getText();
                     objMessage.acknowledge();
                 }
+
                 objConsumer.close();
             }
         } catch (JMSException ex) {
@@ -79,12 +98,16 @@ public class ActiveMQManager implements DocumentSource {
     public boolean initialize() {
         boolean bReturn = false;
         try {
-            mobjConnection = mobjConnectionFactory.createConnection();
-            mobjConnection.setClientID("SIP_Packager-" + Thread.currentThread().getName());
-            mobjConnection.start();
-            bReturn = true;
+            if (mobjConnection == null) {
+                mobjConnection = mobjConnectionFactory.createConnection();
+            }
+            if (!bConnected) {
+                mobjConnection.start();
+                bConnected = bReturn = true;
+            }
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNABLE_TO_CONNECT, ex);
+            shutdown();
         }
 
         return bReturn;
@@ -94,11 +117,11 @@ public class ActiveMQManager implements DocumentSource {
     public boolean shutdown() {
         boolean bReturn = false;
         try {
-            if (mobjConnection != null) {
+            if (mobjConnection != null && bConnected) {
                 mobjConnection.close();
+                bConnected = false;
+                bReturn = true;
             }
-
-            bReturn = true;
         } catch (JMSException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
@@ -112,13 +135,13 @@ public class ActiveMQManager implements DocumentSource {
         Session objSession = null;
         MessageProducer objProducer = null;
 
-        if(mobjConnection == null) {
+        if (mobjConnection == null) {
             return false;
         }
 
         try {
             objSession = mobjConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Queue objDestination = objSession.createQueue(mobjConfiguration.getParameter("result_queue_name"));
+            Queue objDestination = objSession.createQueue(mobjConfiguration.getParameter(PARAMETER_RESULT_QUEUE_NAME));
             objProducer = objSession.createProducer(objDestination);
             TextMessage objMessage = objSession.createTextMessage(getResultXml(cDocuments));
             objProducer.send(objDestination, objMessage);
@@ -146,7 +169,7 @@ public class ActiveMQManager implements DocumentSource {
     private String getResultXml(List<IADocumentReference> cDocuments) {
         StringBuilder objBuilder = new StringBuilder();
         for (IADocumentReference objReference : cDocuments) {
-            String[] cResultValues = mobjConfiguration.getParameter("result_values").split(";");
+            String[] cResultValues = mobjConfiguration.getParameter(PARAMETER_RESULT_VALUES).split(";");
             String[] cValues = new String[cResultValues.length];
             int iCurrent = 0;
             for (String sResultValue : cResultValues) {
@@ -165,8 +188,8 @@ public class ActiveMQManager implements DocumentSource {
                         break;
                 }
             }
-            objBuilder.append(String.format(mobjConfiguration.getParameter("result_format"), cValues));
+            objBuilder.append(String.format(mobjConfiguration.getParameter(PARAMETER_RESULT_FORMAT), cValues));
         }
-        return String.format(mobjConfiguration.getParameter("results_element"), objBuilder.toString());
+        return String.format(mobjConfiguration.getParameter(PARAMETER_RESULTS_ELEMENT), objBuilder.toString());
     }
 }

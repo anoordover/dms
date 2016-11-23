@@ -2,56 +2,42 @@ package com.amplexor.ia.utils;
 
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Random;
 
 /**
  * Created by minkenbergs on 28-9-2016.
  */
 public class RandomGenerator {
-    private Random r ;
+    private Random objRandom;
 
     public RandomGenerator() {
-        r = new Random();
+        objRandom = new Random(System.currentTimeMillis());
     }
 
-    public long generateArchiefDocumentId(){
-        long LOWER_RANGE = 1000000000;
-        long UPPER_RANGE = 1999999999;
-        return LOWER_RANGE + (long)(r.nextDouble()*(UPPER_RANGE - LOWER_RANGE));
+    public String generateId(int iNumCharacters) {
+        if (iNumCharacters == 1) {
+            return String.format("%d", objRandom.nextInt(9));
+        } else {
+            long lValueMin = (long) Math.pow(10.0d, (double) iNumCharacters - 1);
+            long lValueMax = (long) Math.pow(10.0d, (double) (iNumCharacters)) - 1;
+            long lValueDiff = lValueMax - lValueMin;
+            long lGenerated = Math.abs(objRandom.nextLong() % lValueDiff);
+            return String.format("%d", lValueMin + lGenerated);
+        }
     }
 
-    public long generateArchiefPersoonNummer(){
-        long LOWER_RANGE = 1000000000;
-        long UPPER_RANGE = 1999999999;
-        return LOWER_RANGE + (long)(r.nextDouble()*(UPPER_RANGE - LOWER_RANGE));
-    }
-
-    public long generatePersoonBurgersservicenummer(){
-        long LOWER_RANGE = 100000000;
-        long UPPER_RANGE = 199999999;
-        return LOWER_RANGE + (long)(r.nextDouble()*(UPPER_RANGE - LOWER_RANGE));
-    }
-
-    public long generateDocumentKenmerkNr(){
-        long LOWER_RANGE = 10000;
-        long UPPER_RANGE = 99999;
-        return LOWER_RANGE + (long)(r.nextDouble()*(UPPER_RANGE - LOWER_RANGE));
-    }
-
-    public LocalDate generateVerzendDag(){
+    public LocalDate generateVerzendDag() {
         int minDay = (int) LocalDate.of(2015, 1, 1).toEpochDay();
         int maxDay = (int) LocalDate.now().toEpochDay();
-        long randomDay = minDay + r.nextInt(maxDay - minDay);
+        long randomDay = minDay + objRandom.nextInt(maxDay - minDay);
         return LocalDate.ofEpochDay(randomDay);
     }
 
-    public int generateIntOneToSix(){
-        return r.nextInt(6);
-    }
+    public int randomInt(int iMax) {
+        if(iMax == 0) {
+            return 0;
+        }
 
-    public <T extends Enum<?>> T generateRandomEnum(Class<T> enumClass){
-        int x = r.nextInt(enumClass.getEnumConstants().length);
-        return enumClass.getEnumConstants()[x];
+        return objRandom.nextInt(iMax);
     }
 }

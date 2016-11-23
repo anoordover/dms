@@ -7,8 +7,12 @@ import com.amplexor.ia.configuration.CacheConfiguration;
 import com.amplexor.ia.exception.ExceptionHelper;
 import com.amplexor.ia.metadata.IADocument;
 import com.amplexor.ia.retention.IARetentionClass;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,6 +48,26 @@ public class CAKCacheManager extends AMPCacheManager {
         return bReturn;
     }
 
+    @Override
+    public String saveDocument(IACache objCache, IADocument objDocument) throws IOException {
+        Path objDocumentPath = Paths.get(String.format("%s/%d/%s", mobjBasePath.toString(), objCache.getId(), objDocument.getDocumentId()));
+        Path objPayloadPath = Paths.get(String.format("%s/%d/%s.pdf", mobjBasePath.toString(), objCache.getId(), objDocument.getDocumentId()));
+        try (OutputStream objOutputStream = Files.newOutputStream(objPayloadPath)) {
+            objOutputStream.write(objDocument.getContent(CAKDocument.KEY_ATTACHMENT));
+            objDocument.setContentFile(CAKDocument.KEY_ATTACHMENT, objPayloadPath.toString());
+            objDocument.setContent(CAKDocument.KEY_ATTACHMENT, new byte[0]);
+        }
+
+        XStream objXStream = new XStream(new DomDriver("UTF-8"));
+        objXStream.alias(mobjConfiguration.getParameter("document_element_name"), CAKDocument.class);
+        objXStream.processAnnotations(CAKDocument.class);
+        String sXmlData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" + objXStream.toXML(objDocument);
+        try (OutputStream objOutputStream = Files.newOutputStream(objDocumentPath)) {
+            objOutputStream.write(sXmlData.getBytes(Charset.forName("UTF-8")));
+        }
+        return objDocumentPath.toString();
+    }
+
     private IACache getCache(IARetentionClass objRetentionClass, boolean bIsFallback) throws IOException {
         for (IACache objCache : mcCaches) {
             if (objCache.getRetentionClass().equals(objRetentionClass) &&
@@ -59,6 +83,7 @@ public class CAKCacheManager extends AMPCacheManager {
         Files.createDirectories(objCachePath);
         objCreate.setDocumentIdentifier(bIsFallback ? "Fallback" : "Standard");
         mcCaches.add(objCreate);
+        saveCache(objCreate);
         debug(this, "Returning Cache " + objCreate.getId());
 
         return objCreate;
