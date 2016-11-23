@@ -18,11 +18,11 @@ import javax.ws.rs.core.Response;
  */
 public class RestfullTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestfullTest.class);
-    private final static String REQUEST_LIST = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummer>8823502042</urn:ArchiefPersoonsnummer></urn:RaadplegenDocumentLijstRequest>";
-    private final static String REQUEST_DOCUMENT = "<urn:RaadplegenDocumentRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumentId>1305362675</urn:ArchiefDocumentId></urn:RaadplegenDocumentRequest>";
+    private final static String REQUEST_LIST = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummer>2842398989</urn:ArchiefPersoonsnummer></urn:RaadplegenDocumentLijstRequest>";
+    private final static String REQUEST_DOCUMENT = "<urn:RaadplegenDocumentRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumentId>1849272060</urn:ArchiefDocumentId></urn:RaadplegenDocumentRequest>";
 
-    private final static String BAD_REQUEST_LIST = "<urn:ArchiefPersoonsnummer  xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\">1892011538</urn:ArchiefPersoonsnummer>";
-    private final static String BAD_REQUEST_DOCUMENT = "<urn:ArchiefDocumentId  xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\">1921071631</urn:ArchiefDocumentId>";
+    private final static String BAD_REQUEST_LIST = "<urn:ArchiefPersoonsnummer  xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\">2842398989</urn:ArchiefPersoonsnummer>";
+    private final static String BAD_REQUEST_DOCUMENT = "<urn:ArchiefDocumentId  xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\">1849272060</urn:ArchiefDocumentId>";
     
     @Test
     public void testJavaRsConfig() {

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config-request-processor>
-    <ia_application_uuid>1d0485de-c41d-4a87-ad3e-4ee42fca58c6</ia_application_uuid>
-    <ia_searchcomposition_uuid>28717ecc-91f0-444a-b963-f39f84e114bc</ia_searchcomposition_uuid>
+    <ia_application_name>CAK_Klantarchief</ia_application_name>
+    <ia_searchcomposition_name>Set 1</ia_searchcomposition_name>
+    <ia_search_name>Full Search</ia_search_name>
     <log4j_properties></log4j_properties>
     <max_allowed_results>250</max_allowed_results>
     <max_allowed_filesize>2500000</max_allowed_filesize>
     <ia_token></ia_token>
-    <ia_server_https>false</ia_server_https>
-    <ia_server>infoarchive40</ia_server>
-    <ia_port>8080</ia_port>
-    <ia_service_usr>sue@iacustomer.com</ia_service_usr>
-    <ia_service_usr_password>JS0sKQcFX1ZASgZ4eSdnXdjP9OP6pRSn7jDVsnitjrU=</ia_service_usr_password>
+    <ia_server_https>true</ia_server_https>
+    <ia_server>infoarchive-rp.front.ont.dms.func.cak-bz.local</ia_server>
+    <ia_port>10843</ia_port>
+    <ia_service_usr>sa-infoarchive-ont</ia_service_usr>
+    <ia_service_usr_password>PGcbQkIaB0gGNAlVfHEbb5A+I42NRpIRQdtFDDFeA6g=</ia_service_usr_password>
 </config-request-processor>

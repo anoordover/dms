@@ -53,7 +53,6 @@ public class ConnectionTest {
         connectionManager.setConfigurationFile(config);
         Configuration configuration = connectionManager.getConfiguration();
         assertNotNull(connectionManager);
-        assertNotNull(configuration.getApplicationUUID());
     }
     
     //external connection

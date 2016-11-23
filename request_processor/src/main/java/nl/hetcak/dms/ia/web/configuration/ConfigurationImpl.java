@@ -180,7 +180,7 @@ public class ConfigurationImpl implements Configuration {
             resultID = false;
         }
     
-        if(StringUtils.isBlank(msApplicationName) || StringUtils.isBlank(msSearchName) || StringUtils.isBlank(msSearchComponentUUID)){
+        if(StringUtils.isBlank(msApplicationName) || StringUtils.isBlank(msSearchName) || StringUtils.isBlank(msSearchCompositionName)){
             LOGGER.warn("Server application names not set in config..");
             resultName = false;
         }
