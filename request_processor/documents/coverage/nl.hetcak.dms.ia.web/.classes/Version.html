@@ -1,0 +1,115 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Version</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">nl.hetcak.dms.ia.web</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Version (nl.hetcak.dms.ia.web)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Version</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (9/ 10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package nl.hetcak.dms.ia.web;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;/**
+<i>4</i>&nbsp; * (c) 2016 AMPLEXOR International S.A., All rights reserved.
+<i>5</i>&nbsp; *
+<i>6</i>&nbsp; * Version for logging.
+<i>7</i>&nbsp; *
+<i>8</i>&nbsp; * @author Jeroen.Pelt@AMPLEXOR.com
+<i>9</i>&nbsp; */
+<i>10</i>&nbsp;public class Version {
+<i>11</i>&nbsp;    public static final String PROGRAM_NAME = &quot;Request-Processor&quot;;
+<i>12</i>&nbsp;    private static final int VERSION_MAJOR = 1;
+<i>13</i>&nbsp;    private static final int VERSION_MINOR = 1;
+<i>14</i>&nbsp;    private static final int VERSION_REVISION = 0;
+<i>15</i>&nbsp;    private static final String VERSION_NAME = &quot;RELEASE&quot;;
+<i>16</i>&nbsp;
+<b class="nc"><i>17</i>&nbsp;    private Version() {</b>
+<i>18</i>&nbsp;        //no constructor
+<i>19</i>&nbsp;    }
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    public static String currentVersion() {
+<b class="fc"><i>22</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<b class="fc"><i>23</i>&nbsp;        stringBuilder.append(VERSION_MAJOR);</b>
+<b class="fc"><i>24</i>&nbsp;        stringBuilder.append(&#39;.&#39;);</b>
+<b class="fc"><i>25</i>&nbsp;        stringBuilder.append(VERSION_MINOR);</b>
+<b class="fc"><i>26</i>&nbsp;        stringBuilder.append(&#39;.&#39;);</b>
+<b class="fc"><i>27</i>&nbsp;        stringBuilder.append(VERSION_REVISION);</b>
+<b class="fc"><i>28</i>&nbsp;        stringBuilder.append(&#39;-&#39;);</b>
+<b class="fc"><i>29</i>&nbsp;        stringBuilder.append(VERSION_NAME);</b>
+<b class="fc"><i>30</i>&nbsp;        return stringBuilder.toString();</b>
+<i>31</i>&nbsp;    }
+<i>32</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2016-11-21 16:40</div>
+</div>
+</body>
+</html>

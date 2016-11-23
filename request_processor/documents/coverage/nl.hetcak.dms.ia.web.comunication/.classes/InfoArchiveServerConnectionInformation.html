@@ -1,0 +1,178 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: InfoArchiveServerConnectionInformation</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">nl.hetcak.dms.ia.web.comunication</a> ]
+</div>
+
+<h1>Coverage Summary for Class: InfoArchiveServerConnectionInformation (nl.hetcak.dms.ia.web.comunication)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">InfoArchiveServerConnectionInformation</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/ 9)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package nl.hetcak.dms.ia.web.comunication;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;/**
+<i>4</i>&nbsp; * (c) 2016 AMPLEXOR International S.A., All rights reserved.
+<i>5</i>&nbsp; *
+<i>6</i>&nbsp; * @author Jeroen.Pelt@AMPLEXOR.com
+<i>7</i>&nbsp; */
+<b class="fc"><i>8</i>&nbsp;public class InfoArchiveServerConnectionInformation implements ServerConnectionInformation {</b>
+<i>9</i>&nbsp;    private String msServerAddress;
+<i>10</i>&nbsp;    private int miServerPort;
+<i>11</i>&nbsp;    private int miMaxItems;
+<i>12</i>&nbsp;    private boolean useHttps;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    /**
+<i>15</i>&nbsp;     * Gets the server address.
+<i>16</i>&nbsp;     *
+<i>17</i>&nbsp;     * @return the server address.
+<i>18</i>&nbsp;     */
+<i>19</i>&nbsp;    @Override
+<i>20</i>&nbsp;    public String getServerAddress() {
+<b class="fc"><i>21</i>&nbsp;        return msServerAddress;</b>
+<i>22</i>&nbsp;    }
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    /**
+<i>25</i>&nbsp;     * Sets the server address.
+<i>26</i>&nbsp;     *
+<i>27</i>&nbsp;     * @param serverAddress the server address.
+<i>28</i>&nbsp;     */
+<i>29</i>&nbsp;    @Override
+<i>30</i>&nbsp;    public void setServerAddress(String serverAddress) {
+<b class="fc"><i>31</i>&nbsp;        this.msServerAddress = serverAddress;</b>
+<i>32</i>&nbsp;    }
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * Gets the server port.
+<i>36</i>&nbsp;     *
+<i>37</i>&nbsp;     * @return the server port.
+<i>38</i>&nbsp;     */
+<i>39</i>&nbsp;    @Override
+<i>40</i>&nbsp;    public int getServerPort() {
+<b class="fc"><i>41</i>&nbsp;        return miServerPort;</b>
+<i>42</i>&nbsp;    }
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    /**
+<i>45</i>&nbsp;     * Sets the server port.
+<i>46</i>&nbsp;     *
+<i>47</i>&nbsp;     * @param serverPort the server port.
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    @Override
+<i>50</i>&nbsp;    public void setServerPort(int serverPort) {
+<b class="fc"><i>51</i>&nbsp;        this.miServerPort = serverPort;</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    /**
+<i>55</i>&nbsp;     * Gets the max items size.
+<i>56</i>&nbsp;     *
+<i>57</i>&nbsp;     * @return the max items
+<i>58</i>&nbsp;     */
+<i>59</i>&nbsp;    @Override
+<i>60</i>&nbsp;    public int getMaxItems() {
+<b class="fc"><i>61</i>&nbsp;        return miMaxItems;</b>
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * Sets the max item count.
+<i>66</i>&nbsp;     *
+<i>67</i>&nbsp;     * @param maxItems total items
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    @Override
+<i>70</i>&nbsp;    public void setMaxItems(int maxItems) {
+<b class="fc"><i>71</i>&nbsp;        this.miMaxItems = maxItems;</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;    
+<i>74</i>&nbsp;    /**
+<i>75</i>&nbsp;     * True if the request should use https.
+<i>76</i>&nbsp;     *
+<i>77</i>&nbsp;     * @return True if the request should use https.
+<i>78</i>&nbsp;     */
+<i>79</i>&nbsp;    @Override
+<i>80</i>&nbsp;    public boolean isUsingHttps() {
+<b class="fc"><i>81</i>&nbsp;        return useHttps;</b>
+<i>82</i>&nbsp;    }
+<i>83</i>&nbsp;    
+<i>84</i>&nbsp;    /**
+<i>85</i>&nbsp;     * Sets if the request should start with https.
+<i>86</i>&nbsp;     *
+<i>87</i>&nbsp;     * @param https true if the request should use https.
+<i>88</i>&nbsp;     */
+<i>89</i>&nbsp;    @Override
+<i>90</i>&nbsp;    public void setHttps(boolean https) {
+<b class="fc"><i>91</i>&nbsp;        this.useHttps = https;</b>
+<i>92</i>&nbsp;    }
+<i>93</i>&nbsp;    
+<i>94</i>&nbsp;    
+<i>95</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2016-11-21 16:40</div>
+</div>
+</body>
+</html>

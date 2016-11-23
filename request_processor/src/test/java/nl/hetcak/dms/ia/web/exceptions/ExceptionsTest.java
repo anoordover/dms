@@ -1,6 +1,5 @@
 package nl.hetcak.dms.ia.web.exceptions;
 
-import nl.hetcak.dms.ia.web.exceptions.*;
 import org.junit.Test;
 
 /**

@@ -1,15 +1,11 @@
 package nl.hetcak.dms.ia.web.restfull;
 
 import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
-import nl.hetcak.dms.ia.web.exceptions.SchemaLoadingException;
 import nl.hetcak.dms.ia.web.restfull.consumers.DocumentRequestConsumer;
 import nl.hetcak.dms.ia.web.restfull.consumers.ListDocumentRequestConsumer;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
-import java.text.ParseException;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.

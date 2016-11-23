@@ -1,0 +1,158 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Configuration</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">nl.hetcak.dms.ia.web.configuration</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Configuration (nl.hetcak.dms.ia.web.configuration)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">Configuration</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package nl.hetcak.dms.ia.web.configuration;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import nl.hetcak.dms.ia.web.comunication.Credentials;
+<i>4</i>&nbsp;import nl.hetcak.dms.ia.web.comunication.ServerConnectionInformation;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;/**
+<i>7</i>&nbsp; * (c) 2016 AMPLEXOR International S.A., All rights reserved.
+<i>8</i>&nbsp; * &lt;p&gt;
+<i>9</i>&nbsp; * The setting needed to run this program.
+<i>10</i>&nbsp; * If the settings are not met, expect failures.
+<i>11</i>&nbsp; *
+<i>12</i>&nbsp; * @author Jeroen.Pelt@AMPLEXOR.com
+<i>13</i>&nbsp; */
+<i>14</i>&nbsp;public interface Configuration {
+<i>15</i>&nbsp;    //InfoArchive Configuration
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * Gets the server address.
+<i>19</i>&nbsp;     *
+<i>20</i>&nbsp;     * @return the server address.
+<i>21</i>&nbsp;     * @deprecated see {@link Configuration#getInfoArchiveServerInformation()}.
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    @Deprecated
+<i>24</i>&nbsp;    String getInfoArchiveServerAddress();
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /**
+<i>27</i>&nbsp;     * Gets the server port.
+<i>28</i>&nbsp;     *
+<i>29</i>&nbsp;     * @return the server port.
+<i>30</i>&nbsp;     * @deprecated see {@link Configuration#getInfoArchiveServerInformation()}.
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    @Deprecated
+<i>33</i>&nbsp;    int getInfoArchiveServerPort();
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    /**
+<i>36</i>&nbsp;     * Gets the InfoArchive Credentials.
+<i>37</i>&nbsp;     *
+<i>38</i>&nbsp;     * @return
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    Credentials getInfoArchiveCredentials();
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    /**
+<i>43</i>&nbsp;     * Get the sever connection information.
+<i>44</i>&nbsp;     *
+<i>45</i>&nbsp;     * @return the server connection information.
+<i>46</i>&nbsp;     */
+<i>47</i>&nbsp;    ServerConnectionInformation getInfoArchiveServerInformation();
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    //Application Settings
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    /**
+<i>52</i>&nbsp;     * Get the result limit.
+<i>53</i>&nbsp;     *
+<i>54</i>&nbsp;     * @return the maximum results.
+<i>55</i>&nbsp;     */
+<i>56</i>&nbsp;    int getMaxResults();
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    /**
+<i>59</i>&nbsp;     * Get the file size limit.
+<i>60</i>&nbsp;     *
+<i>61</i>&nbsp;     * @return the maximum file size.
+<i>62</i>&nbsp;     */
+<i>63</i>&nbsp;    int getMaxFileSize();
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    //InfoArchive Application Settings
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    /**
+<i>68</i>&nbsp;     * The Application UUID that should be used during a InfoArchive request.
+<i>69</i>&nbsp;     *
+<i>70</i>&nbsp;     * @return the Application UUID.
+<i>71</i>&nbsp;     */
+<i>72</i>&nbsp;    String getApplicationUUID();
+<i>73</i>&nbsp;    
+<i>74</i>&nbsp;    /**
+<i>75</i>&nbsp;     * The name of the application that can be used to get a ID from InfoArchive.
+<i>76</i>&nbsp;     * @return The name of the InfoArchive application space.
+<i>77</i>&nbsp;     */
+<i>78</i>&nbsp;    String getApplicationName();
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    /**
+<i>81</i>&nbsp;     * The Search Composition UUID that should be used during a InfoArchive request.
+<i>82</i>&nbsp;     *
+<i>83</i>&nbsp;     * @return the Search Composition UUID.
+<i>84</i>&nbsp;     */
+<i>85</i>&nbsp;    String getSearchCompositionUUID();
+<i>86</i>&nbsp;    
+<i>87</i>&nbsp;    /**
+<i>88</i>&nbsp;     * The name of the SearchComposition that can be used to get a ID from InfoArchive.
+<i>89</i>&nbsp;     * @return The name of the InfoArchive SearchComposition.
+<i>90</i>&nbsp;     */
+<i>91</i>&nbsp;    String getSearchCompositionName();
+<i>92</i>&nbsp;    
+<i>93</i>&nbsp;    /**
+<i>94</i>&nbsp;     * The name of the Search that can be used to get a ID from InfoArchive.
+<i>95</i>&nbsp;     * @return The name of the InfoArchive Search.
+<i>96</i>&nbsp;     */
+<i>97</i>&nbsp;    String getSearchName();
+<i>98</i>&nbsp;    
+<i>99</i>&nbsp;    /**
+<i>100</i>&nbsp;     * Checks if this class has the basic settings set.
+<i>101</i>&nbsp;     *
+<i>102</i>&nbsp;     * @return true, if this class has the basic settings set.
+<i>103</i>&nbsp;     */
+<i>104</i>&nbsp;    boolean hasBasicInformation();
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    /**
+<i>107</i>&nbsp;     * Gets the encryption key needed to decrypt passwords.
+<i>108</i>&nbsp;     * @return the encryption key.
+<i>109</i>&nbsp;     */
+<i>110</i>&nbsp;    byte[] getDecryptionKey();
+<i>111</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2016-11-21 16:40</div>
+</div>
+</body>
+</html>

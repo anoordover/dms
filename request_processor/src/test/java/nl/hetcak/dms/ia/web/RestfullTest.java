@@ -92,7 +92,9 @@ public class RestfullTest {
         
         String data = (String) documentListResponse.getEntity();
         LOGGER.info(data);
+        Assert.assertTrue(data.contains("<urn:RaadplegenLijstDocumentResponse"));
         Assert.assertTrue(data.contains("<urn:ResultCode>9999</urn:ResultCode>"));
+        Assert.assertTrue(data.contains("</urn:RaadplegenLijstDocumentResponse>"));
     }
     
     @Test

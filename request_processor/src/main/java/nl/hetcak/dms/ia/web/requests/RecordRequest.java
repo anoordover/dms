@@ -131,7 +131,9 @@ public class RecordRequest {
         Map<String, String> requestHeader = requestUtil.createCredentialsMap(credentials);
         IdResolverManager idResolverManager = IdResolverManager.getInstance();
         String url = requestUtil.getServerUrl(SEARCH_POST_REQUEST, idResolverManager.getSearchCompositionID());
-        String requestBody = queryBuilder.addEqualCriteria(VALUE_ARCHIVE_DOCUMENT_NUMBER, archiveDocumentNumber).build();
+        List<String> values = new ArrayList<>();
+        values.add(archiveDocumentNumber);
+        String requestBody = queryBuilder.addEqualCriteria(VALUE_ARCHIVE_DOCUMENT_NUMBER, values).build();
         LOGGER.info("Executing HTTPPOST request for a Documents based on Document Number.");
         LOGGER.debug(requestBody);
         return requestUtil.executePostRequest(url, CONTENT_TYPE_APP_XML, requestHeader, requestBody);
@@ -241,7 +243,7 @@ public class RecordRequest {
                     value = (column.get(PARSE_RESPONSE_VALUE).getAsString());
                 } catch (NullPointerException nullExc) {
                     LOGGER.error("Got null value on column "+columnName);
-                    value = "";
+                    value = "     ";
                 }
                 
                 LOGGER.debug("Parsing column: " + columnName);

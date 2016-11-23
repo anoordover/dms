@@ -1,0 +1,143 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ConfigService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">nl.hetcak.dms.ia.web</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ConfigService (nl.hetcak.dms.ia.web)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ConfigService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    78.9%
+  </span>
+  <span class="absValue">
+    (15/ 19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package nl.hetcak.dms.ia.web;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import nl.hetcak.dms.ia.web.configuration.Configuration;
+<i>4</i>&nbsp;import nl.hetcak.dms.ia.web.exceptions.MisconfigurationException;
+<i>5</i>&nbsp;import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
+<i>6</i>&nbsp;import nl.hetcak.dms.ia.web.infoarchive.application.Application;
+<i>7</i>&nbsp;import nl.hetcak.dms.ia.web.infoarchive.search.Search;
+<i>8</i>&nbsp;import nl.hetcak.dms.ia.web.infoarchive.searchComposition.SearchComposition;
+<i>9</i>&nbsp;import nl.hetcak.dms.ia.web.infoarchive.tenant.Tenant;
+<i>10</i>&nbsp;import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
+<i>11</i>&nbsp;import nl.hetcak.dms.ia.web.managers.ConnectionManager;
+<i>12</i>&nbsp;import nl.hetcak.dms.ia.web.requests.ApplicationRequest;
+<i>13</i>&nbsp;import nl.hetcak.dms.ia.web.requests.SearchCompositionRequest;
+<i>14</i>&nbsp;import nl.hetcak.dms.ia.web.requests.SearchRequest;
+<i>15</i>&nbsp;import nl.hetcak.dms.ia.web.requests.TenantRequest;
+<i>16</i>&nbsp;import org.slf4j.Logger;
+<i>17</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import javax.servlet.http.HttpServletRequest;
+<i>20</i>&nbsp;import javax.ws.rs.GET;
+<i>21</i>&nbsp;import javax.ws.rs.Path;
+<i>22</i>&nbsp;import javax.ws.rs.Produces;
+<i>23</i>&nbsp;import javax.ws.rs.core.Context;
+<i>24</i>&nbsp;import javax.ws.rs.core.MediaType;
+<i>25</i>&nbsp;import javax.ws.rs.core.Response;
+<i>26</i>&nbsp;import java.util.Calendar;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;/**
+<i>29</i>&nbsp; * (c) 2016 AMPLEXOR International S.A., All rights reserved.
+<i>30</i>&nbsp; *
+<i>31</i>&nbsp; * @author Jeroen.Pelt@AMPLEXOR.com
+<i>32</i>&nbsp; */
+<i>33</i>&nbsp;@Path(&quot;/config&quot;)
+<b class="fc"><i>34</i>&nbsp;public class ConfigService {</b>
+<b class="fc"><i>35</i>&nbsp;    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigService.class);</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @GET
+<i>38</i>&nbsp;    @Produces(MediaType.TEXT_PLAIN)
+<i>39</i>&nbsp;    public synchronized Response checkConfig(@Context HttpServletRequest httpRequest) {
+<b class="fc"><i>40</i>&nbsp;        LOGGER.info(Version.PROGRAM_NAME + &quot; &quot; + Version.currentVersion());</b>
+<b class="fc"><i>41</i>&nbsp;        Calendar calendar = Calendar.getInstance();</b>
+<b class="fc"><i>42</i>&nbsp;        LOGGER.info(&quot;Got Request from &quot;+httpRequest.getRemoteAddr());</b>
+<b class="fc"><i>43</i>&nbsp;        LOGGER.info(&quot;Running log checker. (&quot;+calendar.getTime().toString()+&quot;)&quot;);</b>
+<b class="fc"><i>44</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<b class="fc"><i>45</i>&nbsp;        stringBuilder.append(&quot;Loading config file...\n&quot;);</b>
+<b class="fc"><i>46</i>&nbsp;        ConfigurationManager configurationManager = ConfigurationManager.getInstance();</b>
+<i>47</i>&nbsp;        try {
+<b class="fc"><i>48</i>&nbsp;            Configuration configuration = configurationManager.loadConfiguration(false);</b>
+<b class="pc"><i>49</i>&nbsp;            if (!configuration.hasBasicInformation()) {</b>
+<b class="nc"><i>50</i>&nbsp;                throw new MisconfigurationException(&quot;Some elements of the configuration have not been configured.&quot;);</b>
+<i>51</i>&nbsp;            }
+<b class="fc"><i>52</i>&nbsp;            stringBuilder.append(&quot;[OK] Config file found and loaded.\n&quot;);</b>
+<b class="nc"><i>53</i>&nbsp;        } catch (RequestResponseException rrExc) {</b>
+<b class="nc"><i>54</i>&nbsp;            LOGGER.error(&quot;There is a problem with the config file.&quot;, rrExc);</b>
+<b class="nc"><i>55</i>&nbsp;            stringBuilder.append(&quot;[ERROR] Config file not found.\n&quot;);</b>
+<b class="fc"><i>56</i>&nbsp;        }</b>
+<b class="fc"><i>57</i>&nbsp;        LOGGER.info(stringBuilder.toString());</b>
+<b class="fc"><i>58</i>&nbsp;        return Response.ok(stringBuilder.toString()).build();</b>
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2016-11-21 16:40</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,140 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SchemaUtil</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">nl.hetcak.dms.ia.web.util</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SchemaUtil (nl.hetcak.dms.ia.web.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SchemaUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    56.2%
+  </span>
+  <span class="absValue">
+    (9/ 16)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package nl.hetcak.dms.ia.web.util;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import nl.hetcak.dms.ia.web.exceptions.SchemaLoadingException;
+<i>4</i>&nbsp;import org.xml.sax.SAXException;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import javax.xml.XMLConstants;
+<i>7</i>&nbsp;import javax.xml.validation.Schema;
+<i>8</i>&nbsp;import javax.xml.validation.SchemaFactory;
+<i>9</i>&nbsp;import java.io.File;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * (c) 2016 AMPLEXOR International S.A., All rights reserved.
+<i>13</i>&nbsp; *
+<i>14</i>&nbsp; * @author Jeroen.Pelt@AMPLEXOR.com
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public class SchemaUtil {
+<i>17</i>&nbsp;    private static final String SCHEMA_FILE_NAME = &quot;RaadplegenArchief.xsd&quot;;
+<i>18</i>&nbsp;    private static Schema mobjLoadedSchema;
+<i>19</i>&nbsp;    
+<b class="nc"><i>20</i>&nbsp;    private SchemaUtil() {</b>
+<i>21</i>&nbsp;        //see static methods
+<i>22</i>&nbsp;    }
+<i>23</i>&nbsp;    
+<i>24</i>&nbsp;    /**
+<i>25</i>&nbsp;     * Loads the schema if its not loaded yet.
+<i>26</i>&nbsp;     * @return The schema used to validate requests.
+<i>27</i>&nbsp;     * @throws SchemaLoadingException Schema loading problems.
+<i>28</i>&nbsp;     */
+<i>29</i>&nbsp;    public static Schema getSchema() throws SchemaLoadingException {
+<b class="fc"><i>30</i>&nbsp;        if(mobjLoadedSchema == null) {</b>
+<b class="fc"><i>31</i>&nbsp;            mobjLoadedSchema = loadSchema();</b>
+<i>32</i>&nbsp;        }
+<b class="fc"><i>33</i>&nbsp;        return mobjLoadedSchema;</b>
+<i>34</i>&nbsp;    }
+<i>35</i>&nbsp;    
+<i>36</i>&nbsp;    private static synchronized Schema loadSchema() throws SchemaLoadingException {
+<i>37</i>&nbsp;        try {
+<b class="fc"><i>38</i>&nbsp;            ClassLoader classloader = Thread.currentThread().getContextClassLoader();</b>
+<b class="fc"><i>39</i>&nbsp;            File schemaFile = new File(classloader.getResource(SCHEMA_FILE_NAME).getFile());</b>
+<i>40</i>&nbsp;            
+<b class="pc"><i>41</i>&nbsp;            if(schemaFile.exists()) {</b>
+<b class="fc"><i>42</i>&nbsp;                SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);</b>
+<i>43</i>&nbsp;                
+<i>44</i>&nbsp;                //SAXException while loading schema
+<b class="fc"><i>45</i>&nbsp;                Schema schema = schemaFactory.newSchema(schemaFile);</b>
+<b class="fc"><i>46</i>&nbsp;                return schema;</b>
+<i>47</i>&nbsp;            }
+<b class="nc"><i>48</i>&nbsp;        } catch (SAXException saxeExc) {</b>
+<b class="nc"><i>49</i>&nbsp;            throw new SchemaLoadingException(&quot;Failed to parse XSD document.&quot;,saxeExc);</b>
+<b class="nc"><i>50</i>&nbsp;        } catch (NullPointerException nullExc) {</b>
+<b class="nc"><i>51</i>&nbsp;            throw new SchemaLoadingException(&quot;Unable to load Schema.&quot;, nullExc);</b>
+<b class="nc"><i>52</i>&nbsp;        }</b>
+<i>53</i>&nbsp;        //Schema not found
+<b class="nc"><i>54</i>&nbsp;        throw new SchemaLoadingException(&quot;Schema not found.&quot;);</b>
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;    
+<i>57</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2016-11-21 16:40</div>
+</div>
+</body>
+</html>

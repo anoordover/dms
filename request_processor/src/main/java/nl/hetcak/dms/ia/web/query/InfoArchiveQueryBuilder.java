@@ -50,10 +50,10 @@ public class InfoArchiveQueryBuilder {
      * Added a new Equal {@link Criterion} to this query.
      *
      * @param name  Name of the column.
-     * @param value the value.
+     * @param values the values.
      */
-    public InfoArchiveQueryBuilder addEqualCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_EQUAL, value);
+    public InfoArchiveQueryBuilder addEqualCriteria(String name, List<String> values) {
+        addCriterion(name, OPERATOR_EQUAL, values);
         return this;
     }
 
@@ -61,10 +61,10 @@ public class InfoArchiveQueryBuilder {
      * Added a new Not Equal {@link Criterion} to this query.
      *
      * @param name  Name of the column.
-     * @param value the value.
+     * @param values the values.
      */
-    public InfoArchiveQueryBuilder addNotEqualCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_NOT_EQUAL, value);
+    public InfoArchiveQueryBuilder addNotEqualCriteria(String name, List<String> values) {
+        addCriterion(name, OPERATOR_NOT_EQUAL, values);
         return this;
     }
 
@@ -72,10 +72,10 @@ public class InfoArchiveQueryBuilder {
      * Added a new Equal or Greater {@link Criterion} to this query.
      *
      * @param name  Name of the column.
-     * @param value the value.
+     * @param values the values.
      */
-    public InfoArchiveQueryBuilder addGreaterOrEqualCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_GREATER_OR_EQUAL, value);
+    public InfoArchiveQueryBuilder addGreaterOrEqualCriteria(String name, List<String> values) {
+        addCriterion(name, OPERATOR_GREATER_OR_EQUAL, values);
         return this;
     }
 
@@ -83,10 +83,10 @@ public class InfoArchiveQueryBuilder {
      * Added a new Greater {@link Criterion} to this query.
      *
      * @param name  Name of the column.
-     * @param value the value.
+     * @param values the values.
      */
-    public InfoArchiveQueryBuilder addGreaterCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_GREATER, value);
+    public InfoArchiveQueryBuilder addGreaterCriteria(String name, List<String> values) {
+        addCriterion(name, OPERATOR_GREATER, values);
         return this;
     }
 
@@ -94,10 +94,10 @@ public class InfoArchiveQueryBuilder {
      * Added a new Equal or Less {@link Criterion} to this query.
      *
      * @param name  Name of the column.
-     * @param value the value.
+     * @param values the values.
      */
-    public InfoArchiveQueryBuilder addLessOrEqualCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_LESS_OR_EQUAL, value);
+    public InfoArchiveQueryBuilder addLessOrEqualCriteria(String name, List<String> values) {
+        addCriterion(name, OPERATOR_LESS_OR_EQUAL, values);
         return this;
     }
 
@@ -105,30 +105,30 @@ public class InfoArchiveQueryBuilder {
      * Added a new Less {@link Criterion} to this query.
      *
      * @param name  Name of the column.
-     * @param value the value.
+     * @param values the value.
      */
-    public InfoArchiveQueryBuilder addLessCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_LESS, value);
+    public InfoArchiveQueryBuilder addLessCriteria(String name, List<String> values) {
+        addCriterion(name, OPERATOR_LESS, values);
         return this;
     }
     
     /**
      * Added a new Starts with {@link Criterion} to this query.
      * @param name  Name of the column.
-     * @param value the value.
+     * @param values the values.
      */
-    public InfoArchiveQueryBuilder addStartsWithCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_STARTS_WITH, value);
+    public InfoArchiveQueryBuilder addStartsWithCriteria(String name, List<String> values) {
+        addCriterion(name, OPERATOR_STARTS_WITH, values);
         return this;
     }
     
     /**
      * Added a new Ends with {@link Criterion} to this query.
      * @param name  Name of the column.
-     * @param value the value.
+     * @param values the values.
      */
-    public InfoArchiveQueryBuilder addEndsWithCriteria(String name, String value) {
-        addCriterion(name, OPERATOR_ENDS_WITH, value);
+    public InfoArchiveQueryBuilder addEndsWithCriteria(String name, List<String> values) {
+        addCriterion(name, OPERATOR_ENDS_WITH, values);
         return this;
     }
     
@@ -142,7 +142,9 @@ public class InfoArchiveQueryBuilder {
         StringBuilder searchString = new StringBuilder(".*");
         searchString.append(value);
         searchString.append(".*");
-        addCriterion(name, OPERATOR_FULLTEXT, searchString.toString());
+        List<String> values = new ArrayList<>();
+        values.add(searchString.toString());
+        addCriterion(name, OPERATOR_FULLTEXT, values);
         return this;
     }
 
@@ -164,11 +166,11 @@ public class InfoArchiveQueryBuilder {
         return this;
     }
 
-    private void addCriterion(String name, String operator, String value) {
+    private void addCriterion(String name, String operator, List<String> values) {
         Criterion criterion = new Criterion();
         criterion.setName(name);
         criterion.setOperator(operator);
-        criterion.getValues().add(value);
+        criterion.getValues().addAll(values);
         this.mobjaCriterions.add(criterion);
         LOGGER.debug(String.format("[%s] Added %s criteria", this.toString(), operator));
     }

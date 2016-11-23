@@ -12,12 +12,17 @@ public class Version {
     private static final int VERSION_MAJOR = 1;
     private static final int VERSION_MINOR = 1;
     private static final int VERSION_REVISION = 0;
-    private static final String VERSION_NAME = "SNAPSHOT";
+    private static final String VERSION_NAME = "RELEASE";
 
     private Version() {
         //no constructor
     }
-
+    
+    
+    /**
+     * Gets the current version as a {@link String}
+     * @return a {@link String} containing the version number.
+     */
     public static String currentVersion() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(VERSION_MAJOR);

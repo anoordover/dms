@@ -1,0 +1,192 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CryptoUtil</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">nl.hetcak.dms.ia.web.util</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CryptoUtil (nl.hetcak.dms.ia.web.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CryptoUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (4/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (30/ 36)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package nl.hetcak.dms.ia.web.util;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import nl.hetcak.dms.ia.web.configuration.Configuration;
+<i>4</i>&nbsp;import nl.hetcak.dms.ia.web.exceptions.CryptoFailureException;
+<i>5</i>&nbsp;import nl.hetcak.dms.ia.web.exceptions.RequestResponseException;
+<i>6</i>&nbsp;import nl.hetcak.dms.ia.web.managers.ConfigurationManager;
+<i>7</i>&nbsp;import org.slf4j.Logger;
+<i>8</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import javax.crypto.BadPaddingException;
+<i>11</i>&nbsp;import javax.crypto.Cipher;
+<i>12</i>&nbsp;import javax.crypto.IllegalBlockSizeException;
+<i>13</i>&nbsp;import javax.crypto.NoSuchPaddingException;
+<i>14</i>&nbsp;import javax.crypto.spec.IvParameterSpec;
+<i>15</i>&nbsp;import javax.crypto.spec.SecretKeySpec;
+<i>16</i>&nbsp;import java.security.InvalidAlgorithmParameterException;
+<i>17</i>&nbsp;import java.security.InvalidKeyException;
+<i>18</i>&nbsp;import java.security.NoSuchAlgorithmException;
+<i>19</i>&nbsp;import java.security.SecureRandom;
+<i>20</i>&nbsp;import java.util.Arrays;
+<i>21</i>&nbsp;import java.util.Base64;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;/**
+<i>24</i>&nbsp; * (c) 2016 AMPLEXOR International S.A., All rights reserved.
+<i>25</i>&nbsp; * &lt;p&gt;
+<i>26</i>&nbsp; * For reading files.
+<i>27</i>&nbsp; * &lt;/p&gt;
+<i>28</i>&nbsp; * @author Joury.Zimmermann@AMPLEXOR.com
+<i>29</i>&nbsp; * @author Jeroen.Pelt@AMPLEXOR.com (modified for this application)
+<i>30</i>&nbsp; */
+<i>31</i>&nbsp;public class CryptoUtil {
+<b class="fc"><i>32</i>&nbsp;    private static final Logger LOGGER = LoggerFactory.getLogger(CryptoUtil.class);</b>
+<i>33</i>&nbsp;    private static final String CIPHER_INSTANCE = &quot;AES/CBC/NoPadding&quot;;
+<i>34</i>&nbsp;    private static final int IV_SIZEB = 16;
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;    private CryptoUtil() {</b>
+<i>37</i>&nbsp;        //No constructor.
+<i>38</i>&nbsp;    }
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /**
+<i>41</i>&nbsp;     * Decrypts the data.
+<i>42</i>&nbsp;     *
+<i>43</i>&nbsp;     * @param cData The data that must be decrypted.
+<i>44</i>&nbsp;     * @param cKey  The key used for decrypting the data.
+<i>45</i>&nbsp;     * @return decrypted data.
+<i>46</i>&nbsp;     * @throws CryptoFailureException Exception during decrypting the data.
+<i>47</i>&nbsp;     */
+<i>48</i>&nbsp;    public static byte[] decrypt(byte[] cData, byte[] cKey) throws CryptoFailureException {
+<b class="fc"><i>49</i>&nbsp;        byte[] cReturn = new byte[0];</b>
+<b class="pc"><i>50</i>&nbsp;        if (cData.length &lt; 17) {</b>
+<b class="nc"><i>51</i>&nbsp;            return cReturn;</b>
+<i>52</i>&nbsp;        }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;        try {
+<b class="fc"><i>55</i>&nbsp;            byte[] cIV = new byte[IV_SIZEB];</b>
+<b class="fc"><i>56</i>&nbsp;            byte[] cInput = new byte[cData.length - 16];</b>
+<b class="fc"><i>57</i>&nbsp;            for (int i = 0; i &lt; cData.length; ++i) {</b>
+<b class="fc"><i>58</i>&nbsp;                if (i &lt; cIV.length) {</b>
+<b class="fc"><i>59</i>&nbsp;                    cIV[i] = cData[i];</b>
+<i>60</i>&nbsp;                } else {
+<b class="fc"><i>61</i>&nbsp;                    cInput[i - cIV.length] = cData[i];</b>
+<i>62</i>&nbsp;                }
+<i>63</i>&nbsp;            }
+<b class="fc"><i>64</i>&nbsp;            Cipher objCipher = Cipher.getInstance(CIPHER_INSTANCE);</b>
+<b class="fc"><i>65</i>&nbsp;            SecretKeySpec objKeySpec = new SecretKeySpec(cKey, &quot;AES&quot;);</b>
+<b class="fc"><i>66</i>&nbsp;            IvParameterSpec objIvSpec = new IvParameterSpec(cIV);</b>
+<b class="fc"><i>67</i>&nbsp;            objCipher.init(Cipher.DECRYPT_MODE, objKeySpec, objIvSpec);</b>
+<b class="fc"><i>68</i>&nbsp;            byte[] cOutput = objCipher.doFinal(cInput);</b>
+<b class="fc"><i>69</i>&nbsp;            int iLength = cOutput.length - cOutput[cOutput.length - 1];</b>
+<b class="fc"><i>70</i>&nbsp;            cReturn = Arrays.copyOf(cOutput, iLength);</b>
+<b class="nc"><i>71</i>&nbsp;        } catch (BadPaddingException</b>
+<i>72</i>&nbsp;                | NoSuchPaddingException
+<i>73</i>&nbsp;                | NoSuchAlgorithmException
+<i>74</i>&nbsp;                | InvalidAlgorithmParameterException
+<i>75</i>&nbsp;                | InvalidKeyException
+<i>76</i>&nbsp;                | IllegalBlockSizeException ex) {
+<b class="nc"><i>77</i>&nbsp;            CryptoFailureException cfExc = new CryptoFailureException(&quot;Failed to decrypt Object.&quot;, ex);</b>
+<b class="nc"><i>78</i>&nbsp;            LOGGER.error(&quot;Crypto Util was unable to decrypt data.&quot;, cfExc);</b>
+<b class="nc"><i>79</i>&nbsp;            throw cfExc;</b>
+<b class="fc"><i>80</i>&nbsp;        }</b>
+<i>81</i>&nbsp;
+<b class="fc"><i>82</i>&nbsp;        return cReturn;</b>
+<i>83</i>&nbsp;    }
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    /**
+<i>86</i>&nbsp;     * Decrypts a value.
+<i>87</i>&nbsp;     * @param stringData The {@link String} that needs to be decrypted.
+<i>88</i>&nbsp;     * @param configuration The current configuration.
+<i>89</i>&nbsp;     * @return A decrypted String.
+<i>90</i>&nbsp;     * @throws CryptoFailureException Error during decryption.
+<i>91</i>&nbsp;     */
+<i>92</i>&nbsp;    public static String decryptValue(String stringData, Configuration configuration) throws RequestResponseException {
+<b class="fc"><i>93</i>&nbsp;        LOGGER.info(&quot;Decrypting encrypted values.&quot;);</b>
+<b class="fc"><i>94</i>&nbsp;        byte[] data = stringData.getBytes();</b>
+<b class="fc"><i>95</i>&nbsp;        byte[] decryptionKey = retrieveKey(configuration.getDecryptionKey());</b>
+<b class="fc"><i>96</i>&nbsp;        byte[] dataPartiallyDecrypted = Base64.getDecoder().decode(data);</b>
+<b class="fc"><i>97</i>&nbsp;        byte[] dataDecrypted = decrypt(dataPartiallyDecrypted,decryptionKey);</b>
+<b class="fc"><i>98</i>&nbsp;        LOGGER.info(&quot;Decryption complete.&quot;);</b>
+<b class="fc"><i>99</i>&nbsp;        return new String(dataDecrypted);</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    private static byte[] retrieveKey(byte[] cData) throws RequestResponseException {
+<b class="fc"><i>103</i>&nbsp;        byte[] cBase64Key = Arrays.copyOfRange(cData, 0, 16);</b>
+<b class="fc"><i>104</i>&nbsp;        byte[] cBase64Data = Arrays.copyOfRange(cData, 16, cData.length);</b>
+<b class="fc"><i>105</i>&nbsp;        byte[] cDataEnc = Base64.getDecoder().decode(cBase64Data);</b>
+<b class="fc"><i>106</i>&nbsp;        byte[] cPlainData = decrypt(cDataEnc, cBase64Key);</b>
+<b class="fc"><i>107</i>&nbsp;        return Base64.getDecoder().decode(cPlainData);</b>
+<i>108</i>&nbsp;    }
+<i>109</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2016-11-21 16:40</div>
+</div>
+</body>
+</html>
