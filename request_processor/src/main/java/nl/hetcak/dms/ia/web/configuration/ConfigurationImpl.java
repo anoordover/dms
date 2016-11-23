@@ -268,6 +268,7 @@ public class ConfigurationImpl implements Configuration {
     }
     
     @XmlElement(name=CONF_APPLICATION_NAME)
+    @Override
     public String getApplicationName() {
         return msApplicationName;
     }
@@ -277,6 +278,7 @@ public class ConfigurationImpl implements Configuration {
     }
     
     @XmlElement(name=CONF_SEARCHCOMPOSITION_NAME)
+    @Override
     public String getSearchCompositionName() {
         return msSearchCompositionName;
     }
@@ -286,6 +288,7 @@ public class ConfigurationImpl implements Configuration {
     }
     
     @XmlElement(name=CONF_SEARCH_NAME)
+    @Override
     public String getSearchName() {
         return msSearchName;
     }

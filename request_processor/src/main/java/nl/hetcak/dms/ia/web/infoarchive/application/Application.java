@@ -12,9 +12,6 @@ public class Application {
     private String name;
     private int version;
     
-    public Application() {
-    }
-    
     public String getId() {
         return id;
     }

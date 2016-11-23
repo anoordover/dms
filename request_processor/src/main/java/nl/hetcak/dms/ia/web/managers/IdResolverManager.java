@@ -92,9 +92,9 @@ public class IdResolverManager {
         if(applications.size() == 1) {
             return applications.get(0);
         } else {
-            for(Application application : applications) {
-                if(application.getName().contentEquals(applicationName)) {
-                    return application;
+            for(Application applicationItem : applications) {
+                if(applicationItem.getName().contentEquals(applicationName)) {
+                    return applicationItem;
                 }
             }
         }
@@ -110,9 +110,9 @@ public class IdResolverManager {
         if(searches.size() == 1) {
             return searches.get(0);
         } else {
-            for(Search search : searches) {
-                if(application.getName().contentEquals(searchName)) {
-                    return search;
+            for(Search searchItem : searches) {
+                if(searchItem.getName().contentEquals(searchName)) {
+                    return searchItem;
                 }
             }
         }
@@ -129,9 +129,9 @@ public class IdResolverManager {
         if(searchCompositions.size() == 1) {
             return searchCompositions.get(0);
         } else {
-            for(SearchComposition searchComposition : searchCompositions) {
-                if(searchComposition.getName().contentEquals(searchCompositionName)) {
-                    return searchComposition;
+            for(SearchComposition searchCompositionItem : searchCompositions) {
+                if(searchCompositionItem.getName().contentEquals(searchCompositionName)) {
+                    return searchCompositionItem;
                 }
             }
         }

@@ -59,7 +59,6 @@ public class RecordRequest {
     private static final String PARSE_DOCUMENT_TYPE = "ArchiefDocumenttype";
     private static final String PARSE_DOCUMENT_STATUS = "ArchiefDocumentstatus";
     private static final String PARSE_DOCUMENT_YEAR = "ArchiefRegelingsjaar";
-    private static final String PARSE_DOCUMENT_HANDLING_NUMBER = "ArchiefHandelingsnummer";
     private static final String PARSE_DOCUMENT_ATTACHMENT = "Attachment";
 
     private static final String LOGGING_PARSING_RESULT = "Parsing results";
@@ -242,7 +241,7 @@ public class RecordRequest {
                 try {
                     value = (column.get(PARSE_RESPONSE_VALUE).getAsString());
                 } catch (NullPointerException nullExc) {
-                    LOGGER.error("Got null value on column "+columnName);
+                    LOGGER.error("Got null value on column "+columnName, nullExc);
                     value = "     ";
                 }
                 
@@ -259,6 +258,8 @@ public class RecordRequest {
     //(so it has come to this...)
     private InfoArchiveDocument parseFirstTenFields(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column, String value) throws ParseException {
         switch (columnName) {
+            default:
+                break;
             case PARSE_DOCUMENT_ID:
                 infoArchiveDocument.setArchiefDocumentId(value);
                 break;
@@ -286,14 +287,14 @@ public class RecordRequest {
             case PARSE_DOCUMENT_STATUS:
                 infoArchiveDocument.setArchiefDocumentstatus(value);
                 break;
-            default:
-                break;
         }
         return infoArchiveDocument;
     }
 
     private InfoArchiveDocument parseSecondTenField(InfoArchiveDocument infoArchiveDocument, String columnName, JsonObject column, String value) {
         switch (columnName) {
+            default:
+                break;
             case PARSE_DOCUMENT_YEAR:
                 infoArchiveDocument.setArchiefRegelingsjaar(value);
                 break;
@@ -302,8 +303,6 @@ public class RecordRequest {
                 break;
             //case PARSE_DOCUMENT_HANDLING_NUMBER:
             //    infoArchiveDocument.setArchiefHandelingsnummer(column.get(PARSE_RESPONSE_VALUE).getAsString());
-            //    break;
-            //default:
             //    break;
         }
         return infoArchiveDocument;

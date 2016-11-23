@@ -174,7 +174,7 @@ public class ListDocumentRequestConsumer {
     }
 
     public boolean hasContent() {
-        if(checkArchiefDocumentContent() || checkArchiefRegelingContent() || checkVerzenddatumPeriodeContent())
+        if(checkArchiefDocumentContentPartOne() || checkArchiefDocumentContentPartTwo() || checkArchiefRegelingContent() || checkVerzenddatumPeriodeContent())
             return true;
 
 
@@ -199,19 +199,22 @@ public class ListDocumentRequestConsumer {
         return false;
     }
 
-    private boolean checkArchiefDocumentContent() {
+    private boolean checkArchiefDocumentContentPartOne() {
         if(StringUtils.isNotBlank(msArchiefDocumentId))
             return true;
-
+        
         if(StringUtils.isNotBlank(msArchiefDocumentsoort))
             return true;
-
+        
         if(StringUtils.isNotBlank(msArchiefDocumentkenmerk))
             return true;
-
+        
         if(StringUtils.isNotBlank(msArchiefDocumentstatus))
             return true;
 
+        return false;
+    }
+    private boolean checkArchiefDocumentContentPartTwo() {
         if(StringUtils.isNotBlank(msArchiefDocumenttitel))
             return true;
 
@@ -223,6 +226,7 @@ public class ListDocumentRequestConsumer {
 
         return false;
     }
+    
 
     public InfoArchiveQueryBuilder adaptToQuery() {
         InfoArchiveQueryBuilder queryBuilder = new InfoArchiveQueryBuilder();

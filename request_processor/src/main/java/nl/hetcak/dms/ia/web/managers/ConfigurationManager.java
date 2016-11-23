@@ -45,6 +45,9 @@ public class ConfigurationManager {
     }
 
     private boolean checkConfigurationExist(File configFile) {
+        if(configFile == null) {
+            return false;
+        }
         if (configFile.exists()) {
             LOGGER.debug("Found configuration file, using path: " + configFile.getAbsolutePath());
             return true;
@@ -56,15 +59,14 @@ public class ConfigurationManager {
     }
 
     private byte[] getKey() throws RequestResponseException {
-        File file = null;
+        File file;
         if(System.getProperties().containsKey(CATALINA_BASE_PROP)) {
             File configDir = new File(System.getProperty(CATALINA_BASE_PROP), "conf");
             file = new File(configDir, DEFAULT_CONFIG_KEY_NAME);
         } else {
             file = new File(DEFAULT_CONFIG_KEY_FILE_NAME);
         }
-        if(file != null) {
-            if (checkConfigurationExist(file)) {
+        if(file != null && checkConfigurationExist(file)) {
                 LOGGER.info("Loading key file.");
                 try {
                     FileInputStream inputStream = new FileInputStream(file);
@@ -78,7 +80,6 @@ public class ConfigurationManager {
                     LOGGER.error("Error reading key file.");
                     throw new MissingConfigurationException("Unable to read Key file.", ioExc);
                 }
-            }
         }
         LOGGER.error("No key file found.");
         throw new MissingConfigurationException("Unable to find Key file.");
@@ -108,10 +109,8 @@ public class ConfigurationManager {
             file = new File(DEFAULT_CONFIG_FILE_NAME);
         }
         
-        if(file!= null) {
-            if (checkConfigurationExist(file)) {
+        if(file!= null && checkConfigurationExist(file)) {
                 return file;
-            }
         }
         LOGGER.error("No config file found.");
         return null;

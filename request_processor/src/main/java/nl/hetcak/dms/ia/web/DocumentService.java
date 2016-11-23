@@ -35,7 +35,6 @@ public class DocumentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
     
     private static final String ERROR_RESPONSE_GENERIC = "Something went wrong, please notify an administrator.";
-    private static final String ERROR_RESPONSE_MESSAGE_TEMPLATE = "<error><code>%d</code><description>%s</description></error>";
     private static final String LOGGER_IO_OR_PARSE_EXC = "IO or Parsing error.";
     private static final String LOGGER_VALID_INCOMING_REQUEST = "Incoming request content is valid.";
     private static final String LOGGER_INVALID_INCOMING_REQUEST = "Incoming request content is invalid!";
@@ -129,7 +128,7 @@ public class DocumentService {
                 response.setResultCode(0);
                 response.setResultDescription("OK");
                 Calendar calendarStop = Calendar.getInstance();
-                LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendarStop.getTimeInMillis() - calendarStart.getTimeInMillis()) + " ms)");
+                LOGGER.info("Creating List document response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendarStop.getTimeInMillis() - calendarStart.getTimeInMillis()) + " ms)");
                 return Response.ok(response.getAsXML()).build();
             } else {
                 LOGGER.info(LOGGER_INVALID_INCOMING_REQUEST);
@@ -186,7 +185,7 @@ public class DocumentService {
                 documentResponse.setArchiefDocumentId(document.getArchiefDocumentId());
                 documentResponse.setPayloadPdf(encodedDocument);
                 Calendar calendarStop = Calendar.getInstance();
-                LOGGER.info("Creating response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendarStop.getTimeInMillis() - calendarStart.getTimeInMillis()) + " ms)");
+                LOGGER.info("Creating Document response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendarStop.getTimeInMillis() - calendarStart.getTimeInMillis()) + " ms)");
                 LOGGER.info("Sending response.");
                 return Response.ok(documentResponse.getAsXML()).build();
             } else {
