@@ -178,12 +178,11 @@ public class DocumentService {
                 ByteArrayOutputStream byteArray = documentTransfer(documentRequest, document);
                 LOGGER.info("Encoding PDF and storing document into the response object.");
                 LOGGER.info("Encoding "+byteArray.size()+" bytes.");
-                byte[] encodedDocument = Base64.getEncoder().encode(byteArray.toByteArray());
                 RaadplegenDocumentResponse documentResponse = new RaadplegenDocumentResponse();
                 documentResponse.setResultCode(0);
                 documentResponse.setResultDescription("OK");
                 documentResponse.setArchiefDocumentId(document.getArchiefDocumentId());
-                documentResponse.setPayloadPdf(encodedDocument);
+                documentResponse.setPayloadPdf(byteArray.toByteArray());
                 Calendar calendarStop = Calendar.getInstance();
                 LOGGER.info("Creating Document response for request. (" + TimeUnit.MILLISECONDS.toMillis(calendarStop.getTimeInMillis() - calendarStart.getTimeInMillis()) + " ms)");
                 LOGGER.info("Sending response.");
