@@ -61,7 +61,7 @@ public class DocumentService {
             LOGGER.error(reqresExc.getUserErrorMessage(), reqresExc);
             throw reqresExc;
         } catch (Exception exc) {
-            LOGGER.error("Io or parsing error", exc);
+            LOGGER.error("IO or parsing error", exc);
             throw new RequestResponseException(9999, LOGGER_IO_OR_PARSE_EXC);
         }
     }

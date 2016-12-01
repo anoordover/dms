@@ -16,13 +16,13 @@ import org.junit.Test;
  * @author Jeroen.Pelt@AMPLEXOR.com
  */
 public class ConsumerTest {
-    private static final String XML_EXAMPLE_1 = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummer>20001</urn:ArchiefPersoonsnummer></urn:RaadplegenDocumentLijstRequest>";
+    private static final String XML_EXAMPLE_1 = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummers><urn:ArchiefPersoonsnummer>20001</urn:ArchiefPersoonsnummer></urn:ArchiefPersoonsnummers></urn:RaadplegenDocumentLijstRequest>";
     private static final String RESULT_1 = "20001";
-    private static final String XML_EXAMPLE_2 = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummer>802341</urn:ArchiefPersoonsnummer></urn:RaadplegenDocumentLijstRequest>";
+    private static final String XML_EXAMPLE_2 = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefPersoonsnummers><urn:ArchiefPersoonsnummer>802341</urn:ArchiefPersoonsnummer></urn:ArchiefPersoonsnummers></urn:RaadplegenDocumentLijstRequest>";
     private static final String RESULT_2 = "802341";
     private static final String XML_EXAMPLE_3 = "<urn:RaadplegenDocumentRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumentId>7654324456</urn:ArchiefDocumentId></urn:RaadplegenDocumentRequest>";
     private static final String RESULT_3_1 = "7654324456";
-    private static final String XML_EXAMPLE_4 = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumenttitel>Z01</urn:ArchiefDocumenttitel><urn:ArchiefDocumentkenmerk>97348</urn:ArchiefDocumentkenmerk><urn:ArchiefPersoonsnummer>802341</urn:ArchiefPersoonsnummer><urn:VerzenddatumPeriodeVan>2016-08-01T00:00:00</urn:VerzenddatumPeriodeVan><urn:VerzenddatumPeriodeTm>2016-08-15T00:00:00</urn:VerzenddatumPeriodeTm></urn:RaadplegenDocumentLijstRequest>";
+    private static final String XML_EXAMPLE_4 = "<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumenttitels><urn:ArchiefDocumenttitel>Z01</urn:ArchiefDocumenttitel></urn:ArchiefDocumenttitels><urn:ArchiefDocumentkenmerk>97348</urn:ArchiefDocumentkenmerk><urn:ArchiefPersoonsnummers><urn:ArchiefPersoonsnummer>802341</urn:ArchiefPersoonsnummer></urn:ArchiefPersoonsnummers><urn:VerzenddatumPeriodeVan>2016-08-01T00:00:00</urn:VerzenddatumPeriodeVan><urn:VerzenddatumPeriodeTm>2016-08-15T00:00:00</urn:VerzenddatumPeriodeTm></urn:RaadplegenDocumentLijstRequest>";
     private static final String RESULT_4_1_1 = "Z01";
     private static final String RESULT_4_1_2 = "802341";
     private static final String RESULT_4_1_3 = "97348";
@@ -36,11 +36,11 @@ public class ConsumerTest {
     @Test
     public void listDocumentConsumerTest() throws RequestResponseException {
         ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_1);
-        Assert.assertTrue(request.getArchiefPersoonsnummer().contentEquals(RESULT_1));
+        Assert.assertTrue(request.getArchiefPersoonsnummers().getArchiefPersoonsnummers().get(0).contentEquals(RESULT_1));
         Assert.assertTrue(request.hasContent());
         
         ListDocumentRequestConsumer request2 = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_2);
-        Assert.assertTrue(request2.getArchiefPersoonsnummer().contentEquals(RESULT_2));
+        Assert.assertTrue(request2.getArchiefPersoonsnummers().getArchiefPersoonsnummers().get(0).contentEquals(RESULT_2));
         Assert.assertTrue(request2.hasContent());
     }
     
@@ -54,8 +54,8 @@ public class ConsumerTest {
     @Test
     public void listDocumentRequestConsumerTest2() throws RequestResponseException {
         ListDocumentRequestConsumer searchRequest = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_4);
-        Assert.assertTrue(searchRequest.getArchiefDocumenttitel().contentEquals(RESULT_4_1_1));
-        Assert.assertTrue(searchRequest.getArchiefPersoonsnummer().contentEquals(RESULT_4_1_2));
+        Assert.assertTrue(searchRequest.getArchiefDocumenttitels().getArchiefDocumenttitels().get(0).contentEquals(RESULT_4_1_1));
+        Assert.assertTrue(searchRequest.getArchiefPersoonsnummers().getArchiefPersoonsnummers().get(0).contentEquals(RESULT_4_1_2));
         Assert.assertTrue(searchRequest.getArchiefDocumentkenmerk().contentEquals(RESULT_4_1_3));
         Assert.assertTrue(searchRequest.getVerzenddatumPeriodeVan().contentEquals(RESULT_4_2));
         Assert.assertTrue(searchRequest.getVerzenddatumPeriodeTm().contentEquals(RESULT_4_3));
@@ -72,7 +72,7 @@ public class ConsumerTest {
     
     @Test
     public void parseListDocumentConsumerTest() throws RequestResponseException {
-        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest("<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumenttitel>B02</urn:ArchiefDocumenttitel></urn:RaadplegenDocumentLijstRequest>");
+        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest("<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumenttitels><urn:ArchiefDocumenttitel>B02</urn:ArchiefDocumenttitel></urn:ArchiefDocumenttitels></urn:RaadplegenDocumentLijstRequest>");
         Assert.assertTrue(request.hasContent());
     }
     
@@ -86,5 +86,13 @@ public class ConsumerTest {
     public void listDocumentRequestConsumerTest() throws RequestResponseException {
         ListDocumentRequestConsumer docRequest1 = ListDocumentRequestConsumer.unmarshalRequest(XML_EXAMPLE_2);
         Assert.assertTrue(docRequest1.hasContent());
+    }
+
+    @Test
+    public void listDocumentRequestConsumerTestMultipleTitles() throws RequestResponseException{
+        ListDocumentRequestConsumer request = ListDocumentRequestConsumer.unmarshalRequest("<urn:RaadplegenDocumentLijstRequest xmlns:urn=\"urn:hetcak:dms:raadplegenuitingarchief:2016:11\"><urn:ArchiefDocumenttitels><urn:ArchiefDocumenttitel>B02</urn:ArchiefDocumenttitel><urn:ArchiefDocumenttitel>Z01</urn:ArchiefDocumenttitel></urn:ArchiefDocumenttitels></urn:RaadplegenDocumentLijstRequest>");
+        Assert.assertEquals(request.getArchiefDocumenttitels().getArchiefDocumenttitels().size(), 2);
+        Assert.assertTrue(request.getArchiefDocumenttitels().getArchiefDocumenttitels().get(0).contentEquals("B02"));
+        Assert.assertTrue(request.getArchiefDocumenttitels().getArchiefDocumenttitels().get(1).contentEquals("Z01"));
     }
 }

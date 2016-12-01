@@ -20,7 +20,14 @@
 
     <xs:complexType name="RaadplegenDocumentLijstRequestType">
         <xs:all>
-            <xs:element name="ArchiefDocumenttitel" type="urn:Logistiek_ReceptuurkenmerkType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ArchiefDocumenttitels" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="ArchiefDocumenttitel" type="urn:Logistiek_ReceptuurkenmerkType" minOccurs="1"
+                                    maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="ArchiefDocumentId" type="urn:DocumentType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="ArchiefDocumentkenmerk" type="urn:Logistiek_String256Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="ArchiefDocumentsoort" type="urn:Logistiek_String50Type" minOccurs="0" maxOccurs="1"/>
@@ -28,6 +35,13 @@
             <xs:element name="ArchiefRegeling" type="urn:Logistiek_RegelingType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="ArchiefRegelingsjaar" type="urn:JaarType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="ArchiefPersoonsnummer" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ArchiefPersoonsnummers" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="ArchiefPersoonsnummer" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="ArchiefDocumentstatus" type="urn:Logistiek_String30Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="VerzenddatumPeriodeVan" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="VerzenddatumPeriodeTm" type="xs:string" minOccurs="0" maxOccurs="1"/>

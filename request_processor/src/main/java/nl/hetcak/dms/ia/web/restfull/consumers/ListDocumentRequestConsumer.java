@@ -20,6 +20,7 @@ import java.io.StringReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * (c) 2016 AMPLEXOR International S.A., All rights reserved.
@@ -29,7 +30,7 @@ import java.util.List;
 @XmlRootElement(name = "RaadplegenDocumentLijstRequest", namespace = "urn:hetcak:dms:raadplegenuitingarchief:2016:11")
 public class ListDocumentRequestConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ListDocumentRequestConsumer.class);
-    private final static String ARCHIEF_DOCUMENT_TITLE = "ArchiefDocumenttitel";
+    private final static String ARCHIEF_DOCUMENT_TITLE = "ArchiefDocumenttitels";
     private final static String ARCHIEF_DOCUMENT_ID = "ArchiefDocumentId";
     private final static String ARCHIEF_DOCUMENT_KENMERK = "ArchiefDocumentkenmerk";
     private final static String ARCHIEF_DOCUMENT_SOORT = "ArchiefDocumentsoort";
@@ -39,31 +40,31 @@ public class ListDocumentRequestConsumer {
     private final static String ARCHIEF_REGELING = "ArchiefRegeling";
     private final static String ARCHIEF_REGELING_JAAR = "ArchiefRegelingsjaar";
 
-    private final static String ARCHIEF_PERSOONS_NUMMER= "ArchiefPersoonsnummer";
+    private final static String ARCHIEF_PERSOONS_NUMMER = "ArchiefPersoonsnummers";
 
     private final static String ARCHIEF_VERZENDDAG = "ArchiefVerzenddag";
     private final static String ARCHIEF_VERZENDDATUM_VAN = "VerzenddatumPeriodeVan";
     private final static String ARCHIEF_VERZENDDATUM_TM = "VerzenddatumPeriodeTm";
 
-    private String msArchiefDocumenttitel;
+    private ArchiefDocumenttitels mcArchiefDocumenttitels;
     private String msArchiefDocumentId;
     private String msArchiefDocumentkenmerk;
     private String msArchiefDocumentsoort;
     private String msArchiefDocumenttype;
     private String msArchiefRegeling;
     private String msArchiefRegelingsjaar;
-    private String msArchiefPersoonsnummer;
+    private ArchiefPersoonsnummers mcArchiefPersoonsnummers;
     private String msArchiefDocumentstatus;
     private String msVerzenddatumPeriodeVan;
     private String msVerzenddatumPeriodeTm;
 
     @XmlElement(name = ARCHIEF_DOCUMENT_TITLE)
-    public String getArchiefDocumenttitel() {
-        return msArchiefDocumenttitel;
+    public ArchiefDocumenttitels getArchiefDocumenttitels() {
+        return mcArchiefDocumenttitels;
     }
 
-    public void setArchiefDocumenttitel(String archiefDocumenttitel) {
-        this.msArchiefDocumenttitel = archiefDocumenttitel;
+    public void setArchiefDocumenttitels(ArchiefDocumenttitels cArchiefDocumenttitels) {
+        this.mcArchiefDocumenttitels = cArchiefDocumenttitels;
     }
 
     @XmlElement(name = ARCHIEF_DOCUMENT_ID)
@@ -121,12 +122,12 @@ public class ListDocumentRequestConsumer {
     }
 
     @XmlElement(name = ARCHIEF_PERSOONS_NUMMER)
-    public String getArchiefPersoonsnummer() {
-        return msArchiefPersoonsnummer;
+    public ArchiefPersoonsnummers getArchiefPersoonsnummers() {
+        return mcArchiefPersoonsnummers;
     }
 
-    public void setArchiefPersoonsnummer(String archiefPersoonsnummer) {
-        this.msArchiefPersoonsnummer = archiefPersoonsnummer;
+    public void setArchiefPersoonsnummers(ArchiefPersoonsnummers cArchiefPersoonsnummers) {
+        this.mcArchiefPersoonsnummers = cArchiefPersoonsnummers;
     }
 
     @XmlElement(name = ARCHIEF_DOCUMENT_STATUS)
@@ -142,6 +143,7 @@ public class ListDocumentRequestConsumer {
     public String getVerzenddatumPeriodeVan() {
         return msVerzenddatumPeriodeVan;
     }
+
     @XmlTransient
     public String getVerzenddatumPeriodeVanAsInfoArchiveString() {
         try {
@@ -160,6 +162,7 @@ public class ListDocumentRequestConsumer {
     public String getVerzenddatumPeriodeTm() {
         return msVerzenddatumPeriodeTm;
     }
+
     public String getVerzenddatumPeriodeTmAsInfoArchiveString() {
         try {
             return InfoArchiveDateUtil.convertToInfoArchiveDate(msVerzenddatumPeriodeTm);
@@ -174,16 +177,15 @@ public class ListDocumentRequestConsumer {
     }
 
     public boolean hasContent() {
-        if(checkArchiefDocumentContentPartOne() || checkArchiefDocumentContentPartTwo() || checkArchiefRegelingContent() || checkVerzenddatumPeriodeContent())
+        if (checkArchiefDocumentContentPartOne() || checkArchiefDocumentContentPartTwo() || checkArchiefRegelingContent() || checkVerzenddatumPeriodeContent()) {
             return true;
-
-
+        }
 
         return false;
     }
 
     private boolean checkVerzenddatumPeriodeContent() {
-        if(StringUtils.isNotBlank(msVerzenddatumPeriodeVan) && StringUtils.isNotBlank(msVerzenddatumPeriodeTm))
+        if (StringUtils.isNotBlank(msVerzenddatumPeriodeVan) && StringUtils.isNotBlank(msVerzenddatumPeriodeTm))
             return true;
 
         return false;
@@ -191,42 +193,43 @@ public class ListDocumentRequestConsumer {
 
 
     private boolean checkArchiefRegelingContent() {
-        if(StringUtils.isNotBlank(msArchiefRegeling))
+        if (StringUtils.isNotBlank(msArchiefRegeling))
             return true;
-        if(StringUtils.isNotBlank(msArchiefRegelingsjaar))
+        if (StringUtils.isNotBlank(msArchiefRegelingsjaar))
             return true;
 
         return false;
     }
 
     private boolean checkArchiefDocumentContentPartOne() {
-        if(StringUtils.isNotBlank(msArchiefDocumentId))
+        if (StringUtils.isNotBlank(msArchiefDocumentId))
             return true;
-        
-        if(StringUtils.isNotBlank(msArchiefDocumentsoort))
+
+        if (StringUtils.isNotBlank(msArchiefDocumentsoort))
             return true;
-        
-        if(StringUtils.isNotBlank(msArchiefDocumentkenmerk))
+
+        if (StringUtils.isNotBlank(msArchiefDocumentkenmerk))
             return true;
-        
-        if(StringUtils.isNotBlank(msArchiefDocumentstatus))
+
+        if (StringUtils.isNotBlank(msArchiefDocumentstatus))
             return true;
 
         return false;
     }
+
     private boolean checkArchiefDocumentContentPartTwo() {
-        if(StringUtils.isNotBlank(msArchiefDocumenttitel))
+        if (Objects.nonNull(mcArchiefDocumenttitels))
             return true;
 
-        if(StringUtils.isNotBlank(msArchiefDocumenttype))
+        if (StringUtils.isNotBlank(msArchiefDocumenttype))
             return true;
 
-        if(StringUtils.isNotBlank(msArchiefPersoonsnummer))
+        if (Objects.nonNull(mcArchiefPersoonsnummers))
             return true;
 
         return false;
     }
-    
+
 
     public InfoArchiveQueryBuilder adaptToQuery() {
         InfoArchiveQueryBuilder queryBuilder = new InfoArchiveQueryBuilder();
@@ -236,62 +239,58 @@ public class ListDocumentRequestConsumer {
     }
 
     private InfoArchiveQueryBuilder convertOtherContent(InfoArchiveQueryBuilder queryBuilder) {
-        if(StringUtils.isNotBlank(msArchiefPersoonsnummer)) {
-            List<String> values = new ArrayList<>();
-            values.add(msArchiefPersoonsnummer);
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_PERSOONS_NUMMER, values);
+        if (Objects.nonNull(mcArchiefPersoonsnummers)) {
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_PERSOONS_NUMMER, mcArchiefPersoonsnummers.getArchiefPersoonsnummers());
         }
 
-        if(StringUtils.isNotBlank(msArchiefRegeling)) {
+        if (StringUtils.isNotBlank(msArchiefRegeling)) {
             List<String> values = new ArrayList<>();
             values.add(msArchiefRegeling);
             queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_REGELING, values);
         }
 
-        if(StringUtils.isNotBlank(msArchiefRegelingsjaar)) {
+        if (StringUtils.isNotBlank(msArchiefRegelingsjaar)) {
             List<String> values = new ArrayList<>();
             values.add(msArchiefRegelingsjaar);
             queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_REGELING_JAAR, values);
         }
-        
-        if(StringUtils.isNotBlank(msVerzenddatumPeriodeVan) && StringUtils.isNotBlank(msVerzenddatumPeriodeTm))
+
+        if (StringUtils.isNotBlank(msVerzenddatumPeriodeVan) && StringUtils.isNotBlank(msVerzenddatumPeriodeTm))
             queryBuilder = queryBuilder.addBetweenCriteria(ARCHIEF_VERZENDDAG, msVerzenddatumPeriodeVan, msVerzenddatumPeriodeTm);
 
         return queryBuilder;
     }
 
     private InfoArchiveQueryBuilder convertArchiefDocumentContent(InfoArchiveQueryBuilder queryBuilder) {
-        if(StringUtils.isNotBlank(msArchiefDocumentId)) {
+        if (StringUtils.isNotBlank(msArchiefDocumentId)) {
             List<String> values = new ArrayList<>();
             values.add(msArchiefDocumentId);
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_ID,values );
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_ID, values);
         }
-        
-        if(StringUtils.isNotBlank(msArchiefDocumentsoort)) {
+
+        if (StringUtils.isNotBlank(msArchiefDocumentsoort)) {
             List<String> values = new ArrayList<>();
             values.add(msArchiefDocumentsoort);
             queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_SOORT, values);
         }
-        
-        if(StringUtils.isNotBlank(msArchiefDocumentkenmerk)) {
+
+        if (StringUtils.isNotBlank(msArchiefDocumentkenmerk)) {
             List<String> values = new ArrayList<>();
             values.add(msArchiefDocumentkenmerk);
             queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_KENMERK, values);
         }
-        
-        if(StringUtils.isNotBlank(msArchiefDocumentstatus)) {
+
+        if (StringUtils.isNotBlank(msArchiefDocumentstatus)) {
             List<String> values = new ArrayList<>();
             values.add(msArchiefDocumentstatus);
             queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_STATUS, values);
         }
-        
-        if(StringUtils.isNotBlank(msArchiefDocumenttitel)) {
-            List<String> values = new ArrayList<>();
-            values.add(msArchiefDocumenttitel);
-            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_TITLE, values);
+
+        if (Objects.nonNull(mcArchiefDocumenttitels)) {
+            queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_TITLE, mcArchiefDocumenttitels.getArchiefDocumenttitels());
         }
-        
-        if(StringUtils.isNotBlank(msArchiefDocumenttype)) {
+
+        if (StringUtils.isNotBlank(msArchiefDocumenttype)) {
             List<String> values = new ArrayList<>();
             values.add(msArchiefDocumenttype);
             queryBuilder = queryBuilder.addEqualCriteria(ARCHIEF_DOCUMENT_TYPE, values);
