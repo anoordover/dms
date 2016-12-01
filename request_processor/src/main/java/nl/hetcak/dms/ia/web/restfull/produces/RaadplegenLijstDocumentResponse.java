@@ -59,7 +59,7 @@ public class RaadplegenLijstDocumentResponse {
             JAXBContext context = JAXBContext.newInstance(RaadplegenLijstDocumentResponse.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, false);
             marshaller.setSchema(SchemaUtil.getSchema());
             marshaller.marshal(this, sw);
         } catch (JAXBException jaxExc) {

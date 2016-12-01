@@ -68,7 +68,8 @@ public class RaadplegenDocumentResponse {
             JAXBContext context = JAXBContext.newInstance(RaadplegenDocumentResponse.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            marshaller.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.TRUE);
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, false);
             marshaller.setSchema(SchemaUtil.getSchema());
             marshaller.marshal(this, sw);
         } catch (JAXBException jaxExc) {
