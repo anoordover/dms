@@ -30,7 +30,8 @@ import java.util.Objects;
 @XmlRootElement(name = "RaadplegenDocumentLijstRequest", namespace = "urn:hetcak:dms:raadplegenuitingarchief:2016:11")
 public class ListDocumentRequestConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ListDocumentRequestConsumer.class);
-    private final static String ARCHIEF_DOCUMENT_TITLE = "ArchiefDocumenttitels";
+    private final static String ARCHIEF_DOCUMENT_TITLE = "ArchiefDocumenttitel";
+    private final static String ARCHIEF_DOCUMENT_TITLES = "ArchiefDocumenttitels";
     private final static String ARCHIEF_DOCUMENT_ID = "ArchiefDocumentId";
     private final static String ARCHIEF_DOCUMENT_KENMERK = "ArchiefDocumentkenmerk";
     private final static String ARCHIEF_DOCUMENT_SOORT = "ArchiefDocumentsoort";
@@ -40,7 +41,8 @@ public class ListDocumentRequestConsumer {
     private final static String ARCHIEF_REGELING = "ArchiefRegeling";
     private final static String ARCHIEF_REGELING_JAAR = "ArchiefRegelingsjaar";
 
-    private final static String ARCHIEF_PERSOONS_NUMMER = "ArchiefPersoonsnummers";
+    private final static String ARCHIEF_PERSOONS_NUMMER = "ArchiefPersoonsnummer";
+    private final static String ARCHIEF_PERSOONS_NUMMERS = "ArchiefPersoonsnummers";
 
     private final static String ARCHIEF_VERZENDDAG = "ArchiefVerzenddag";
     private final static String ARCHIEF_VERZENDDATUM_VAN = "VerzenddatumPeriodeVan";
@@ -58,7 +60,7 @@ public class ListDocumentRequestConsumer {
     private String msVerzenddatumPeriodeVan;
     private String msVerzenddatumPeriodeTm;
 
-    @XmlElement(name = ARCHIEF_DOCUMENT_TITLE)
+    @XmlElement(name = ARCHIEF_DOCUMENT_TITLES)
     public ArchiefDocumenttitels getArchiefDocumenttitels() {
         return mcArchiefDocumenttitels;
     }
@@ -121,7 +123,7 @@ public class ListDocumentRequestConsumer {
         this.msArchiefRegelingsjaar = archiefRegelingsjaar;
     }
 
-    @XmlElement(name = ARCHIEF_PERSOONS_NUMMER)
+    @XmlElement(name = ARCHIEF_PERSOONS_NUMMERS)
     public ArchiefPersoonsnummers getArchiefPersoonsnummers() {
         return mcArchiefPersoonsnummers;
     }

@@ -14,7 +14,11 @@ import com.amplexor.ia.sip.SipManager;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.amplexor.ia.Logger.*;
@@ -124,28 +128,39 @@ class IAArchiverWorkerThread implements Runnable {
     }
 
     public List<IADocument> retrieve() {
-        List<IADocument> cDocuments = new ArrayList<>();
-        if (!mbIngestFlag) {
-            String sDocumentData = mobjDocumentSource.retrieveDocumentData();
-            if (!"".equals(sDocumentData)) {
-                cDocuments = mobjMessageParser.parse(sDocumentData);
-            }
+        List<IADocument> cReturn = new ArrayList<>();
+        List<IADocument> cDocuments;
+        if (mbIngestFlag) {
+            return cReturn;
         }
-        return cDocuments;
-    }
+        String sDocumentData = mobjDocumentSource.retrieveDocumentData();
+        if ("".equals(sDocumentData)) {
+            return cReturn;
+        }
 
-    public void addToCache(IADocument objDocument) {
-        try {
+        cDocuments = mobjMessageParser.parse(sDocumentData);
+        for (Iterator<IADocument> objIter = cDocuments.iterator(); objIter.hasNext(); ) {
+            IADocument objDocument = objIter.next();
             if (objDocument.getErrorCode() != 0) {
                 error(this, "Error found in document " + objDocument.getDocumentId());
+                mobjCacheManager.saveInvalidDocument(sDocumentData, objDocument.getDocumentId());
+
+                //Post back result to document source
                 IADocumentReference objReference = new IADocumentReference(objDocument, null);
                 List<IADocumentReference> cTempReference = new ArrayList<>();
                 cTempReference.add(objReference);
                 mobjDocumentSource.postResult(cTempReference);
-                return;
+
             } else {
-                mobjCacheManager.add(objDocument, mobjRetentionManager.retrieveRetentionClass(objDocument));
+                cReturn.add(objDocument);
             }
+        }
+        return cReturn;
+    }
+
+    public void addToCache(IADocument objDocument) {
+        try {
+            mobjCacheManager.add(objDocument, mobjRetentionManager.retrieveRetentionClass(objDocument));
         } catch (IllegalArgumentException ex) {
             IADocumentReference objReference = new IADocumentReference(objDocument.getDocumentId(), null);
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_SOURCE_UNKNOWN_RETENTION, objReference, ex);

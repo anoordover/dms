@@ -69,4 +69,6 @@ public interface CacheManager {
      * Saves the cache to the filesystem
      */
     boolean saveCache(IACache objCache) throws IOException;
+
+    boolean saveInvalidDocument(String sData, String sFilename);
 }

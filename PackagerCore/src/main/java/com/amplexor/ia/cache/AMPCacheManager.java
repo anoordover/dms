@@ -11,10 +11,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,6 +34,7 @@ public class AMPCacheManager implements CacheManager {
     protected Path mobjBasePath;
     protected Path mobjSavePath;
     protected Path mobjErrorPath;
+    protected Path mobjInvalidDocumentsPath;
 
     public AMPCacheManager(CacheConfiguration objConfiguration) {
         mobjConfiguration = objConfiguration;
@@ -64,6 +62,8 @@ public class AMPCacheManager implements CacheManager {
                     String.format("%s/save", mobjBasePath.toString()).replace('/', File.separatorChar));
             mobjErrorPath = Paths.get(
                     String.format("%s/error", mobjBasePath.toString()).replace('/', File.separatorChar));
+            mobjInvalidDocumentsPath = Paths.get(
+                    String.format("%s/invalid", mobjConfiguration.getCacheBasePath()).replace('/', File.separatorChar));
 
             if (!Files.exists(mobjBasePath)) {
                 Files.createDirectories(mobjBasePath);
@@ -71,6 +71,10 @@ public class AMPCacheManager implements CacheManager {
 
             if (!Files.exists(mobjErrorPath)) {
                 Files.createDirectories(mobjErrorPath);
+            }
+
+            if (!Files.exists(mobjInvalidDocumentsPath)) {
+                Files.createDirectories(mobjInvalidDocumentsPath);
             }
 
             if (!Files.exists(mobjSavePath)) {
@@ -261,6 +265,18 @@ public class AMPCacheManager implements CacheManager {
         } catch (StreamException ex) {
             ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
             bReturn = false;
+        }
+        return bReturn;
+    }
+
+    @Override
+    public boolean saveInvalidDocument(String sData, String sFilename) {
+        boolean bReturn = false;
+        try {
+            Files.write(Paths.get(String.format("%s/%s.xml", mobjInvalidDocumentsPath.toString(), sFilename)), sData.getBytes());
+            bReturn = true;
+        } catch (IOException ex) {
+            ExceptionHelper.getExceptionHelper().handleException(ExceptionHelper.ERROR_OTHER, ex);
         }
         return bReturn;
     }

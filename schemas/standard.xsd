@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" 
    targetNamespace="urn:hetcak:dms:uitingarchief:2016:08" xmlns:urn="urn:hetcak:dms:uitingarchief:2016:08">
+    <xs:element name="ArchiefDocumenten">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="urn:ArchiefDocument"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="ArchiefDocument">
         <xs:complexType>
             <xs:all>
@@ -37,7 +44,7 @@
 	<xs:simpleType name="Archief_DocumentSoort">
 		<xs:restriction base="xs:string">
 			<xs:minLength value="1" />
-			<xs:maxLength value="30" />
+			<xs:maxLength value="50" />
 		</xs:restriction>
 	</xs:simpleType>
 	
